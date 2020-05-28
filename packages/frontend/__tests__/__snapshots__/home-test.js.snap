@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders login button if authorize URL can be fetched 1`] = `
+<div>
+  <div
+    className="home container-fluid"
+  >
+    <div
+      className="header row"
+    >
+      <div
+        className="col-md-10"
+      >
+        flaky.dev
+      </div>
+      <div
+        className="col"
+      >
+        <a
+          className="btn btn-primary btn-block"
+          href="http://www.github.com//login/oauth/authorize"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+        >
+          Login with GitHub
+        </a>
+      </div>
+    </div>
+    <div
+      className="row"
+    >
+      <div
+        className="col-md-6 offset-md-2"
+      >
+        <h1>
+          Stop wrestling with flaky tests
+        </h1>
+        <p>
+          flaky.dev collects information from your tests runs, performs statistical analysis, and helps you keep on top of failing tests.
+        </p>
+      </div>
+    </div>
+    <div
+      className="row"
+    >
+      <div
+        className="col-md-3"
+      />
+      <div
+        className="col-md-6"
+      >
+        <a
+          className="btn btn-primary btn-block"
+          href="http://www.github.com//login/oauth/authorize"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+        >
+          Create an Account
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

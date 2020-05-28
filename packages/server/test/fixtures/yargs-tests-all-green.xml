@@ -1,0 +1,625 @@
+<testsuite name="Mocha Tests" tests="623" failures="0" errors="0" skipped="0" timestamp="Sun, 29 Mar 2020 18:51:26 GMT" time="16.723">
+<testcase classname="" name="should expose yargs-parser as Parser" time="0.001"/>
+<testcase classname="Argsert" name="does not warn if optional argument is not provided" time="0.004"/>
+<testcase classname="Argsert" name="warn if wrong type is provided for optional argument" time="0.003"/>
+<testcase classname="Argsert" name="does not warn if optional argument is valid" time="0.002"/>
+<testcase classname="Argsert" name="warns if required argument is not provided" time="0.003"/>
+<testcase classname="Argsert" name="warns if required argument is of wrong type" time="0.003"/>
+<testcase classname="Argsert" name="supports a combination of required and optional arguments" time="0.003"/>
+<testcase classname="Argsert" name="warns if too many arguments are provided" time="0.004"/>
+<testcase classname="Argsert" name="warn with argument position if wrong type is provided for argument" time="0.002"/>
+<testcase classname="Argsert" name="warn with generic argument position if wrong type is provided for seventh or greater argument" time="0.002"/>
+<testcase classname="Argsert" name="configures function to accept 0 parameters, if only arguments object is provided" time="0.001"/>
+<testcase classname="Argsert" name="allows for any type if * is provided" time="0.001"/>
+<testcase classname="Argsert" name="should ignore trailing undefined values" time="0.001"/>
+<testcase classname="Argsert" name="should not ignore undefined values that are not trailing" time="0.002"/>
+<testcase classname="Argsert" name="supports null as special type" time="0.002"/>
+<testcase classname="Command" name="preserves top-level envPrefix" time="0.012"/>
+<testcase classname="Command" name="respects order of positional arguments when matching commands" time="0.003"/>
+<testcase classname="Command" name="handles positional arguments if command is invoked using .parse()" time="0.004"/>
+<testcase classname="Command" name="invokes command handler repeatedly if parse() is called multiple times" time="0.003"/>
+<testcase classname="Command" name="allows command handler to be invoked repeatedly when help is enabled" time="0.006"/>
+<testcase classname="Command" name="does not require builder function to return" time="0.003"/>
+<testcase classname="Command" name="allows builder function to parse argv without returning" time="0.002"/>
+<testcase classname="Command" name="allows builder function to return parsed argv" time="0.003"/>
+<testcase classname="Command" name="ignores extra spaces in command string" time="0.002"/>
+<testcase classname="Command" name="executes a command via alias" time="0.002"/>
+<testcase classname="Command" name="should kick along [demand] configuration to commands" time="0.015"/>
+<testcase classname="Command" name="should support numeric commands" time="0.003"/>
+<testcase classname="Command" name="should not execute command if it is proceeded by another positional argument" time="0.003"/>
+<testcase classname="Command" name="should allow positional arguments for inner commands in strict mode, when no handler is provided" time="0.004"/>
+<testcase classname="Command" name="does not coerce number from positional with leading &#x22;+&#x22;" time="0.001"/>
+<testcase classname="Command positional arguments" name="parses command string and populates optional and required positional arguments" time="0.003"/>
+<testcase classname="Command positional arguments" name="populates inner argv with positional arguments" time="0.004"/>
+<testcase classname="Command positional arguments" name="populates outer argv with positional arguments when unknown-options-as-args is not set" time="0.002"/>
+<testcase classname="Command positional arguments" name="populates outer argv with positional arguments when unknown-options-as-args is set" time="0.004"/>
+<testcase classname="Command positional arguments" name="populates argv with camel-case variants of arguments when possible" time="0.005"/>
+<testcase classname="Command positional arguments" name="populates argv with camel-case variants of variadic args when possible" time="0.005"/>
+<testcase classname="Command positional arguments" name="populates subcommand&#x27;s inner argv with positional arguments" time="0.009"/>
+<testcase classname="Command positional arguments" name="ignores positional args for aliases" time="0.005"/>
+<testcase classname="Command positional arguments" name="does not overwrite existing values in argv for keys that are not positional" time="0.003"/>
+<testcase classname="Command positional arguments" name="does not load config twice when command executed" time="0.009"/>
+<testcase classname="Command positional arguments" name="handles -- in conjunction with positional arguments" time="0.003"/>
+<testcase classname="Command positional arguments" name="continues to support populate-- for commands, post #1457" time="0.009"/>
+<testcase classname="Command variadic" name="allows required arguments to be variadic" time="0.006"/>
+<testcase classname="Command variadic" name="allows optional arguments to be variadic" time="0.009"/>
+<testcase classname="Command variadic" name="fails if required arguments are missing" time="0.004"/>
+<testcase classname="Command variadic" name="does not fail if zero optional arguments are provided" time="0.005"/>
+<testcase classname="Command variadic" name="only allows the last argument to be variadic" time="0.006"/>
+<testcase classname="Command variadic" name="allows camel-case, variadic arguments, and strict mode to be combined" time="0.005"/>
+<testcase classname="Command missing positional arguments" name="fails if a required argument is missing" time="0.002"/>
+<testcase classname="Command missing positional arguments" name="does not fail if optional argument is missing" time="0.005"/>
+<testcase classname="Command API" name="accepts string, string as first 2 arguments" time="0.001"/>
+<testcase classname="Command API" name="accepts array, string as first 2 arguments" time="0.002"/>
+<testcase classname="Command API" name="accepts string, boolean as first 2 arguments" time="0.002"/>
+<testcase classname="Command API" name="accepts array, boolean as first 2 arguments" time="0.001"/>
+<testcase classname="Command API" name="accepts function as 3rd argument" time="0.001"/>
+<testcase classname="Command API" name="accepts options object as 3rd argument" time="0.002"/>
+<testcase classname="Command API" name="accepts module (with builder function and handler function) as 3rd argument" time="0.001"/>
+<testcase classname="Command API" name="accepts module (with builder object and handler function) as 3rd argument" time="0.001"/>
+<testcase classname="Command API" name="accepts module (describe key, builder function) as 1st argument" time="0.001"/>
+<testcase classname="Command API" name="accepts module (description key, builder function) as 1st argument" time="0.002"/>
+<testcase classname="Command API" name="accepts module (desc key, builder function) as 1st argument" time="0.002"/>
+<testcase classname="Command API" name="accepts module (false describe, builder function) as 1st argument" time="0.002"/>
+<testcase classname="Command API" name="accepts module (missing describe, builder function) as 1st argument" time="0.004"/>
+<testcase classname="Command API" name="accepts module (describe key, builder object) as 1st argument" time="0.002"/>
+<testcase classname="Command API" name="accepts module (missing handler function) as 1st argument" time="0.003"/>
+<testcase classname="Command API" name="accepts module (with command array) as 1st argument" time="0.004"/>
+<testcase classname="Command API" name="accepts module (with command string and aliases array) as 1st argument" time="0.001"/>
+<testcase classname="Command API" name="accepts module (with command array and aliases array) as 1st argument" time="0.001"/>
+<testcase classname="Command API" name="accepts module (with command string and aliases string) as 1st argument" time="0.003"/>
+<testcase classname="Command commandDir" name="supports relative dirs" time="0.009"/>
+<testcase classname="Command commandDir" name="supports nested subcommands" time="0.009"/>
+<testcase classname="Command commandDir" name="supports a &#x22;recurse&#x22; boolean option" time="0.01"/>
+<testcase classname="Command commandDir" name="supports a &#x22;visit&#x22; function option" time="0.005"/>
+<testcase classname="Command commandDir" name="detects and ignores cyclic dir references" time="0.006"/>
+<testcase classname="Command commandDir" name="derives &#x27;command&#x27; string from filename when not exported" time="0.005"/>
+<testcase classname="Command help command" name="displays command help appropriately" time="0.013"/>
+<testcase classname="Command positional aliases" name="allows an alias to be defined for a required positional argument" time="0.002"/>
+<testcase classname="Command positional aliases" name="allows an alias to be defined for an optional positional argument" time="0.002"/>
+<testcase classname="Command positional aliases" name="allows variadic and positional arguments to be combined" time="0.001"/>
+<testcase classname="Command global parsing hints config" name="does not load config for command if global is false" time="0.004"/>
+<testcase classname="Command global parsing hints config" name="loads config for command by default" time="0.007"/>
+<testcase classname="Command global parsing hints validation" name="resets implies logic for command if global is false" time="0.003"/>
+<testcase classname="Command global parsing hints validation" name="applies conflicts logic for command by default" time="0.003"/>
+<testcase classname="Command global parsing hints validation" name="resets conflicts logic for command if global is false" time="0.002"/>
+<testcase classname="Command global parsing hints validation" name="applies custom checks globally by default" time="0.005"/>
+<testcase classname="Command global parsing hints validation" name="resets custom check if global is false" time="0.002"/>
+<testcase classname="Command global parsing hints validation" name="applies demandOption globally" time="0.002"/>
+<testcase classname="Command global parsing hints strict" name="defaults to false when not called" time="0.001"/>
+<testcase classname="Command global parsing hints strict" name="can be enabled just for a command" time="0.002"/>
+<testcase classname="Command global parsing hints strict" name="applies strict globally by default" time="0.001"/>
+<testcase classname="Command global parsing hints strict" name="does not fail strict check due to postional command arguments" time="0.001"/>
+<testcase classname="Command global parsing hints strict" name="does not fail strict check due to postional command arguments in nested commands" time="0.003"/>
+<testcase classname="Command global parsing hints strict" name="allows a command to override global&#x60;" time="0.001"/>
+<testcase classname="Command global parsing hints strict" name="does not fire command if validation fails" time="0.005"/>
+<testcase classname="Command global parsing hints types" name="applies array type globally" time="0.002"/>
+<testcase classname="Command global parsing hints types" name="allows global setting to be disabled for array type" time="0.001"/>
+<testcase classname="Command global parsing hints types" name="applies choices type globally" time="0.001"/>
+<testcase classname="Command global parsing hints aliases" name="defaults to applying aliases globally" time="0.002"/>
+<testcase classname="Command global parsing hints aliases" name="allows global application of alias to be disabled" time="0.002"/>
+<testcase classname="Command global parsing hints coerce" name="defaults to applying coerce rules globally" time="0.002"/>
+<testcase classname="Command global parsing hints coerce" name="should bubble errors thrown by coerce function inside commands" time="0.003"/>
+<testcase classname="Command global parsing hints defaults" name="applies defaults globally" time="0.002"/>
+<testcase classname="Command global parsing hints describe" name="flags an option as global if a description is set" time="0.004"/>
+<testcase classname="Command global parsing hints help" name="applies help globally" time="0.003"/>
+<testcase classname="Command global parsing hints version" name="applies version globally" time="0.002"/>
+<testcase classname="Command global parsing hints groups" name="should apply custom option groups globally" time="0.003"/>
+<testcase classname="Command default commands" name="executes default command if no positional arguments given" time="0.001"/>
+<testcase classname="Command default commands" name="executes default command if undefined positional arguments and only command" time="0.002"/>
+<testcase classname="Command default commands" name="executes default command if defined positional arguments and only command" time="0.002"/>
+<testcase classname="Command default commands" name="allows $0 as an alias for a default command" time="0.002"/>
+<testcase classname="Command default commands" name="does not execute default command if another command is provided" time="0.002"/>
+<testcase classname="Command default commands" name="allows default command to be set as alias" time="0.006"/>
+<testcase classname="Command default commands" name="allows command to be run when alias is default command" time="0.003"/>
+<testcase classname="Command default commands" name="the last default command set should take precedence" time="0.003"/>
+<testcase classname="Command default commands strict" name="executes default command when strict mode is enabled" time="0.002"/>
+<testcase classname="Command default commands strict" name="allows default command aliases, when strict mode is enabled" time="0.004"/>
+<testcase classname="Command usage" name="allows you to configure a default command" time="0.004"/>
+<testcase classname="Command usage" name="throws exception if default command does not have leading $0" time="0.003"/>
+<testcase classname="Command async" name="fails when the promise returned by the command handler rejects" time="0.007"/>
+<testcase classname="Command async" name="succeeds when the promise returned by the command handler resolves" time="0.006"/>
+<testcase classname="Command async" name="displays error and appropriate help message when handler fails" time="0.011"/>
+<testcase classname="Completion default completion behavior" name="avoids repeating already included commands" time="0.004"/>
+<testcase classname="Completion default completion behavior" name="avoids repeating already included options" time="0.003"/>
+<testcase classname="Completion default completion behavior" name="avoids repeating options whose aliases are already included" time="0.004"/>
+<testcase classname="Completion default completion behavior" name="completes short options with a single dash when the user did not already enter two dashes" time="0.006"/>
+<testcase classname="Completion default completion behavior" name="completes short options with two dashes when the user already entered two dashes" time="0.004"/>
+<testcase classname="Completion default completion behavior" name="completes single digit options with two dashes" time="0.003"/>
+<testcase classname="Completion default completion behavior" name="completes with no- prefix flags defaulting to true when boolean-negation is set" time="0.007"/>
+<testcase classname="Completion default completion behavior" name="avoids repeating flags whose negated counterparts are already included" time="0.004"/>
+<testcase classname="Completion default completion behavior" name="ignores no- prefix flags when boolean-negation is not set" time="0.003"/>
+<testcase classname="Completion default completion behavior" name="completes options for the correct command" time="0.007"/>
+<testcase classname="Completion default completion behavior" name="does not complete hidden commands" time="0.004"/>
+<testcase classname="Completion default completion behavior" name="does not include positional arguments" time="0.004"/>
+<testcase classname="Completion default completion behavior" name="works if command has no options" time="0.003"/>
+<testcase classname="Completion default completion behavior" name="returns arguments as completion suggestion, if next contains &#x27;-&#x27;" time="0.007"/>
+<testcase classname="Completion generateCompletionScript()" name="replaces completion command variable with custom completion command in script" time="0.004"/>
+<testcase classname="Completion generateCompletionScript()" name="if $0 has a .js extension, a ./ prefix is added" time="0.003"/>
+<testcase classname="Completion generateCompletionScript()" name="allows $0 and cmd to be set" time="0.003"/>
+<testcase classname="Completion completion()" name="shows completion script if command registered with completion(cmd) is called" time="0.005"/>
+<testcase classname="Completion completion()" name="allows a custom function to be registered for completion" time="0.005"/>
+<testcase classname="Completion completion()" name="passes current arg for completion and the parsed arguments thus far to custom function" time="0.003"/>
+<testcase classname="Completion completion()" name="if a promise is returned, completions can be asynchronous" time="0.018"/>
+<testcase classname="Completion completion()" name="if a promise is returned, errors are handled" time="0.017"/>
+<testcase classname="Completion completion()" name="if a callback parameter is provided, completions can be asynchronous" time="0.019"/>
+<testcase classname="Completion bash" name="returns a list of commands as completion suggestions" time="0.005"/>
+<testcase classname="Completion bash" name="avoids interruption from command recommendations" time="0.004"/>
+<testcase classname="Completion bash" name="avoids interruption from default command" time="0.004"/>
+<testcase classname="Completion bash" name="completes options for a command" time="0.006"/>
+<testcase classname="Completion bash" name="does not apply validation when --get-yargs-completions is passed in" time="0.004"/>
+<testcase classname="Completion bash generateCompletionScript()" name="replaces application variable with $0 in script" time="0.003"/>
+<testcase classname="Completion bash getCompletion()" name="returns default completion to callback" time="0.006"/>
+<testcase classname="Completion bash getCompletion()" name="returns default completion to callback for options" time="0.003"/>
+<testcase classname="Completion zsh" name="returns a list of commands as completion suggestions" time="0.002"/>
+<testcase classname="Completion zsh" name="avoids interruption from command recommendations" time="0.003"/>
+<testcase classname="Completion zsh" name="avoids interruption from default command" time="0.004"/>
+<testcase classname="Completion zsh" name="completes options for a command" time="0.004"/>
+<testcase classname="Completion zsh" name="replaces application variable with $0 in script" time="0.002"/>
+<testcase classname="Completion zsh" name="does not apply validation when --get-yargs-completions is passed in" time="0.003"/>
+<testcase classname="Completion zsh" name="bails out early when full command matches" time="0.007"/>
+<testcase classname="Completion zsh getCompletion()" name="returns default completion to callback" time="0.004"/>
+<testcase classname="integration tests" name="should run as a shell script with no arguments" time="0.196"/>
+<testcase classname="integration tests" name="should run as a shell script with arguments" time="0.214"/>
+<testcase classname="integration tests" name="should run as a node script with no arguments" time="0.335"/>
+<testcase classname="integration tests" name="should run as a node script with arguments" time="0.411"/>
+<testcase classname="integration tests" name="allows --help to be completed without returning help message" time="0.281"/>
+<testcase classname="integration tests" name="flushes all output when --help is executed" time="2.68"/>
+<testcase classname="integration tests" name="correctly fills positional command args with preceding option" time="0.196"/>
+<testcase classname="integration tests" name="correctly fills positional command args with = assignment in preceding option" time="0.179"/>
+<testcase classname="integration tests path returned by &#x22;which&#x22;" name="should match the actual path to the script file" time="0.173"/>
+<testcase classname="integration tests path returned by &#x22;which&#x22;" name="should match the actual path to the script file, with arguments" time="0.181"/>
+<testcase classname="integration tests load root package.json version #" name="defaults to appropriate version # when yargs is installed normally" time="0.168"/>
+<testcase classname="integration tests load root package.json version #" name="defaults to appropriate version # when yargs is symlinked" time="0.18"/>
+<testcase classname="integration tests load root package.json parser settings" name="reads parser config settings when yargs is installed normally" time="0.258"/>
+<testcase classname="integration tests load root package.json parser settings" name="reads parser config settings when yargs is installed as a symlink" time="0.245"/>
+<testcase classname="integration tests load root package.json parser settings" name="reads parser config settings when somebody obscures require.main" time="0.225"/>
+<testcase classname="integration tests load root package.json parser settings" name="reads parser config settings when entry file has no extension" time="0.22"/>
+<testcase classname="isPromise" name="returns &#x60;false&#x60; on non promise value" time="0"/>
+<testcase classname="isPromise" name="returns &#x60;true&#x60; on es6 promise" time="0"/>
+<testcase classname="isPromise" name="returns &#x60;true&#x60; on some other thenable" time="0"/>
+<testcase classname="isPromise" name="returns &#x60;false&#x60; if some falsy value is passed" time="0.001"/>
+<testcase classname="isPromise" name="returns &#x60;false&#x60; if passed object has no &#x60;then&#x60; property" time="0"/>
+<testcase classname="isPromise" name="returns &#x60;false&#x60; if &#x60;then&#x60; is not a function" time="0"/>
+<testcase classname="middleware" name="should add a list of callbacks to global middleware" time="0.001"/>
+<testcase classname="middleware" name="should throw exception if middleware is not a function" time="0"/>
+<testcase classname="middleware" name="should add a single callback to global middleware" time="0"/>
+<testcase classname="middleware" name="runs the middleware before reaching the handler" time="0.002"/>
+<testcase classname="middleware" name="runs all middleware before reaching the handler" time="0.002"/>
+<testcase classname="middleware" name="should be able to register middleware regardless of when middleware is called" time="0.002"/>
+<testcase classname="middleware" name="doesn&#x27;t modify globalMiddleware array when executing middleware" time="0.002"/>
+<testcase classname="middleware" name="allows middleware to be added in builder" time="0.002"/>
+<testcase classname="middleware" name="passes yargs object to middleware" time="0.001"/>
+<testcase classname="middleware" name="applies aliases before middleware is called" time="0.002"/>
+<testcase classname="middleware async" name="fails when the promise returned by the middleware rejects" time="0.003"/>
+<testcase classname="middleware async" name="calls the command handler when all middleware promises resolve" time="0.012"/>
+<testcase classname="middleware async" name="calls an async middleware only once for nested subcommands" time="0.002"/>
+<testcase classname="middleware applyBeforeValidation=true" name="runs before validation" time="0.001"/>
+<testcase classname="middleware applyBeforeValidation=true" name="throws an error if promise returned and applyBeforeValidation enabled" time="0.002"/>
+<testcase classname="middleware applyBeforeValidation=true" name="runs before validation, when middleware is added in builder" time="0.001"/>
+<testcase classname="middleware applyBeforeValidation=true" name="applies aliases before middleware is called, for global middleware" time="0.001"/>
+<testcase classname="middleware applyBeforeValidation=true" name="applies aliases before middleware is called, when middleware is added in builder" time="0.002"/>
+<testcase classname="ObjFilter" name="returns a new reference to the original object if no filter function is given" time="0.001"/>
+<testcase classname="usage tests" name="should return valid values when check passes" time="0.003"/>
+<testcase classname="usage tests" name="should display missing arguments when check fails with a thrown exception" time="0.003"/>
+<testcase classname="usage tests" name="should display missing arguments when check fails with a return value" time="0.003"/>
+<testcase classname="usage tests" name="should return a valid result when check condition passes" time="0.002"/>
+<testcase classname="usage tests" name="should display a failed message when check condition fails" time="0.003"/>
+<testcase classname="usage tests" name="should return a valid result when demanding a count of non-hyphenated values" time="0.002"/>
+<testcase classname="usage tests" name="should return a failure message when not enough non-hyphenated arguments are found after a demand count" time="0.003"/>
+<testcase classname="usage tests" name="should return a custom failure message when not enough non-hyphenated arguments are found after a demand count" time="0.004"/>
+<testcase classname="usage tests" name="should return a valid result when setting defaults for singles" time="0.003"/>
+<testcase classname="usage tests" name="should return a valid result when default is set for an alias" time="0.005"/>
+<testcase classname="usage tests" name="should print a single line when failing and default is set for an alias" time="0.004"/>
+<testcase classname="usage tests" name="should allow you to set default values for a hash of options" time="0.004"/>
+<testcase classname="usage tests" name="should display example on fail" time="0.007"/>
+<testcase classname="usage tests" name="should succeed when rebase" time="0.001"/>
+<testcase classname="usage tests" name="should not print usage string if help() is called without arguments" time="0.003"/>
+<testcase classname="usage tests" name="should add --help as an option for printing usage text if help() is called without arguments" time="0.004"/>
+<testcase classname="usage tests demand options" name="should show an error along with a custom message on demand fail" time="0.007"/>
+<testcase classname="usage tests demand options" name="should return valid values when demand passes" time="0.004"/>
+<testcase classname="usage tests demand options" name="should not show a custom message if msg is null" time="0.004"/>
+<testcase classname="usage tests demand options using .demand()" name="should show an error along with the missing arguments on demand fail" time="0.003"/>
+<testcase classname="usage tests demand options using .demand()" name="missing argument message given if one command, but an argument not on the list is provided" time="0.003"/>
+<testcase classname="usage tests demand options using .demand()" name="missing command message if all the required arguments exist, but not enough commands are provided" time="0.003"/>
+<testcase classname="usage tests demand options using .demand()" name="no failure occurs if the required arguments and the required number of commands are provided" time="0.003"/>
+<testcase classname="usage tests demand options using .demand()" name="missing command message if all the required arguments exist, but not enough commands are provided" time="0.003"/>
+<testcase classname="usage tests demand options using .demand() using .require()" name="should show an error along with the missing arguments on demand fail" time="0.003"/>
+<testcase classname="usage tests demand options using .demand() using .require()" name="missing argument message given if one command and an argument not on the list are provided" time="0.003"/>
+<testcase classname="usage tests demand options min/max demanded count" name="does not output an error if &#x27;_&#x27; count is within the min/max range" time="0.002"/>
+<testcase classname="usage tests demand options min/max demanded count" name="outputs an error if &#x27;_&#x27; count is above max" time="0.002"/>
+<testcase classname="usage tests demand options min/max demanded count" name="outputs an error if &#x27;_&#x27; count is below min" time="0.003"/>
+<testcase classname="usage tests demand options min/max demanded count" name="allows a customer error message to be provided" time="0.002"/>
+<testcase classname="usage tests demand options min/max demanded count" name="shouldn&#x27;t interpret the second argument as a max when it is an array" time="0.002"/>
+<testcase classname="usage tests deprecate options using .option(x, {deprecate: [boolean|string]})" name="{deprecated: true} should show [deprecated]" time="0.003"/>
+<testcase classname="usage tests deprecate options using .option(x, {deprecate: [boolean|string]})" name="{deprecated: string} should show [deprecated: string]" time="0.002"/>
+<testcase classname="usage tests deprecate options using .option(x, {deprecate: [boolean|string]})" name="{deprecated: boolean} in sub-command" time="0.003"/>
+<testcase classname="usage tests deprecate options using .option(x, {deprecate: [boolean|string]})" name="{deprecated: string} in sub-command" time="0.005"/>
+<testcase classname="usage tests deprecate options using .deprecateOption(x, [string])" name=".deprecateOption(x) should show [deprecated]" time="0.003"/>
+<testcase classname="usage tests deprecate options using .deprecateOption(x, [string])" name=".deprecateOption(x, string) should show [deprecated: string]" time="0.003"/>
+<testcase classname="usage tests deprecate options using .deprecateOption(x, [string])" name=".deprecateOption(x) in a sub-command" time="0.003"/>
+<testcase classname="usage tests deprecate options using .deprecateOption(x, [string])" name=".deprecateOption(x, string) in a sub-command" time="0.003"/>
+<testcase classname="usage tests when exitProcess is false when check fails with a thrown exception" name="should display missing arguments once" time="0.003"/>
+<testcase classname="usage tests when exitProcess is false fail()" name="is called with the original error message as the first parameter" time="0.002"/>
+<testcase classname="usage tests when exitProcess is false fail()" name="is invoked with yargs instance as third argument" time="0.003"/>
+<testcase classname="usage tests when exitProcess is false fail() when check() throws error" name="fail() is called with the original error object as the second parameter" time="0.003"/>
+<testcase classname="usage tests when exitProcess is false fail() when command() throws error" name="fail() is called with the original error object as the second parameter" time="0.002"/>
+<testcase classname="usage tests required arguments" name="still requires argument if &#x27;type&#x27; hints are given" time="0.002"/>
+<testcase classname="usage tests required arguments with options object" name="should show a failure message if a required option is missing" time="0.004"/>
+<testcase classname="usage tests required arguments with options object" name="should show a failure message if more than one required option is missing" time="0.004"/>
+<testcase classname="usage tests required arguments with requiresArg method" name="should show a failure message if a required option is missing" time="0.004"/>
+<testcase classname="usage tests with strict() option set" name="should fail given an option argument that is not demanded" time="0.003"/>
+<testcase classname="usage tests with strict() option set" name="should fail given an option argument without a corresponding description" time="0.003"/>
+<testcase classname="usage tests with strict() option set" name="should fail given multiple option arguments without corresponding descriptions" time="0.004"/>
+<testcase classname="usage tests with strict() option set" name="should pass given option arguments with corresponding descriptions" time="0.002"/>
+<testcase classname="usage tests with strict() option set with hyphens in options" name="fails when an invalid argument is provided" time="0.001"/>
+<testcase classname="usage tests with strict() option set with hyphens in options" name="accepts valid options" time="0.002"/>
+<testcase classname="usage tests with strict() option set with hyphens in options" name="works with aliases" time="0.003"/>
+<testcase classname="usage tests with strict() option set with hyphens in options" name="accepts mixed options with values" time="0.002"/>
+<testcase classname="usage tests demand option with boolean flag" name="should not report missing required arguments when given an alias" time="0.003"/>
+<testcase classname="usage tests demand option with boolean flag with demand option" name="should report missing required arguments" time="0.003"/>
+<testcase classname="usage tests demand option with boolean flag with required option" name="should report missing required arguments" time="0.003"/>
+<testcase classname="usage tests help option" name="should display usage" time="0.003"/>
+<testcase classname="usage tests help option" name="should not show both dashed and camelCase aliases" time="0.003"/>
+<testcase classname="usage tests help option" name="should use 2 dashes for general 1-digit usage" time="0.003"/>
+<testcase classname="usage tests help option" name="should use single dashes for 1-digit boolean key usage" time="0.003"/>
+<testcase classname="usage tests help option" name="should use single dashes for 1-digit boolean alias usage" time="0.003"/>
+<testcase classname="usage tests help option" name="should use 2 dashes for multiple-digit alias usage" time="0.003"/>
+<testcase classname="usage tests help option when exitProcess is false" name="should not validate arguments (required argument)" time="0.003"/>
+<testcase classname="usage tests help option when exitProcess is false" name="should not validate arguments (nargs)" time="0.003"/>
+<testcase classname="usage tests version option" name="should display version" time="0.002"/>
+<testcase classname="usage tests version option" name="accepts version option as first argument, and version number as second argument" time="0.006"/>
+<testcase classname="usage tests version option" name="should default to &#x27;version&#x27; as version option" time="0.002"/>
+<testcase classname="usage tests version option when exitProcess is false" name="should not validate arguments (required argument)" time="0.003"/>
+<testcase classname="usage tests version option when exitProcess is false" name="should not validate arguments (nargs)" time="0.003"/>
+<testcase classname="usage tests showHelpOnFail" name="should display user supplied message" time="0.003"/>
+<testcase classname="usage tests exitProcess" name="should not call process.exit on error if disabled" time="0.002"/>
+<testcase classname="usage tests scriptName" name="should display user supplied scriptName" time="0.004"/>
+<testcase classname="usage tests scriptName" name="should not alter the user supplied scriptName" time="0.003"/>
+<testcase classname="usage tests wrap" name="should wrap argument descriptions onto multiple lines" time="0.003"/>
+<testcase classname="usage tests wrap" name="should wrap based on window-size if no wrap is provided" time="0.008"/>
+<testcase classname="usage tests wrap" name="should not raise an exception when long default and description are provided" time="0.001"/>
+<testcase classname="usage tests wrap" name="should wrap the left-hand-column if it takes up more than 50% of the screen" time="0.003"/>
+<testcase classname="usage tests wrap" name="should not wrap left-hand-column if no description is provided" time="0.004"/>
+<testcase classname="usage tests wrap" name="should wrap the usage string" time="0.004"/>
+<testcase classname="usage tests wrap" name="should align span columns when ansi colors are not used in a description" time="0.003"/>
+<testcase classname="usage tests wrap" name="should align span columns when ansi colors are used in a description" time="0.004"/>
+<testcase classname="usage tests commands" name="should output a list of available commands" time="0.003"/>
+<testcase classname="usage tests commands" name="should not show hidden commands" time="0.005"/>
+<testcase classname="usage tests commands" name="allows completion command to be hidden" time="0.004"/>
+<testcase classname="usage tests commands" name="preserves global wrap() for commands that do not override it" time="0.007"/>
+<testcase classname="usage tests commands" name="allows a command to override global wrap()" time="0.006"/>
+<testcase classname="usage tests commands" name="resets groups for a command handler, respecting order" time="0.003"/>
+<testcase classname="usage tests commands" name="allows global option to be disabled" time="0.003"/>
+<testcase classname="usage tests commands" name="can add to preserved groups" time="0.003"/>
+<testcase classname="usage tests commands" name="can bump up preserved groups" time="0.004"/>
+<testcase classname="usage tests commands" name="should display global non empty groups for commands" time="0.004"/>
+<testcase classname="usage tests commands" name="should display global non empty groups for subcommands" time="0.003"/>
+<testcase classname="usage tests commands" name="should list a module command only once" time="0.003"/>
+<testcase classname="usage tests commands" name="allows a builder function to override default usage() string" time="0.005"/>
+<testcase classname="usage tests commands" name="allows a builder function to disable default usage() with null" time="0.003"/>
+<testcase classname="usage tests commands" name="displays given command chain with positional args in default usage for subcommand with builder object" time="0.002"/>
+<testcase classname="usage tests commands" name="displays given command chain with positional args in default usage for subcommand with builder function" time="0.003"/>
+<testcase classname="usage tests commands" name="displays aliases for commands that have them (no wrap)" time="0.003"/>
+<testcase classname="usage tests commands" name="displays aliases for commands that have them (with wrap)" time="0.003"/>
+<testcase classname="usage tests commands" name="allows a builder to add more than one usage with mutiple usage calls" time="0.003"/>
+<testcase classname="usage tests commands" name="allows a builder to disable usage with null after mutiple usage calls" time="0.006"/>
+<testcase classname="usage tests commands" name="does not display $0 twice when default commands are enabled" time="0.003"/>
+<testcase classname="usage tests epilogue" name="should display an epilog message at the end of the usage instructions" time="0.003"/>
+<testcase classname="usage tests epilogue" name="supports multiple epilogs" time="0.003"/>
+<testcase classname="usage tests epilogue" name="replaces $0 in epilog string" time="0.003"/>
+<testcase classname="usage tests default" name="should indicate that the default is a generated-value, if function is provided" time="0.003"/>
+<testcase classname="usage tests default" name="if a named function is provided, should use name rather than (generated-value)" time="0.002"/>
+<testcase classname="usage tests default" name="default-description take precedence if one is provided" time="0.002"/>
+<testcase classname="usage tests default" name="serializes object and array defaults" time="0.003"/>
+<testcase classname="usage tests defaultDescription using option() without default()" name="should output given desc with default value" time="0.003"/>
+<testcase classname="usage tests defaultDescription using option() without default()" name="should output given desc without default value" time="0.003"/>
+<testcase classname="usage tests defaultDescription using option() without default()" name="should prefer given desc over function desc" time="0.003"/>
+<testcase classname="usage tests defaultDescription using option() with default()" name="should prefer default() desc when given last" time="0.004"/>
+<testcase classname="usage tests defaultDescription using option() with default()" name="should prefer option() desc when given last" time="0.003"/>
+<testcase classname="usage tests defaultDescription using option() with default()" name="should prefer option() desc over default() function" time="0.002"/>
+<testcase classname="usage tests defaultDescription using positional() without default()" name="should output given desc with default value" time="0.003"/>
+<testcase classname="usage tests defaultDescription using positional() without default()" name="should output given desc without default value" time="0.003"/>
+<testcase classname="usage tests defaultDescription using positional() without default()" name="should prefer given desc over function desc" time="0.003"/>
+<testcase classname="usage tests defaultDescription using positional() with default()" name="should prefer default() desc when given last" time="0.003"/>
+<testcase classname="usage tests defaultDescription using positional() with default()" name="should prefer positional() desc when given last" time="0.003"/>
+<testcase classname="usage tests defaultDescription using positional() with default()" name="should prefer positional() desc over default() function" time="0.003"/>
+<testcase classname="usage tests normalizeAliases" name="should display &#x27;description&#x27; string in help message if set for alias" time="0.003"/>
+<testcase classname="usage tests normalizeAliases" name="should display &#x27;required&#x27; string in help message if set for alias" time="0.002"/>
+<testcase classname="usage tests normalizeAliases" name="should display &#x27;type&#x27; string in help message if set for alias" time="0.004"/>
+<testcase classname="usage tests normalizeAliases" name="should display &#x27;type&#x27; number in help message if set for alias" time="0.004"/>
+<testcase classname="usage tests showHelp" name="should show help regardless of whether argv has been called" time="0.003"/>
+<testcase classname="usage tests showHelp" name="should print the help using console.error when no arguments were specified" time="0.003"/>
+<testcase classname="usage tests showHelp" name="should call the correct console.log method when specified" time="0.002"/>
+<testcase classname="usage tests showHelp" name="should call the callback to print when specified" time="0.001"/>
+<testcase classname="usage tests $0" name="is detected correctly for a basic script" time="0.001"/>
+<testcase classname="usage tests $0" name="is detected correctly when argv contains &#x22;node&#x22;" time="0.001"/>
+<testcase classname="usage tests $0" name="is detected correctly when dirname contains &#x22;node&#x22;" time="0.001"/>
+<testcase classname="usage tests $0" name="is detected correctly when dirname and argv contain &#x22;node&#x22;" time="0.001"/>
+<testcase classname="usage tests $0" name="is detected correctly when argv contains &#x22;iojs&#x22;" time="0.001"/>
+<testcase classname="usage tests $0" name="is detected correctly when dirname contains &#x22;iojs&#x22;" time="0.001"/>
+<testcase classname="usage tests $0" name="is detected correctly when dirname and argv contain &#x22;iojs&#x22;" time="0.001"/>
+<testcase classname="usage tests $0" name="is detected correctly when argv contains &#x22;node.exe&#x22;" time="0"/>
+<testcase classname="usage tests $0" name="is detected correctly when argv contains &#x22;iojs.exe&#x22;" time="0"/>
+<testcase classname="usage tests $0" name="is resolved to the relative path if it is shorter" time="0"/>
+<testcase classname="usage tests $0" name="is not resolved to the relative path if it is larger" time="0.001"/>
+<testcase classname="usage tests choices" name="should output choices when defined for non-hidden options" time="0.003"/>
+<testcase classname="usage tests choices" name="should not output choices when defined for hidden options" time="0.003"/>
+<testcase classname="usage tests count" name="should indicate when an option is a count" time="0.003"/>
+<testcase classname="usage tests array" name="should indicate when an option is an array" time="0.003"/>
+<testcase classname="usage tests group" name="allows an an option to be placed in an alternative group" time="0.004"/>
+<testcase classname="usage tests group" name="does not print the &#x27;Options:&#x27; group if no keys are in it" time="0.003"/>
+<testcase classname="usage tests group" name="displays alias keys appropriately within a grouping" time="0.004"/>
+<testcase classname="usage tests group" name="allows a group to be provided as the only information about an option" time="0.003"/>
+<testcase classname="usage tests group" name="allows multiple options to be grouped at the same time" time="0.003"/>
+<testcase classname="usage tests group" name="allows group to be provided in the options object" time="0.002"/>
+<testcase classname="usage tests group" name="only displays a duplicated option once per group" time="0.006"/>
+<testcase classname="usage tests cjk" name="should calculate width of cjk text correctly" time="0.004"/>
+<testcase classname="usage tests default command" name="should display top-level help with no command given" time="0.005"/>
+<testcase classname="usage tests default command" name="should display top-level help with sorting with no command given if sorting enabled" time="0.021"/>
+<testcase classname="usage tests default command" name="should display default command as ./$0 if it has no aliases" time="0.004"/>
+<testcase classname="usage tests default command" name="should display positionals that have been configured" time="0.004"/>
+<testcase classname="usage tests default command" name="should display options that have been configured" time="0.004"/>
+<testcase classname="usage tests positional" name="should display help section for positionals" time="0.003"/>
+<testcase classname="usage tests positional" name="shows that variadic positional arguments are arrays" time="0.006"/>
+<testcase classname="usage tests positional" name="indicates that &#x3C;foo&#x3E; positional arguments are required" time="0.004"/>
+<testcase classname="usage tests positional" name="displays aliases appropriately" time="0.004"/>
+<testcase classname="usage tests positional" name="displays type information" time="0.004"/>
+<testcase classname="usage tests positional" name="displays choices array" time="0.004"/>
+<testcase classname="usage tests hidden options" name="--help should display all options except for hidden ones" time="0.004"/>
+<testcase classname="usage tests hidden options" name="--help should display all options except for hidden ones even with a default" time="0.005"/>
+<testcase classname="usage tests hidden options" name="--help should display all options except for hidden ones even in a group" time="0.004"/>
+<testcase classname="usage tests hidden options" name="--help should display all groups except for ones with only hidden options" time="0.004"/>
+<testcase classname="usage tests hidden options" name="--help should display all options (including hidden ones) with --show-hidden" time="0.003"/>
+<testcase classname="usage tests hidden options" name="--help should display all groups (including ones with only hidden options) with --show-hidden" time="0.004"/>
+<testcase classname="usage tests hidden options" name="--help should display --custom-show-hidden" time="0.004"/>
+<testcase classname="usage tests hidden options" name="--help should display all options with --custom-show-hidden" time="0.004"/>
+<testcase classname="usage tests help message caching" name="should display proper usage when an async handler fails" time="0.106"/>
+<testcase classname="usage tests help message caching" name="should not display a cached help message for the next parsing" time="0.109"/>
+<testcase classname="validation tests implies" name="fails if &#x27;_&#x27; populated, and implied argument not set" time="0.001"/>
+<testcase classname="validation tests implies" name="fails if key implies values in &#x27;_&#x27;, but &#x27;_&#x27; is not populated" time="0.002"/>
+<testcase classname="validation tests implies" name="fails if either implied argument is not set and displays only failed" time="0.003"/>
+<testcase classname="validation tests implies" name="fails if --no-foo&#x27;s implied argument is not set" time="0.001"/>
+<testcase classname="validation tests implies" name="fails if a key is set, along with a key that it implies should not be set" time="0.002"/>
+<testcase classname="validation tests implies" name="fails if implied key (with &#x22;no&#x22; in the name) is not set" time="0.001"/>
+<testcase classname="validation tests implies" name="doesn&#x27;t fail if implied key (with &#x22;no&#x22; in the name) is set" time="0.001"/>
+<testcase classname="validation tests implies" name="fails if implied key (with &#x22;no&#x22; in the name) is given when it should not" time="0.002"/>
+<testcase classname="validation tests implies" name="doesn&#x27;t fail if implied key (with &#x22;no&#x22; in the name) that should not be given is not set" time="0.001"/>
+<testcase classname="validation tests implies" name="allows key to be specified with option shorthand" time="0.001"/>
+<testcase classname="validation tests conflicts" name="fails if both arguments are supplied" time="0.002"/>
+<testcase classname="validation tests conflicts" name="fails if argument is supplied along with either conflicting argument" time="0.003"/>
+<testcase classname="validation tests conflicts" name="should not fail if no conflicting arguments are provided" time="0.001"/>
+<testcase classname="validation tests conflicts" name="should not fail if argument with conflict is provided, but not the argument it conflicts with" time="0.001"/>
+<testcase classname="validation tests conflicts" name="should not fail if conflicting argument is provided, without argument with conflict" time="0.004"/>
+<testcase classname="validation tests conflicts" name="allows an object to be provided defining conflicting option pairs" time="0.002"/>
+<testcase classname="validation tests conflicts" name="takes into account aliases when applying conflicts logic" time="0.001"/>
+<testcase classname="validation tests conflicts" name="allows key to be specified with option shorthand" time="0.002"/>
+<testcase classname="validation tests conflicts" name="should fail if alias of conflicting argument is provided" time="0.002"/>
+<testcase classname="validation tests conflicts" name="should fail if alias of argument with conflict is provided" time="0.001"/>
+<testcase classname="validation tests conflicts" name="should use appropriate translation" time="0.002"/>
+<testcase classname="validation tests demand" name="fails with standard error message if msg is not defined" time="0.001"/>
+<testcase classname="validation tests demand" name="fails in strict mode with invalid command" time="0.002"/>
+<testcase classname="validation tests demand" name="fails in strict mode with extra positionals" time="0.001"/>
+<testcase classname="validation tests demand" name="does not fail in strict mode when no commands configured" time="0.001"/>
+<testcase classname="validation tests demand" name="should recognize context variables in strict mode" time="0.002"/>
+<testcase classname="validation tests demand" name="should recognize context variables in strict mode, when running sub-commands" time="0.002"/>
+<testcase classname="validation tests demand" name="fails when a required argument is missing" time="0.001"/>
+<testcase classname="validation tests demand" name="fails when required arguments are present, but a command is missing" time="0.001"/>
+<testcase classname="validation tests demand" name="fails without a message if msg is null" time="0.001"/>
+<testcase classname="validation tests demand" name="custom failure message should be printed for both min and max constraints" time="0.001"/>
+<testcase classname="validation tests demand" name="interprets min relative to command" time="0.001"/>
+<testcase classname="validation tests demand" name="interprets max relative to command" time="0.003"/>
+<testcase classname="validation tests requiresArg" name="fails when a required argument value of type number is missing" time="0.003"/>
+<testcase classname="validation tests requiresArg" name="fails when a required argument value of type string is missing" time="0.003"/>
+<testcase classname="validation tests requiresArg" name="fails when a required argument value of type boolean is missing" time="0.003"/>
+<testcase classname="validation tests requiresArg" name="fails when a required argument value of type array is missing" time="0.002"/>
+<testcase classname="validation tests requiresArg" name="does not fail if argument with required value is not provided" time="0"/>
+<testcase classname="validation tests requiresArg" name="does not fail if argument with required value is not provided to subcommand" time="0.001"/>
+<testcase classname="validation tests choices" name="fails with one invalid value" time="0.001"/>
+<testcase classname="validation tests choices" name="fails with one valid and one invalid value" time="0.002"/>
+<testcase classname="validation tests choices" name="fails with multiple invalid values for same argument" time="0.001"/>
+<testcase classname="validation tests choices" name="fails with case-insensitive value" time="0.002"/>
+<testcase classname="validation tests choices" name="fails with multiple invalid arguments" time="0.001"/>
+<testcase classname="validation tests choices" name="succeeds when demandOption is true and valid choice is provided" time="0.001"/>
+<testcase classname="validation tests choices" name="fails when demandOption is true and choice is not provided" time="0.001"/>
+<testcase classname="validation tests choices" name="succeeds when demandOption is false and no choice is provided" time="0.001"/>
+<testcase classname="validation tests choices" name="succeeds when demandOption is not provided and no choice is provided" time="0.001"/>
+<testcase classname="validation tests config" name="should raise an appropriate error if JSON file is not found" time="0.002"/>
+<testcase classname="validation tests config" name="should not raise an exception if config file is set as default argument value" time="0.001"/>
+<testcase classname="validation tests config" name="should be displayed in the help message" time="0.003"/>
+<testcase classname="validation tests config" name="should be displayed in the help message with its default name" time="0.002"/>
+<testcase classname="validation tests config" name="should allow help message to be overridden" time="0.002"/>
+<testcase classname="validation tests config" name="outputs an error returned by the parsing function" time="0.003"/>
+<testcase classname="validation tests config" name="outputs an error if thrown by the parsing function" time="0.003"/>
+<testcase classname="validation tests defaults" name="should not fail when demanded options with defaults are missing" time="0.001"/>
+<testcase classname="validation tests strict mode" name="does not fail when command with subcommands called" time="0.001"/>
+<testcase classname="validation tests strict mode" name="does not fail for hidden options" time="0.001"/>
+<testcase classname="validation tests strict mode" name="does not fail if an alias is provided, rather than option itself" time="0.001"/>
+<testcase classname="validation tests strict mode" name="does not fail when unrecognized option is passed after --" time="0.001"/>
+<testcase classname="validation tests demandOption" name="allows an array of options to be demanded" time="0.002"/>
+<testcase classname="validation tests demandOption" name="allows demandOption in option shorthand" time="0.001"/>
+<testcase classname="validation tests demandCommand" name="should return a custom failure message when too many non-hyphenated arguments are found after a demand count" time="0.003"/>
+<testcase classname="validation tests demandCommand" name="allows a custom min message to be provided" time="0.001"/>
+<testcase classname="validation tests demandCommand" name="allows a custom min and max message to be provided" time="0.001"/>
+<testcase classname="validation tests demandCommand" name="defaults to demanding 1 command" time="0.002"/>
+<testcase classname="validation tests strictCommands" name="succeeds in parse if command is known" time="0.001"/>
+<testcase classname="validation tests strictCommands" name="succeeds in parse if top level and inner command are known" time="0.002"/>
+<testcase classname="validation tests strictCommands" name="fails with error if command is unknown" time="0.001"/>
+<testcase classname="validation tests strictCommands" name="fails with error if inner command is unknown" time="0.002"/>
+<testcase classname="validation tests strictCommands" name="does not apply implicit strictCommands to inner commands" time="0.001"/>
+<testcase classname="validation tests strictCommands" name="allows strictCommands to be applied to inner commands" time="0.001"/>
+<testcase classname="yargs dsl tests" name="should use bin name for $0, eliminating path" time="0.001"/>
+<testcase classname="yargs dsl tests" name="should not remove the 1st argument of bundled electron apps" time="0.002"/>
+<testcase classname="yargs dsl tests" name="should remove the 1st argument of unbundled electron apps" time="0.002"/>
+<testcase classname="yargs dsl tests" name="accepts an object for aliases" time="0.001"/>
+<testcase classname="yargs dsl tests" name="do not populates argv with placeholder keys for unset options" time="0.004"/>
+<testcase classname="yargs dsl tests" name="accepts an object for implies" time="0.002"/>
+<testcase classname="yargs dsl tests" name="accepts an object for describes" time="0.003"/>
+<testcase classname="yargs dsl tests" name="a function can be provided, to execute when a parsing failure occurs" time="0.001"/>
+<testcase classname="yargs dsl tests" name="should set alias to string if option is string" time="0.001"/>
+<testcase classname="yargs dsl tests" name="should allow a valid choice" time="0.001"/>
+<testcase classname="yargs dsl tests" name="should ignore a missing array choice with an empty default" time="0.001"/>
+<testcase classname="yargs dsl tests" name="should allow defaultDescription to be set with .option()" time="0.001"/>
+<testcase classname="yargs dsl tests" name="should not require config object for an option" time="0.004"/>
+<testcase classname="yargs dsl tests" name="should not fail if command handler freezes object" time="0.002"/>
+<testcase classname="yargs dsl tests" name="should allow array and requires arg to be used in conjunction" time="0.001"/>
+<testcase classname="yargs dsl tests hide" name="should add the key to hiddenOptions" time="0.003"/>
+<testcase classname="yargs dsl tests showHidden" name="should have a default show-hidden private option pre-configured" time="0.002"/>
+<testcase classname="yargs dsl tests showHidden" name="should not have show-hidden as an actual option described by default" time="0.001"/>
+<testcase classname="yargs dsl tests showHidden" name="should set show-hidden option" time="0.002"/>
+<testcase classname="yargs dsl tests showHidden" name="should set custom-show-hidden option" time="0.001"/>
+<testcase classname="yargs dsl tests showHelpOnFail" name="should display custom failure message, if string is provided as first argument" time="0.003"/>
+<testcase classname="yargs dsl tests showHelpOnFail" name="calling with no arguments should default to displaying help" time="0.004"/>
+<testcase classname="yargs dsl tests exitProcess" name="should set exit process to true, if no argument provided" time="0.003"/>
+<testcase classname="yargs dsl tests exitProcess when exitProcess is set to false and a failure occurs" name="should throw an exception" time="0.002"/>
+<testcase classname="yargs dsl tests exitProcess when exitProcess is set to false and a failure occurs" name="should output the errors to stderr once" time="0.002"/>
+<testcase classname="yargs dsl tests reset" name="should put yargs back into its initial state" time="0.002"/>
+<testcase classname="yargs dsl tests reset" name="does not invoke parse with an error if reset has been called and option is not global" time="0.003"/>
+<testcase classname="yargs dsl tests command" name="executes command handler with parsed argv" time="0.002"/>
+<testcase classname="yargs dsl tests command" name="runs all middleware before reaching the handler" time="0.001"/>
+<testcase classname="yargs dsl tests command" name="recommends a similar command if no command handler is found" time="0.007"/>
+<testcase classname="yargs dsl tests command" name="does not recommend a similiar command if no similar command exists" time="0.003"/>
+<testcase classname="yargs dsl tests command" name="recommends the longest match first" time="0.005"/>
+<testcase classname="yargs dsl tests command" name="does not print command recommendation if help message will be shown" time="0.003"/>
+<testcase classname="yargs dsl tests command" name="skips executing root-level command if builder&#x27;s help is executed" time="0.004"/>
+<testcase classname="yargs dsl tests command" name="executes top-level help if no handled command is provided" time="0.003"/>
+<testcase classname="yargs dsl tests command" name="accepts an object for describing a command&#x27;s options" time="0.004"/>
+<testcase classname="yargs dsl tests command" name="accepts a module with a &#x27;builder&#x27; and &#x27;handler&#x27; key" time="0.002"/>
+<testcase classname="yargs dsl tests command" name="accepts a module with a keys &#x27;command&#x27;, &#x27;describe&#x27;, &#x27;builder&#x27;, and &#x27;handler&#x27;" time="0.002"/>
+<testcase classname="yargs dsl tests command" name="derives &#x27;command&#x27; string from filename when missing" time="0.002"/>
+<testcase classname="yargs dsl tests command" name="throws error for non-module command object missing &#x27;command&#x27; string" time="0.003"/>
+<testcase classname="yargs dsl tests terminalWidth" name="returns the maximum width of the terminal" time="0"/>
+<testcase classname="yargs dsl tests number" name="accepts number arguments when a number type is specified" time="0.001"/>
+<testcase classname="yargs dsl tests number" name="should expose an options short-hand for numbers" time="0.001"/>
+<testcase classname="yargs dsl tests choices" name="accepts an object" time="0.002"/>
+<testcase classname="yargs dsl tests choices" name="accepts a string and array" time="0.001"/>
+<testcase classname="yargs dsl tests choices" name="accepts a string and single value" time="0"/>
+<testcase classname="yargs dsl tests locale" name="uses english as a default locale" time="0"/>
+<testcase classname="yargs dsl tests locale" name="detects the operating system&#x27;s locale" time="0.003"/>
+<testcase classname="yargs dsl tests locale" name="should not detect the OS locale if detectLocale is &#x27;false&#x27;" time="0.004"/>
+<testcase classname="yargs dsl tests locale" name="allows a locale other than the default &#x27;en&#x27; to be specified" time="0.002"/>
+<testcase classname="yargs dsl tests locale" name="handles a missing locale" time="0.006"/>
+<testcase classname="yargs dsl tests locale" name="properly translates a region-specific locale file" time="0.005"/>
+<testcase classname="yargs dsl tests locale" name="uses locale string for help option default desc on .locale().help()" time="0.002"/>
+<testcase classname="yargs dsl tests locale" name="uses locale string for help option default desc on .help().locale()" time="0.002"/>
+<testcase classname="yargs dsl tests locale updateLocale" name="allows you to override the default locale strings" time="0.003"/>
+<testcase classname="yargs dsl tests locale updateLocale" name="allows you to use updateStrings() as an alias for updateLocale()" time="0.002"/>
+<testcase classname="yargs dsl tests env" name="translates no arg as empty prefix (parser applies all env vars)" time="0"/>
+<testcase classname="yargs dsl tests env" name="accepts true as a valid prefix (parser applies all env vars)" time="0.001"/>
+<testcase classname="yargs dsl tests env" name="accepts empty string as a valid prefix (parser applies all env vars)" time="0"/>
+<testcase classname="yargs dsl tests env" name="accepts a string prefix" time="0"/>
+<testcase classname="yargs dsl tests env" name="translates false as undefined prefix (disables parsing of env vars)" time="0"/>
+<testcase classname="yargs dsl tests parse" name="parses a simple string" time="0.001"/>
+<testcase classname="yargs dsl tests parse" name="parses a quoted string" time="0.001"/>
+<testcase classname="yargs dsl tests parse" name="parses an array" time="0.001"/>
+<testcase classname="yargs dsl tests parse" name="ignores implicit help command (with short-circuit)" time="0.001"/>
+<testcase classname="yargs dsl tests parse" name="allows an optional context object to be provided" time="0"/>
+<testcase classname="yargs dsl tests parse" name="overrides parsed value of argv with context object" time="0.001"/>
+<testcase classname="yargs dsl tests parse" name="parses process.parse() if no arguments are provided" time="0.003"/>
+<testcase classname="yargs dsl tests parse" name="can be called multiple times with the same behavior" time="0.004"/>
+<testcase classname="yargs dsl tests parsed" name="should be false before parsing" time="0"/>
+<testcase classname="yargs dsl tests parsed" name="should not be false after parsing" time="0.001"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse" name="does not print to stdout" time="0.003"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse" name="gets passed error as first argument" time="0.003"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse" name="gets passed argv as second argument" time="0.004"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse" name="gets passed output as third argument" time="0.005"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse" name="reinstates original exitProcess setting after invocation" time="0.002"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse" name="does not call callback if subsequently called without callback" time="0.004"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse" name="resets error state between calls to parse" time="0.002"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="does not invoke command handler if output is populated" time="0.008"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="invokes command handler normally if no output is populated" time="0.002"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="allows context object to be passed to parse" time="0.002"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="does not fail if context object has cyclical reference" time="0.007"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="allows nested sub-commands to be invoked multiple times" time="0.008"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="overwrites the prior context object, when parse is called multiple times" time="0.002"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="populates argv appropriately when parse is called multiple times" time="0.003"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="populates output appropriately when parse is called multiple times" time="0.005"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="resets errors when parse is called multiple times" time="0.004"/>
+<testcase classname="yargs dsl tests function passed as second argument to parse commands" name="preserves top-level config when parse is called multiple times" time="0.003"/>
+<testcase classname="yargs dsl tests config" name="allows a parsing function to be provided as a second argument" time="0.001"/>
+<testcase classname="yargs dsl tests config" name="allows key to be specified with option shorthand" time="0.002"/>
+<testcase classname="yargs dsl tests config" name="can be disabled with option shorthand" time="0.001"/>
+<testcase classname="yargs dsl tests config" name="allows to pass a configuration object" time="0.001"/>
+<testcase classname="yargs dsl tests config extends" name="applies default configurations when given config object" time="0.001"/>
+<testcase classname="yargs dsl tests config extends" name="protects against circular extended configurations" time="0.001"/>
+<testcase classname="yargs dsl tests config extends" name="handles aboslute paths" time="0.001"/>
+<testcase classname="yargs dsl tests config extends" name="tolerates null prototype config objects" time="0.001"/>
+<testcase classname="yargs dsl tests config extends" name="allows a module to be extended, rather than a JSON file" time="0.002"/>
+<testcase classname="yargs dsl tests config extends" name="ignores an extends key that does not look like a path or module" time="0.001"/>
+<testcase classname="yargs dsl tests config extends" name="allows files with .*rc extension to be extended" time="0.002"/>
+<testcase classname="yargs dsl tests config extends" name="deep merges configs when extending when deep-merge-config=true" time="0.002"/>
+<testcase classname="yargs dsl tests config extends" name="deep merges multiple configs when extending when deep-merge-config=true" time="0.002"/>
+<testcase classname="yargs dsl tests config extends" name="does not deep merge objects by default" time="0.001"/>
+<testcase classname="yargs dsl tests normalize" name="normalizes paths passed as arguments" time="0.001"/>
+<testcase classname="yargs dsl tests normalize" name="normalizes path when when it is updated" time="0.001"/>
+<testcase classname="yargs dsl tests normalize" name="allows key to be specified with option shorthand" time="0.001"/>
+<testcase classname="yargs dsl tests normalize" name="can be disabled with option shorthand" time="0.001"/>
+<testcase classname="yargs dsl tests narg" name="accepts a key as the first argument and a count as the second" time="0.001"/>
+<testcase classname="yargs dsl tests narg" name="accepts a hash of keys and counts" time="0.001"/>
+<testcase classname="yargs dsl tests narg" name="allows key to be specified with option shorthand" time="0.002"/>
+<testcase classname="yargs dsl tests global" name="does not reset a global options when reset is called" time="0.001"/>
+<testcase classname="yargs dsl tests global" name="does not reset alias of global option" time="0.001"/>
+<testcase classname="yargs dsl tests global" name="should set help to global option by default" time="0.001"/>
+<testcase classname="yargs dsl tests global" name="should set version to global option by default" time="0.001"/>
+<testcase classname="yargs dsl tests global" name="should not reset usage descriptions of global options" time="0.002"/>
+<testcase classname="yargs dsl tests global" name="should not reset implications of global options" time="0.002"/>
+<testcase classname="yargs dsl tests global" name="should expose an options short-hand for declaring global options" time="0.001"/>
+<testcase classname="yargs dsl tests pkgConf" name="uses values from package.json" time="0.002"/>
+<testcase classname="yargs dsl tests pkgConf" name="combines yargs defaults with package.json values" time="0.002"/>
+<testcase classname="yargs dsl tests pkgConf" name="should use value from package.json, if argv value is using default value" time="0.001"/>
+<testcase classname="yargs dsl tests pkgConf" name="should apply value from config object to all aliases" time="0.002"/>
+<testcase classname="yargs dsl tests pkgConf" name="is cool with a key not existing" time="0.002"/>
+<testcase classname="yargs dsl tests pkgConf" name="allows an alternative cwd to be specified" time="0.001"/>
+<testcase classname="yargs dsl tests pkgConf" name="doesn&#x27;t mess up other pkg lookups when cwd is specified" time="0.007"/>
+<testcase classname="yargs dsl tests pkgConf" name="handles an invalid package.json" time="0.001"/>
+<testcase classname="yargs dsl tests pkgConf" name="should apply default configurations from extended packages" time="0.001"/>
+<testcase classname="yargs dsl tests pkgConf" name="should apply extended configurations from cwd when no path is given" time="0.015"/>
+<testcase classname="yargs dsl tests parserConfiguration" name="overrides the default parser configuration" time="0.002"/>
+<testcase classname="yargs dsl tests parserConfiguration" name="supports --unknown-options-as-args" time="0.004"/>
+<testcase classname="yargs dsl tests skipValidation" name="skips validation if an option with skipValidation is present" time="0.001"/>
+<testcase classname="yargs dsl tests skipValidation" name="does not skip validation if no option with skipValidation is present" time="0.002"/>
+<testcase classname="yargs dsl tests skipValidation" name="allows key to be specified with option shorthand" time="0.002"/>
+<testcase classname="yargs dsl tests skipValidation" name="allows having an option that skips validation but not skipping validation if that option is not used" time="0.001"/>
+<testcase classname="yargs dsl tests .help()" name="enables &#x60;--help&#x60; option and &#x60;help&#x60; command without arguments" time="0.006"/>
+<testcase classname="yargs dsl tests .help()" name="enables &#x60;--help&#x60; option and &#x60;help&#x60; command with &#x60;true&#x60; argument" time="0.007"/>
+<testcase classname="yargs dsl tests .help()" name="enables given string as help option and command with string argument" time="0.009"/>
+<testcase classname="yargs dsl tests .help()" name="enables given string as help option and command with custom description with two string arguments" time="0.006"/>
+<testcase classname="yargs dsl tests .help()" name="enables given string as help option and command with custom description with two string arguments and &#x60;true&#x60; argument" time="0.01"/>
+<testcase classname="yargs dsl tests .help() with .alias()" name="uses multi-char (but not single-char) help alias as command" time="0.007"/>
+<testcase classname="yargs dsl tests .coerce()" name="supports string and function args (as option key and coerce function)" time="0.001"/>
+<testcase classname="yargs dsl tests .coerce()" name="supports object arg (as map of multiple options)" time="0.002"/>
+<testcase classname="yargs dsl tests .coerce()" name="supports array and function args (as option keys and coerce function)" time="0.002"/>
+<testcase classname="yargs dsl tests .coerce()" name="allows an error to be handled by fail() handler" time="0.001"/>
+<testcase classname="yargs dsl tests .coerce()" name="supports an option alias" time="0.002"/>
+<testcase classname="yargs dsl tests .coerce()" name="supports a global option within command" time="0.001"/>
+<testcase classname="yargs dsl tests .coerce()" name="is supported by .option()" time="0.001"/>
+<testcase classname="yargs dsl tests .coerce()" name="supports positional and variadic args for a command" time="0.003"/>
+<testcase classname="yargs dsl tests .coerce()" name="returns camelcase args for a command" time="0.003"/>
+<testcase classname="yargs dsl tests .coerce()" name="allows an error from positional arg to be handled by fail() handler" time="0.002"/>
+<testcase classname="yargs dsl tests stop parsing" name="populates argv._ with unparsed arguments after &#x22;--&#x22;" time="0.001"/>
+<testcase classname="yargs dsl tests yargs context" name="should begin with initial state" time="0.001"/>
+<testcase classname="yargs dsl tests yargs context" name="should track number of resets" time="0.001"/>
+<testcase classname="yargs dsl tests yargs context" name="should track commands being executed" time="0.005"/>
+<testcase classname="yargs dsl tests positional" name="defaults array with no arguments to []" time="0.002"/>
+<testcase classname="yargs dsl tests positional" name="populates array with appropriate arguments" time="0.002"/>
+<testcase classname="yargs dsl tests positional" name="allows a conflicting argument to be specified" time="0.003"/>
+<testcase classname="yargs dsl tests positional" name="allows a default to be set" time="0.007"/>
+<testcase classname="yargs dsl tests positional" name="allows a defaultDescription to be set" time="0.005"/>
+<testcase classname="yargs dsl tests positional" name="allows an implied argument to be specified" time="0.004"/>
+<testcase classname="yargs dsl tests positional" name="allows an alias to be provided" time="0.002"/>
+<testcase classname="yargs dsl tests positional" name="allows normalize to be specified" time="0.004"/>
+<testcase classname="yargs dsl tests positional" name="allows a choices array to be specified" time="0.003"/>
+<testcase classname="yargs dsl tests positional" name="allows a coerce method to be provided" time="0.003"/>
+<testcase classname="yargs dsl tests positional" name="allows a boolean type to be specified" time="0.002"/>
+<testcase classname="yargs dsl tests positional" name="allows a number type to be specified" time="0.002"/>
+<testcase classname="yargs dsl tests positional" name="allows a string type to be specified" time="0.002"/>
+<testcase classname="yargs dsl tests positional" name="allows positional arguments for subcommands to be configured" time="0.002"/>
+<testcase classname="yargs dsl tests positional" name="can only be used as part of a command&#x27;s builder function" time="0.001"/>
+<testcase classname="yargs dsl tests positional" name="does not parse large scientific notation values, when type string" time="0.002"/>
+<testcase classname="yargs dsl tests onFinishCommand" name="use with promise" time="0.008"/>
+<testcase classname="yargs dsl tests onFinishCommand" name="use without promise" time="0.006"/>
+<testcase classname="yargs dsl tests &#x22;nargs&#x22; with &#x22;array&#x22;" name="should not consume more than nargs items" time="0.001"/>
+<testcase classname="yargs dsl tests &#x22;nargs&#x22; with &#x22;array&#x22;" name="should apply nargs with higher precedence than requiresArg: true" time="0.001"/>
+<testcase classname="yargs dsl tests &#x22;nargs&#x22; with &#x22;array&#x22;" name="should apply nargs with higher precedence than requiresArg()" time="0.001"/>
+<testcase classname="yargs dsl tests &#x22;nargs&#x22; with &#x22;array&#x22;" name="should raise error if not enough values follow nargs key" time="0.001"/>
+</testsuite>
