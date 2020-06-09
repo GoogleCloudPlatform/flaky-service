@@ -11,16 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-const env = process.env.NODE_ENV || 'development';
-const db = {};
-db[env] = {
-  driver: 'pg',
-  user: process.env.POSTGRES_USER || 'postgres',
-  password: process.env.POSTGRES_PASSWORD || 'postgres',
-  port: process.env.POSTGRES_PORT ? Number(process.env.DB_PORT) : 5432,
-  host: process.env.POSTGRES_HOST || 'localhost',
-  database: process.env.POSTGRES_DB || 'flaky_dev_test'
-};
 
-module.exports = db;
+/*
+class TestRun {
+  isFlaky () {
+  }
+}
+*/

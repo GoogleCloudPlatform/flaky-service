@@ -1,0 +1,38 @@
+{
+  "name": "flaky-service-api",
+  "private": true,
+  "version": "1.0.0",
+  "description": "the api for the flaky.dev service",
+  "main": "server.js",
+  "scripts": {
+    "test": "c8 mocha --timeout=15000 test/*.js",
+    "posttest": "semistandard",
+    "fix": "semistandard --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/GoogleCloudPlatform/flaky-service.git"
+  },
+  "keywords": [
+    "flaky",
+    "service",
+    "api"
+  ],
+  "author": "Google LLC",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/GoogleCloudPlatform/flaky-service/issues"
+  },
+  "homepage": "https://github.com/GoogleCloudPlatform/flaky-service#readme",
+  "dependencies": {
+    "@google-cloud/firestore": "^3.8.4",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "c8": "^7.1.2",
+    "mocha": "^7.2.0",
+    "node-fetch": "^2.6.0",
+    "semistandard": "^14.2.0"
+  }
+}

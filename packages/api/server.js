@@ -1,3 +1,4 @@
+
 // Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,21 +12,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-'use strict';
 
-exports.up = async function (db) {
-  await db.createTable('orgs_github', {
-    name: {type: 'text', primaryKey: true},
-    company: {type: 'text'},
-    avatar_url: {type: 'text'}
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+
+// GET: fetching some resource.
+// POST: creating or updating a resource.
+// PUT: creating or updating a resource.
+app.post('/', (req, res) => {
+  res.send({
+    message: req.body.message ? req.body.message : 'hello world'
   });
-};
+});
 
-exports.down = async function (db) {
-  await db.dropTable('orgs_github');
-};
+const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
 
-exports._meta = {
-  version: 1
+module.exports = {
+  server
 };
