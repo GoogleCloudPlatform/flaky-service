@@ -53,5 +53,9 @@ jobs:
         working-directory: ./packages/frontend
       - run: npm install
         working-directory: ./packages/frontend
-      - run: npm test
+      - run: npm run test
+        working-directory: ./packages/frontend
+      - run: npm run e2e
+        working-directory: ./packages/frontend
+      - run: npm run lint
         working-directory: ./packages/frontend
