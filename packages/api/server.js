@@ -13,12 +13,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// const express = require('express');
+// const app = express();
+// const bodyParser = require('body-parser');
+
+// app.use(bodyParser.json());
+
+// // GET: fetching some resource.
+// // POST: creating or updating a resource.
+// // PUT: creating or updating a resource.
+// app.post('/', (req, res) => {
+//   res.send({
+//     message: req.body.message ? req.body.message : 'hello world'
+//   });
+// });
+
+// const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+// const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+
+// module.exports = {
+//   server
+// };
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+  res
+    .status(200)
+    .send(`Hello World`)
+    .end();
+});
 // GET: fetching some resource.
 // POST: creating or updating a resource.
 // PUT: creating or updating a resource.
@@ -29,8 +57,8 @@ app.post('/', (req, res) => {
 });
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
 
-module.exports = {
-  server
-};
+const host = 'localhost';
+const server = app.listen(port,host, () => console.log(`Example app listening at http://localhost:${port}`));
+
+module.exports = server
