@@ -64,9 +64,10 @@ const buildInfo = [
 
 describe('Add-Build', () => {
   let client;
-  const testingCollection = TESTING_COLLECTION_BASE + Math.random().toString(36).substr(2, 9); //random ID for collection so can be concurrently run
-  before(() => {
+  let testingCollection; //random ID for collection so can be concurrently run
+  before(async () => {
     client = new Firestore();
+    testingCollection = TESTING_COLLECTION_BASE + Math.random().toString(36).substr(2, 9);
   });
   describe('addBuild', async () => {
     it('Can add a build and repository to a blank collection', async () => {
@@ -139,7 +140,7 @@ describe('Add-Build', () => {
         }
       ];
 
-      testExpectations.forEach(async (testExpecation) => {
+    testExpectations.forEach(async (testExpecation) => {
         const test = await client.collection(testingCollection).doc(buildInfo[0].repoId).collection('tests').doc(encodeURIComponent(testExpecation.name)).get();
         assert.strictEqual(test.data().percentpassing, testExpecation.percentpassing);
         assert.deepStrictEqual(test.data().environments, testExpecation.environments);
@@ -150,14 +151,16 @@ describe('Add-Build', () => {
         testruns.forEach((doc) => {
           testBuilds.push(doc.id);
         });
+        console.log("ASSERTING EQUAL");
         assert.deepStrictEqual(testBuilds, testExpecation.builds);
       });
+      console.log("DESCRIBE DONE");
     });
   });
 
   after(async () => {
 
-
+    console.log("AFTER START");
     // must delete each collection individually
     const deletePaths = [
       'tests/{testcase}/runs/{buildid}',
