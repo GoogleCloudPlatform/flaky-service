@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { HomeComponent } from './home.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {HomeComponent} from './home.component';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -22,10 +22,9 @@ describe('HomeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HomeComponent ],
-      imports: [ MatToolbarModule ]
-    })
-    .compileComponents();
+      declarations: [HomeComponent],
+      imports: [MatToolbarModule],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -38,13 +37,15 @@ describe('HomeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it(`should have as title 'flaky-dashboard'`, () => {
+  it("should have as title 'flaky-dashboard'", () => {
     expect(component.title).toEqual('flaky-dashboard');
   });
 
   it('should render title', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('span').textContent).toContain('flaky-dashboard is running !');
+    expect(compiled.querySelector('span').textContent).toContain(
+      'flaky-dashboard is running !'
+    );
   });
 });
