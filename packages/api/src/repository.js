@@ -37,6 +37,12 @@ class Repository {
     return document.data();
   }
 
+  async getCollection (identifier) {
+    let repoRef = await this.client.collection('{identifier}').get();
+    // repoRef = ["aaa", "bbb"];
+    return repoRef;
+  }
+
   async delete (identifier) {
     const document = this.client.doc(`${REPOSITORY_COLLECTION}/${identifier}`);
     return document.delete();
