@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { browser, by, element } from 'protractor';
+import {browser, by, element} from 'protractor';
 
 export class AppPage {
   navigateTo(): Promise<unknown> {

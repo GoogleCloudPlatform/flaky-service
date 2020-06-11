@@ -6,9 +6,13 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "gts check",
     "e2e": "ng e2e",
-    "coverage": "ng test --code-coverage --sourceMap=false"
+    "coverage": "ng test --code-coverage --sourceMap=false",
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix"
   },
   "private": true,
   "dependencies": {
@@ -32,8 +36,9 @@
     "@angular/compiler-cli": "~9.1.9",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
-    "@types/node": "^12.11.1",
+    "@types/node": "^13.11.1",
     "codelyzer": "^5.1.2",
+    "gts": "^2.0.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~5.0.0",
