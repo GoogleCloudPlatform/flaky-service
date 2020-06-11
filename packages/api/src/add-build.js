@@ -20,9 +20,11 @@
 */
 const { Firestore } = require('@google-cloud/firestore');
 
+// ANALYTICS FUNCTIONS
+
 /*
 @param snapshot a snapshot with the results of a firestore query
-@returns a floating point number representing the percent passing in the last 100 goes, or -1 if no test cases
+@returns a floating point number representing the percent passing, or -1 if no test cases
 */
 function testCasePassingPercent (snapshot) {
   var successCnt = 0;
@@ -34,11 +36,27 @@ function testCasePassingPercent (snapshot) {
   return (total > 0) ? successCnt / parseFloat(total) : -1;
 }
 
+/*
+@param successes list of each success
+@param failures Object with attributes for each failure
+@returns a floating point number representing the percent passing , or -1 if no builds
+*/
 function buildPassingPercent (successes, failures) {
   var total = successes.length + Object.keys(failures).length;
   return (total > 0) ? successes.length / parseFloat(total) : -1;
 }
 
+// Main Functionality
+
+/*
+* Adds a list of TestCaseRun objects to the database, described by the meta information in buildInfo
+*       Does not assume repository has been initialized
+*       Particular build MAY NOT be added multiple times with different information, but may be added multiple times with same info
+* @param buildInfo must have attributes of organization, timestamp, url, environment, buildId
+* @param client is the firebase client
+* @param collectionName is the collection to use in firestore
+*
+*/
 async function addBuild (testCases, buildInfo, client, collectionName = 'repositories-fake') {
   var dbRepo = client.collection(collectionName).doc(buildInfo.repoId);
 
@@ -88,23 +106,5 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     failures: failures
   });
 }
-
-// buildInfo = {
-//     repoId: encodeURIComponent("nodejs/node"),
-//     buildId: "23543",
-//     url: "https://github.com/nodejs/node" ,
-//     environment: "linux-testing",
-//     timestamp: new Date(),
-// };
-
-// testCases = [
-//     new TestCaseRun("ok",1,"abort/test-abort-backtrace"),
-//     new TestCaseRun("not ok",2,"abort/test-abort-uncaught-exception"),
-//     new TestCaseRun("ok",3,"abort/test-addon-register-signal-handler"),
-//     new TestCaseRun("not ok",4,"abort/test-addon-uv-handle-leak"),
-// ]
-
-// var client = new Firestore();
-// addBuild(testCases, buildInfo, client)
 
 module.exports = addBuild;

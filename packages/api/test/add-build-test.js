@@ -21,6 +21,7 @@ const addBuild = require('../src/add-build');
 
 const TESTING_COLLECTION_BASE = 'repositories-testsuite-';
 
+// The three builds that will be added
 const buildInfo = [
   {
     repoId: encodeURIComponent('nodejs/node'),
@@ -64,11 +65,13 @@ const buildInfo = [
 
 describe('Add-Build', () => {
   let client;
-  let testingCollection; //random ID for collection so can be concurrently run
+  let testingCollection; // random ID for collection so can be concurrently run
+
   before(async () => {
     client = new Firestore();
-    testingCollection = TESTING_COLLECTION_BASE + Math.random().toString(36).substr(2, 9);
+    testingCollection = TESTING_COLLECTION_BASE + Math.random().toString(36).substr(2, 9); // random collection name for concurrent testing
   });
+
   describe('addBuild', async () => {
     it('Can add a build and repository to a blank collection', async () => {
       await addBuild(buildInfo[0].testCases, buildInfo[0], client, testingCollection);
@@ -140,7 +143,9 @@ describe('Add-Build', () => {
         }
       ];
 
-    testExpectations.forEach(async (testExpecation) => {
+      for (var k = 0; k < testExpectations.length; k++) {
+        var testExpecation = testExpectations[k];
+
         const test = await client.collection(testingCollection).doc(buildInfo[0].repoId).collection('tests').doc(encodeURIComponent(testExpecation.name)).get();
         assert.strictEqual(test.data().percentpassing, testExpecation.percentpassing);
         assert.deepStrictEqual(test.data().environments, testExpecation.environments);
@@ -151,16 +156,12 @@ describe('Add-Build', () => {
         testruns.forEach((doc) => {
           testBuilds.push(doc.id);
         });
-        console.log("ASSERTING EQUAL");
         assert.deepStrictEqual(testBuilds, testExpecation.builds);
-      });
-      console.log("DESCRIBE DONE");
+      }
     });
   });
 
   after(async () => {
-
-    console.log("AFTER START");
     // must delete each collection individually
     const deletePaths = [
       'tests/{testcase}/runs/{buildid}',
@@ -169,16 +170,16 @@ describe('Add-Build', () => {
     ];
     const buildIds = ['11111', '22222', '33333'];
     const testCases = ['a/1', 'a/2', 'a/3', 'a/4', 'a/5', 'a/6'];
+    // Delete all possible documents, okay to delete document that doesnt exist
     deletePaths.forEach(async (deletePath) => {
       buildIds.forEach(async (buildId) => {
         testCases.forEach(async (testCase) => {
           const deletePathUse = deletePath.replace('{testcase}', encodeURIComponent(testCase)).replace('{buildid}', buildId);
-          await client.collection(testingCollection).doc(buildInfo[0].repoId + "/" + deletePathUse).delete();
+          await client.collection(testingCollection).doc(buildInfo[0].repoId + '/' + deletePathUse).delete();
         });
       });
     });
 
     await client.collection(testingCollection).doc(buildInfo[0].repoId).delete();
-
   });
 });
