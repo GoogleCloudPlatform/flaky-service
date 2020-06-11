@@ -18,10 +18,10 @@ const assert = require('assert');
 const fetch = require('node-fetch');
 
 describe('flaky express server', () => {
-  let server;
+  // let server;
   before(() => {
     const serverModule = require('../server');
-    server = serverModule.server;
+    // server = serverModule.server;
   });
   it('it responds to a GET on the / path', async () => {
     const resp = await fetch('http://127.0.0.1:3000', {
@@ -38,6 +38,6 @@ describe('flaky express server', () => {
   it('it returns a single repository, when you call GET on /repository/:id');
   it('it creates a repository, when you call POST on /repository');
   after(() => {
-    server.close();
+    // server.close();
   });
 });

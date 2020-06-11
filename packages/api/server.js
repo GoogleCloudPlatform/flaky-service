@@ -41,12 +41,24 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
+app.get('/allRepos', (req, res) => {
+  repos = ["aaa", "bbb", "ccc"];
+  //TODO allow the requester to give search/filter criterion!
   res
     .status(200)
-    .send(`Hello World`)
+    .send(repos + '\n')
     .end();
 });
+
+app.get('/', (req, res) => {
+
+  message = req.body.message ? req.body.message : 'hello world'
+  res
+    .status(200)
+    .send(message)
+    .end();
+});
+
 // GET: fetching some resource.
 // POST: creating or updating a resource.
 // PUT: creating or updating a resource.
@@ -57,8 +69,7 @@ app.post('/', (req, res) => {
 });
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-
 const host = 'localhost';
-const server = app.listen(port,host, () => console.log(`Example app listening at http://localhost:${port}`));
+const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
 
 module.exports = server
