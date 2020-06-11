@@ -22,6 +22,14 @@ app.use(bodyParser.json());
 // GET: fetching some resource.
 // POST: creating or updating a resource.
 // PUT: creating or updating a resource.
+app.get('/', (req, res) => {
+  message = req.body.message ? req.body.message : 'hello world'
+  res
+    .status(200)
+    .send(message)
+    .end();
+});
+
 app.post('/', (req, res) => {
   res.send({
     message: req.body.message ? req.body.message : 'hello world'
@@ -29,6 +37,7 @@ app.post('/', (req, res) => {
 });
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+
 const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
 
 module.exports = {
