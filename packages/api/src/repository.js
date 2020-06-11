@@ -17,7 +17,7 @@ const { Firestore } = require('@google-cloud/firestore');
 const REPOSITORY_COLLECTION = 'repositories';
 
 class Repository {
-  constructor (client) {
+  constructor(client) {
     if (!client) {
       this.client = new Firestore();
     } else {
@@ -25,25 +25,39 @@ class Repository {
     }
   }
 
-  async create (identifier, params) {
+  async create(identifier, params) {
     // TODO: DANGER we should have validation and what not at some point
     // before we do this, probably before this is called by the server too.
     return this.client.collection(REPOSITORY_COLLECTION).doc(identifier).set(params);
   }
 
-  async get (identifier) {
+  async get(identifier) {
     const document = await this.client.doc(`${REPOSITORY_COLLECTION}/${identifier}`).get();
     // TODO: we actually need to call doc.exists and check if this doc exists.
     return document.data();
   }
 
-  async getCollection (identifier) {
-    let repoRef = await this.client.collection('{identifier}').get();
+  async getCollection(identifier) {
+    console.log("TRYING TO GET DOCS FROM: " + identifier);
+    let repoRef = await this.client.collection(`${identifier}`).get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching documents.');
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          console.log(doc.id, '=>', doc.data());
+        });
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
+      });
     // repoRef = ["aaa", "bbb"];
     return repoRef;
   }
 
-  async delete (identifier) {
+  async delete(identifier) {
     const document = this.client.doc(`${REPOSITORY_COLLECTION}/${identifier}`);
     return document.delete();
   }
