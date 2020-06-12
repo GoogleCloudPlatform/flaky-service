@@ -15,6 +15,13 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {HomeComponent} from './home.component';
+import {Component} from '@angular/core';
+
+// Mock the inner components
+@Component({
+  selector: 'app-search',
+})
+class SearchComponent {}
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -22,7 +29,7 @@ describe('HomeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HomeComponent],
+      declarations: [HomeComponent, SearchComponent],
       imports: [MatToolbarModule],
     }).compileComponents();
   }));

@@ -1,0 +1,16 @@
+<div id="input-container">
+    <mat-icon aria-hidden="false" aria-label="search" id="search-icon">search</mat-icon>
+
+    <input
+        matInput
+        placeholder="search an organisation or a repository"
+        id="search-input"
+        [formControl]="myControl"
+        [matAutocomplete]="auto">
+
+    <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+</div>
