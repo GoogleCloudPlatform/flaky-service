@@ -12,17 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
-import {HomeComponent} from './home/home.component';
+import {TestBed} from '@angular/core/testing';
+import {COMService} from './com.service';
+import {HttpClientModule} from '@angular/common/http';
 
-const routes: Routes = [
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
-  {path: 'home', component: HomeComponent},
-];
+describe('COMService', () => {
+  let service: COMService;
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientModule],
+    });
+    service = TestBed.inject(COMService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});

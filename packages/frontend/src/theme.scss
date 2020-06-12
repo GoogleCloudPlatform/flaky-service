@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#toolbar {
-	display: flex;
-	color: #0075FF;
-	justify-content: center;
-	border-bottom: 1px solid #0075FF;
-	background-color: white;
-}
+@import '~@angular/material/theming';
+@include mat-core();
+
+$my-app-primary: mat-palette($mat-light-blue);
+$my-app-accent:  mat-palette($mat-yellow, 400);
+$my-app-warn:    mat-palette($mat-deep-orange);
+$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
+@include angular-material-theme($my-app-theme);

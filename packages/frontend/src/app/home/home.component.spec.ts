@@ -12,33 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {TestBed, async} from '@angular/core/testing';
-import {RouterTestingModule} from '@angular/router/testing';
-import {AppComponent} from './app.component';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {HomeComponent} from './home.component';
+import {Component} from '@angular/core';
 
-describe('AppComponent', () => {
+// Mock the inner components
+@Component({
+  selector: 'app-search',
+})
+class SearchComponent {}
+
+describe('HomeComponent', () => {
+  let component: HomeComponent;
+  let fixture: ComponentFixture<HomeComponent>;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, MatToolbarModule],
-      declarations: [AppComponent],
+      declarations: [HomeComponent, SearchComponent],
+      imports: [MatToolbarModule],
     }).compileComponents();
   }));
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  beforeEach(() => {
+    fixture = TestBed.createComponent(HomeComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
   });
 
   it("should have as title 'flaky-dashboard'", () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('flaky-dashboard');
+    expect(component.title).toEqual('flaky-dashboard');
   });
 
   it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
     expect(compiled.querySelector('span').textContent).toContain(

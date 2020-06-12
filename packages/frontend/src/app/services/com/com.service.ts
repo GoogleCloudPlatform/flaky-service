@@ -12,13 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component} from '@angular/core';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {apiLinks} from './api';
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+@Injectable({
+  providedIn: 'root',
 })
-export class AppComponent {
-  title = 'flaky-dashboard';
+export class COMService {
+  constructor(private http: HttpClient) {}
+
+  public fetchRepositories(): Promise<string[]> {
+    return this.http
+      .get<string[]>(apiLinks.get.repositories)
+      .toPromise<string[]>();
+  }
 }
