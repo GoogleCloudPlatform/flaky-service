@@ -44,7 +44,8 @@ app.use(bodyParser.json());
 
 app.get('/allRepos',async (req, res) => {
   var repository = new Repository(null);
-  var repos = await repository.getCollection('dummy-repositories');
+  let repos = await repository.getCollection('dummy-repositories');
+
   // repos = ["aaa", "bbb", "ccc"];
   //TODO allow the requester to give search/filter criterion!
   res
@@ -73,6 +74,6 @@ app.post('/', (req, res) => {
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = 'localhost';
-const server = app.listen(port,host, () => console.log(`Example app listening at http://localhost:${port}`));
+const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
 
 module.exports = server
