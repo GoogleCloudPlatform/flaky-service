@@ -43,6 +43,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 app.get('/repos',async (req, res) => {
+  //TODO: Make it return more information about the repos, beyond just their names
   var repository = new Repository(null);
   var result = await repository.getCollection('dummy-repositories');
 
