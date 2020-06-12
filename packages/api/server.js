@@ -42,19 +42,21 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-app.get('/allrepos',async (req, res) => {
+app.get('/repos',async (req, res) => {
   var repository = new Repository(null);
-  let result = await repository.getCollection('dummy-repositories');
+  var result = await repository.getCollection('dummy-repositories');
 
   let repoNames = [];
 
     for(var index = 0; index < result.length; index++) {
-      console.log(index + ": " + result[index]);
-      repoNames.push(result[index].repositoryid);
+      let id =result[index].repositoryid;
+      // console.log(index + ": " + id);
+      repoNames.push(id);
     }
 
-  // repos = ["aaa", "bbb", "ccc"];
-  //TODO allow the requester to give search/filter criterion!
+    repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
+
+    //TODO allow the requester to give search/filter criterion!
   res
     .status(200)
     .send(repoNames)

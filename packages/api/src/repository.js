@@ -38,7 +38,6 @@ class Repository {
   }
 
   async getCollection(identifier) {
-    console.log("TRYING TO GET DOCS FROM: " + identifier);
     var result = [];
     var repoRef = await this.client.collection(`${identifier}`).get()
     .then(snapshot => {
@@ -57,7 +56,6 @@ class Repository {
       console.log('Error getting documents\n', err);
     });
 
-    // repoRef = ["aaa", "bbb"];
     return result;
   }
 

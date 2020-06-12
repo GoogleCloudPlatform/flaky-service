@@ -35,9 +35,8 @@ describe('Repository', () => {
   });
   describe('allRepositories', async () => {
     it('returns the repository JSON', async () => {
-      // await repo.create('temp-repo');
       let result = await repo.getCollection('dummy-repositories');
-      //TOD: this test relies on a specific document in a specific repo. Fix this.
+      //TODO: this test relies on a specific document in a specific repo. Fix this.
       assert.strictEqual(result[0].repositoryid, 'firstRepo');
     })
   })
