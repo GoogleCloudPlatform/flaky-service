@@ -22,13 +22,6 @@ app.use(bodyParser.json());
 // GET: fetching some resource.
 // POST: creating or updating a resource.
 // PUT: creating or updating a resource.
-app.get('/', (req, res) => {
-  message = req.body.message ? req.body.message : 'hello world'
-  res
-    .status(200)
-    .send(message)
-    .end();
-});
 
 app.post('/', (req, res) => {
   res.send({
