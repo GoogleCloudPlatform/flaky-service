@@ -12,17 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
-import {HomeComponent} from './home/home.component';
+interface ApiLinks {
+  get: {
+    repositories: string;
+  };
+}
 
-const routes: Routes = [
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
-  {path: 'home', component: HomeComponent},
-];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}
+const apiBaseLink = '127.0.0.0:3000/';
+export const apiLinks: ApiLinks = {
+  get: {
+    repositories: apiBaseLink + 'allRepos',
+  },
+};

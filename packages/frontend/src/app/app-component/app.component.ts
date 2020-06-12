@@ -12,17 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
-import {HomeComponent} from './home/home.component';
+import {Component} from '@angular/core';
 
-const routes: Routes = [
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
-  {path: 'home', component: HomeComponent},
-];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: [],
 })
-export class AppRoutingModule {}
+export class AppComponent {
+  title = 'flaky-dashboard';
+}
