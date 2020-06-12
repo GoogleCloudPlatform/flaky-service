@@ -15,25 +15,25 @@ limitations under the License.
 */
 
 #toolbar {
-	display: flex;
-	color: #0075FF;
-	justify-content: center;
-	border-bottom: 1px solid #0075FF;
-	background-color: white;
+    display: flex;
+    color: #0075FF;
+    justify-content: center;
+    border-bottom: 1px solid #0075FF;
+    background-color: white;
 }
 
 #presentation-text {
-	margin-top: 10px;
-	width: 100%;
-	text-align: center;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
 }
 
 #search-bar {
-	margin-top: 10px;
-	display: flex;
-	width: 100%;
-	align-content: center;
-	justify-content: center;
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+    align-content: center;
+    justify-content: center;
 }
 
 app-search {
