@@ -42,15 +42,22 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-app.get('/allRepos',async (req, res) => {
+app.get('/allrepos',async (req, res) => {
   var repository = new Repository(null);
-  let repos = await repository.getCollection('dummy-repositories');
+  let result = await repository.getCollection('dummy-repositories');
+
+  let repoNames = [];
+
+    for(var index = 0; index < result.length; index++) {
+      console.log(index + ": " + result[index]);
+      repoNames.push(result[index].repositoryid);
+    }
 
   // repos = ["aaa", "bbb", "ccc"];
   //TODO allow the requester to give search/filter criterion!
   res
     .status(200)
-    .send(repos + '\n')
+    .send(repoNames)
     .end();
 });
 
@@ -74,6 +81,6 @@ app.post('/', (req, res) => {
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = 'localhost';
-const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+const server = app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`));
 
 module.exports = server

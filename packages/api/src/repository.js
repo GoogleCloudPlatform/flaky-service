@@ -39,8 +39,8 @@ class Repository {
 
   async getCollection(identifier) {
     console.log("TRYING TO GET DOCS FROM: " + identifier);
-    let result = [];
-    let repoRef = await this.client.collection(`${identifier}`).get()
+    var result = [];
+    var repoRef = await this.client.collection(`${identifier}`).get()
     .then(snapshot => {
       if (snapshot.empty) {
         console.log('No matching documents.');
@@ -49,23 +49,16 @@ class Repository {
   
       snapshot.forEach(doc => {
         var entry = doc.data();
-        result.push(JSON.stringify(entry));
-        console.log(doc.id, '=>', doc.data());
+        result.push(entry);
+        // console.log(doc.id, '=>',entry);
       });
     })
     .catch(err => {
       console.log('Error getting documents\n', err);
     });
 
-    let repoNames = [];
-
-    for(var index = 0; index < result.length; index++) {
-      console.log(index + ": " + result[index]);
-      repoNames.push(JSON.parse(result[index]).repositoryid);
-    }
-
     // repoRef = ["aaa", "bbb"];
-    return repoNames;
+    return result;
   }
 
   async delete(identifier) {

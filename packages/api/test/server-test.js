@@ -24,7 +24,7 @@ describe('flaky express server', () => {
     // server = serverModule.server;
   });
   it('it responds to a GET on the / path', async () => {
-    const resp = await fetch('http://127.0.0.1:3000', {
+    const resp = await fetch('http://localhost:3000', {
       method: 'post',
       body: JSON.stringify({
         message: 'goodnight moon'
@@ -34,7 +34,15 @@ describe('flaky express server', () => {
     const respJSON = await resp.json();
     assert.strictEqual(respJSON.message, 'goodnight moon');
   });
-  it('it returns a list of repositories, when you call GET on /repository');
+
+  it('it returns a list of repositories, when you call GET on /allrepos', async () => {
+    const resp = await fetch('http://localhost:3000/allrepos', {});
+    var sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
+    assert.strictEqual(resp, sol);
+    // var resp = await fetch('http://localhost:3000/allrepos');
+    // assert.strictEqual('goodnnight moon', 'goodnight moon');
+  });
+  
   it('it returns a single repository, when you call GET on /repository/:id');
   it('it creates a repository, when you call POST on /repository');
   after(() => {

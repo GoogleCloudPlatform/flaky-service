@@ -15,6 +15,7 @@
 const { describe, it, after, before } = require('mocha');
 const Repository = require('../src/repository');
 const assert = require('assert');
+const fetch = require('node-fetch');
 
 describe('Repository', () => {
   let repo;
@@ -32,6 +33,14 @@ describe('Repository', () => {
       assert.strictEqual(repository.description, 'this is my first test repository');
     });
   });
+  describe('allRepositories', async () => {
+    it('returns the repository JSON', async () => {
+      // await repo.create('temp-repo');
+      let result = await repo.getCollection('dummy-repositories');
+      //TOD: this test relies on a specific document in a specific repo. Fix this.
+      assert.strictEqual(result[0].repositoryid, 'firstRepo');
+    })
+  })
   after(async () => {
     await repo.delete('my-first-repository');
   });
