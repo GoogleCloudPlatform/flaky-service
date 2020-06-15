@@ -21,13 +21,12 @@ describe('Repository', () => {
   let repo;
   before(async () => {
     repo = new Repository();
-    await repo.create('testing-repo', {
-      description: 'this should be deleted at end of test run'
+    await repo.create('firstRepo', {
+      repositoryid: 'this is the first repo'
     });
-    await repo.createSubcollectionOfCollection('repositories', 'repoDocs');
-    await repo.addDocToCollection('repositories/repoDocs', 'firstRepo', {
-      repositoryid:"firstRepoTestValue!"
-    })
+    await repo.create('secondRepo', {
+      repositoryid: 'this is the second repo'
+    });
   });
 
   describe('createRepository', async () => {
@@ -43,12 +42,15 @@ describe('Repository', () => {
   });
   describe('allRepositories', async () => {
     it('returns the repository JSON', async () => {
-      let result = await repo.getCollection('repositories/repoDocs');
+      let result = await repo.getCollection('repositories');
       //TODO: this test relies on a specific document in a specific repo. Fix this.
-      assert.strictEqual(result[0].repositoryid, 'firstRepo');
+      var shouldMatchSolution = [JSON.parse({'repositoryid':'this is the first repo'}), JSON.parse({'repositoryid':'this is the second repo'})];
+      assert.strictEqual(result, shouldMatchSolution);
     })
   })
   after(async () => {
     await repo.delete('my-first-repository');
+    await repo.delete('firstRepo');
+    await repo.delete('secondRepo');
   });
 });

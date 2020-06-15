@@ -31,14 +31,6 @@ class Repository {
     return this.client.collection(REPOSITORY_COLLECTION).doc(identifier).set(params);
   }
 
-  async createSubcollectionOfCollection(identifier, params) {
-    return this.client.collection(identifier).collection(params);
-  }
-
-  async addDocToCollection(collection, newName, params) {
-    return this.client.collection(identifier).doc(newName).set(params);
-  }
-
   async get(identifier) {
     const document = await this.client.doc(`${REPOSITORY_COLLECTION}/${identifier}`).get();
     // TODO: we actually need to call doc.exists and check if this doc exists.
