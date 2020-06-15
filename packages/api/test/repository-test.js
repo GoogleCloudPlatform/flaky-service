@@ -44,7 +44,7 @@ describe('Repository', () => {
     it('returns the repository JSON', async () => {
       let result = await repo.getCollection('repositories');
       //TODO: this test relies on a specific document in a specific repo. Fix this.
-      var shouldMatchSolution = [JSON.parse({'repositoryid':'this is the first repo'}), JSON.parse({'repositoryid':'this is the second repo'})];
+      var shouldMatchSolution = [{'repositoryid':'this is the first repo'}, {'repositoryid':'this is the second repo'}];
       assert.strictEqual(result, shouldMatchSolution);
     })
   })
