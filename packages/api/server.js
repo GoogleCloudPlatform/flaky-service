@@ -13,28 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// const express = require('express');
-// const app = express();
-// const bodyParser = require('body-parser');
-
-// app.use(bodyParser.json());
-
-// // GET: fetching some resource.
-// // POST: creating or updating a resource.
-// // PUT: creating or updating a resource.
-// app.post('/', (req, res) => {
-//   res.send({
-//     message: req.body.message ? req.body.message : 'hello world'
-//   });
-// });
-
-// const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-// const server = app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
-
-// module.exports = {
-//   server
-// };
-
 const express = require('express');
 const Repository = require('./src/repository');
 const app = express();
@@ -57,10 +35,11 @@ app.get('/repos',async (req, res) => {
 
     repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
 
+    var jsonObject = {repositoryNames:repoNames};
     //TODO allow the requester to give search/filter criterion!
   res
     .status(200)
-    .send(repoNames)
+    .send(jsonObject)
     .end();
 });
 

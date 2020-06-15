@@ -35,11 +35,11 @@ describe('flaky express server', () => {
     assert.strictEqual(respJSON.message, 'goodnight moon');
   });
 
-  it('it returns the list of repositories, when you call GET on /repos', async () => {
+  it('it returns a json object with the list of repositories, when you call GET on /repos', async () => {
     const resp = await fetch('http://localhost:3000/repos', {});
     var sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
     const respJSON = await resp.json()
-    assert.deepEqual(respJSON, sol);
+    assert.deepEqual(respJSON.repoNames, sol);
   });
   
   it('it returns a single repository, when you call GET on /repository/:id');
