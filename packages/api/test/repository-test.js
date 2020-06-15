@@ -21,7 +21,15 @@ describe('Repository', () => {
   let repo;
   before(() => {
     repo = new Repository();
+    await repo.create('testing-repo', {
+      description: 'this should be deleted at end of test run'
+    });
+    await repo.createSubcollectionOfCollection('repositories', 'repoDocs');
+    await repo.addDocToCollection('repositories/repoDocs', 'firstRepo', {
+      repositoryid:"firstRepoTestValue!"
+    })
   });
+
   describe('createRepository', async () => {
     it('creates a new repository', async () => {
       await repo.create('my-first-repository', {
@@ -35,7 +43,7 @@ describe('Repository', () => {
   });
   describe('allRepositories', async () => {
     it('returns the repository JSON', async () => {
-      let result = await repo.getCollection('dummy-repositories');
+      let result = await repo.getCollection('repositories/repoDocs');
       //TODO: this test relies on a specific document in a specific repo. Fix this.
       assert.strictEqual(result[0].repositoryid, 'firstRepo');
     })
