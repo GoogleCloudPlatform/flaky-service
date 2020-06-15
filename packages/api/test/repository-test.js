@@ -21,10 +21,10 @@ describe('Repository', () => {
   let repo;
   before(async () => {
     repo = new Repository();
-    await repo.create('test-repos/firstRepo', {
+    await repo.create('test-repos-doc/collection-of-repos/firstRepo', {
       repositoryid: 'this is the first repo'
     });
-    await repo.create('test-repos/secondRepo', {
+    await repo.create('test-repos-doc/collection-of-repos/secondRepo', {
       repositoryid: 'this is the second repo'
     });
   });
@@ -42,15 +42,14 @@ describe('Repository', () => {
   });
   describe('allRepositories', async () => {
     it('returns the repository JSON', async () => {
-      let result = await repo.getCollection('repositories/test-repos');
+      let result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
       //TODO: this test relies on a specific document in a specific repo. Fix this.
       var shouldMatchSolution = [{'repositoryid':'this is the first repo'}, {'repositoryid':'this is the second repo'}];
-      assert.strictEqual(result, shouldMatchSolution);
+      assert.deepEqual(result, shouldMatchSolution);
     })
   })
   after(async () => {
     await repo.delete('my-first-repository');
-    await repo.delete('test-repos/firstRepo');
-    await repo.delete('test-repos/secondRepo');
+    await repo.delete('test-repos-doc');
   });
 });
