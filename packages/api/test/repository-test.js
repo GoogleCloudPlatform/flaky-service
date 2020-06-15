@@ -41,6 +41,14 @@ describe('Repository', () => {
       await repo.delete('my-first-repository');
     });
   });
+
+  describe('deleteRepository', async () => {
+    // await repo.create('my-first-repository', {
+    //   description: 'this is my first test repository';
+    // });
+    // await repo.delete('my-first-repository');
+    //TODO: make this work
+  })
   describe('allRepositories', async () => {
     it('retrieves the contents of a collection', async () => {
       let result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
