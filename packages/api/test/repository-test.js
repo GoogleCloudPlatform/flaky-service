@@ -19,7 +19,7 @@ const fetch = require('node-fetch');
 
 describe('Repository', () => {
   let repo;
-  before(() => {
+  before(async () => {
     repo = new Repository();
     await repo.create('testing-repo', {
       description: 'this should be deleted at end of test run'
