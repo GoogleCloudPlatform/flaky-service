@@ -21,10 +21,10 @@ describe('Repository', () => {
   let repo;
   before(async () => {
     repo = new Repository();
-    await repo.create('test-repos/firstRepo', {
+    await repo.create('test-repos-doc/collection-of-repos/firstRepo', {
       repositoryid: 'this is the first repo'
     });
-    await repo.create('test-repos/secondRepo', {
+    await repo.create('test-repos-doc/collection-of-repos/secondRepo', {
       repositoryid: 'this is the second repo'
     });
   });
@@ -38,19 +38,18 @@ describe('Repository', () => {
       // so that two folks can run tests at the same time without colliding.
       const repository = await repo.get('my-first-repository');
       assert.strictEqual(repository.description, 'this is my first test repository');
+      await repo.delete('my-first-repository');
     });
   });
   describe('allRepositories', async () => {
-    it('returns the repository JSON', async () => {
-      let result = await repo.getCollection('repositories/test-repos');
-      //TODO: this test relies on a specific document in a specific repo. Fix this.
+    it('retrieves the contents of a collection', async () => {
+      let result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
+      //TODO: what happens when a document in the collection contains a collection?
       var shouldMatchSolution = [{'repositoryid':'this is the first repo'}, {'repositoryid':'this is the second repo'}];
-      assert.strictEqual(result, shouldMatchSolution);
+      assert.deepEqual(result, shouldMatchSolution);
     })
   })
   after(async () => {
-    await repo.delete('my-first-repository');
-    await repo.delete('test-repos/firstRepo');
-    await repo.delete('test-repos/secondRepo');
+    await repo.delete('test-repos-doc');
   });
 });
