@@ -35,7 +35,7 @@ app.get('/repos',async (req, res) => {
 
     repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
 
-    var jsonObject = {repositoryNames:repoNames};
+    var jsonObject = {repoNames:repoNames};
     //TODO allow the requester to give search/filter criterion!
   res
     .status(200)
