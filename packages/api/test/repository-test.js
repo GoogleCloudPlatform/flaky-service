@@ -38,18 +38,26 @@ describe('Repository', () => {
       // so that two folks can run tests at the same time without colliding.
       const repository = await repo.get('my-first-repository');
       assert.strictEqual(repository.description, 'this is my first test repository');
+      await repo.delete('my-first-repository');
     });
   });
+
+  describe('deleteRepository', async () => {
+    // await repo.create('my-first-repository', {
+    //   description: 'this is my first test repository';
+    // });
+    // await repo.delete('my-first-repository');
+    //TODO: make this work
+  })
   describe('allRepositories', async () => {
-    it('returns the repository JSON', async () => {
+    it('retrieves the contents of a collection', async () => {
       let result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
-      //TODO: this test relies on a specific document in a specific repo. Fix this.
+      //TODO: what happens when a document in the collection contains a collection?
       var shouldMatchSolution = [{'repositoryid':'this is the first repo'}, {'repositoryid':'this is the second repo'}];
       assert.deepEqual(result, shouldMatchSolution);
     })
   })
   after(async () => {
-    await repo.delete('my-first-repository');
     await repo.delete('test-repos-doc');
   });
 });
