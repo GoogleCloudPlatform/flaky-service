@@ -37,6 +37,7 @@ describe('flaky express server', () => {
 
   it('it returns a json object with the list of repositories, when you call GET on /repos', async () => {
     const resp = await fetch('http://localhost:3000/repos', {});
+    //TODO: get rid of this hard-coding which depends on certain collections never being edited
     var sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
     const respJSON = await resp.json()
     assert.deepEqual(respJSON.repoNames, sol);
