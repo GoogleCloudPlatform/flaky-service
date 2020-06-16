@@ -61,7 +61,7 @@ app.post('/', (req, res) => {
     message: req.body.message ? req.body.message : 'hello world'
   });
 });
-var postBuildHandler = new PostBuildHandler(app, client);
+const postBuildHandler = new PostBuildHandler(app, client);
 postBuildHandler.listen();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
