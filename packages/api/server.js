@@ -25,14 +25,14 @@ app.get('/repos', async (req, res) => {
   const repository = new Repository(null);
   const result = await repository.getCollection('dummy-repositories');
 
-  let repoNames = [];
+  const repoNames = [];
 
   for (let index = 0; index < result.length; index++) {
     const id = result[index].repositoryid;
     repoNames.push(id);
   }
 
-  //TODO: Comment out the below if the data in the database changes so that the test starts failing
+  // TODO: Comment out the below if the data in the database changes so that the test starts failing
   // repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
 
   const jsonObject = { repoNames: repoNames };

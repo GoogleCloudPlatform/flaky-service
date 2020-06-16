@@ -18,7 +18,7 @@ const assert = require('assert');
 const fetch = require('node-fetch');
 
 describe('flaky express server', () => {
-  var server;
+  let server;
   before(() => {
     server = require('../server');
   });
