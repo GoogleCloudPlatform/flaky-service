@@ -18,10 +18,9 @@ const assert = require('assert');
 const fetch = require('node-fetch');
 
 describe('flaky express server', () => {
-  // let server;
+  var server;
   before(() => {
-    const serverModule = require('../server');
-    // server = serverModule.server;
+    server = require('../server');
   });
   it('it responds to a GET on the / path', async () => {
     const resp = await fetch('http://localhost:3000', {
@@ -38,13 +37,13 @@ describe('flaky express server', () => {
   it('it returns a json object with the list of repositories, when you call GET on /repos', async () => {
     const resp = await fetch('http://localhost:3000/repos', {});
     var sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
-    const respJSON = await resp.json()
-    assert.deepEqual(respJSON.repoNames, sol);
+    const respJSON = await resp.json();
+    assert.deepStrictEqual(respJSON.repoNames, sol);
   });
-  
+
   it('it returns a single repository, when you call GET on /repository/:id');
   it('it creates a repository, when you call POST on /repository');
   after(() => {
-    // server.close();
+    server.close();
   });
 });

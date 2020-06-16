@@ -15,7 +15,6 @@
 const { describe, it, after, before } = require('mocha');
 const Repository = require('../src/repository');
 const assert = require('assert');
-const fetch = require('node-fetch');
 
 describe('Repository', () => {
   let repo;
@@ -47,16 +46,16 @@ describe('Repository', () => {
     //   description: 'this is my first test repository';
     // });
     // await repo.delete('my-first-repository');
-    //TODO: make this work
-  })
+    // TODO: make this work
+  });
   describe('allRepositories', async () => {
     it('retrieves the contents of a collection', async () => {
-      let result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
-      //TODO: what happens when a document in the collection contains a collection?
-      var shouldMatchSolution = [{'repositoryid':'this is the first repo'}, {'repositoryid':'this is the second repo'}];
-      assert.deepEqual(result, shouldMatchSolution);
-    })
-  })
+      const result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
+      // TODO: what happens when a document in the collection contains a collection?
+      var shouldMatchSolution = [{ repositoryid: 'this is the first repo' }, { repositoryid: 'this is the second repo' }];
+      assert.deepStrictEqual(result, shouldMatchSolution);
+    });
+  });
   after(async () => {
     await repo.delete('test-repos-doc');
   });

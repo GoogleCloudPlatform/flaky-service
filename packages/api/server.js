@@ -20,23 +20,23 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-app.get('/repos',async (req, res) => {
-  //TODO: Make it return more information about the repos, beyond just their names
+app.get('/repos', async (req, res) => {
+  // TODO: Make it return more information about the repos, beyond just their names
   var repository = new Repository(null);
   var result = await repository.getCollection('dummy-repositories');
 
   let repoNames = [];
 
-    for(var index = 0; index < result.length; index++) {
-      let id =result[index].repositoryid;
-      // console.log(index + ": " + id);
-      repoNames.push(id);
-    }
+  for (var index = 0; index < result.length; index++) {
+    const id = result[index].repositoryid;
+    // console.log(index + ": " + id);
+    repoNames.push(id);
+  }
 
-    repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
+  repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
 
-    var jsonObject = {repoNames:repoNames};
-    //TODO allow the requester to give search/filter criterion!
+  var jsonObject = { repoNames: repoNames };
+  // TODO allow the requester to give search/filter criterion!
   res
     .status(200)
     .send(jsonObject)
@@ -44,8 +44,7 @@ app.get('/repos',async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-
-  message = req.body.message ? req.body.message : 'hello world'
+  const message = req.body.message ? req.body.message : 'hello world';
   res
     .status(200)
     .send(message)
@@ -65,4 +64,4 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = 'localhost';
 const server = app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`));
 
-module.exports = server
+module.exports = server;
