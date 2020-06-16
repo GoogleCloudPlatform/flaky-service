@@ -12,16 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const { describe, before, after, it } = require('mocha');
+const { describe, it } = require('mocha');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
 
 describe('flaky express server', () => {
-  let server;
-  before(() => {
-    server = require('../server');
-  });
   it('it responds to a GET on the / path', async () => {
     const resp = await fetch('http://localhost:3000', {
       method: 'post',
@@ -44,7 +40,4 @@ describe('flaky express server', () => {
 
   it('it returns a single repository, when you call GET on /repository/:id');
   it('it creates a repository, when you call POST on /repository');
-  after(() => {
-    server.close();
-  });
 });

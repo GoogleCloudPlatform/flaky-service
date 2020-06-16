@@ -22,10 +22,8 @@ const assert = require('assert');
 const fetch = require('node-fetch');
 
 describe('flaky express server', () => {
-  // let server;
   let client;
   before(async () => {
-    require('../server');
     client = new Firestore();
     global.headCollection = 'repositories-testsuite-' + uuidv4();
   });
@@ -90,8 +88,6 @@ describe('flaky express server', () => {
   });
 
   after(async () => {
-    // server.close();
-
     const deletePaths = [
       'tests/{testcase}/runs/{buildid}',
       'tests/{testcase}',
