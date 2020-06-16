@@ -56,6 +56,7 @@ app.get('/', (req, res) => {
 // GET: fetching some resource.
 // POST: creating or updating a resource.
 // PUT: creating or updating a resource.
+
 app.post('/', (req, res) => {
   res.send({
     message: req.body.message ? req.body.message : 'hello world'

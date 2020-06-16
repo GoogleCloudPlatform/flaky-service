@@ -124,5 +124,8 @@
       }
     }
   },
-  "defaultProject": "flaky-dashboard"
+  "defaultProject": "flaky-dashboard",
+  "cli": {
+    "analytics": false
+  }
 }
