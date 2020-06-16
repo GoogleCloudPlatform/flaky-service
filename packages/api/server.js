@@ -22,20 +22,20 @@ app.use(bodyParser.json());
 
 app.get('/repos', async (req, res) => {
   // TODO: Make it return more information about the repos, beyond just their names
-  var repository = new Repository(null);
-  var result = await repository.getCollection('dummy-repositories');
+  const repository = new Repository(null);
+  const result = await repository.getCollection('dummy-repositories');
 
   let repoNames = [];
 
-  for (var index = 0; index < result.length; index++) {
+  for (let index = 0; index < result.length; index++) {
     const id = result[index].repositoryid;
-    // console.log(index + ": " + id);
     repoNames.push(id);
   }
 
-  repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
+  //TODO: Comment out the below if the data in the database changes so that the test starts failing
+  // repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
 
-  var jsonObject = { repoNames: repoNames };
+  const jsonObject = { repoNames: repoNames };
   // TODO allow the requester to give search/filter criterion!
   res
     .status(200)
@@ -61,7 +61,7 @@ app.post('/', (req, res) => {
 });
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-const host = 'localhost';
+const host = '0.0.0.0';
 const server = app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`));
 
 module.exports = server;

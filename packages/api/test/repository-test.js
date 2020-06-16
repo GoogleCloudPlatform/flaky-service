@@ -52,7 +52,7 @@ describe('Repository', () => {
     it('retrieves the contents of a collection', async () => {
       const result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
       // TODO: what happens when a document in the collection contains a collection?
-      var shouldMatchSolution = [{ repositoryid: 'this is the first repo' }, { repositoryid: 'this is the second repo' }];
+      const shouldMatchSolution = [{ repositoryid: 'this is the first repo' }, { repositoryid: 'this is the second repo' }];
       assert.deepStrictEqual(result, shouldMatchSolution);
     });
   });
