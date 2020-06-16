@@ -16,18 +16,17 @@ const EXAMPLE_PAYLOAD = '{ "summary":{ "ok":true, "count":2, "pass":2, "fail":0,
 
 const { describe, before, after, it } = require('mocha');
 const { Firestore } = require('@google-cloud/firestore');
+const { v4: uuidv4 } = require('uuid');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
 
 describe('flaky express server', () => {
   let server;
-  let client;
   before(async () => {
-    const serverModule = require('../server');
-    server = serverModule.server;
+    server = require('../server');
     client = new Firestore();
-    global.headCollection = 'repositories-testsuite-' + Math.random().toString(36).substr(2, 9);
+    global.headCollection = 'repositories-testsuite-' + uuidv4();
   });
 
   it('should send back an error code when being sent invalid metadata', async () => {
