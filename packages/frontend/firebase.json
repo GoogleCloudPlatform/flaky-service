@@ -10,7 +10,7 @@
     "rewrites": [{
       "source": "**",
       "run": {
-        "serviceId": "flaky-api",  
+        "serviceId": "api",  
         "region": "us-central1"     
       }
     }]
