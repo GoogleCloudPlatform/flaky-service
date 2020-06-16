@@ -20,11 +20,10 @@ const fetch = require('node-fetch');
 describe('flaky express server', () => {
   let server;
   before(() => {
-    const serverModule = require('../server');
-    server = serverModule.server;
+    server = require('../server');
   });
   it('it responds to a GET on the / path', async () => {
-    const resp = await fetch('http://127.0.0.1:3000', {
+    const resp = await fetch('http://localhost:3000', {
       method: 'post',
       body: JSON.stringify({
         message: 'goodnight moon'
@@ -34,7 +33,15 @@ describe('flaky express server', () => {
     const respJSON = await resp.json();
     assert.strictEqual(respJSON.message, 'goodnight moon');
   });
-  it('it returns a list of repositories, when you call GET on /repository');
+
+  it('it returns a json object with the list of repositories, when you call GET on /repos', async () => {
+    const resp = await fetch('http://localhost:3000/repos', {});
+    // TODO: get rid of this hard-coding which depends on certain collections never being edited
+    const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
+    const respJSON = await resp.json();
+    assert.deepStrictEqual(respJSON.repoNames, sol);
+  });
+
   it('it returns a single repository, when you call GET on /repository/:id');
   it('it creates a repository, when you call POST on /repository');
   after(() => {
