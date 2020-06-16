@@ -18,9 +18,16 @@ const assert = require('assert');
 
 describe('Repository', () => {
   let repo;
-  before(() => {
+  before(async () => {
     repo = new Repository();
+    await repo.create('test-repos-doc/collection-of-repos/firstRepo', {
+      repositoryid: 'this is the first repo'
+    });
+    await repo.create('test-repos-doc/collection-of-repos/secondRepo', {
+      repositoryid: 'this is the second repo'
+    });
   });
+
   describe('createRepository', async () => {
     it('creates a new repository', async () => {
       await repo.create('my-first-repository', {
@@ -30,9 +37,26 @@ describe('Repository', () => {
       // so that two folks can run tests at the same time without colliding.
       const repository = await repo.get('my-first-repository');
       assert.strictEqual(repository.description, 'this is my first test repository');
+      await repo.delete('my-first-repository');
+    });
+  });
+
+  describe('deleteRepository', async () => {
+    // await repo.create('my-first-repository', {
+    //   description: 'this is my first test repository';
+    // });
+    // await repo.delete('my-first-repository');
+    // TODO: make this work
+  });
+  describe('allRepositories', async () => {
+    it('retrieves the contents of a collection', async () => {
+      const result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
+      // TODO: what happens when a document in the collection contains a collection?
+      const shouldMatchSolution = [{ repositoryid: 'this is the first repo' }, { repositoryid: 'this is the second repo' }];
+      assert.deepStrictEqual(result, shouldMatchSolution);
     });
   });
   after(async () => {
-    await repo.delete('my-first-repository');
+    await repo.delete('test-repos-doc');
   });
 });
