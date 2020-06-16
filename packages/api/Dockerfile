@@ -11,13 +11,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install production dependencies.
-# Use the official lightweight Node.js 12 image.
-# https://hub.docker.com/_/node
-FROM node:12-slim
-
-# Create and change to the app directory.
-WORKDIR /usr/src/appRUN npm install --only=production
-
+RUN npm install --only=production
 
 # Copy local code to the container image.
 COPY . ./
