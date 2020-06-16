@@ -32,7 +32,6 @@ app.get('/repos', async (req, res) => {
     repoNames.push(id);
   }
 
-  // TODO: Comment out the below if the data in the database changes so that the test starts failing
   // repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
 
   const jsonObject = { repoNames: repoNames };
