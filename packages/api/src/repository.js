@@ -37,6 +37,28 @@ class Repository {
     return document.data();
   }
 
+  async getCollection (identifier) {
+    var result = [];
+    await this.client.collection(`${identifier}`).get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching documents.');
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          var entry = doc.data();
+          result.push(entry);
+        // console.log(doc.id, '=>',entry);
+        });
+      })
+      .catch(err => {
+        console.log('Error getting documents\n', err);
+      });
+
+    return result;
+  }
+
   async delete (identifier) {
     const document = this.client.doc(`${REPOSITORY_COLLECTION}/${identifier}`);
     return document.delete();

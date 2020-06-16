@@ -15,6 +15,7 @@
 const { describe, it, after, before } = require('mocha');
 const { Firestore } = require('@google-cloud/firestore');
 const assert = require('assert');
+const { v4: uuidv4 } = require('uuid');
 
 const TestCaseRun = require('../lib/testrun');
 const addBuild = require('../src/add-build');
@@ -69,7 +70,7 @@ describe('Add-Build', () => {
 
   before(async () => {
     client = new Firestore();
-    testingCollection = TESTING_COLLECTION_BASE + Math.random().toString(36).substr(2, 9); // random collection name for concurrent testing
+    testingCollection = TESTING_COLLECTION_BASE + uuidv4(); // random collection name for concurrent testing
   });
 
   describe('addBuild', async () => {
