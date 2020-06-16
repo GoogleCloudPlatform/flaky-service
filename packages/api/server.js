@@ -17,6 +17,9 @@ const express = require('express');
 const Repository = require('./src/repository');
 const app = express();
 const bodyParser = require('body-parser');
+const PostBuildHandler = require('./src/post-build.js');
+const { Firestore } = require('@google-cloud/firestore');
+const client = new Firestore();
 
 app.use(bodyParser.json());
 
@@ -58,6 +61,8 @@ app.post('/', (req, res) => {
     message: req.body.message ? req.body.message : 'hello world'
   });
 });
+var postBuildHandler = new PostBuildHandler(app, client);
+postBuildHandler.listen();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';
