@@ -8,11 +8,15 @@
       "**/node_modules/**"
     ],
     "rewrites": [{
-      "source": "**",
+      "source": "/api",
       "run": {
         "serviceId": "api",  
         "region": "us-central1"     
       }
-    }]
+    }, {
+      "source": "/home",
+      "destination": "/index.html"
+    }],
+    "cleanUrls": true
   }
 }
