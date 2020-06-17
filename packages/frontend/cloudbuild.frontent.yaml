@@ -1,0 +1,12 @@
+steps:
+  #install
+- name: node
+  entrypoint: npm
+  args: ['i']
+  #build
+- name: node
+  entrypoint: npm
+  args: ['run', 'build']
+  #deploy to firebase
+- name: 'gcr.io/oss-automation/firebase'
+  args: ['deploy']
