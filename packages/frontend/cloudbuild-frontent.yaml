@@ -1,11 +1,13 @@
 steps:
+
   #install
 - name: 'node'
   entrypoint: 'npm'
-  args: ['install']
+  args: ['install', '--production']
 
   #build
-- name: 'gcr.io/cloud-builders/npm'
+- name: 'node'
+  entrypoint: 'npm'
   args: ['run', 'build']
 
   #deploy to firebase
