@@ -1,11 +1,13 @@
 steps:
   #install
-- name: 'gcr.io/cloud-builders/npm'
-  dir: 'packages/frontend'
+- name: 'node'
+  entrypoint: 'npm'
   args: ['install']
   #build
-- name: 'gcr.io/cloud-builders/npm'
+- name: 'node'
+  entrypoint: 'npm'
   args: ['run', 'build']
   #deploy to firebase
 - name: 'gcr.io/oss-automation/firebase'
+  dir: 'packages/frontend'
   args: ['deploy']
