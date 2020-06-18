@@ -342,7 +342,8 @@ async function main(){
     console.log('SENDING: \n\n' + sendMe);
 
     var outcome = await fetch('https://ptsv2.com/t/flakydev/post', {method: 'POST', body: sendMe});
-    console.log(outcome);
+    var outcomeText = await outcome.text();
+    console.log(outcomeText);
     
   } catch (error) {
     core.setFailed(error.message);
