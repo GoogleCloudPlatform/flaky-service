@@ -14,7 +14,7 @@ steps:
   #Install Dependencies
 - name: 'node'
   entrypoint: 'npm'
-  entrypoint: 'packages/frontend'
+  dir: 'packages/frontend'
   args: ['install']
 
   #Build
