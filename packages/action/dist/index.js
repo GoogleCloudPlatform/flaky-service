@@ -340,7 +340,7 @@ try {
       {type: fileType, data: data, metadata: metaData});
   console.log('SENDING: \n\n' + sendMe);
 
-  fetch('https://ptsv2.com/t/sgsey-1592237741/post', {method: 'POST', body: sendMe})
+  fetch('https://ptsv2.com/t/flakydev/post', {method: 'POST', body: sendMe})
       .then((res) => console.log('\n\n Received: \n\n' + JSON.stringify(res)));
 } catch (error) {
   core.setFailed(error.message);
