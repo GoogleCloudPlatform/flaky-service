@@ -1,9 +1,13 @@
 steps:
   #build
 - id: 'Build Container Image'
-  name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: gcloud
-  args: ['builds', 'submit', '--tag', 'gcr.io/oss-automation/api']
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build','-t', 'gcr.io/oss-automation/api', '.']
+
+  #push image to container registry
+- id: 'Push Image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/oss-automation/api']
 
   #deploy
 - id: 'Deploy to Cloud Run'
