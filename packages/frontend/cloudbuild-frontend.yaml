@@ -1,7 +1,13 @@
 steps:
   #Install Angular
-- name: 'gcr.io/cloud-builders/npm'
+- name: 'node'
+  entrypoint: 'npm'
   args: ['install', '-g', '@angular/cli']
+
+  #Install Firebase tools
+- name: 'node'
+  entrypoint: 'npm'
+  args: ['install', '-g', 'firebase-tools']
 
   #Install Dependencies
 - name: 'node'
