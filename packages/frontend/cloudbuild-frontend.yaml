@@ -7,8 +7,8 @@ steps:
   #build
 - name: 'node'
   entrypoint: 'npm'
-  args: ['run', 'build']
-  
+  args: ['run', 'build', '--prod']
+
   #deploy to firebase
 - name: 'gcr.io/oss-automation/firebase'
   dir: 'packages/frontend'
