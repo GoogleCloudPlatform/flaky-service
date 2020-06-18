@@ -16,15 +16,29 @@ limitations under the License.
 
 <!--HEADER-->
 <mat-toolbar id="toolbar">
-    <span>{{ title }} is running !</span>
+    <span>{{ title }}</span>
 </mat-toolbar>
 
 <!--PRESENTATION TEXT-->
 <div id="presentation-text">
     <h2>Welcome to flaky.dev !</h2>
+    <h3>
+        <p>This is a platform that allows you to track every test in your repository.</p>
+        <p>If any of them is flaky, it will be found !</p>
+    </h3>
+</div>
+
+<!--INTRODUCTION TEXT-->
+<div id="introduction-text">
+    <p>What are you going to do now?</p>
 </div>
 
 <!--SEARCH BAR-->
 <div id="search-bar">
-    <app-search></app-search>
+    <app-search (searchOptionSelected)="onSearchOptionSelected($event)"></app-search>
+</div>
+
+<!--INTRODUCTION BUTTON-->
+<div id="introduction-btn">
+    <button mat-raised-button color="primary">Get started</button>
 </div>

@@ -12,7 +12,8 @@
     "check": "gts check",
     "clean": "gts clean",
     "compile": "tsc",
-    "fix": "gts fix"
+    "fix": "gts fix",
+    "check-header": "python scripts/header-validator.py"
   },
   "private": true,
   "dependencies": {

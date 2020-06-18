@@ -53,3 +53,15 @@ input.mat-input-element {
 #input-container:hover, #input-container:focus-within {
     box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);
 }
+
+.org-name{
+    font-weight: lighter;
+    color: grey;
+}
+.repo-description {
+    font-weight: lighter;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    width: 20px;
+}

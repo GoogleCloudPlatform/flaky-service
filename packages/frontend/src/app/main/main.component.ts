@@ -12,24 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit, NgZone} from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.css'],
 })
-export class HomeComponent implements OnInit {
-  title = 'flaky.dev';
-
-  constructor(private ngZone: NgZone, private router: Router) {}
+export class MainComponent implements OnInit {
+  constructor() {}
 
   ngOnInit(): void {}
-
-  onSearchOptionSelected(option: string): void {
-    this.ngZone.run(() => {
-      this.router.navigate(['search', {query: option}]);
-    });
-  }
 }

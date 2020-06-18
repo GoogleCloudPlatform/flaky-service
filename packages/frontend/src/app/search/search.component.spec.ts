@@ -18,10 +18,20 @@ import {SearchComponent} from './search.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatIconModule} from '@angular/material/icon';
 import {ReactiveFormsModule} from '@angular/forms';
+import {MatAutocompleteHarness} from '@angular/material/autocomplete/testing';
+import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
+import {HarnessLoader} from '@angular/cdk/testing';
+import {MatInputHarness} from '@angular/material/input/testing';
+import {By} from '@angular/platform-browser';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
+  let loader: HarnessLoader;
+  const mockRepositories = [
+    {repoName: 'Repo 1', orgName: ''},
+    {repoName: '', orgName: 'org A'},
+  ];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -33,10 +43,65 @@ describe('SearchComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    component.options = mockRepositories;
+    fixture.autoDetectChanges(true);
+    loader = TestbedHarnessEnvironment.loader(fixture);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should emit the selected option when a repository is selected', async () => {
+    const input = await loader.getHarness(MatAutocompleteHarness);
+
+    await input.focus();
+
+    // select the repository
+    spyOn(component.searchOptionSelected, 'emit');
+    await input.selectOption({text: new RegExp(mockRepositories[0].repoName)});
+
+    expect(component.searchOptionSelected.emit).toHaveBeenCalledWith(
+      mockRepositories[0].repoName
+    );
+  });
+
+  it('should emit the selected option when an organisation is selected', async () => {
+    const input = await loader.getHarness(MatAutocompleteHarness);
+
+    await input.focus();
+
+    // select the organisation
+    spyOn(component.searchOptionSelected, 'emit');
+    await input.selectOption({text: new RegExp(mockRepositories[1].orgName)});
+
+    expect(component.searchOptionSelected.emit).toHaveBeenCalledWith(
+      mockRepositories[1].orgName
+    );
+  });
+
+  it('should emit the entered text when the user hits `enter`', async () => {
+    const input = await loader.getHarness(MatInputHarness);
+
+    // write the repo name
+    await input.setValue(mockRepositories[0].repoName);
+    const inputElement = fixture.debugElement.query(By.css('input'));
+
+    // hit enter
+    spyOn(component.searchOptionSelected, 'emit');
+    inputElement.triggerEventHandler('keyup.enter', {});
+
+    expect(component.searchOptionSelected.emit).toHaveBeenCalledWith(
+      mockRepositories[0].repoName
+    );
+  });
+
+  it('should not emit an empty value', async () => {
+    // hit enter
+    spyOn(component.searchOptionSelected, 'emit');
+    const inputElement = fixture.debugElement.query(By.css('input'));
+    inputElement.triggerEventHandler('keyup.enter', {});
+
+    expect(component.searchOptionSelected.emit).not.toHaveBeenCalled();
   });
 });

@@ -18,15 +18,26 @@ limitations under the License.
     <mat-icon aria-hidden="false" aria-label="search" id="search-icon">search</mat-icon>
 
     <input
+        #searchInput
         matInput
         placeholder="search an organisation or a repository"
         id="search-input"
-        [formControl]="myControl"
-        [matAutocomplete]="auto">
+        [formControl]="inputControl"
+        [matAutocomplete]="auto"
+        (keyup.enter)="searchInput.value && onEnterKeyUp(searchInput.value)">
 
-    <mat-autocomplete #auto="matAutocomplete">
+    <mat-autocomplete #auto="matAutocomplete"
+      (optionSelected)='onSearchOptionSelected($event.option.value.repoName?$event.option.value.repoName:$event.option.value.orgName)'>
         <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-          {{option}}
+          <!--ORGANISATION NAME-->
+            <span class="org-name" *ngIf="option.orgName">{{option.orgName}}</span>
+            <span *ngIf="option.orgName">/</span>
+
+          <!--REPOSITORY NAME-->
+          <span class="repo-name">{{option.repoName}}</span>
+          
+          <!--REPOSITORY DESCRIPTION-->
+          <span class="repo-description">App that does something awesome</span>
         </mat-option>
       </mat-autocomplete>
 </div>

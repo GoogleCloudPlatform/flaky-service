@@ -12,47 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  tick,
+  fakeAsync,
+} from '@angular/core/testing';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {HomeComponent} from './home.component';
-import {Component} from '@angular/core';
+import {Component, Output, EventEmitter} from '@angular/core';
+import {AppRoutingModule} from '../app-routing.module';
+import {Router} from '@angular/router';
+import {By} from '@angular/platform-browser';
+import {Location} from '@angular/common';
 
 // Mock the inner components
 @Component({
   selector: 'app-search',
 })
-class SearchComponent {}
+class SearchComponent {
+  @Output() searchOptionSelected = new EventEmitter<string>();
+}
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
+  let router: Router;
+  let location: Location;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [HomeComponent, SearchComponent],
-      imports: [MatToolbarModule],
+      imports: [MatToolbarModule, AppRoutingModule],
     }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture.autoDetectChanges(true);
+    router = TestBed.get(Router);
+    location = TestBed.get(Location);
+    fixture.ngZone.run(() => router.initialNavigation());
   });
 
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it("should have as title 'flaky-dashboard'", () => {
-    expect(component.title).toEqual('flaky-dashboard');
-  });
-
-  it('should render title', () => {
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('span').textContent).toContain(
-      'flaky-dashboard is running !'
-    );
-  });
+  it('should redirect to the main page when a search option is selected', fakeAsync(() => {
+    const searchComponent: SearchComponent = fixture.debugElement.query(
+      By.css('app-search')
+    ).componentInstance;
+    const searchResult = 'result';
+    searchComponent.searchOptionSelected.emit(searchResult);
+    tick();
+    expect(location.path()).toContain('/search');
+    expect(location.path()).toContain(searchResult);
+  }));
 });
