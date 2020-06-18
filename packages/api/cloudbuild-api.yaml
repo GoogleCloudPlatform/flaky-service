@@ -1,8 +1,4 @@
 steps:
-  #install
-- name: 'node'
-  entrypoint: 'npm'
-  args: ['install', 'express']
 
   #build
 - id: 'Build Container Image'
