@@ -17,29 +17,30 @@ const fs = require('fs');
 const core = require('@actions/core');
 const path = require('path');
 
+async function main(){
 
-try {
-  // `who-to-greet` input defined in action metadata file
+  try {
+    // `who-to-greet` input defined in action metadata file
 
-  const metaData = {
-    github: JSON.parse(core.getInput('github')),
-    os: JSON.parse(core.getInput('os')),
-    matrix: JSON.parse(core.getInput('matrix')),
-  };
-  const fileType = core.getInput('logtype');
-  console.log("reading from: " + core.getInput('filepath'));
-  const data = fs.readFileSync(
-      core.getInput('filepath'), 'utf8');
+    const metaData = {
+      github: JSON.parse(core.getInput('github')),
+      os: JSON.parse(core.getInput('os')),
+      matrix: JSON.parse(core.getInput('matrix')),
+    };
+    const fileType = core.getInput('logtype');
+    console.log("reading from: " + core.getInput('filepath'));
+    const data = fs.readFileSync(
+        core.getInput('filepath'), 'utf8');
 
-  const sendMe = JSON.stringify(
-      {type: fileType, data: data, metadata: metaData});
-  console.log('SENDING: \n\n' + sendMe);
+    const sendMe = JSON.stringify(
+        {type: fileType, data: data, metadata: metaData});
+    console.log('SENDING: \n\n' + sendMe);
 
-  fetch('https://ptsv2.com/t/flakydev/post', {method: 'POST', body: sendMe})
-      .then((res) => {
-        var jsonresp = await res.json()
-        console.log('\n\n Received: \n\n' + jsonresp)
-      });
-} catch (error) {
-  core.setFailed(error.message);
+    var outcome = await fetch('https://ptsv2.com/t/flakydev/post', {method: 'POST', body: sendMe});
+    console.log(outcome);
+    
+  } catch (error) {
+    core.setFailed(error.message);
+  }
 }
+main();
