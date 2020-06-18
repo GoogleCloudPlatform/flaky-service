@@ -15,8 +15,11 @@ inputs:
   logtype:
     description: 'Type of Log.. e.g. (TAP, XML, ... TODO)'
     required: true
-  filepath:
+  filefolder:
     description: 'location of the testing file'
+    required: true
+  filename:
+    description: 'name of the testing file'
     required: true
 
 runs:
