@@ -17,9 +17,10 @@ steps:
   args: ['install']
 
   #Build
-- name: 'gcr.io/oss-automation/ng'
+- name: 'node'
+  entrypoint: 'npm'
   dir: 'packages/frontend'
-  args: ['build', '--prod']
+  args: ['run', 'build', '--prod']
 
   #Deploy to Firebase
 - name: 'gcr.io/oss-automation/firebase'
