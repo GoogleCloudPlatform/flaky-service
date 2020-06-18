@@ -1,7 +1,6 @@
 steps:
   #Install Angular
-- name: 'node'
-  entrypoint: 'npm'
+- name: 'gcr.io/oss-automation/npm'
   dir: 'packages/frontend'
   args: ['install', '-g', '@angular/cli']
 
