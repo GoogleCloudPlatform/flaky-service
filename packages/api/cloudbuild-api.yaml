@@ -2,6 +2,7 @@ steps:
   #build
 - id: 'Build Container Image'
   name: 'gcr.io/cloud-builders/docker'
+  dir: 'packages/api'
   args: ['build','-t', 'gcr.io/oss-automation/api', '.']
 
   #push image to container registry
@@ -15,6 +16,10 @@ steps:
   args: 
   - 'run'
   - 'deploy'
+  - '--image'
   - 'gcr.io/oss-automation/api'
   - '--platform'
   - 'managed'
+  - '--allow-unauthenticated'
+images:
+  -gcr.io/oss-automation/api
