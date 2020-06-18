@@ -2,11 +2,13 @@ steps:
   #Install Angular
 - name: 'node'
   entrypoint: 'npm'
+  dir: 'packages/frontend'
   args: ['install', '-g', '@angular/cli']
 
   #Install Firebase tools
 - name: 'node'
   entrypoint: 'npm'
+  dir: 'packages/frontend'
   args: ['install', '-g', 'firebase-tools']
 
   #Install Dependencies
@@ -15,10 +17,9 @@ steps:
   args: ['install']
 
   #Build
-- name: 'node'
-  entrypoint: 'npm'
+- name: 'gcr.io/oss-automation/ng'
   dir: 'packages/frontend'
-  args: ['run', 'build', '--prod']
+  args: ['build', '--prod']
 
   #Deploy to Firebase
 - name: 'gcr.io/oss-automation/firebase'
