@@ -1,4 +1,9 @@
 steps:
+  #install
+- name: 'node'
+  entrypoint: 'npm'
+  args: ['install']
+  
   #build
 - id: 'Build Container Image'
   name: 'gcr.io/cloud-builders/gcloud'
