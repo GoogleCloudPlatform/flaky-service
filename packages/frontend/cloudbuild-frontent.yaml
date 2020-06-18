@@ -1,8 +1,7 @@
 steps:
   #install
-- name: node
-  entrypoint: npm
-  args: ['i']
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['install']
   #build
 - name: node
   entrypoint: npm
