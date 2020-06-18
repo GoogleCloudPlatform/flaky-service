@@ -1,0 +1,20 @@
+name: 'Flaky.dev'
+description: 'Post Testing Logs to Flaky Server'
+inputs:
+  github:
+    description: 'The Github Context JSON object'
+    required: true
+    default: 'None'
+  matrix:
+    description: 'Matrix information on run'
+    required: false
+    default: 'None'
+  os:
+    description: 'Operating System it is being run on'
+    required: true
+  logtype:
+    description: 'Type of Log.. e.g. (TAP, XML, ... TODO)'
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
