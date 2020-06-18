@@ -21,3 +21,4 @@ steps:
   - '--allow-unauthenticated'
 images:
   - 'gcr.io/oss-automation/api'
+  - 'gcr.io/oss-automation/api'
