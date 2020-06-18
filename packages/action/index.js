@@ -27,9 +27,9 @@ try {
     matrix: JSON.parse(core.getInput('matrix')),
   };
   const fileType = core.getInput('logtype');
-  console.log("reading from + " + core.getInput('filefolder')+core.getInput('filename'));
+  console.log("reading from + " + core.getInput('filepath'));
   const data = fs.readFileSync(
-      core.getInput('filefolder')+core.getInput('filename'), 'utf8');
+      core.getInput('filepath'), 'utf8');
 
   const sendMe = JSON.stringify(
       {type: fileType, data: data, metadata: metaData});
