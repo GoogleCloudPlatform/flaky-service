@@ -11,6 +11,9 @@ steps:
   args: 
   - 'run'
   - 'deploy'
+  - '--namespace'
+  - 'api'
+  - '--image'
   - 'gcr.io/oss-automation/api'
   - '--platform'
   - 'managed'
