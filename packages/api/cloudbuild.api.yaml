@@ -7,4 +7,9 @@ steps:
   #deploy
 - id: 'Deploy to Cloud Run'
   name: 'gcr.io/cloud-builders/gcloud'
-  args: ['run', 'deploy', 'gcr.io/oss-automation/api', '--allow-unauthentication', '--platform managed']
+  args: 
+  - 'run'
+  - 'deploy'
+  - 'gcr.io/oss-automation/api'
+  - '--platform'
+  - 'managed'
