@@ -1,5 +1,4 @@
 steps:
-
   #build
 - id: 'Build Container Image'
   name: 'gcr.io/cloud-builders/gcloud'
@@ -9,7 +8,6 @@ steps:
   #deploy
 - id: 'Deploy to Cloud Run'
   name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: '/bin/bash'
   args: 
   - 'run'
   - 'deploy'
