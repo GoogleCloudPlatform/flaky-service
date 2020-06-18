@@ -332,7 +332,7 @@ try {
     matrix: JSON.parse(core.getInput('matrix')),
   };
   const fileType = core.getInput('logtype');
-  console.log("reading from + " + core.getInput('filepath'));
+  console.log("reading from: " + core.getInput('filepath'));
   const data = fs.readFileSync(
       core.getInput('filepath'), 'utf8');
 
@@ -341,7 +341,7 @@ try {
   console.log('SENDING: \n\n' + sendMe);
 
   fetch('https://ptsv2.com/t/sgsey-1592237741/post', {method: 'POST', body: sendMe})
-      .then((res) => console.log('\n\n Received: \n\n' + res));
+      .then((res) => console.log('\n\n Received: \n\n' + JSON.parse(res)));
 } catch (error) {
   core.setFailed(error.message);
 }
