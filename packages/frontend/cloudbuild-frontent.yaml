@@ -3,8 +3,7 @@ steps:
 - name: 'gcr.io/cloud-builders/npm'
   args: ['install']
   #build
-- name: node
-  entrypoint: npm
+- name: 'gcr.io/cloud-builders/npm'
   args: ['run', 'build']
   #deploy to firebase
 - name: 'gcr.io/oss-automation/firebase'
