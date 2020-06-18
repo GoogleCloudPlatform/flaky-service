@@ -1,26 +1,21 @@
 steps:
+  #Install Dependencies
+- name: 'node'
+  entrypoint: 'npm'
+  dir: 'packages/frontend'
+  args: ['install']
+
   #Install Angular
 - name: 'node'
   entrypoint: 'npm'
   dir: 'packages/frontend'
   args: ['install', '-g', '@angular/cli']
 
-  #Link
-- name: 'node'
-  entrypoint: 'npm'
-  args: ['link', '@angular/cli']
-
   #Install Firebase tools
 - name: 'node'
   entrypoint: 'npm'
   dir: 'packages/frontend'
   args: ['install', '-g', 'firebase-tools']
-
-  #Install Dependencies
-- name: 'node'
-  entrypoint: 'npm'
-  dir: 'packages/frontend'
-  args: ['install']
 
   #Build
 - name: 'node'
