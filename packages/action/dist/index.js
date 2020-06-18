@@ -333,7 +333,7 @@ try {
   };
   const fileType = core.getInput('logtype');
   const data = fs.readFileSync(
-      path.resolve(__dirname, '../../flaky-tap-log.tap'), 'utf8');
+      path.resolve(__dirname, core.getInput('filepath')), 'utf8');
 
   const sendMe = JSON.stringify(
       {type: fileType, data: data, metadata: metaData});
