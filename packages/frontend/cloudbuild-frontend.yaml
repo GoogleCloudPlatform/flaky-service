@@ -7,6 +7,7 @@ steps:
   #build
 - name: 'node'
   entrypoint: 'npm'
+  dir: 'packages/frontend'
   args: ['run', 'build', '--prod']
 
   #deploy to firebase
