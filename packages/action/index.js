@@ -36,7 +36,10 @@ try {
   console.log('SENDING: \n\n' + sendMe);
 
   fetch('https://ptsv2.com/t/flakydev/post', {method: 'POST', body: sendMe})
-      .then((res) => console.log('\n\n Received: \n\n' + JSON.stringify(res)));
+      .then((res) => {
+        var jsonresp = await res.json()
+        console.log('\n\n Received: \n\n' + jsonresp)
+      });
 } catch (error) {
   core.setFailed(error.message);
 }
