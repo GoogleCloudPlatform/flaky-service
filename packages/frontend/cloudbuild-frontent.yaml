@@ -1,6 +1,7 @@
 steps:
   #install
 - name: 'gcr.io/cloud-builders/npm'
+  dir: 'packages/frontend'
   args: ['install']
   #build
 - name: 'gcr.io/cloud-builders/npm'
