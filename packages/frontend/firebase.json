@@ -11,9 +11,6 @@
       "source": "/home",
       "destination": "/index.html"
     }, {
-      "source": "/license",
-      "destination": "/index.html"
-    }, {
       "source": "/api",
       "run": {
         "serviceId": "api",  
