@@ -7,12 +7,22 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [{
-      "source": "**",
+    "rewrites": [ {
+      "source": "/home",
+      "destination": "/index.html"
+    }, {
+      "source": "/api",
       "run": {
         "serviceId": "api",  
         "region": "us-central1"     
       }
-    }]
+    }, {
+      "source" : "/api/**",
+      "run" : {
+        "serviceId" : "api",
+        "region": "us-central1"
+      }
+    }],
+    "cleanUrls": true
   }
 }
