@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
@@ -23,21 +23,52 @@ import {map, startWith} from 'rxjs/operators';
   styleUrls: ['./search.component.css'],
 })
 export class SearchComponent implements OnInit {
-  myControl = new FormControl();
-  options: string[] = ['Repo 1', 'Repo 2', 'Repo 3'];
-  filteredOptions: Observable<string[]>;
+  @Output() searchOptionSelected = new EventEmitter<string>();
+
+  inputControl = new FormControl();
+  options: SearchOption[] = [];
+  defaultOptions: SearchOption[] = [
+    {repoName: 'See all repositories', orgName: ''},
+  ];
+  filteredOptions: Observable<SearchOption[]>;
 
   ngOnInit(): void {
-    this.filteredOptions = this.myControl.valueChanges.pipe(
+    this.filteredOptions = this.inputControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value))
     );
   }
 
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.options.filter(option =>
-      option.toLowerCase().includes(filterValue)
-    );
+  private _filter(value: string): SearchOption[] {
+    const filterValue = value.toString().toLowerCase();
+    return this.options
+      .concat(this.defaultOptions)
+      .filter(
+        option =>
+          option.repoName.toString().toLowerCase().includes(filterValue) ||
+          option.orgName.toString().toLowerCase().includes(filterValue)
+      );
   }
+
+  onEnterKeyUp(option: string): void {
+    this.searchOptionSelected.emit(option);
+  }
+
+  onSearchOptionSelected(option: string): void {
+    const isADefaultOption = this.defaultOptions.find(
+      opt => opt.repoName === option
+    );
+    if (isADefaultOption) this.inputControl.setValue(option);
+    else this.searchOptionSelected.emit(option);
+  }
+}
+
+export interface SearchOption {
+  repoName: string;
+  orgName: string;
+}
+
+export interface SearchSelection {
+  name: string;
+  isAnOrg: boolean;
 }

@@ -12,28 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {AppPage} from './app.po';
-import {browser, logging} from 'protractor';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {MainComponent} from './main.component';
 
-describe('workspace-project App', () => {
-  let page: AppPage;
+describe('MainComponent', () => {
+  let component: MainComponent;
+  let fixture: ComponentFixture<MainComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [MainComponent],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
-    page = new AppPage();
+    fixture = TestBed.createComponent(MainComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getTitleText()).toEqual('flaky.dev');
-  });
-
-  afterEach(async () => {
-    // Assert that there are no errors emitted from the browser
-    const logs = await browser.manage().logs().get(logging.Type.BROWSER);
-    expect(logs).not.toContain(
-      jasmine.objectContaining({
-        level: logging.Level.SEVERE,
-      } as logging.Entry)
-    );
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 });

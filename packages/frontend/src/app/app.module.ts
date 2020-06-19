@@ -65,9 +65,17 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import {HomeComponent} from './home/home.component';
 import {SearchComponent} from './search/search.component';
+import {MainComponent} from './main/main.component';
+import {SingleRepositoryComponent} from './single-repository/single-repository.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, SearchComponent],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    SearchComponent,
+    MainComponent,
+    SingleRepositoryComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,

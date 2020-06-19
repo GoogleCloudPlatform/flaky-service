@@ -17,7 +17,40 @@ limitations under the License.
 @import '~@angular/material/theming';
 @include mat-core();
 
-$my-app-primary: mat-palette($mat-light-blue);
+$md-flakyblue: (
+    50 : #e0eeff,
+    100 : #b3d6ff,
+    200 : #80baff,
+    300 : #4d9eff,
+    400 : #268aff,
+    500 : #0075ff,
+    600 : #006dff,
+    700 : #0062ff,
+    800 : #0058ff,
+    900 : #0045ff,
+    A100 : #ffffff,
+    A200 : #f2f5ff,
+    A400 : #bfccff,
+    A700 : #a6b8ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$my-app-primary: mat-palette($md-flakyblue);
 $my-app-accent:  mat-palette($mat-yellow, 400);
 $my-app-warn:    mat-palette($mat-deep-orange);
 $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);

@@ -22,16 +22,22 @@ limitations under the License.
     background-color: white;
 }
 
-#presentation-text {
+#presentation-text, #introduction-text, #introduction-btn, #search-bar {
     margin-top: 10px;
     width: 100%;
     text-align: center;
 }
+@media (min-width: 768px) {
+    #presentation-text {
+        margin-top: 40px;
+    }
+    #introduction-text {
+        margin-top: 100px;
+    }
+}
 
 #search-bar {
-    margin-top: 10px;
     display: flex;
-    width: 100%;
     align-content: center;
     justify-content: center;
 }

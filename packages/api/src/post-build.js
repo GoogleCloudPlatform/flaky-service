@@ -18,6 +18,8 @@
 
 const addBuild = require('../src/add-build');
 const TestCaseRun = require('../lib/testrun');
+var Parser = require('tap-parser');
+const Readable = require('stream').Readable;
 
 class PostBuildHandler {
   constructor (app, client) {
@@ -55,11 +57,48 @@ class PostBuildHandler {
     });
   }
 
+  async parseRawOutput (dataString, fileType) {
+    switch (fileType) {
+      case 'TAP': {
+        var data = [];
+        var p = new Parser();
+
+        p.on('result', function (assert) {
+          data.push(assert);
+        });
+
+        Readable.from(dataString).pipe(p);
+        await new Promise(resolve => {
+          p.on('complete', response => resolve(response));
+        });
+
+        return data;
+      }
+      default: {
+        throw new Error('Unsupported File Type');
+      }
+    }
+  }
+
   listen () {
-    this.app.post('/postbuild', async (req, res, next) => {
+    // route for when parsed in action
+    this.app.post('/api/buildparsed', async (req, res, next) => {
       try {
         var buildInfo = this.parseBuildInfo(req.body.metadata);
         var testCases = this.parseTestCases(req.body.data);
+        await addBuild(testCases, buildInfo, this.client, global.headCollection);
+        res.send({ message: 'successfully added build' });
+      } catch (err) {
+        res.status(400).send({ error: err.message });
+      }
+    });
+
+    // route for parsing test input server side
+    this.app.post('/api/build', async (req, res, next) => {
+      try {
+        var buildInfo = this.parseBuildInfo(req.body.metadata);
+        var parsedRaw = await this.parseRawOutput(req.body.data, req.body.type);
+        var testCases = this.parseTestCases(parsedRaw);
         await addBuild(testCases, buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
