@@ -21,9 +21,11 @@ const PostBuildHandler = require('./src/post-build.js');
 const GetBuildHandler = require('./src/get-build.js');
 const { Firestore } = require('@google-cloud/firestore');
 const client = new Firestore();
+const cors = require('cors');
 
 global.headCollection = 'testing-buildsget';
 
+app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/api/repos', async (req, res) => {

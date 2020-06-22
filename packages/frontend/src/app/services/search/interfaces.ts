@@ -12,15 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-interface ApiLinks {
-  get: {
-    repositories: string;
-  };
+export interface Repository {
+  repoName: string;
+  orgName: string;
 }
 
-const apiBaseLink = 'http://localhost:3000/';
-export const apiLinks: ApiLinks = {
-  get: {
-    repositories: apiBaseLink + 'repos',
-  },
-};
+export interface Filter {
+  name: string;
+  value?: string;
+}
+
+export interface InterpretedInput {
+  filters: Filter[];
+  query: string;
+}
+
+// TODO: Temporary format. The com protocol repository format will be used intead.
+export interface ApiRepositories {
+  repoNames: string[];
+}
