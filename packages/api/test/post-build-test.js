@@ -20,6 +20,7 @@ const EXAMPLE_PAYLOAD_RAW = '{"type":"TAP","data":"1..2\\nok 1 Testing Box shoul
 const { describe, before, after, it } = require('mocha');
 const { Firestore } = require('@google-cloud/firestore');
 const { v4: uuidv4 } = require('uuid');
+const firebaseEncode = require('../lib/firebase-encode');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
@@ -70,22 +71,22 @@ describe('flaky express server', () => {
 
     // now make sure Firestore has all the info
     var parsedPayload = JSON.parse(EXAMPLE_PAYLOAD);
-    var repoId = encodeURIComponent(parsedPayload.metadata.github.repository);
-    var buildId = parsedPayload.metadata.github.sha;
+    var repoId = firebaseEncode(parsedPayload.metadata.github.repository);
+    var buildId = parsedPayload.metadata.github.run_id;
 
     var repositoryInfo = await client.collection(global.headCollection).doc(repoId).get();
     assert.strictEqual(repositoryInfo.data().organization, parsedPayload.metadata.github.repository_owner);
     assert.strictEqual(repositoryInfo.data().url, parsedPayload.metadata.github.repositoryUrl);
 
     var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').doc(buildId).get();
-    assert.deepStrictEqual(new Set(buildInfo.data().successes), new Set([encodeURIComponent(parsedPayload.data[0].name), encodeURIComponent(parsedPayload.data[1].name)]));
+    assert.deepStrictEqual(new Set(buildInfo.data().successes), new Set([firebaseEncode(parsedPayload.data[0].name), firebaseEncode(parsedPayload.data[1].name)]));
     assert.strictEqual(buildInfo.data().percentpassing, 1);
 
     for (var i = 0; i < 2; i++) {
-      var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(encodeURIComponent(parsedPayload.data[0].name)).get();
+      var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).get();
       assert.strictEqual(testInfo.data().percentpassing, 1);
 
-      var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(encodeURIComponent(parsedPayload.data[0].name)).collection('runs').doc(buildId).get();
+      var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).collection('runs').doc(buildId).get();
       assert.strictEqual(runInfo.data().timestamp.toDate().getTime(), new Date(parsedPayload.metadata.github.event.head_commit.timestamp).getTime());
     }
   });
@@ -102,22 +103,22 @@ describe('flaky express server', () => {
     // now make sure Firestore has all the info
     var parsedPayload = JSON.parse(EXAMPLE_PAYLOAD);
     var parsedPayloadRaw = JSON.parse(EXAMPLE_PAYLOAD_RAW); // NOTE: the distinction is just the github.repository so the testing doesnt collide
-    var repoId = encodeURIComponent(parsedPayloadRaw.metadata.github.repository);
-    var buildId = parsedPayloadRaw.metadata.github.sha;
+    var repoId = firebaseEncode(parsedPayloadRaw.metadata.github.repository);
+    var buildId = parsedPayloadRaw.metadata.github.run_id;
 
     var repositoryInfo = await client.collection(global.headCollection).doc(repoId).get();
     assert.strictEqual(repositoryInfo.data().organization, parsedPayloadRaw.metadata.github.repository_owner);
     assert.strictEqual(repositoryInfo.data().url, parsedPayloadRaw.metadata.github.repositoryUrl);
 
     var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').doc(buildId).get();
-    assert.deepStrictEqual(new Set(buildInfo.data().successes), new Set([encodeURIComponent(parsedPayload.data[0].name), encodeURIComponent(parsedPayload.data[1].name)]));
+    assert.deepStrictEqual(new Set(buildInfo.data().successes), new Set([firebaseEncode(parsedPayload.data[0].name), firebaseEncode(parsedPayload.data[1].name)]));
     assert.strictEqual(buildInfo.data().percentpassing, 1);
 
     for (var i = 0; i < 2; i++) {
-      var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(encodeURIComponent(parsedPayload.data[0].name)).get();
+      var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).get();
       assert.strictEqual(testInfo.data().percentpassing, 1);
 
-      var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(encodeURIComponent(parsedPayload.data[0].name)).collection('runs').doc(buildId).get();
+      var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).collection('runs').doc(buildId).get();
       assert.strictEqual(runInfo.data().timestamp.toDate().getTime(), new Date(parsedPayloadRaw.metadata.github.event.head_commit.timestamp).getTime());
     }
   });
@@ -130,7 +131,7 @@ describe('flaky express server', () => {
     ];
     var parsedPayload = JSON.parse(EXAMPLE_PAYLOAD);
     var parsedPayloadRaw = JSON.parse(EXAMPLE_PAYLOAD_RAW);
-    var repoIds = [encodeURIComponent(parsedPayloadRaw.metadata.github.repository), encodeURIComponent(parsedPayload.metadata.github.repository)];
+    var repoIds = [firebaseEncode(parsedPayloadRaw.metadata.github.repository), firebaseEncode(parsedPayload.metadata.github.repository)];
     const buildIds = [parsedPayload.metadata.github.sha, parsedPayloadRaw.metadata.github.sha];
     const testCases = [parsedPayload.data[0].name, parsedPayload.data[1].name];
 
@@ -139,7 +140,7 @@ describe('flaky express server', () => {
       repoIds.forEach(async (repoId) => {
         buildIds.forEach(async (buildId) => {
           testCases.forEach(async (testCase) => {
-            const deletePathUse = deletePath.replace('{testcase}', encodeURIComponent(testCase)).replace('{buildid}', buildId);
+            const deletePathUse = deletePath.replace('{testcase}', firebaseEncode(testCase)).replace('{buildid}', buildId);
             await client.collection(global.headCollection).doc(repoId + '/' + deletePathUse).delete();
           });
         });

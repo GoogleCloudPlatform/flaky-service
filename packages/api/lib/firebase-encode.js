@@ -1,3 +1,4 @@
+
 // Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const firebaseEncode = require('./firebase-encode');
-
-class TestCaseRun {
-  constructor (okMessage, number, name) {
-    this.successful = (okMessage === 'ok');
-    this.number = number;
-    this.name = name;
-    this.encodedName = firebaseEncode(this.name);
-    this.failureMessage = 'TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)';
-  }
-
-  display () {
-    return this.number + ', ' + this.name + ', ' + this.time + ', ' + (this.successful ? '1' : '0');
-  }
+function firebaseEncode (inputStr) {
+  return encodeURIComponent(inputStr)
+    .replace(/\./g, '%2E')
+    .replace(/\*/g, '%2A')
+    .replace(/`/g, '%60');
 }
 
-module.exports = TestCaseRun;
+module.exports = firebaseEncode;

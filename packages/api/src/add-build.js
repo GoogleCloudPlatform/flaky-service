@@ -60,17 +60,21 @@ function buildPassingPercent (successes, failures) {
 async function addBuild (testCases, buildInfo, client, collectionName = 'repositories-fake') {
   var dbRepo = client.collection(collectionName).doc(buildInfo.repoId);
 
-  // if repo does not exist, add information
-  await dbRepo.update({
-    organization: buildInfo.organization,
-    url: buildInfo.url
-  }, { merge: true });
+  // if repo does not exist, add information including environment variables and possibilities
+  const repoUpdate = { };
+  for (const prop in buildInfo.environment) {
+    repoUpdate['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
+  }
+  repoUpdate.organization = buildInfo.organization;
+  repoUpdate.url = buildInfo.url;
+  await dbRepo.update(repoUpdate, { merge: true });
 
   var failures = {};
   var successes = [];
 
   // For the test cases
-  testCases.forEach(async testCase => {
+  for (let k = 0; k < testCases.length; k++) {
+    const testCase = testCases[k];
     // track successes and failures in the build
     if (testCase.successful) {
       successes.push(testCase.encodedName);
@@ -83,19 +87,23 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
       {
         environment: buildInfo.environment,
         status: testCase.successful ? 'OK' : testCase.failureMessage,
-        timestamp: buildInfo.timestamp
+        timestamp: buildInfo.timestamp,
+        buildId: decodeURIComponent(buildInfo.buildId), // as value decoded
+        sha: decodeURIComponent(buildInfo.sha)
       }
     );
 
     // 2: Query an appropriate amount of test runs, for now 100 most recent
     var snapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp').limit(100).get();
 
-    // 3: Compute the passing percent and write that back
-    await dbRepo.collection('tests').doc(testCase.encodedName).update({
-      environments: Firestore.FieldValue.arrayUnion(buildInfo.environment),
-      percentpassing: testCasePassingPercent(snapshot)
-    }, { merge: true });
-  });
+    // 3: Compute the passing percent and write that back as well as updated environment variables
+    const updateObj = { };
+    for (const prop in buildInfo.environment) {
+      updateObj['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
+    }
+    updateObj.percentpassing = testCasePassingPercent(snapshot);
+    await dbRepo.collection('tests').doc(testCase.encodedName).update(updateObj, { merge: true });
+  }
 
   // For the Builds
   await dbRepo.collection('builds').doc(buildInfo.buildId).set({
@@ -103,7 +111,9 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     environment: buildInfo.environment,
     timestamp: buildInfo.timestamp,
     successes: successes,
-    failures: failures
+    failures: failures,
+    sha: decodeURIComponent(buildInfo.sha),
+    buildId: decodeURIComponent(buildInfo.buildId)
   });
 }
 

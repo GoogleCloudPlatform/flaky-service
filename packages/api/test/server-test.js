@@ -19,7 +19,7 @@ const fetch = require('node-fetch');
 
 describe('flaky express server', () => {
   it('it responds to a GET on the / path', async () => {
-    const resp = await fetch('http://localhost:3000', {
+    const resp = await fetch('http://localhost:3000/api', {
       method: 'post',
       body: JSON.stringify({
         message: 'goodnight moon'
@@ -31,7 +31,7 @@ describe('flaky express server', () => {
   });
 
   it('it returns a json object with the list of repositories, when you call GET on /repos', async () => {
-    const resp = await fetch('http://localhost:3000/repos', {});
+    const resp = await fetch('http://localhost:3000/api/repos', {});
     // TODO: get rid of this hard-coding which depends on certain collections never being edited
     const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
     const respJSON = await resp.json();
