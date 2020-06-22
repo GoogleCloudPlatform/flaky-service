@@ -27,7 +27,7 @@ const client = new Firestore({
   projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
 });
 
-global.headCollection = (process.env.HEAD_COLLECTION)? process.env.HEAD_COLLECTION : 'testing-buildsget';
+global.headCollection = process.env.HEAD_COLLECTION || 'testing-buildsget';
 
 app.use(cors());
 app.use(bodyParser.json());
