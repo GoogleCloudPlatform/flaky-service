@@ -21,7 +21,6 @@ const PostBuildHandler = require('./src/post-build.js');
 const GetBuildHandler = require('./src/get-build.js');
 const { Firestore } = require('@google-cloud/firestore');
 
-const client = new Firestore();
 const cors = require('cors');
 
 const client = new Firestore({
