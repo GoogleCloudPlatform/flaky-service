@@ -87,7 +87,9 @@ describe('Add-Build', () => {
   let client;
 
   before(async () => {
-    client = new Firestore();
+    client = new Firestore({
+      projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
+    });
     global.headCollection = TESTING_COLLECTION_BASE + uuidv4(); // random collection name for concurrent testing
   });
 

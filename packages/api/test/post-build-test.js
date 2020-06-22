@@ -28,7 +28,9 @@ const fetch = require('node-fetch');
 describe('flaky express server', () => {
   let client;
   before(async () => {
-    client = new Firestore();
+    client = new Firestore({
+      projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
+    });
     global.headCollection = 'repositories-testsuite-' + uuidv4();
   });
 

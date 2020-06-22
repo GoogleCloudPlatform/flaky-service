@@ -19,7 +19,9 @@ const REPOSITORY_COLLECTION = 'repositories';
 class Repository {
   constructor (client) {
     if (!client) {
-      this.client = new Firestore();
+      this.client = new Firestore({
+        projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
+      });
     } else {
       this.client = client;
     }
