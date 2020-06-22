@@ -13,26 +13,27 @@
 // limitations under the License.
 
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {apiLinks} from './api';
-import {Observable} from 'rxjs';
-import {ApiRepositories} from '../search/interfaces';
+import {Observable, of} from 'rxjs';
+import {COMService} from '../com/com.service';
+import {Repository} from './interfaces';
+import {map, catchError} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
-export class COMService {
-  constructor(private http: HttpClient) {}
+export class SearchService {
+  constructor(private com: COMService) {}
 
-  public fetchRepositories(
-    targetRepository: string
-  ): Observable<ApiRepositories> {
-    const params: HttpParams = new HttpParams().set(
-      'keyword',
-      targetRepository
+  quickSearch(targetRepository: string): Observable<Repository[]> {
+    if (!targetRepository) return of([]);
+    return this.com.fetchRepositories(targetRepository).pipe(
+      map(apiRepositories => {
+        return apiRepositories.repoNames.map(name => ({
+          repoName: name,
+          orgName: '',
+        }));
+      }),
+      catchError(() => of([]))
     );
-    return this.http.get<ApiRepositories>(apiLinks.get.repositories, {
-      params: params,
-    });
   }
 }
