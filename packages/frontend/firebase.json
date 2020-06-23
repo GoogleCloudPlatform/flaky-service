@@ -8,21 +8,25 @@
       "**/node_modules/**"
     ],
     "rewrites": [ {
+      "source" : "/api/**",
+      "headers": [{
+        "key": "Cache-Control",
+        "value": "no-store"
+      }],
+      "run" : {
+        "serviceId" : "api",
+        "region": "us-central1"
+        }
+      }, {
       "source": "/home",
       "destination": "/index.html"
-    }, {
+      }, {
       "source": "/api",
       "run": {
         "serviceId": "api",  
         "region": "us-central1"     
-      }
-    }, {
-      "source" : "/api/**",
-      "run" : {
-        "serviceId" : "api",
-        "region": "us-central1"
-      }
-    }],
+        }
+      }],
     "cleanUrls": true
   }
 }
