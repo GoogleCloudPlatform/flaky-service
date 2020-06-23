@@ -22,9 +22,13 @@ class GetBuildHandler {
 
   listen () {
     // return the different environments for a build - all parameters and possible values for next query
-    this.app.get('/api/buildenv/:repoid', async (req, res, next) => {
+    this.app.get('/api/buildenv', async (req, res, next) => {
       try {
-        const results = await this.client.collection(global.headCollection).doc(encodeURIComponent(req.params.repoid)).get();
+        if (!req.query.repoid) {
+          throw new Error('Route Requires repoid parameter');
+        }
+
+        const results = await this.client.collection(global.headCollection).doc(encodeURIComponent(req.query.repoid)).get();
         res.send(results.data());
       } catch (err) {
         res.status(400).send({ error: err });
@@ -32,15 +36,21 @@ class GetBuildHandler {
     });
 
     // return the recent builds based on parameters
-    this.app.get('/api/build/:repoid', async (req, res, next) => {
+    this.app.get('/api/build', async (req, res, next) => {
       try {
         let limit = 100;
-        let starterQuery = this.client.collection(global.headCollection).doc(encodeURIComponent(req.params.repoid)).collection('builds');
+        if (!req.query.repoid) {
+          throw new Error('Route Requires repoid parameter');
+        }
+
+        let starterQuery = this.client.collection(global.headCollection).doc(encodeURIComponent(req.query.repoid)).collection('builds');
         for (const prop in req.query) {
           if (prop === 'limit') {
             limit = parseInt(req.query[prop]);
           } else if (prop === 'matrix') {
             starterQuery = starterQuery.where('environment.' + prop, '==', JSON.parse(req.query[prop]));
+          } else if (prop === 'repoid') {
+            continue;
           } else {
             starterQuery = starterQuery.where('environment.' + prop, '==', req.query[prop]);
           }
