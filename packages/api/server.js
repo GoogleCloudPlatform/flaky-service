@@ -18,12 +18,21 @@ const Repository = require('./src/repository');
 const app = express();
 const bodyParser = require('body-parser');
 const PostBuildHandler = require('./src/post-build.js');
+const GetBuildHandler = require('./src/get-build.js');
 const { Firestore } = require('@google-cloud/firestore');
-const client = new Firestore();
 
+const cors = require('cors');
+
+const client = new Firestore({
+  projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
+});
+
+global.headCollection = process.env.HEAD_COLLECTION || 'testing-buildsget';
+
+app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/repos', async (req, res) => {
+app.get('/api/repos', async (req, res) => {
   // TODO: Make it return more information about the repos, beyond just their names
   const repository = new Repository(null);
   const result = await repository.getCollection('dummy-repositories');
@@ -45,7 +54,7 @@ app.get('/repos', async (req, res) => {
     .end();
 });
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   const message = req.body.message ? req.body.message : 'hello world';
   res
     .status(200)
@@ -57,13 +66,15 @@ app.get('/', (req, res) => {
 // POST: creating or updating a resource.
 // PUT: creating or updating a resource.
 
-app.post('/', (req, res) => {
+app.post('/api', (req, res) => {
   res.send({
     message: req.body.message ? req.body.message : 'hello world'
   });
 });
 const postBuildHandler = new PostBuildHandler(app, client);
 postBuildHandler.listen();
+const getBuildHandler = new GetBuildHandler(app, client);
+getBuildHandler.listen();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';

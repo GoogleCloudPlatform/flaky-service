@@ -14,8 +14,11 @@
 
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {map, filter, debounceTime, switchMap} from 'rxjs/operators';
+import {InterpretationService} from './interpretation/interpretation.service';
+import {Repository} from '../services/search/interfaces';
+import {SearchService} from '../services/search/search.service';
+export {Filter, InterpretedInput} from '../services/search/interfaces';
 
 @Component({
   selector: 'app-search',
@@ -26,28 +29,39 @@ export class SearchComponent implements OnInit {
   @Output() searchOptionSelected = new EventEmitter<string>();
 
   inputControl = new FormControl();
-  options: SearchOption[] = [];
-  defaultOptions: SearchOption[] = [
-    {repoName: 'See all repositories', orgName: ''},
-  ];
-  filteredOptions: Observable<SearchOption[]>;
+  options: Repository[] = [];
+  defaultOption: Repository = {repoName: 'See all repositories', orgName: ''};
+  filteredOptions: Repository[];
+  debounceTime = 200;
+
+  constructor(
+    private searchService: SearchService,
+    private interpreter: InterpretationService
+  ) {}
 
   ngOnInit(): void {
-    this.filteredOptions = this.inputControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value))
-    );
+    this.filteredOptions = [this.defaultOption];
+    this.inputControl.valueChanges
+      .pipe(
+        debounceTime(this.debounceTime),
+        map(value => this.updateOptions(value)),
+        filter(value => this.canBeAutoCompleted(value)),
+        switchMap(value => this.searchService.quickSearch(value))
+      )
+      .subscribe(newOptions => {
+        if (this.inputControl.value)
+          this.filteredOptions = newOptions.concat([this.defaultOption]);
+      });
   }
 
-  private _filter(value: string): SearchOption[] {
-    const filterValue = value.toString().toLowerCase();
-    return this.options
-      .concat(this.defaultOptions)
-      .filter(
-        option =>
-          option.repoName.toString().toLowerCase().includes(filterValue) ||
-          option.orgName.toString().toLowerCase().includes(filterValue)
-      );
+  private canBeAutoCompleted(input: string): boolean {
+    return input && !input.toString().includes(' ');
+  }
+
+  private updateOptions(value: string): string {
+    if (!value) this.filteredOptions = [this.defaultOption];
+    else if (value.toString().includes(' ')) this.filteredOptions = [];
+    return value;
   }
 
   onEnterKeyUp(option: string): void {
@@ -55,10 +69,8 @@ export class SearchComponent implements OnInit {
   }
 
   onSearchOptionSelected(option: string): void {
-    const isADefaultOption = this.defaultOptions.find(
-      opt => opt.repoName === option
-    );
-    if (isADefaultOption) this.inputControl.setValue(option);
+    const isADefaultOption = option === this.defaultOption.repoName;
+    if (isADefaultOption) this.inputControl.setValue('');
     else this.searchOptionSelected.emit(option);
   }
 }

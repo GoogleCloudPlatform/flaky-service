@@ -5,7 +5,7 @@
   "description": "the api for the flaky.dev service",
   "main": "server.js",
   "scripts": {
-    "test": "c8 mocha --timeout=15000 test/*.js",
+    "test": "c8 mocha --timeout=25000 test/*.js",
     "posttest": "semistandard",
     "fix": "semistandard --fix"
   },
@@ -27,6 +27,7 @@
   "dependencies": {
     "@google-cloud/firestore": "^3.8.4",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "tap-parser": "^10.0.1",
     "uuid": "^8.1.0"

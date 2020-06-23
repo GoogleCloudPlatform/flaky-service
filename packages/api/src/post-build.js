@@ -20,6 +20,7 @@ const addBuild = require('../src/add-build');
 const TestCaseRun = require('../lib/testrun');
 var Parser = require('tap-parser');
 const Readable = require('stream').Readable;
+const firebaseEncode = require('../lib/firebase-encode');
 
 class PostBuildHandler {
   constructor (app, client) {
@@ -27,19 +28,37 @@ class PostBuildHandler {
     this.client = client;
   }
 
-  parseBuildInfo (metadata) {
-    // buildInfo must have attributes of organization, timestamp, url, environment, buildId
-    var returnVal = {
-      repoId: encodeURIComponent(metadata.github.repository),
-      organization: metadata.github.repository_owner,
-      timestamp: new Date(metadata.github.event.head_commit.timestamp),
-      url: metadata.github.repositoryUrl,
-      environment: metadata.os.os,
-      buildId: metadata.github.sha
+  parseEnvironment (metadata) {
+    var envData = {
+      os: metadata.os.os,
+      ref: metadata.github.ref,
+      matrix: (metadata.matrix) ? JSON.stringify(metadata.matrix, Object.keys(metadata.matrix).sort()) : 'None',
+      tag: 'None'
     };
 
     // validate data
-    for (var prop in returnVal) {
+    for (const prop in envData) {
+      if (!envData[prop]) {
+        throw new Error('Missing All Build Meta Data Info - ' + prop);
+      }
+    }
+    return envData;
+  }
+
+  parseBuildInfo (metadata) {
+    // buildInfo must have attributes of organization, timestamp, url, environment, buildId
+    var returnVal = {
+      repoId: firebaseEncode(metadata.github.repository),
+      organization: metadata.github.repository_owner,
+      timestamp: new Date(metadata.github.event.head_commit.timestamp),
+      url: metadata.github.repositoryUrl,
+      environment: this.parseEnvironment(metadata),
+      buildId: firebaseEncode(metadata.github.run_id),
+      sha: metadata.github.sha
+    };
+
+    // validate data
+    for (const prop in returnVal) {
       if (!returnVal[prop]) {
         throw new Error('Missing All Build Meta Data Info - ' + prop);
       }

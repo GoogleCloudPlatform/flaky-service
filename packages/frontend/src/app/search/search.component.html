@@ -24,11 +24,11 @@ limitations under the License.
         id="search-input"
         [formControl]="inputControl"
         [matAutocomplete]="auto"
-        (keyup.enter)="searchInput.value && onEnterKeyUp(searchInput.value)">
+        (keyup.enter)="onEnterKeyUp(searchInput.value)">
 
     <mat-autocomplete #auto="matAutocomplete"
       (optionSelected)='onSearchOptionSelected($event.option.value.repoName?$event.option.value.repoName:$event.option.value.orgName)'>
-        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+        <mat-option *ngFor="let option of filteredOptions" [value]="option">
           <!--ORGANISATION NAME-->
             <span class="org-name" *ngIf="option.orgName">{{option.orgName}}</span>
             <span *ngIf="option.orgName">/</span>
