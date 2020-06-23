@@ -341,11 +341,13 @@ async function main(){
         {type: fileType, data: data, metadata: metaData});
     console.log('SENDING: \n\n' + sendMe);
 
-    var outcome = await fetch('https://ptsv2.com/t/flakydev/post', {method: 'POST', body: sendMe});
+    var outcome = await fetch('https://flaky-dashboard.web.app/api/build', {method: 'POST', body: sendMe});
     var outcomeText = await outcome.text();
+    console.log("server response:");
     console.log(outcomeText);
     
   } catch (error) {
+    console.log(error);
     core.setFailed(error.message);
   }
 }
