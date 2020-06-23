@@ -9,10 +9,6 @@
     ],
     "rewrites": [ {
       "source" : "/api/**",
-      "headers": [{
-        "key": "Cache-Control",
-        "value": "no-store"
-      }],
       "run" : {
         "serviceId" : "api",
         "region": "us-central1"
