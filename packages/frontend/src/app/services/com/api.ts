@@ -18,7 +18,7 @@ interface ApiLinks {
   };
 }
 
-const apiBaseLink = 'http://localhost:3000/';
+const apiBaseLink = 'window.location.origin';
 export const apiLinks: ApiLinks = {
   get: {
     repositories: apiBaseLink + 'repos',
