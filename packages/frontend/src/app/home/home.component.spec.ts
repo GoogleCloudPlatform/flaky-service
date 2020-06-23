@@ -19,7 +19,6 @@ import {
   tick,
   fakeAsync,
 } from '@angular/core/testing';
-import {MatToolbarModule} from '@angular/material/toolbar';
 import {HomeComponent} from './home.component';
 import {Component, Output, EventEmitter} from '@angular/core';
 import {AppRoutingModule} from '../app-routing.module';
@@ -44,7 +43,7 @@ describe('HomeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [HomeComponent, SearchComponent],
-      imports: [MatToolbarModule, AppRoutingModule],
+      imports: [AppRoutingModule],
     }).compileComponents();
   }));
 

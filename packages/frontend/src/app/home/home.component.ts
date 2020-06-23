@@ -21,8 +21,6 @@ import {Router} from '@angular/router';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  title = 'flaky.dev';
-
   constructor(private ngZone: NgZone, private router: Router) {}
 
   ngOnInit(): void {}

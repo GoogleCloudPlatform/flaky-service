@@ -20,6 +20,6 @@ export class AppPage {
   }
 
   getTitleText(): Promise<string> {
-    return element(by.css('#toolbar span')).getText() as Promise<string>;
+    return element(by.css('#title')).getText() as Promise<string>;
   }
 }
