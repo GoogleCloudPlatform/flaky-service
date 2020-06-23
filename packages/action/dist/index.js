@@ -341,7 +341,11 @@ async function main(){
         {type: fileType, data: data, metadata: metaData});
     console.log('SENDING: \n\n' + sendMe);
 
-    var outcome = await fetch('https://flaky-dashboard.web.app/api/build', {method: 'POST', body: sendMe});
+    var outcome = await fetch('https://flaky-dashboard.web.app/api/build', {
+      method: 'POST', 
+      body: JSON.stringify(sendMe),
+      headers: { 'Content-Type': 'application/json' }
+    });
     var outcomeText = await outcome.text();
     console.log("server response:");
     console.log(outcomeText);
