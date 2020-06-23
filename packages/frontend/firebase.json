@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "flaky-dashboard",
+    "site": "flaky-dev-staging",
     "public": "dist/flaky-dashboard",
     "ignore": [
       "firebase.json",
