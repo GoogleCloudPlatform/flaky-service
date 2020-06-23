@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {Injectable} from '@angular/core';
-import {Filter, InterpretedInput} from '../search.component';
+import {Filter, InterpretedInput} from '../../services/search/interfaces';
 
 // This class is responsible for determining wheter a search input can be considered as a filtering option
 @Injectable({

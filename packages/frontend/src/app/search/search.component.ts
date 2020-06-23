@@ -18,7 +18,6 @@ import {map, filter, debounceTime, switchMap} from 'rxjs/operators';
 import {InterpretationService} from './interpretation/interpretation.service';
 import {Repository} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
-export {Filter, InterpretedInput} from '../services/search/interfaces';
 
 @Component({
   selector: 'app-search',

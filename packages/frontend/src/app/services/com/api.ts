@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {environment} from '../../../environments/environment';
+
 interface ApiLinks {
   get: {
     repositories: string;
   };
 }
 
-const apiBaseLink = window.location.origin + '/api/';
+const apiBaseLink = environment.baseUrl + '/api/';
 export const apiLinks: ApiLinks = {
   get: {
     repositories: apiBaseLink + 'repos',
