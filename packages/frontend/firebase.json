@@ -14,7 +14,7 @@
         "region": "us-central1"
         }
       }, {
-      "source": "/home",
+      "source": "/**",
       "destination": "/index.html"
       }, {
       "source": "/api",
