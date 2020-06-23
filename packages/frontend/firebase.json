@@ -10,7 +10,7 @@
     "rewrites": [ {
       "source" : "/api/**",
       "run" : {
-        "serviceId" : "api",
+        "serviceId" : "api-staging",
         "region": "us-central1"
         }
       }, {
@@ -19,7 +19,7 @@
       }, {
       "source": "/api",
       "run": {
-        "serviceId": "api",  
+        "serviceId": "api-staging",  
         "region": "us-central1"     
         }
       }],

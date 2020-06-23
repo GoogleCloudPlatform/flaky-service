@@ -3,7 +3,7 @@ steps:
 - id: 'Build Container Image'
   name: 'gcr.io/cloud-builders/gcloud'
   dir: 'packages/api'
-  args: ['builds','submit', '--tag', 'gcr.io/oss-automation/api']
+  args: ['builds','submit', '--tag', 'gcr.io/oss-automation/api-staging']
 
   #deploy
 - id: 'Deploy to Cloud Run'
@@ -11,9 +11,9 @@ steps:
   args: 
   - 'run'
   - 'deploy'
-  - 'api'
+  - 'api-staging'
   - '--image'
-  - 'gcr.io/oss-automation/api'
+  - 'gcr.io/oss-automation/api-staging'
   - '--region'
   - 'us-central1'
   - '--platform'
