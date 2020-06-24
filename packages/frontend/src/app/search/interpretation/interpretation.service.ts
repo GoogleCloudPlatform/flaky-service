@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {Injectable} from '@angular/core';
-import {Filter, InterpretedInput} from '../../services/search/interfaces';
+import {Filter, Search} from '../../services/search/interfaces';
 
 // This class is responsible for determining wheter a search input can be considered as a filtering option
 @Injectable({
@@ -27,17 +27,27 @@ export class InterpretationService {
     {name: 'orderby', possibleValues: ['name', 'flakyness']},
   ];
 
+  private getValideFilter(
+    filterName: string,
+    filterValue: string
+  ): Filter | undefined {
+    const possibleFilter = this.filters.find(
+      filter =>
+        filter.name.toLowerCase() === filterName &&
+        filter.possibleValues.includes(filterValue)
+    );
+
+    if (possibleFilter) return {name: possibleFilter.name};
+    else return undefined;
+  }
+
   private sanitizeFilter(inputFilter: Filter): Filter | undefined {
     inputFilter.value = inputFilter.value.trim().toLowerCase();
     inputFilter.name = inputFilter.name.trim().toLowerCase();
 
-    const valideFilter = this.filters.find(
-      filter =>
-        filter.name.toLowerCase() === inputFilter.name &&
-        filter.possibleValues.includes(inputFilter.value)
-    );
-
-    if (valideFilter !== undefined) {
+    if (
+      this.getValideFilter(inputFilter.name, inputFilter.value) !== undefined
+    ) {
       return inputFilter;
     } else {
       return undefined;
@@ -56,7 +66,7 @@ export class InterpretationService {
   }
 
   // Parse an entire input with possibly multiple filters
-  parse(input: string): InterpretedInput {
+  parse(input: string): Search {
     const interpretedInput = {
       filters: [],
       query: '',
@@ -72,6 +82,30 @@ export class InterpretationService {
     });
 
     return interpretedInput;
+  }
+
+  parseQueryObject(queryObject: object): Search {
+    const search: Search = {query: queryObject['query'], filters: []};
+
+    Object.keys(queryObject).forEach(key => {
+      const filterName = key,
+        filterValue = queryObject[key];
+      const filter = this.getValideFilter(filterName, filterValue);
+
+      if (filter !== undefined) {
+        filter.value = filterValue;
+        search.filters.push(filter);
+      }
+    });
+    return search;
+  }
+
+  getQueryObject(option: Search): object {
+    const queryObject = {query: option.query};
+    option.filters.forEach(filter => {
+      queryObject[filter.name] = filter.value;
+    });
+    return queryObject;
   }
 }
 

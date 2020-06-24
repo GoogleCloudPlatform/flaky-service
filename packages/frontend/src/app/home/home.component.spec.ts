@@ -25,13 +25,14 @@ import {AppRoutingModule} from '../app-routing.module';
 import {Router} from '@angular/router';
 import {By} from '@angular/platform-browser';
 import {Location} from '@angular/common';
+import {Search} from '../services/search/interfaces';
 
 // Mock the inner components
 @Component({
   selector: 'app-search',
 })
 class SearchComponent {
-  @Output() searchOptionSelected = new EventEmitter<string>();
+  @Output() searchOptionSelected = new EventEmitter<Search>();
 }
 
 describe('HomeComponent', () => {
@@ -64,10 +65,31 @@ describe('HomeComponent', () => {
     const searchComponent: SearchComponent = fixture.debugElement.query(
       By.css('app-search')
     ).componentInstance;
-    const searchResult = 'result';
+    const searchResult = {query: 'query', filters: []};
     searchComponent.searchOptionSelected.emit(searchResult);
     tick();
     expect(location.path()).toContain('/search');
-    expect(location.path()).toContain(searchResult);
+    expect(location.path()).toContain(searchResult.query);
+  }));
+
+  it('should pass the right filters when redirecting to the main page', fakeAsync(() => {
+    const searchComponent: SearchComponent = fixture.debugElement.query(
+      By.css('app-search')
+    ).componentInstance;
+    const searchResult = {
+      query: 'repo',
+      filters: [{name: 'flaky', value: 'y'}],
+    };
+    searchComponent.searchOptionSelected.emit(searchResult);
+
+    tick();
+
+    let newLocation = '/search;query=' + searchResult.query;
+    searchResult.filters.forEach(
+      filter => (newLocation += ';' + filter.name + '=' + filter.value)
+    );
+
+    expect(location.path()).toEqual(newLocation);
+    expect(location.path()).toContain(searchResult.query);
   }));
 });

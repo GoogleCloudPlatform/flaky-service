@@ -26,6 +26,8 @@ limitations under the License.
     border: none;
     font-size: 1em;
     flex-grow: 2;
+    background-color: inherit;
+    max-width: 310px;
 }
 #search-input:focus {
     outline: none;

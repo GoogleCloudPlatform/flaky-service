@@ -12,9 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export interface Repository {
+export interface DefaultRepository {
   repoName: string;
   orgName: string;
+}
+
+export interface Repository extends DefaultRepository {
+  description?: string;
+  testCount?: number;
+  flaky?: boolean;
+  failing?: boolean;
 }
 
 export interface Filter {
@@ -22,7 +29,7 @@ export interface Filter {
   value?: string;
 }
 
-export interface InterpretedInput {
+export interface Search {
   filters: Filter[];
   query: string;
 }

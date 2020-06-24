@@ -52,13 +52,6 @@ describe('SearchService', () => {
       });
     });
 
-    it('should return an empty response if no target was provided', done => {
-      service.quickSearch('').subscribe(repos => {
-        expect(repos.length).toEqual(0);
-        done();
-      });
-    });
-
     it('should return an empty response if an error occurs', done => {
       // prepare the error
       mockCOMService.fetchRepositories = () => throwError('');

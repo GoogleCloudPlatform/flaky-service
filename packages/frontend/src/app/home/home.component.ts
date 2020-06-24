@@ -14,6 +14,8 @@
 
 import {Component, OnInit, NgZone} from '@angular/core';
 import {Router} from '@angular/router';
+import {Search} from '../services/search/interfaces';
+import {InterpretationService} from '../search/interpretation/interpretation.service';
 
 @Component({
   selector: 'app-home',
@@ -21,13 +23,17 @@ import {Router} from '@angular/router';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  constructor(private ngZone: NgZone, private router: Router) {}
+  constructor(
+    private ngZone: NgZone,
+    private router: Router,
+    private interpreter: InterpretationService
+  ) {}
 
   ngOnInit(): void {}
 
-  onSearchOptionSelected(option: string): void {
+  onSearchOptionSelected(option: Search): void {
     this.ngZone.run(() => {
-      this.router.navigate(['search', {query: option}]);
+      this.router.navigate(['search', this.interpreter.getQueryObject(option)]);
     });
   }
 }

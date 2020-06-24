@@ -67,6 +67,7 @@ import {HomeComponent} from './home/home.component';
 import {SearchComponent} from './search/search.component';
 import {MainComponent} from './main/main.component';
 import {SingleRepositoryComponent} from './single-repository/single-repository.component';
+import {RepoListComponent} from './main/repo-list/repo-list.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import {SingleRepositoryComponent} from './single-repository/single-repository.c
     SearchComponent,
     MainComponent,
     SingleRepositoryComponent,
+    RepoListComponent,
   ],
   imports: [
     BrowserModule,

@@ -39,6 +39,7 @@ limitations under the License.
 }
 
 mat-sidenav-container {
+    background-color: white;
     /* When the sidenav is fixed, don't constrain the height of the sidenav container.*/
     flex: 1 0 auto;
     margin-top: 56px;
