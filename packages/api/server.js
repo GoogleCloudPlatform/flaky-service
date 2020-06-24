@@ -19,6 +19,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const PostBuildHandler = require('./src/post-build.js');
 const GetBuildHandler = require('./src/get-build.js');
+const GetRepoOrgsHandler = require('./src/get-repo-orgs.js');
+
 const { Firestore } = require('@google-cloud/firestore');
 
 const cors = require('cors');
@@ -75,6 +77,8 @@ const postBuildHandler = new PostBuildHandler(app, client);
 postBuildHandler.listen();
 const getBuildHandler = new GetBuildHandler(app, client);
 getBuildHandler.listen();
+const getRepoOrgsHandler = new GetRepoOrgsHandler(app, client);
+getRepoOrgsHandler.listen();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';

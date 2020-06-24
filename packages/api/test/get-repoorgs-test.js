@@ -1,0 +1,135 @@
+
+// Copyright 2020 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+const { describe, before, after, it } = require('mocha');
+const { Firestore } = require('@google-cloud/firestore');
+const { v4: uuidv4 } = require('uuid');
+const firebaseEncode = require('../lib/firebase-encode');
+
+const assert = require('assert');
+const fetch = require('node-fetch');
+
+const data = [
+  // name, org
+  ['aaaname', 'aaa'],
+  ['aaabeta', 'aaa'], // same organization, different repo
+  ['org', 'aaaname'], // repo with same name as org
+  ['123', '456'], // test numbers
+  ['z', 'bigorg'],
+  ['za', 'bigorg'],
+  ['z9', 'bigorg'],
+  ['zZ', 'bigorg'],
+  ['UPPER', 'UPPER'],
+  ['lower', 'lower']
+];
+
+describe('Getting Repos and Orgs', () => {
+  let client;
+  before(async () => {
+    client = new Firestore({
+      projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
+    });
+    global.headCollection = 'repositories-testsuite-' + uuidv4();
+
+    for (let k = 0; k < data.length; k++) {
+      const repo = data[k];
+      const repoid = repo[1] + '/' + repo[0];
+      await client.collection(global.headCollection).doc(firebaseEncode(repoid)).set({
+        organization: repo[1],
+        name: repo[0],
+        repoId: repoid,
+        lower: {
+          organization: repo[1].toLowerCase(),
+          name: repo[0].toLowerCase(),
+          repoId: repoid.toLowerCase()
+        }
+      });
+    }
+  });
+
+  it('should respond with an empty list with random queries', async () => {
+    const resp = await fetch('http://localhost:3000/api/repo?startswith=randomquery');
+    const respText = await resp.text();
+    assert.strictEqual(JSON.parse(respText).length, 0);
+
+    const respOrg = await fetch('http://localhost:3000/api/org/randomquery');
+    const respTextOrg = await respOrg.text();
+
+    assert.strictEqual(JSON.parse(respTextOrg).length, 0);
+  });
+
+  it('should filter out duplicates', async () => {
+    const resp = await fetch('http://localhost:3000/api/repo?startswith=aaa');
+    const respText = await resp.text();
+    assert.strictEqual(JSON.parse(respText).length, 3);
+  });
+
+  it('should return all results no matter the preceding characters', async () => {
+    const resp = await fetch('http://localhost:3000/api/repo?startswith=z');
+    const respText = await resp.text();
+    assert.strictEqual(JSON.parse(respText).length, 4);
+  });
+
+  it('should not work with a name too long', async () => {
+    const resp = await fetch('http://localhost:3000/api/repo?startswith=aaanamelengthen');
+    const respText = await resp.text();
+    assert.strictEqual(JSON.parse(respText).length, 0);
+  });
+
+  it('find all repos for one org', async () => {
+    const resp = await fetch('http://localhost:3000/api/org/bigorg');
+    const respText = await resp.text();
+    assert.strictEqual(JSON.parse(respText).length, 4);
+  });
+
+  it('limit search (only on repos)', async () => {
+    const resp = await fetch('http://localhost:3000/api/repo?startswith=z&limit=3');
+    const respText = await resp.text();
+    assert.strictEqual(JSON.parse(respText).length, 3);
+  });
+
+  it('should be able to search by org/beginning of name', async () => {
+    const querySuffixes = ['bigor', 'bigorg', 'bigorg%2F', 'bigorg%2Fz'];
+    for (let t = 0; t < querySuffixes.length; t++) {
+      const resp = await fetch('http://localhost:3000/api/repo?startswith=' + querySuffixes[t]);
+      const respText = await resp.text();
+      assert.strictEqual(JSON.parse(respText).length, 4);
+    }
+  });
+  it('should return all with no parameter', async () => {
+    const resp = await fetch('http://localhost:3000/api/repo');
+    const respText = await resp.text();
+    assert.strictEqual(JSON.parse(respText).length, data.length);
+  });
+
+  it('should work with case insensitive', async () => {
+    const resp = await fetch('http://localhost:3000/api/repo?startswith=upper');
+    const respText = await resp.text();
+    assert.strictEqual(JSON.parse(respText).length, 1);
+
+    const resp2 = await fetch('http://localhost:3000/api/repo?startswith=LOWER');
+    const respText2 = await resp2.text();
+
+    assert.strictEqual(JSON.parse(respText2).length, 1);
+  });
+
+  after(async () => {
+    for (let k = 0; k < data.length; k++) {
+      const repo = data[k];
+      const repoid = repo[1] + '/' + repo[0];
+      await client.collection(global.headCollection).doc(firebaseEncode(repoid)).delete();
+    }
+  });
+});

@@ -25,7 +25,7 @@ const firebaseEncode = require('../lib/firebase-encode');
 const assert = require('assert');
 const fetch = require('node-fetch');
 
-describe('flaky express server', () => {
+describe('Posting Builds', () => {
   let client;
   before(async () => {
     client = new Firestore({
@@ -45,7 +45,7 @@ describe('flaky express server', () => {
     });
     const respJSON = await resp.json();
     assert.strictEqual(respJSON.error, 'Missing All Build Meta Data Info - url');
-    assert.strictEqual(resp.status, 400);
+    assert.strictEqual(resp.status, 500);
   });
 
   it('should send back an error code when being sent invalid test cases', async () => {
@@ -59,7 +59,7 @@ describe('flaky express server', () => {
     });
     const respJSON = await resp.json();
     assert.strictEqual(respJSON.error, 'Missing All Test Case Info');
-    assert.strictEqual(resp.status, 400);
+    assert.strictEqual(resp.status, 500);
   });
 
   it('it responds to a valid POST on the /postbuild path', async () => {

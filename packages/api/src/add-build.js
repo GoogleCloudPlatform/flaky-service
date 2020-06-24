@@ -67,6 +67,13 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   }
   repoUpdate.organization = buildInfo.organization;
   repoUpdate.url = buildInfo.url;
+  repoUpdate.repoId = decodeURIComponent(buildInfo.repoId);
+  repoUpdate.name = buildInfo.name;
+  repoUpdate.lower = {
+    repoId: decodeURIComponent(buildInfo.repoId).toLowerCase(),
+    name: buildInfo.name.toLowerCase(),
+    organization: buildInfo.organization.toLowerCase()
+  };
   await dbRepo.update(repoUpdate, { merge: true });
 
   var failures = {};

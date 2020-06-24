@@ -54,7 +54,8 @@ class PostBuildHandler {
       url: metadata.github.repositoryUrl,
       environment: this.parseEnvironment(metadata),
       buildId: firebaseEncode(metadata.github.run_id),
-      sha: metadata.github.sha
+      sha: metadata.github.sha,
+      name: metadata.github.event.repository.name
     };
 
     // validate data
@@ -108,7 +109,7 @@ class PostBuildHandler {
         await addBuild(testCases, buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
-        res.status(400).send({ error: err.message });
+        res.status(500).send({ error: err.message });
       }
     });
 
@@ -121,7 +122,7 @@ class PostBuildHandler {
         await addBuild(testCases, buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
-        res.status(400).send({ error: err.message });
+        res.status(500).send({ error: err.message });
       }
     });
   }

@@ -28,6 +28,7 @@ const buildInfo = [
   {
     repoId: encodeURIComponent('nodejs/node'),
     organization: 'nodejs',
+    name: 'node',
     buildId: '11111',
     sha: '123',
     url: 'https://github.com/nodejs/WRONG', // URL starts off wrong
@@ -48,6 +49,7 @@ const buildInfo = [
   {
     repoId: encodeURIComponent('nodejs/node'),
     organization: 'nodejs',
+    name: 'node',
     buildId: '22222', // different build
     sha: '456',
     url: 'https://github.com/nodejs/node', // URL was fixed
@@ -66,6 +68,7 @@ const buildInfo = [
   {
     repoId: encodeURIComponent('nodejs/node'),
     organization: 'nodejs',
+    name: 'node',
     buildId: '33333',
     sha: '789',
     url: 'https://github.com/nodejs/node',
@@ -218,30 +221,28 @@ describe('Add-Build', () => {
   });
 
   describe('getBuild', async () => {
-    it('Can get parameters for the build', async () => {
-      const resp = await fetch('http://localhost:3000/api/buildenv?repoid=nodejs%2Fnode');
-      const respJSON = await resp.json();
-      const sol = { organization: 'nodejs', environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
-      assert.deepStrictEqual(respJSON, sol);
-    });
-
     it('Can get limit and sort by date', async () => {
-      const resp = await fetch('http://localhost:3000/api/build?repoid=nodejs%2Fnode&limit=1');
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?limit=1');
+
       const respText = await resp.text();
       const sol = '[{"buildId": "33333","sha": "789","percentpassing":0,"successes":[],"failures":{"a%2F2":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)","a%2F5":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)"},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}}]';
 
-      const ansObj = JSON.parse(respText);
+      const ansObj = JSON.parse(respText).builds;
       delete ansObj[0].timestamp;
       assert.deepStrictEqual(ansObj, JSON.parse(sol));
+
+      const solMeta = { name: 'node', repoId: 'nodejs/node', organization: 'nodejs', lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
+
+      assert.deepStrictEqual(JSON.parse(respText).metadata, solMeta);
     });
 
     it('Can use random combinations of queries', async () => {
-      const resp = await fetch('http://localhost:3000/api/build?repoid=nodejs%2Fnode&os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
       const respText = await resp.text();
 
       const sol = '[{"buildId": "33333","sha": "789","percentpassing":0,"successes":[],"failures":{"a%2F2":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)","a%2F5":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)"},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}},{"buildId": "22222","sha": "456","percentpassing":1,"successes":["a%2F1","a%2F2"],"failures":{},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}}]';
 
-      const ansObj = JSON.parse(respText);
+      const ansObj = JSON.parse(respText).builds;
       delete ansObj[0].timestamp;
       delete ansObj[1].timestamp;
       assert.deepStrictEqual(ansObj, JSON.parse(sol));
