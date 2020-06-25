@@ -4,6 +4,11 @@ steps:
   name: 'gcr.io/cloud-builders/gcloud'
   dir: 'packages/api'
   args: ['builds','submit', '--tag', 'gcr.io/oss-automation/api-staging']
+options:
+  env: [
+    'FLAKY_DP_PROJECT=flaky-dev-development',
+    'HEAD_COLLECTION='
+  ]
 
   #deploy
 - id: 'Deploy to Cloud Run'
@@ -19,3 +24,5 @@ steps:
   - '--platform'
   - 'managed'
   - '--allow-unauthenticated'
+substitutions:
+  _FIREBASE_CLOUDRUN_PROJECT

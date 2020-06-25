@@ -27,4 +27,4 @@ steps:
   #Deploy to Firebase
 - name: 'gcr.io/oss-automation/firebase'
   dir: 'packages/frontend'
-  args: ['deploy', '--project=oss-automation', '--only=hosting']
+  args: ['deploy', '--project=$PROJECT_ID', '--only=hosting']
