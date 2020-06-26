@@ -25,7 +25,7 @@ const firebaseEncode = require('../lib/firebase-encode');
 const assert = require('assert');
 const fetch = require('node-fetch');
 
-describe('flaky express server', () => {
+describe('Posting Builds', () => {
   let client;
   before(async () => {
     client = new Firestore({
@@ -45,7 +45,7 @@ describe('flaky express server', () => {
     });
     const respJSON = await resp.json();
     assert.strictEqual(respJSON.error, 'Missing All Build Meta Data Info - url');
-    assert.strictEqual(resp.status, 400);
+    assert.strictEqual(resp.status, 500);
   });
 
   it('should send back an error code when being sent invalid test cases', async () => {
@@ -59,7 +59,7 @@ describe('flaky express server', () => {
     });
     const respJSON = await resp.json();
     assert.strictEqual(respJSON.error, 'Missing All Test Case Info');
-    assert.strictEqual(resp.status, 400);
+    assert.strictEqual(resp.status, 500);
   });
 
   it('it responds to a valid POST on the /postbuild path', async () => {
@@ -134,20 +134,21 @@ describe('flaky express server', () => {
     var parsedPayload = JSON.parse(EXAMPLE_PAYLOAD);
     var parsedPayloadRaw = JSON.parse(EXAMPLE_PAYLOAD_RAW);
     var repoIds = [firebaseEncode(parsedPayloadRaw.metadata.github.repository), firebaseEncode(parsedPayload.metadata.github.repository)];
-    const buildIds = [parsedPayload.metadata.github.sha, parsedPayloadRaw.metadata.github.sha];
+    const buildIds = [parsedPayload.metadata.github.run_id, parsedPayloadRaw.metadata.github.run_id];
     const testCases = [parsedPayload.data[0].name, parsedPayload.data[1].name];
 
     // Delete all possible documents, okay to delete document that doesnt exist
-    deletePaths.forEach(async (deletePath) => {
-      repoIds.forEach(async (repoId) => {
-        buildIds.forEach(async (buildId) => {
-          testCases.forEach(async (testCase) => {
+    for (let a = 0; a < deletePaths.length; a++) {
+      for (let b = 0; b < buildIds.length; b++) {
+        for (let c = 0; c < testCases.length; c++) {
+          for (let d = 0; d < repoIds.length; d++) {
+            const { deletePath, buildId, testCase, repoId } = { deletePath: deletePaths[a], buildId: buildIds[b], testCase: testCases[c], repoId: repoIds[d] };
             const deletePathUse = deletePath.replace('{testcase}', firebaseEncode(testCase)).replace('{buildid}', buildId);
             await client.collection(global.headCollection).doc(repoId + '/' + deletePathUse).delete();
-          });
-        });
-      });
-    });
+          }
+        }
+      }
+    }
 
     await client.collection(global.headCollection).doc(repoIds[0]).delete();
     await client.collection(global.headCollection).doc(repoIds[1]).delete();

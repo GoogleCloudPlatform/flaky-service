@@ -16,9 +16,12 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {map, filter, debounceTime, switchMap} from 'rxjs/operators';
 import {InterpretationService} from './interpretation/interpretation.service';
-import {Repository} from '../services/search/interfaces';
+import {
+  DefaultRepository,
+  Repository,
+  Search,
+} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
-export {Filter, InterpretedInput} from '../services/search/interfaces';
 
 @Component({
   selector: 'app-search',
@@ -26,11 +29,14 @@ export {Filter, InterpretedInput} from '../services/search/interfaces';
   styleUrls: ['./search.component.css'],
 })
 export class SearchComponent implements OnInit {
-  @Output() searchOptionSelected = new EventEmitter<string>();
+  @Output() searchOptionSelected = new EventEmitter<Search>();
 
   inputControl = new FormControl();
   options: Repository[] = [];
-  defaultOption: Repository = {repoName: 'See all repositories', orgName: ''};
+  defaultOption: DefaultRepository = {
+    repoName: 'See all repositories',
+    orgName: '',
+  };
   filteredOptions: Repository[];
   debounceTime = 200;
 
@@ -65,13 +71,14 @@ export class SearchComponent implements OnInit {
   }
 
   onEnterKeyUp(option: string): void {
-    this.searchOptionSelected.emit(option);
+    this.searchOptionSelected.emit(this.interpreter.parse(option));
   }
 
   onSearchOptionSelected(option: string): void {
+    this.inputControl.setValue(option);
     const isADefaultOption = option === this.defaultOption.repoName;
     if (isADefaultOption) this.inputControl.setValue('');
-    else this.searchOptionSelected.emit(option);
+    else this.searchOptionSelected.emit(this.interpreter.parse(option));
   }
 }
 

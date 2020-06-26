@@ -39,7 +39,11 @@ describe('SearchComponent', () => {
 
   // Mock services
   const mockSearchService = {quickSearch: () => of(mockRepositories)};
-  const mockInterpretationService = {};
+  const mockInterpretationService = {
+    parse: input => {
+      return {query: input, filters: []};
+    },
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -65,7 +69,7 @@ describe('SearchComponent', () => {
   });
 
   it('should emit the selected option when a repository is selected', done => {
-    spyOn(component.searchOptionSelected, 'emit');
+    const emitMethod = spyOn(component.searchOptionSelected, 'emit');
     const repoName = mockRepositories[0].repoName;
 
     loader
@@ -77,8 +81,12 @@ describe('SearchComponent', () => {
             setTimeout(async () => {
               // select the repository
               await input.selectOption({text: new RegExp(repoName)});
-              expect(component.searchOptionSelected.emit).toHaveBeenCalledWith(
+
+              expect(emitMethod.calls.mostRecent().args[0].query).toEqual(
                 repoName
+              );
+              expect(component.searchOptionSelected.emit).toHaveBeenCalledTimes(
+                1
               );
               done();
             }, component.debounceTime + 200);
@@ -95,11 +103,12 @@ describe('SearchComponent', () => {
     const inputElement = fixture.debugElement.query(By.css('input'));
 
     // hit enter
-    spyOn(component.searchOptionSelected, 'emit');
+    const emitMethod = spyOn(component.searchOptionSelected, 'emit');
     inputElement.triggerEventHandler('keyup.enter', {});
 
-    expect(component.searchOptionSelected.emit).toHaveBeenCalledWith(
+    expect(emitMethod.calls.mostRecent().args[0].query).toEqual(
       mockRepositories[0].repoName
     );
+    expect(component.searchOptionSelected.emit).toHaveBeenCalledTimes(1);
   });
 });

@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, NgZone} from '@angular/core';
+import {Search} from '../services/search/interfaces';
+import {SearchService} from '../services/search/search.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {InterpretationService} from '../search/interpretation/interpretation.service';
 
 @Component({
   selector: 'app-main',
@@ -20,7 +24,25 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./main.component.css'],
 })
 export class MainComponent implements OnInit {
-  constructor() {}
+  constructor(
+    public searchService: SearchService,
+    private route: ActivatedRoute,
+    private interpreter: InterpretationService,
+    private ngZone: NgZone,
+    private router: Router
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.searchService
+        .search(this.interpreter.parseQueryObject(params))
+        .subscribe();
+    });
+  }
+
+  onSearchOptionSelected(option: Search): void {
+    this.ngZone.run(() => {
+      this.router.navigate(['search', this.interpreter.getQueryObject(option)]);
+    });
+  }
 }

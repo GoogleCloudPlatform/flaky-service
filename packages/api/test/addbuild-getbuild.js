@@ -28,6 +28,7 @@ const buildInfo = [
   {
     repoId: encodeURIComponent('nodejs/node'),
     organization: 'nodejs',
+    name: 'node',
     buildId: '11111',
     sha: '123',
     url: 'https://github.com/nodejs/WRONG', // URL starts off wrong
@@ -48,6 +49,7 @@ const buildInfo = [
   {
     repoId: encodeURIComponent('nodejs/node'),
     organization: 'nodejs',
+    name: 'node',
     buildId: '22222', // different build
     sha: '456',
     url: 'https://github.com/nodejs/node', // URL was fixed
@@ -66,6 +68,7 @@ const buildInfo = [
   {
     repoId: encodeURIComponent('nodejs/node'),
     organization: 'nodejs',
+    name: 'node',
     buildId: '33333',
     sha: '789',
     url: 'https://github.com/nodejs/node',
@@ -141,7 +144,8 @@ describe('Add-Build', () => {
             tag: ['abc', 'xyz']
           },
           percentpassing: 1.0,
-          builds: ['11111', '22222']
+          builds: ['11111', '22222'],
+          flaky: 0
         },
         {
           name: 'a/2',
@@ -152,7 +156,8 @@ describe('Add-Build', () => {
             tag: ['abc', 'xyz']
           },
           percentpassing: 1.0 / 3.0,
-          builds: ['11111', '22222', '33333']
+          builds: ['11111', '22222', '33333'],
+          flaky: 0
         },
         {
           name: 'a/3',
@@ -163,7 +168,8 @@ describe('Add-Build', () => {
             tag: ['abc']
           },
           percentpassing: 1,
-          builds: ['11111']
+          builds: ['11111'],
+          flaky: 0
         },
         {
           name: 'a/4',
@@ -174,7 +180,8 @@ describe('Add-Build', () => {
             tag: ['abc']
           },
           percentpassing: 0,
-          builds: ['11111']
+          builds: ['11111'],
+          flaky: 0
         },
         {
           name: 'a/5',
@@ -185,7 +192,8 @@ describe('Add-Build', () => {
             tag: ['xyz']
           },
           percentpassing: 0,
-          builds: ['33333']
+          builds: ['33333'],
+          flaky: 0
         }
       ];
 
@@ -218,30 +226,28 @@ describe('Add-Build', () => {
   });
 
   describe('getBuild', async () => {
-    it('Can get parameters for the build', async () => {
-      const resp = await fetch('http://localhost:3000/api/buildenv/nodejs%2Fnode');
-      const respJSON = await resp.json();
-      const sol = { organization: 'nodejs', environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
-      assert.deepStrictEqual(respJSON, sol);
-    });
-
     it('Can get limit and sort by date', async () => {
-      const resp = await fetch('http://localhost:3000/api/build/nodejs%2Fnode?limit=1');
-      const respText = await resp.text();
-      const sol = '[{"buildId": "33333","sha": "789","percentpassing":0,"successes":[],"failures":{"a%2F2":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)","a%2F5":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)"},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}}]';
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?limit=1');
 
-      const ansObj = JSON.parse(respText);
+      const respText = await resp.text();
+      const sol = '[{"buildId": "33333","sha": "789","flaky": 0, "percentpassing":0,"successes":[],"failures":{"a%2F2":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)","a%2F5":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)"},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}}]';
+
+      const ansObj = JSON.parse(respText).builds;
       delete ansObj[0].timestamp;
       assert.deepStrictEqual(ansObj, JSON.parse(sol));
+
+      const solMeta = { name: 'node', repoId: 'nodejs/node', organization: 'nodejs', numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
+
+      assert.deepStrictEqual(JSON.parse(respText).metadata, solMeta);
     });
 
     it('Can use random combinations of queries', async () => {
-      const resp = await fetch('http://localhost:3000/api/build/nodejs%2Fnode?os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
       const respText = await resp.text();
 
-      const sol = '[{"buildId": "33333","sha": "789","percentpassing":0,"successes":[],"failures":{"a%2F2":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)","a%2F5":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)"},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}},{"buildId": "22222","sha": "456","percentpassing":1,"successes":["a%2F1","a%2F2"],"failures":{},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}}]';
+      const sol = '[{"buildId": "33333","sha": "789","flaky": 0, "percentpassing":0,"successes":[],"failures":{"a%2F2":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)","a%2F5":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)"},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}},{"buildId": "22222","sha": "456","flaky": 0,"percentpassing":1,"successes":["a%2F1","a%2F2"],"failures":{},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}}]';
 
-      const ansObj = JSON.parse(respText);
+      const ansObj = JSON.parse(respText).builds;
       delete ansObj[0].timestamp;
       delete ansObj[1].timestamp;
       assert.deepStrictEqual(ansObj, JSON.parse(sol));
@@ -258,14 +264,15 @@ describe('Add-Build', () => {
     const buildIds = ['11111', '22222', '33333'];
     const testCases = ['a/1', 'a/2', 'a/3', 'a/4', 'a/5', 'a/6'];
     // Delete all possible documents, okay to delete document that doesnt exist
-    deletePaths.forEach(async (deletePath) => {
-      buildIds.forEach(async (buildId) => {
-        testCases.forEach(async (testCase) => {
+    for (let a = 0; a < deletePaths.length; a++) {
+      for (let b = 0; b < buildIds.length; b++) {
+        for (let c = 0; c < testCases.length; c++) {
+          const { deletePath, buildId, testCase } = { deletePath: deletePaths[a], buildId: buildIds[b], testCase: testCases[c] };
           const deletePathUse = deletePath.replace('{testcase}', encodeURIComponent(testCase)).replace('{buildid}', buildId);
           await client.collection(global.headCollection).doc(buildInfo[0].repoId + '/' + deletePathUse).delete();
-        });
-      });
-    });
+        }
+      }
+    }
 
     await client.collection(global.headCollection).doc(buildInfo[0].repoId).delete();
   });

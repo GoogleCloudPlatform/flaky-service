@@ -1,0 +1,61 @@
+<!--
+Copyright 2020 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<div id="repos-container">
+    <div
+        *ngFor="let repo of renderedRepositories"
+        class="repo"
+        [class.flaky-repo]="!repo.failing && repo.flaky"
+        [class.failing-repo]="repo.failing">
+
+        <div class="details">
+            <!-- NAMES -->
+            <div class="names">
+                <a *ngIf="repo.orgName" routerLink=".">{{repo.orgName}}</a>
+                <span *ngIf="repo.orgName">/</span>
+                <a routerLink=".">{{repo.repoName}}</a>
+            </div>
+    
+            <!-- DESCRIPTION -->
+            <div class="description">{{repo.description}}</div>
+        </div>
+        
+        <!-- INDICATORS -->
+        <div class="indicators">
+            <table>
+                <tr>
+                    <td>
+                        <span class="test-count">{{repo.testCount}}</span>
+                        <span class="test-label">&nbsp;tests</span>
+                    </td>
+                    <td class="last-update">
+                        <span class="last-update-label">last update on&nbsp;</span>
+                        <span class="last-update-date">May 19, 2020</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    
+    </div>
+
+    <!-- PAGINATOR-->
+    <mat-paginator
+        [length]="_repositories.length"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        [pageIndex]="pageIndex"
+        (page)="updatePage($event)">
+    </mat-paginator>
+</div>

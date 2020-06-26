@@ -14,6 +14,8 @@
 
 // class to receive POSTS with build information
 
+const firebaseEncode = require('../lib/firebase-encode');
+
 class GetBuildHandler {
   constructor (app, client) {
     this.app = app;
@@ -21,26 +23,20 @@ class GetBuildHandler {
   }
 
   listen () {
-    // return the different environments for a build - all parameters and possible values for next query
-    this.app.get('/api/buildenv/:repoid', async (req, res, next) => {
-      try {
-        const results = await this.client.collection(global.headCollection).doc(encodeURIComponent(req.params.repoid)).get();
-        res.send(results.data());
-      } catch (err) {
-        res.status(400).send({ error: err });
-      }
-    });
-
     // return the recent builds based on parameters
-    this.app.get('/api/build/:repoid', async (req, res, next) => {
+    this.app.get('/api/repo/:orgname/:reponame', async (req, res, next) => {
       try {
+        const repoid = req.params.orgname + '/' + req.params.reponame;
         let limit = 100;
-        let starterQuery = this.client.collection(global.headCollection).doc(encodeURIComponent(req.params.repoid)).collection('builds');
+        let starterQuery = this.client.collection(global.headCollection).doc(firebaseEncode(repoid)).collection('builds');
+
         for (const prop in req.query) {
           if (prop === 'limit') {
             limit = parseInt(req.query[prop]);
           } else if (prop === 'matrix') {
             starterQuery = starterQuery.where('environment.' + prop, '==', JSON.parse(req.query[prop]));
+          } else if (prop === 'repoid') {
+            continue;
           } else {
             starterQuery = starterQuery.where('environment.' + prop, '==', req.query[prop]);
           }
@@ -48,9 +44,12 @@ class GetBuildHandler {
         const snapshot = await starterQuery.orderBy('timestamp', 'desc').limit(limit).get();
         const resp = [];
         snapshot.forEach(doc => resp.push(doc.data()));
-        res.send(resp);
+
+        var metadata = await this.client.collection(global.headCollection).doc(firebaseEncode(repoid)).get();
+
+        res.send({ metadata: metadata.data(), builds: resp });
       } catch (err) {
-        res.status(400).send({ error: err.message, stack: err.stack, name: err.name });
+        res.status(500).send({ error: err.message, stack: err.stack, name: err.name });
       }
     });
   }

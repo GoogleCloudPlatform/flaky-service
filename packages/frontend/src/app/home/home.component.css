@@ -14,14 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#toolbar {
-    display: flex;
-    color: #0075FF;
-    justify-content: center;
-    border-bottom: 1px solid #0075FF;
-    background-color: white;
-}
-
 #presentation-text, #introduction-text, #introduction-btn, #search-bar {
     margin-top: 10px;
     width: 100%;

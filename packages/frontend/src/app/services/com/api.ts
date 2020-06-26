@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {environment} from '../../../environments/environment';
+
 interface ApiLinks {
   get: {
     repositories: string;

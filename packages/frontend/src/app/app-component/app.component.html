@@ -14,5 +14,31 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<!-- The routed views render in the <router-outlet>-->
-  <router-outlet></router-outlet>
+<div id="main-container">
+  <!--HEADER-->
+  <mat-toolbar id="header">
+    <button mat-button (click)="snav.toggle()">
+      <mat-icon aria-hidden="false" aria-label="menu">menu</mat-icon>
+    </button>
+    <span id="title">{{ title }}</span>
+    <span></span>
+  </mat-toolbar>
+
+
+  <!-- SIDE NAVBAR -->
+  <mat-sidenav-container>
+
+    <mat-sidenav #snav mode="over" fixedTopGap="56">
+      <mat-nav-list>
+        <a mat-list-item routerLink=".">Login with GitHub</a>
+        <a mat-list-item routerLink=".">Help</a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <!-- The routed views render in the <router-outlet>-->
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
+</div>
