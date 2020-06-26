@@ -3,12 +3,7 @@ steps:
 - id: 'Build Container Image'
   name: 'gcr.io/cloud-builders/gcloud'
   dir: 'packages/api'
-  args: ['builds','submit', '--tag', 'gcr.io/oss-automation/api-staging']
-options:
-  env: [
-    'FLAKY_DP_PROJECT=flaky-dev-development',
-    'HEAD_COLLECTION='
-  ]
+  args: ['builds','submit', '--tag', 'gcr.io/$PROJECT_ID/api-staging']
 
   #deploy
 - id: 'Deploy to Cloud Run'
@@ -18,11 +13,9 @@ options:
   - 'deploy'
   - 'api-staging'
   - '--image'
-  - 'gcr.io/oss-automation/api-staging'
+  - 'gcr.io/$PROJECT_ID/api-staging'
   - '--region'
   - 'us-central1'
   - '--platform'
   - 'managed'
   - '--allow-unauthenticated'
-substitutions:
-  _FIREBASE_CLOUDRUN_PROJECT
