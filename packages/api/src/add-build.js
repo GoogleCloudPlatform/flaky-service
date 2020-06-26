@@ -19,31 +19,14 @@
 * returns analytics object and adds such data to database
 */
 const { Firestore } = require('@google-cloud/firestore');
+const { buildPassingPercent, TestCaseAnalytics } = require('../lib/analytics.js');
 
-// ANALYTICS FUNCTIONS
-
-/*
-@param snapshot a snapshot with the results of a firestore query
-@returns a floating point number representing the percent passing, or -1 if no test cases
-*/
-function testCasePassingPercent (snapshot) {
-  var successCnt = 0;
-  var total = 0;
-  snapshot.forEach((doc) => {
-    successCnt += doc.data().status === 'OK' ? 1 : 0;
-    total += 1;
+function listifySnapshot (snapshot) {
+  const results = [];
+  snapshot.forEach(doc => {
+    results.push(doc.data());
   });
-  return (total > 0) ? successCnt / parseFloat(total) : -1;
-}
-
-/*
-@param successes list of each success
-@param failures Object with attributes for each failure
-@returns a floating point number representing the percent passing , or -1 if no builds
-*/
-function buildPassingPercent (successes, failures) {
-  var total = successes.length + Object.keys(failures).length;
-  return (total > 0) ? successes.length / parseFloat(total) : -1;
+  return results;
 }
 
 // Main Functionality
@@ -60,6 +43,15 @@ function buildPassingPercent (successes, failures) {
 async function addBuild (testCases, buildInfo, client, collectionName = 'repositories-fake') {
   var dbRepo = client.collection(collectionName).doc(buildInfo.repoId);
 
+  // if this build is not the most recent build, than update test cases based on ALL repos, update build info based on RPREVIOUS builds, and ignore repo
+  let mostRecent = true;
+  let prevMostRecent = await dbRepo.collection('builds').orderBy('timestamp', 'desc').limit(1).get();
+  prevMostRecent = listifySnapshot(prevMostRecent);
+  if (prevMostRecent.length > 0 && prevMostRecent[0].timestamp.toDate() > buildInfo.timestamp) {
+    // if there exists a build with a later date, that not the most recent
+    mostRecent = false;
+  }
+
   // if repo does not exist, add information including environment variables and possibilities
   const repoUpdate = { };
   for (const prop in buildInfo.environment) {
@@ -74,10 +66,20 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     name: buildInfo.name.toLowerCase(),
     organization: buildInfo.organization.toLowerCase()
   };
+  if (mostRecent) {
+    repoUpdate.numtestcases = testCases.length;
+    repoUpdate.numfails = 0;
+    testCases.forEach(tc => {
+      repoUpdate.numfails += (tc.successful) ? 0 : 1;
+    });
+  }
   await dbRepo.update(repoUpdate, { merge: true });
 
   var failures = {};
   var successes = [];
+
+  let flakyBuild = 0; // if a flaky test has failed this time
+  let flakyRepo = 0; // if any test is marked as flaky (could have been successes for last 5 runs)
 
   // For the test cases
   for (let k = 0; k < testCases.length; k++) {
@@ -101,15 +103,28 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     );
 
     // 2: Query an appropriate amount of test runs, for now 100 most recent
-    var snapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp').limit(100).get();
+    const snapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp', 'desc').limit(100).get();
+    let buildSnapshot = snapshot;
+    if (!mostRecent) {
+      const dateUse = buildInfo.timestamp;
+      // dateUse.setHours(dateUse.getHours() - 2);
+      buildSnapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp', 'desc').startAt(dateUse).limit(100).get();
+    }
+    const testCaseAnalytics = new TestCaseAnalytics(testCase, snapshot); // test case metrics should look at everything
+    const buildtestCaseAnalytics = new TestCaseAnalytics(testCase, buildSnapshot); // builds should only look previously
 
     // 3: Compute the passing percent and write that back as well as updated environment variables
     const updateObj = { };
     for (const prop in buildInfo.environment) {
       updateObj['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
     }
-    updateObj.percentpassing = testCasePassingPercent(snapshot);
+    updateObj.percentpassing = testCaseAnalytics.computePassingPercent();
+    updateObj.flaky = testCaseAnalytics.computeIsFlaky();
     await dbRepo.collection('tests').doc(testCase.encodedName).update(updateObj, { merge: true });
+
+    // update information for flakybuild and flakyrepo;
+    flakyBuild = (buildtestCaseAnalytics.computeIsFlaky() && !testCase.successful) ? 1 + flakyBuild : flakyBuild;
+    flakyRepo = (updateObj.flaky) ? 1 + flakyRepo : flakyRepo;
   }
 
   // For the Builds
@@ -120,8 +135,14 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     successes: successes,
     failures: failures,
     sha: decodeURIComponent(buildInfo.sha),
-    buildId: decodeURIComponent(buildInfo.buildId)
+    buildId: decodeURIComponent(buildInfo.buildId),
+    flaky: flakyBuild
   });
+
+  // lastly update whether the repo is flaky
+  // must update repo information in two steps to first make sure it is there before making queries on it which affect this field
+
+  await dbRepo.update({ flaky: flakyRepo }, { merge: true });
 }
 
 module.exports = addBuild;
