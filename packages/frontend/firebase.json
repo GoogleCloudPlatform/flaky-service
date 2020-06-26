@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "flaky-dev-staging",
+    "site": "flaky-dashboard",
     "public": "dist/flaky-dashboard",
     "ignore": [
       "firebase.json",
@@ -10,7 +10,7 @@
     "rewrites": [ {
       "source" : "/api/**",
       "run" : {
-        "serviceId" : "api-staging",
+        "serviceId" : "api",
         "region": "us-central1"
         }
       }, {
@@ -19,7 +19,7 @@
       }, {
       "source": "/api",
       "run": {
-        "serviceId": "api-staging",  
+        "serviceId": "api",  
         "region": "us-central1"     
         }
       }],

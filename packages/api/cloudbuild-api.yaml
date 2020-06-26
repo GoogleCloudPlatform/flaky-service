@@ -3,7 +3,7 @@ steps:
 - id: 'Build Container Image'
   name: 'gcr.io/cloud-builders/gcloud'
   dir: 'packages/api'
-  args: ['builds','submit', '--tag', 'gcr.io/$PROJECT_ID/api-staging']
+  args: ['builds','submit', '--tag', 'gcr.io/$PROJECT_ID/api']
 
   #deploy
 - id: 'Deploy to Cloud Run'
@@ -11,9 +11,9 @@ steps:
   args: 
   - 'run'
   - 'deploy'
-  - 'api-staging'
+  - 'api'
   - '--image'
-  - 'gcr.io/$PROJECT_ID/api-staging'
+  - 'gcr.io/$PROJECT_ID/api'
   - '--region'
   - 'us-central1'
   - '--platform'

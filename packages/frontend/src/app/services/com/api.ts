@@ -18,7 +18,7 @@ interface ApiLinks {
   };
 }
 
-const apiBaseLink = window.location.origin + '/api/';
+const apiBaseLink = environment.baseUrl + '/api/';
 export const apiLinks: ApiLinks = {
   get: {
     repositories: apiBaseLink + 'repos',
