@@ -17,15 +17,15 @@ limitations under the License.
     <div
         *ngFor="let repo of renderedRepositories"
         class="repo"
-        [class.flaky-repo]="!repo.failing && repo.flaky"
-        [class.failing-repo]="repo.failing">
+        [class.flaky-repo]="!repo.numfails && repo.flaky"
+        [class.failing-repo]="repo.numfails">
 
         <div class="details">
             <!-- NAMES -->
             <div class="names">
-                <a *ngIf="repo.orgName" routerLink=".">{{repo.orgName}}</a>
-                <span *ngIf="repo.orgName">/</span>
-                <a routerLink=".">{{repo.repoName}}</a>
+                <a *ngIf="repo.organization" routerLink=".">{{repo.organization}}</a>
+                <span *ngIf="repo.organization">/</span>
+                <a href="{{repo.url}}">{{repo.name}}</a>
             </div>
     
             <!-- DESCRIPTION -->
@@ -37,7 +37,7 @@ limitations under the License.
             <table>
                 <tr>
                     <td>
-                        <span class="test-count">{{repo.testCount}}</span>
+                        <span class="test-count">{{repo.numtestcases}}</span>
                         <span class="test-label">&nbsp;tests</span>
                     </td>
                     <td class="last-update">
@@ -52,6 +52,7 @@ limitations under the License.
 
     <!-- PAGINATOR-->
     <mat-paginator
+        #paginator
         [length]="_repositories.length"
         [pageSize]="pageSize"
         [pageSizeOptions]="[10, 25, 50, 100]"

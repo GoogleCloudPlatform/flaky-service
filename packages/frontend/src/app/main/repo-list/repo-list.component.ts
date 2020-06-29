@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit, Input} from '@angular/core';
-import {PageEvent} from '@angular/material/paginator';
+import {Component, OnInit, Input, ViewChild} from '@angular/core';
+import {PageEvent, MatPaginator} from '@angular/material/paginator';
 import {Repository} from 'src/app/services/search/interfaces';
 
 @Component({
@@ -22,10 +22,13 @@ import {Repository} from 'src/app/services/search/interfaces';
   styleUrls: ['./repo-list.component.css'],
 })
 export class RepoListComponent implements OnInit {
+  @ViewChild('paginator') paginator: MatPaginator;
+
   _repositories: Repository[] = [];
   @Input() set repositories(value: Repository[]) {
     this._repositories = value;
     this.updatePage();
+    this.paginator?.firstPage();
   }
 
   renderedRepositories: Repository[] = [];
@@ -42,6 +45,11 @@ export class RepoListComponent implements OnInit {
       : this.pageIndex * this.pageSize;
     const endIndex: number =
       startIndex + (page ? page.pageSize : this.pageSize);
+
+    if (page) {
+      this.pageIndex = page.pageIndex;
+      this.pageSize = page.pageSize;
+    }
     this.renderedRepositories = this._repositories.slice(startIndex, endIndex);
   }
 }

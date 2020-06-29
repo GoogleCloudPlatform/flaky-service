@@ -16,7 +16,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {apiLinks} from './api';
 import {Observable} from 'rxjs';
-import {ApiRepositories, Search} from '../search/interfaces';
+import {Search, Repository} from '../search/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -24,10 +24,10 @@ import {ApiRepositories, Search} from '../search/interfaces';
 export class COMService {
   constructor(private http: HttpClient) {}
 
-  public fetchRepositories(search: Search): Observable<ApiRepositories> {
-    const params: HttpParams = new HttpParams().set('query', search.query);
+  public fetchRepositories(search: Search): Observable<Repository[]> {
+    const params: HttpParams = new HttpParams().set('startswith', search.query);
     search.filters.forEach(filter => params.set(filter.name, filter.value));
-    return this.http.get<ApiRepositories>(apiLinks.get.repositories, {
+    return this.http.get<Repository[]>(apiLinks.get.repositories, {
       params: params,
     });
   }

@@ -23,6 +23,6 @@ interface ApiLinks {
 const apiBaseLink = environment.baseUrl + '/api/';
 export const apiLinks: ApiLinks = {
   get: {
-    repositories: apiBaseLink + 'repos',
+    repositories: apiBaseLink + 'repo',
   },
 };

@@ -15,7 +15,7 @@
 import {Component, OnInit, NgZone} from '@angular/core';
 import {Router} from '@angular/router';
 import {Search} from '../services/search/interfaces';
-import {InterpretationService} from '../search/interpretation/interpretation.service';
+import {InterpretationService} from '../services/interpretation/interpretation.service';
 
 @Component({
   selector: 'app-home',

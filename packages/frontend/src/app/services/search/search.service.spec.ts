@@ -15,14 +15,17 @@
 import {TestBed} from '@angular/core/testing';
 import {SearchService} from './search.service';
 import {COMService} from '../com/com.service';
-import {ApiRepositories} from './interfaces';
+import {Repository} from './interfaces';
 import {of, throwError} from 'rxjs';
 
 describe('SearchService', () => {
   let service: SearchService;
 
   // Mock sub-services
-  const repositories: ApiRepositories = {repoNames: ['repo1', 'repo2']};
+  const repositories: Repository[] = [
+    {name: 'repo1', organization: ''},
+    {name: 'repo2', organization: ''},
+  ];
   const mockCOMService = {
     fetchRepositories: () => of(repositories),
   };
@@ -43,10 +46,10 @@ describe('SearchService', () => {
     it('should return the fetched repositories', done => {
       const targetRepo = 'repo';
       service.quickSearch(targetRepo).subscribe(repos => {
-        expect(repos.length).toEqual(repositories.repoNames.length);
+        expect(repos.length).toEqual(repositories.length);
 
         repos.forEach((repo, index) => {
-          expect(repo.repoName).toEqual(repositories.repoNames[index]);
+          expect(repo.name).toEqual(repositories[index].name);
         });
         done();
       });

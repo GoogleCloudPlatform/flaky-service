@@ -27,17 +27,17 @@ limitations under the License.
         (keyup.enter)="onEnterKeyUp(searchInput.value)">
 
     <mat-autocomplete #auto="matAutocomplete"
-      (optionSelected)='onSearchOptionSelected($event.option.value.repoName?$event.option.value.repoName:$event.option.value.orgName)'>
+      (optionSelected)='onSearchOptionSelected($event.option.value.name?$event.option.value.name:$event.option.value.organization)'>
         <mat-option *ngFor="let option of filteredOptions" [value]="option">
           <!--ORGANISATION NAME-->
-            <span class="org-name" *ngIf="option.orgName">{{option.orgName}}</span>
-            <span *ngIf="option.orgName">/</span>
+            <span class="org-name" *ngIf="option.organization">{{option.organization}}</span>
+            <span *ngIf="option.organization">/</span>
 
           <!--REPOSITORY NAME-->
-          <span class="repo-name">{{option.repoName}}</span>
+          <span class="repo-name">{{option.name}}</span>
           
           <!--REPOSITORY DESCRIPTION-->
-          <span class="repo-description">App that does something awesome</span>
+          <span class="repo-description" *ngIf="option.description">{{option.description}}</span>
         </mat-option>
       </mat-autocomplete>
 </div>

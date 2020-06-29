@@ -13,15 +13,17 @@
 // limitations under the License.
 
 export interface DefaultRepository {
-  repoName: string;
-  orgName: string;
+  name: string;
+  organization: string;
 }
 
 export interface Repository extends DefaultRepository {
   description?: string;
-  testCount?: number;
-  flaky?: boolean;
-  failing?: boolean;
+  flaky?: number;
+  numfails?: number;
+  repoId?: string;
+  numtestcases?: number;
+  url?: string;
 }
 
 export interface Filter {
@@ -32,9 +34,4 @@ export interface Filter {
 export interface Search {
   filters: Filter[];
   query: string;
-}
-
-// TODO: Temporary format. The com protocol repository format will be used intead.
-export interface ApiRepositories {
-  repoNames: string[];
 }

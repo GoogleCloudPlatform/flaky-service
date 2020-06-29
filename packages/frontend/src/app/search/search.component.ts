@@ -15,7 +15,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {map, filter, debounceTime, switchMap} from 'rxjs/operators';
-import {InterpretationService} from './interpretation/interpretation.service';
+import {InterpretationService} from '../services/interpretation/interpretation.service';
 import {
   DefaultRepository,
   Repository,
@@ -34,8 +34,8 @@ export class SearchComponent implements OnInit {
   inputControl = new FormControl();
   options: Repository[] = [];
   defaultOption: DefaultRepository = {
-    repoName: 'See all repositories',
-    orgName: '',
+    name: 'See all repositories',
+    organization: '',
   };
   filteredOptions: Repository[];
   debounceTime = 200;
@@ -65,8 +65,8 @@ export class SearchComponent implements OnInit {
   }
 
   private updateOptions(value: string): string {
-    if (!value) this.filteredOptions = [this.defaultOption];
-    else if (value.toString().includes(' ')) this.filteredOptions = [];
+    if (!value || (value && value.toString().includes(' ')))
+      this.filteredOptions = [this.defaultOption];
     return value;
   }
 
@@ -76,7 +76,7 @@ export class SearchComponent implements OnInit {
 
   onSearchOptionSelected(option: string): void {
     this.inputControl.setValue(option);
-    const isADefaultOption = option === this.defaultOption.repoName;
+    const isADefaultOption = option === this.defaultOption.name;
     if (isADefaultOption) this.inputControl.setValue('');
     else this.searchOptionSelected.emit(this.interpreter.parse(option));
   }

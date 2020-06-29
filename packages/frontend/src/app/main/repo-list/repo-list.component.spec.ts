@@ -13,13 +13,28 @@
 // limitations under the License.
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MatPaginatorModule} from '@angular/material/paginator';
+import {
+  MatPaginatorModule,
+  MatPaginator,
+  PageEvent,
+} from '@angular/material/paginator';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RepoListComponent} from './repo-list.component';
+import {Repository} from 'src/app/services/search/interfaces';
 
 describe('RepoListComponent', () => {
   let component: RepoListComponent;
   let fixture: ComponentFixture<RepoListComponent>;
+
+  const mockRepositories: Repository[] = [
+    {
+      name: '',
+      organization: '',
+      flaky: 0,
+      numfails: 0,
+      numtestcases: 10,
+    },
+  ];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -31,10 +46,41 @@ describe('RepoListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RepoListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture.autoDetectChanges(true);
+    component.paginator = {
+      firstPage: () => {
+        component.updatePage({
+          pageIndex: 0,
+          pageSize: component.pageSize,
+        } as PageEvent);
+      },
+    } as MatPaginator;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should update the rendered pages on input change', () => {
+    component.pageIndex = 1;
+    const expectedPageSize: number = component.pageSize;
+
+    component.repositories = mockRepositories;
+
+    expect(component._repositories).toEqual(mockRepositories);
+    // reset the index
+    expect(component.pageIndex).toEqual(0);
+    // didn't change the page size
+    expect(component.pageSize).toEqual(expectedPageSize);
+  });
+
+  it('should not return to the first page when the paginator is not ready', () => {
+    const expectedPageIndex = 1;
+    component.paginator = undefined;
+    component.pageIndex = expectedPageIndex;
+
+    component.repositories = mockRepositories;
+
+    expect(component.pageIndex).toEqual(expectedPageIndex);
   });
 });
