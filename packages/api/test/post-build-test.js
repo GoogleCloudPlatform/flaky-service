@@ -43,9 +43,7 @@ describe('Posting Builds', () => {
       body: JSON.stringify(botchedPayload),
       headers: { 'Content-Type': 'application/json' }
     });
-    const respJSON = await resp.json();
-    assert.strictEqual(respJSON.error, 'Missing All Build Meta Data Info - url');
-    assert.strictEqual(resp.status, 500);
+    assert.strictEqual(resp.status, 400);
   });
 
   it('should send back an error code when being sent invalid test cases', async () => {
@@ -57,9 +55,7 @@ describe('Posting Builds', () => {
       body: JSON.stringify(botchedPayload),
       headers: { 'Content-Type': 'application/json' }
     });
-    const respJSON = await resp.json();
-    assert.strictEqual(respJSON.error, 'Missing All Test Case Info');
-    assert.strictEqual(resp.status, 500);
+    assert.strictEqual(resp.status, 400);
   });
 
   it('it responds to a valid POST on the /postbuild path', async () => {

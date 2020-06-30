@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 
 // class to receive POSTS with build information
+const { InvalidParameterError, handleError } = require('../lib/errors');
 
 class GetRepoOrgsHandler {
   constructor (app, client) {
@@ -44,6 +45,9 @@ class GetRepoOrgsHandler {
     // return the different environments for a build - all parameters and possible values for next query
     this.app.get('/api/repo', async (req, res, next) => {
       try {
+        if (req.query.limit && isNaN(req.query.limit)) {
+          throw new InvalidParameterError('limit parameter must be int');
+        }
         const limit = parseInt(req.query.limit || 10);
         if (!req.query.startswith) { // case with no query
           const snapshot = await this.client.collection(global.headCollection).limit(limit).get();
@@ -67,12 +71,8 @@ class GetRepoOrgsHandler {
 
           res.send(this.removeDuplicates(results));
         }
-      } catch (error) {
-        res.status(500).send({
-          status: error.status,
-          message: error.message,
-          stack: error.stack
-        });
+      } catch (err) {
+        handleError(res, err);
       }
     });
 
@@ -80,16 +80,12 @@ class GetRepoOrgsHandler {
     this.app.get('/api/org/:orgname', async (req, res, next) => {
       try {
         if (!req.params.orgname) {
-          throw new Error('requires org query parameter');
+          throw new InvalidParameterError('requires org parameter');
         }
         const snapshot = await this.client.collection(global.headCollection).where('lower.organization', '==', req.params.orgname.toLowerCase()).get();
         res.send(snapshot.docs.map(doc => doc.data()));
-      } catch (error) {
-        res.status(500).send({
-          status: error.status,
-          message: error.message,
-          stack: error.stack
-        });
+      } catch (err) {
+        handleError(res, err);
       }
     });
   }

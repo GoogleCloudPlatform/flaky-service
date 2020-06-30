@@ -11,32 +11,40 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.
 
 // class to receive POSTS with build information
 
 const firebaseEncode = require('../lib/firebase-encode');
 const { InvalidParameterError, handleError } = require('../lib/errors');
 const { isJson } = require('../util/validation');
-const FILTERS_ALLOWED = ['tag', 'ref', 'os', 'limit', 'matrix'];
+const FILTERS_ALLOWED = ['tag', 'ref', 'os', 'limit', 'matrix', 'name'];
 
-class GetBuildHandler {
+class GetTestHandler {
   constructor (app, client) {
     this.app = app;
     this.client = client;
   }
 
   listen () {
-    // return the recent builds based on parameters
-    this.app.get('/api/repo/:orgname/:reponame', async (req, res, next) => {
+    // must use query parameter for the name of the test since it can be irregular (irregular strings do not work as url parameters)
+    //      required query param: name
+    //      optional query params: limit (# of builds), tag, matrix, os, ref
+    this.app.get('/api/repo/:orgname/:reponame/test', async (req, res, next) => {
       try {
         const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
+        if (!req.query.name) {
+          throw new InvalidParameterError('Route requires query parameter of name');
+        }
+        const name = firebaseEncode(req.query.name);
         let limit = 30;
-        let starterQuery = this.client.collection(global.headCollection).doc(repoid).collection('builds');
 
+        let starterQuery = this.client.collection(global.headCollection).doc(repoid)
+          .collection('tests').doc(name).collection('runs');
+
+        // add all possible where queries
         for (const prop in req.query) {
           if (!FILTERS_ALLOWED.includes(prop)) {
-            throw new InvalidParameterError('Only valid params are os, ref, tag, matrix, limit');
+            throw new InvalidParameterError('Only valid params are os, ref, tag, matrix, limit, name');
           }
 
           if (prop === 'limit') {
@@ -49,36 +57,22 @@ class GetBuildHandler {
               throw new InvalidParameterError('matrix parameter must be json');
             }
             starterQuery = starterQuery.where('environment.' + firebaseEncode(prop), '==', JSON.parse(req.query[prop]));
+          } else if (prop === 'name') {
+            continue;
           } else {
-            starterQuery = starterQuery.where('environment.' + firebaseEncode(prop), '==', req.query[prop]);
+            starterQuery = starterQuery.where('environment.' + firebaseEncode(prop), '==', req.query[prop]); // tag,
           }
         }
         const snapshot = await starterQuery.orderBy('timestamp', 'desc').limit(limit).get();
         const resp = [];
         snapshot.forEach(doc => resp.push(doc.data()));
 
-        var metadata = await this.client.collection(global.headCollection).doc(repoid).get();
+        var metadataResp = await this.client.collection(global.headCollection).doc(repoid).collection('tests').doc(name).get();
 
-        if (metadata.data()) {
-          res.send({ metadata: metadata.data(), builds: resp });
+        if (metadataResp.data()) {
+          res.send({ metadata: metadataResp.data(), builds: resp });
         } else {
-          res.status(404).send({ error: 'Did not find repo' });
-        }
-      } catch (err) {
-        handleError(res, err);
-      }
-    });
-
-    this.app.get('/api/repo/:orgname/:reponame/build/:buildid', async (req, res, next) => {
-      try {
-        const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
-        const buildid = firebaseEncode(req.params.buildid);
-
-        const doc = await this.client.collection(global.headCollection).doc(repoid).collection('builds').doc(buildid).get();
-        if (doc.data()) {
-          res.send(doc.data());
-        } else {
-          res.status(404).send({ error: 'Build not Found' });
+          res.status(404).send({ error: 'Did not find this test in this repo' });
         }
       } catch (err) {
         handleError(res, err);
@@ -87,4 +81,4 @@ class GetBuildHandler {
   }
 }
 
-module.exports = GetBuildHandler;
+module.exports = GetTestHandler;

@@ -102,13 +102,13 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
       }
     );
 
-    // 2: Query an appropriate amount of test runs, for now 100 most recent
-    const snapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp', 'desc').limit(100).get();
+    // 2: Query an appropriate amount of test runs, for now 30 most recent
+    const snapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp', 'desc').limit(30).get();
     let buildSnapshot = snapshot;
     if (!mostRecent) {
       const dateUse = buildInfo.timestamp;
       // dateUse.setHours(dateUse.getHours() - 2);
-      buildSnapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp', 'desc').startAt(dateUse).limit(100).get();
+      buildSnapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp', 'desc').startAt(dateUse).limit(30).get();
     }
     const testCaseAnalytics = new TestCaseAnalytics(testCase, snapshot); // test case metrics should look at everything
     const buildtestCaseAnalytics = new TestCaseAnalytics(testCase, buildSnapshot); // builds should only look previously

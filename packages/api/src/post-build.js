@@ -21,6 +21,7 @@ const TestCaseRun = require('../lib/testrun');
 var Parser = require('tap-parser');
 const Readable = require('stream').Readable;
 const firebaseEncode = require('../lib/firebase-encode');
+const { InvalidParameterError, handleError } = require('../lib/errors');
 
 class PostBuildHandler {
   constructor (app, client) {
@@ -39,7 +40,7 @@ class PostBuildHandler {
     // validate data
     for (const prop in envData) {
       if (!envData[prop]) {
-        throw new Error('Missing All Build Meta Data Info - ' + prop);
+        throw new InvalidParameterError('Missing All Build Meta Data Info - ' + prop);
       }
     }
     return envData;
@@ -61,8 +62,11 @@ class PostBuildHandler {
     // validate data
     for (const prop in returnVal) {
       if (!returnVal[prop]) {
-        throw new Error('Missing All Build Meta Data Info - ' + prop);
+        throw new InvalidParameterError('Missing All Build Meta Data Info - ' + prop);
       }
+    }
+    if (metadata.github.run_id !== firebaseEncode(metadata.github.run_id)) {
+      throw new InvalidParameterError('github.run_id must be alphanumeric');
     }
 
     return returnVal;
@@ -71,7 +75,7 @@ class PostBuildHandler {
   parseTestCases (data) {
     return data.map(function (x) {
       if (typeof x.ok !== 'boolean' || !x.id || !x.name) {
-        throw new Error('Missing All Test Case Info');
+        throw new InvalidParameterError('Missing All Test Case Info');
       }
       return new TestCaseRun(x.ok ? 'ok' : 'not ok', x.id, x.name);
     });
@@ -109,7 +113,7 @@ class PostBuildHandler {
         await addBuild(testCases, buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
-        res.status(500).send({ error: err.message });
+        handleError(res, err);
       }
     });
 
@@ -122,7 +126,7 @@ class PostBuildHandler {
         await addBuild(testCases, buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
-        res.status(500).send({ error: err.message });
+        handleError(res, err);
       }
     });
   }

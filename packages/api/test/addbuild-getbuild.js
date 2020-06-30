@@ -96,7 +96,7 @@ describe('Add-Build', () => {
     global.headCollection = TESTING_COLLECTION_BASE + uuidv4(); // random collection name for concurrent testing
   });
 
-  describe('addBuild', async () => {
+  describe('add-build', async () => {
     it('Can add a build and repository to a blank collection', async () => {
       await addBuild(buildInfo[0].testCases, buildInfo[0], client, global.headCollection);
 
@@ -225,7 +225,7 @@ describe('Add-Build', () => {
     });
   });
 
-  describe('getBuild', async () => {
+  describe('GetBuildHandler', async () => {
     it('Can get limit and sort by date', async () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?limit=1');
 
@@ -251,6 +251,80 @@ describe('Add-Build', () => {
       delete ansObj[0].timestamp;
       delete ansObj[1].timestamp;
       assert.deepStrictEqual(ansObj, JSON.parse(sol));
+    });
+  });
+
+  describe('GetTestHandler', async () => {
+    it('Can get limit and sort by date', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=a%2F1&limit=1');
+
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
+
+      assert.strictEqual(ansObj.builds.length, 1);
+      assert.strictEqual(ansObj.builds[0].buildId, '11111');
+
+      assert.deepStrictEqual(ansObj.metadata.environments.os, ['linux-apple', 'linux-banana']);
+    });
+
+    it('Can use random combinations of queries', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=a%2F2&os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
+
+      assert.strictEqual(ansObj.builds.length, 2);
+      assert.strictEqual(ansObj.builds[0].buildId, '33333');
+      assert.strictEqual(ansObj.builds[1].buildId, '22222');
+
+      assert.deepStrictEqual(ansObj.metadata.environments.os, ['linux-apple', 'linux-banana']);
+    });
+
+    it('Can Handle Malformed requests', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=a%2F2&RANDOFIELD=3');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
+
+      assert('error' in ansObj);
+      assert.strictEqual(resp.status, 400);
+    });
+    it('Can Handle length 0 request', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=DOESNOTEXIST');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
+
+      assert('error' in ansObj);
+      assert.strictEqual(resp.status, 404);
+    });
+  });
+
+  describe('GetBuildHandler', async () => {
+    it('Can get a particular build', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/build/33333');
+
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
+
+      assert.strictEqual(ansObj.sha, '789');
+    });
+
+    it('Can get a nonexistant build', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/flaky/repo/build/DOESNOTEXIST');
+
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
+
+      assert('error' in ansObj);
+      assert.strictEqual(resp.status, 404);
+    });
+
+    it('Can get a nonexistant repo', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/flaky/DOESNOTEXIST/build/33333');
+
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
+
+      assert('error' in ansObj);
+      assert.strictEqual(resp.status, 404);
     });
   });
 
