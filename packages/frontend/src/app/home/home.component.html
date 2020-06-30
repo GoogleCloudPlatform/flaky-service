@@ -33,7 +33,15 @@ limitations under the License.
     <app-search (searchOptionSelected)="onSearchOptionSelected($event)"></app-search>
 </div>
 
+
 <!--INTRODUCTION BUTTON-->
 <div id="introduction-btn">
     <button mat-raised-button color="primary">Get started</button>
+</div>
+
+<!-- LICENSE BUTTON-->
+<div id="license-footer">
+	<button mat-button id="license-button" (click)="openLicenseDialog()">
+	© 2020 Google, LLC.
+	</button>
 </div>

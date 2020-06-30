@@ -15,12 +15,14 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {HomeComponent} from './home/home.component';
+import {LicenseComponent} from './license/license.component';
 import {MainComponent} from './main/main.component';
 import {SingleRepositoryComponent} from './single-repository/single-repository.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
   {path: 'home', component: HomeComponent},
+  {path: 'license', component: LicenseComponent},
   {path: 'search', component: MainComponent},
   {path: 'repo', component: SingleRepositoryComponent},
   {path: '**', component: HomeComponent},

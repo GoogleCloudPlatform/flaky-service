@@ -38,3 +38,24 @@ app-search {
     width: 100%; /* Take the entire space on mobile devices */
     max-width: 400px;
 }
+
+#license-footer {
+    text-align: right;
+    margin: 5px;
+}
+@media (min-height: 555px) {
+    #license-footer {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+    }
+}
+
+#license-button{
+    font-size: 1em;
+    color: #b0b0b0;
+    outline: none;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+

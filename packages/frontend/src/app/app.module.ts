@@ -41,6 +41,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {HomeComponent} from './home/home.component';
 import {SearchComponent} from './search/search.component';
+import {LicenseComponent} from './license/license.component';
 import {MainComponent} from './main/main.component';
 import {SingleRepositoryComponent} from './single-repository/single-repository.component';
 import {RepoListComponent} from './main/repo-list/repo-list.component';
@@ -50,6 +51,7 @@ import {RepoListComponent} from './main/repo-list/repo-list.component';
     AppComponent,
     HomeComponent,
     SearchComponent,
+    LicenseComponent,
     MainComponent,
     SingleRepositoryComponent,
     RepoListComponent,
@@ -79,6 +81,7 @@ import {RepoListComponent} from './main/repo-list/repo-list.component';
     MatToolbarModule,
     MatTooltipModule,
   ],
+  entryComponents: [LicenseComponent],
   providers: [],
   bootstrap: [AppComponent],
 })

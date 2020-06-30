@@ -14,7 +14,9 @@
 
 import {Component, OnInit, NgZone} from '@angular/core';
 import {Router} from '@angular/router';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {Search} from '../services/search/interfaces';
+import {LicenseComponent} from '../license/license.component';
 import {InterpretationService} from '../services/interpretation/interpretation.service';
 
 @Component({
@@ -26,10 +28,20 @@ export class HomeComponent implements OnInit {
   constructor(
     private ngZone: NgZone,
     private router: Router,
-    private interpreter: InterpretationService
+    private interpreter: InterpretationService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {}
+
+  openLicenseDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.height = '500px';
+    dialogConfig.width = '800px';
+    dialogConfig.id = 'license-dialog';
+
+    this.dialog.open(LicenseComponent, dialogConfig);
+  }
 
   onSearchOptionSelected(option: Search): void {
     this.ngZone.run(() => {

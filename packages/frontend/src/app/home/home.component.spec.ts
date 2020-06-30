@@ -25,6 +25,8 @@ import {AppRoutingModule} from '../app-routing.module';
 import {Router} from '@angular/router';
 import {By} from '@angular/platform-browser';
 import {Location} from '@angular/common';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {Search} from '../services/search/interfaces';
 
 // Mock the inner components
@@ -40,11 +42,12 @@ describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
   let router: Router;
   let location: Location;
+  let dialogSpy: jasmine.Spy;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [HomeComponent, SearchComponent],
-      imports: [AppRoutingModule],
+      imports: [AppRoutingModule, MatDialogModule, NoopAnimationsModule],
     }).compileComponents();
   }));
 
@@ -91,5 +94,21 @@ describe('HomeComponent', () => {
 
     expect(location.path()).toEqual(newLocation);
     expect(location.path()).toContain(searchResult.query);
+  }));
+
+  it('should call openLicenseDialog when the license button is clicked', fakeAsync(() => {
+    spyOn(component, 'openLicenseDialog');
+    const licenseButton = fixture.debugElement.nativeElement.querySelector(
+      '#license-button'
+    );
+    licenseButton.click();
+    tick();
+    expect(component.openLicenseDialog).toHaveBeenCalled();
+  }));
+
+  it('should call the dialog open() function when the license button is clicked', fakeAsync(() => {
+    dialogSpy = spyOn(TestBed.get(MatDialog), 'open').and.callThrough();
+    component.openLicenseDialog();
+    expect(dialogSpy).toHaveBeenCalled();
   }));
 });
