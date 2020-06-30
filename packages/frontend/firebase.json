@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "flaky-dashboard",
+    "target": "prod",
     "public": "dist/flaky-dashboard",
     "ignore": [
       "firebase.json",

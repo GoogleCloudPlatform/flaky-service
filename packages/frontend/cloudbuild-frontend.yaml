@@ -25,6 +25,6 @@ steps:
   args: ['run', 'prod-build']
 
   #Deploy to Firebase
-- name: 'gcr.io/$PROJECT_ID/firebase'
+- name: 'gcr.io/${_PROJECT_ID}/firebase'
   dir: 'packages/frontend'
-  args: ['deploy', '--project=$PROJECT_ID', '--only=hosting']
+  args: ['deploy', '--project=${_PROJECT_ID}', '--only=hosting']
