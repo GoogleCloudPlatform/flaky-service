@@ -25,12 +25,15 @@
   },
   "homepage": "https://github.com/GoogleCloudPlatform/flaky-service#readme",
   "dependencies": {
+    "@google-cloud/connect-firestore": "^1.0.6",
     "@google-cloud/firestore": "^3.8.4",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "moment": "^2.27.0",
     "tap-parser": "^10.0.1",
-    "uuid": "^8.1.0"
+    "uuid": "^8.2.0"
   },
   "devDependencies": {
     "c8": "^7.1.2",
