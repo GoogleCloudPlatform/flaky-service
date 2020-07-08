@@ -208,7 +208,7 @@ async function main() {
        metaData.github.token.substring(4));
 
 
-    await timeout(1000*60*10);
+    // await timeout(1000*60*10);
 
 
     const outcome = await fetch('https://flaky-dashboard.web.app/api/build', {
@@ -235,9 +235,9 @@ pause
  * @param {int} ms Time to wait
  * @return {Promise} a promise to wait until
  */
-function timeout(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// function timeout(ms) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
 
 
 main();
