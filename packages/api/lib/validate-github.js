@@ -38,11 +38,13 @@ async function validateGithub (token, repo) {
   }
 
   for (let i = 0; i < respJSON.repositories.length; i++) {
+    if(!respJSON.repositories[i].full_name){
+        return false;
+    }
     if (respJSON.repositories[i].full_name.toLowerCase() === repo.toLowerCase()) {
       return true;
     }
   }
-  console.log('did not find');
   return false;
 }
 
