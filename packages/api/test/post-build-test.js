@@ -77,7 +77,7 @@ describe('Posting Builds', () => {
     assert.strictEqual(repositoryInfo.data().url, parsedPayload.metadata.github.repositoryUrl);
 
     var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').doc(buildId).get();
-    assert.deepStrictEqual(new Set(buildInfo.data().successes), new Set([firebaseEncode(parsedPayload.data[0].name), firebaseEncode(parsedPayload.data[1].name)]));
+    assert.strictEqual(buildInfo.data().tests.length, 2);
     assert.strictEqual(buildInfo.data().percentpassing, 1);
 
     for (var i = 0; i < 2; i++) {
@@ -109,7 +109,7 @@ describe('Posting Builds', () => {
     assert.strictEqual(repositoryInfo.data().url, parsedPayloadRaw.metadata.github.repositoryUrl);
 
     var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').doc(buildId).get();
-    assert.deepStrictEqual(new Set(buildInfo.data().successes), new Set([firebaseEncode(parsedPayload.data[0].name), firebaseEncode(parsedPayload.data[1].name)]));
+    assert.strictEqual(buildInfo.data().tests.length, 2);
     assert.strictEqual(buildInfo.data().percentpassing, 1);
 
     for (var i = 0; i < 2; i++) {
