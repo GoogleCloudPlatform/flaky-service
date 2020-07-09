@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "oss-automation"
+  },
+  "targets": {
+    "oss-automation": {
+      "hosting": {
+        "staging": [
+          "flaky-dev-staging"
+        ],
+        "prod": [
+          "flaky-dashboard"
+        ]
+      }
+    }
+  }
+}

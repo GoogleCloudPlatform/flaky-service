@@ -1,0 +1,35 @@
+{
+  "hosting": {
+    "target": "staging",
+    "public": "dist/flaky-dashboard",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [ {
+      "source" : "/api/**",
+      "run" : {
+        "serviceId" : "api-staging",
+        "region": "us-central1"
+        }
+      }, {
+      "source": "/**",
+      "destination": "/index.html"
+      }, {
+      "source": "/api",
+      "run": {
+        "serviceId": "api-staging",  
+        "region": "us-central1"     
+        }
+      }],
+    "headers":[{
+      "source": "/api/**",
+      "headers": [{
+        "key": "Cache-Control",
+        "value": "no-store"
+      }]
+    }],
+    "cleanUrls": true
+  }
+}
