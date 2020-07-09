@@ -51,7 +51,8 @@ input.mat-input-element {
     border-radius: 15px;
     box-shadow: 0 1px 2px 0 rgba(32,33,36,0.28);
     padding-right: 15px;
-    height: 30px;;
+    height: 30px;
+    background-color: #ffffff;
 }
 #input-container:hover, #input-container:focus-within {
     box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);

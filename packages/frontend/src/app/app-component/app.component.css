@@ -24,18 +24,13 @@ limitations under the License.
 #header {
     display: flex;
     color: #0075FF;
-    justify-content: space-between;
+    justify-content: center;
     border-bottom: 1px solid #0075FF;
     background-color: white;
     position: fixed;
     /* Make sure the toolbar will stay on top of the content as it scrolls past. */
     z-index: 2;
     flex: 1 0 auto;
-}
-
-#title {
-    position: relative;
-    right: 35px;
 }
 
 mat-sidenav-container {

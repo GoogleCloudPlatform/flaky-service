@@ -17,31 +17,52 @@ limitations under the License.
 <!--PRESENTATION TEXT-->
 <div id="presentation-text">
     <h2>Welcome to flaky.dev !</h2>
-    <h3>
-        <p>This is a platform that allows you to track every test in your repository.</p>
-        <p>If any of them is flaky, it will be found !</p>
-    </h3>
 </div>
 
-<!--INTRODUCTION TEXT-->
-<div id="introduction-text">
-    <p>What are you going to do now?</p>
+
+<!--DESCRIPTIONS-->
+<div class="description">
+
+    <section class="description-section">
+        <h3 class="description-header">All your tests in one place</h3>
+        <p class="description-text">
+            Get organization-wide insights into the test health of your repositories.
+            <br/>
+            <!--
+                TODO: Add this text when the feature is present.
+                Automatically open new issues for failling tests.
+            -->
+        </p>
+    </section>
+
+    <section class="description-section">
+        <h3 class="description-header">Spot flaky tests</h3>
+        <p class="description-text">
+            Easily identify the specific build that introduced a flaky test.
+            <br/>
+            Based on historical build information, flaky.dev calculates which of your tests exhibit flakiness.
+        </p>
+    </section>
+
+    <section class="description-section">
+        <h3 class="description-header">Deploy your own flaky.dev</h3>
+        <p class="description-text">
+            Flaky.dev is developed in the open on GitHub.
+            <br/>
+            You can easily deploy a version to your own GCP account, or help add support for other platforms.
+        </p>
+    </section>
+
 </div>
 
-<!--SEARCH BAR-->
-<div id="search-bar">
-    <app-search (searchOptionSelected)="onSearchOptionSelected($event)"></app-search>
-</div>
 
 
 <!--INTRODUCTION BUTTON-->
 <div id="introduction-btn">
-    <button mat-raised-button color="primary">Get started</button>
+    <a mat-raised-button color="primary" target="_blank" href="https://github.com/GoogleCloudPlatform/flaky-service">Follow development on GitHub</a>
 </div>
 
 <!-- LICENSE BUTTON-->
-<div id="license-footer">
-	<button mat-button id="license-button" (click)="openLicenseDialog()">
-	© 2020 Google, LLC.
-	</button>
-</div>
+<footer id="license-footer">
+    <a color="primary" id="license-button" (click)="openLicenseDialog()">© 2020 Google, LLC.</a>
+</footer>

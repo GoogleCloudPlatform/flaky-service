@@ -22,21 +22,56 @@ limitations under the License.
 @media (min-width: 768px) {
     #presentation-text {
         margin-top: 40px;
+        margin-bottom: 40px;
     }
-    #introduction-text {
-        margin-top: 100px;
+    h2 {
+        font-size: 2em;
+        letter-spacing: 3px;
+        font-style: 'Courier New';
     }
 }
 
-#search-bar {
+.description {
+    width: 100%;
+    text-align: center;
+}
+.description-section {
     display: flex;
-    align-content: center;
-    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 320px;
+    margin-bottom: 10px;
 }
-
-app-search {
-    width: 100%; /* Take the entire space on mobile devices */
-    max-width: 400px;
+@media (min-width: 500px) {
+    .description-section {
+        margin-bottom: 50px;
+        max-width: 500px;
+    }
+    .description-section:nth-of-type(even) {
+        text-align: right;
+    }
+    .description-section:nth-of-type(odd) {
+        text-align: left;
+    }
+    .description-section:nth-of-type(even) .description-text {
+        text-align: right;
+        align-self: flex-end;
+    }
+    .description-section:nth-of-type(odd) .description-text {
+        text-align: left;
+        align-self: flex-start;
+    }
+}
+.description-header{
+    text-transform: uppercase;
+    color: #1976d2;
+    margin-bottom: 0px;
+}
+.description-text{
+    color: #444;
+    max-width: 300px;
 }
 
 #license-footer {
@@ -58,4 +93,3 @@ app-search {
     background-color: #ffffff;
     cursor: pointer;
 }
-
