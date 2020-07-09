@@ -14,101 +14,48 @@
 
 import {Injectable} from '@angular/core';
 import {Filter, Search} from '../../services/search/interfaces';
+import {SearchInterpreter} from './interpreters/search-interpreter';
+import {
+  RouteInterpreter,
+  FoundParams,
+  ExpectedParams,
+} from './interpreters/route-interpreter';
+export {ExpectedParams, expectedParams} from './interpreters/route-interpreter';
 
 // This class is responsible for determining wheter a search input can be considered as a filtering option
 @Injectable({
   providedIn: 'root',
 })
 export class InterpretationService {
-  filterSeparator = ':';
-  inputSeparator = ' ';
-  filters: PossibleFilter[] = [
-    {name: 'flaky', possibleValues: ['y', 'n']},
-    {name: 'orderby', possibleValues: ['name', 'flakyness']},
-  ];
+  searchInterpreter: SearchInterpreter = new SearchInterpreter();
+  queryInterpreter: RouteInterpreter = new RouteInterpreter();
 
-  private getValideFilter(
-    filterName: string,
-    filterValue: string
-  ): Filter | undefined {
-    const possibleFilter = this.filters.find(
-      filter =>
-        filter.name.toLowerCase() === filterName &&
-        filter.possibleValues.includes(filterValue)
+  /*
+   * Parses an entire input with possibly multiple filters.
+   */
+  parseSearchInput(input: string): Search {
+    return this.searchInterpreter.parseSearchInput(input);
+  }
+
+  /*
+   * Builds the route query parameters corresponding to the provided filters.
+   */
+  getRouteParam(filters: Filter[]): object {
+    return this.searchInterpreter.getRouteParam(filters);
+  }
+
+  /*
+   * Builds an object filled with the expected parameters if they are present.
+   * @param queryParam The route query parameters object.
+   * @param expectedParameters The parameters to look for.
+   */
+  parseRouteParam(
+    queryParam: object,
+    expectedParameters: ExpectedParams
+  ): FoundParams {
+    return this.queryInterpreter.parseRouteParam(
+      queryParam,
+      expectedParameters
     );
-
-    if (possibleFilter) return {name: possibleFilter.name};
-    else return undefined;
   }
-
-  private sanitizeFilter(inputFilter: Filter): Filter | undefined {
-    inputFilter.value = inputFilter.value.trim().toLowerCase();
-    inputFilter.name = inputFilter.name.trim().toLowerCase();
-
-    if (
-      this.getValideFilter(inputFilter.name, inputFilter.value) !== undefined
-    ) {
-      return inputFilter;
-    } else {
-      return undefined;
-    }
-  }
-
-  private parseFilter(filterInput: string): Filter | undefined {
-    const splittedInput: string[] = filterInput.split(this.filterSeparator);
-
-    if (splittedInput.length === 2)
-      return this.sanitizeFilter({
-        name: splittedInput[0],
-        value: splittedInput[1],
-      });
-    else return undefined;
-  }
-
-  // Parse an entire input with possibly multiple filters
-  parse(input: string): Search {
-    const interpretedInput = {
-      filters: [],
-      query: '',
-    };
-    const splittedInputs: string[] = input.split(this.inputSeparator);
-
-    splittedInputs.forEach(splittedInput => {
-      if (splittedInput.includes(this.filterSeparator)) {
-        const filter = this.parseFilter(splittedInput);
-        if (filter !== undefined) interpretedInput.filters.push(filter);
-      } else if (!interpretedInput.query)
-        interpretedInput.query = splittedInput;
-    });
-
-    return interpretedInput;
-  }
-
-  parseQueryObject(queryObject: object): Search {
-    const search: Search = {query: queryObject['query'], filters: []};
-
-    Object.keys(queryObject).forEach(key => {
-      const filterName = key,
-        filterValue = queryObject[key];
-      const filter = this.getValideFilter(filterName, filterValue);
-
-      if (filter !== undefined) {
-        filter.value = filterValue;
-        search.filters.push(filter);
-      }
-    });
-    return search;
-  }
-
-  getQueryObject(option: Search): object {
-    const queryObject = {query: option.query};
-    option.filters.forEach(filter => {
-      queryObject[filter.name] = filter.value;
-    });
-    return queryObject;
-  }
-}
-
-export interface PossibleFilter extends Filter {
-  possibleValues: string[];
 }

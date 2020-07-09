@@ -15,14 +15,13 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {COMService} from '../com/com.service';
-import {Repository, Search} from './interfaces';
+import {Repository, Search, ApiRepository, Filter} from './interfaces';
 import {map, catchError} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
-  // mock repositories until the server returns the actual data
   repositories: Repository[] = [];
 
   constructor(private com: COMService) {}
@@ -40,5 +39,13 @@ export class SearchService {
         return repos;
       })
     );
+  }
+
+  searchBuilds(
+    repoName: string,
+    orgName: string,
+    filters: Filter[]
+  ): Observable<ApiRepository> {
+    return this.com.fetchBuilds(repoName, orgName, filters);
   }
 }

@@ -71,14 +71,15 @@ export class SearchComponent implements OnInit {
   }
 
   onEnterKeyUp(option: string): void {
-    this.searchOptionSelected.emit(this.interpreter.parse(option));
+    this.searchOptionSelected.emit(this.interpreter.parseSearchInput(option));
   }
 
   onSearchOptionSelected(option: string): void {
     this.inputControl.setValue(option);
     const isADefaultOption = option === this.defaultOption.name;
     if (isADefaultOption) this.inputControl.setValue('');
-    else this.searchOptionSelected.emit(this.interpreter.parse(option));
+    else
+      this.searchOptionSelected.emit(this.interpreter.parseSearchInput(option));
   }
 }
 

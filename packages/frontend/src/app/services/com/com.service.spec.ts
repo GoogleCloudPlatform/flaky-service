@@ -86,4 +86,22 @@ describe('COMService', () => {
       );
     });
   });
+
+  describe('fetchBuilds', () => {
+    it('should send a GET request with the provided filters', () => {
+      const searchData = getSearchData();
+      const repoName = 'repoName';
+      const orgName = 'orgName';
+      httpClientSpy.get.and.returnValue(of(searchData.expectedServerResponse));
+
+      service
+        .fetchBuilds(repoName, orgName, searchData.search.filters)
+        .subscribe();
+
+      // called the right link
+      expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
+        apiLinks.get.builds(repoName, orgName)
+      );
+    });
+  });
 });

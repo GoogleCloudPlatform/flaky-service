@@ -14,3 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#main-container {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+a {
+    color: #0075FF;
+    text-decoration: none;
+    cursor: pointer;
+}
+a:hover {
+    text-decoration: underline;
+}

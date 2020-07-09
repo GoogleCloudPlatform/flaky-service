@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {TestBed} from '@angular/core/testing';
-import {InterpretationService} from './interpretation.service';
+import {ExpectedParams, InterpretationService} from './interpretation.service';
 import {Search} from '../search/interfaces';
 
 describe('InterpretationService', () => {
@@ -32,34 +32,48 @@ describe('InterpretationService', () => {
         if (alter) {
           inputs = inputs as [];
           // dirty the inputs
-          inputs.push(query + filter.name + service.filterSeparator + value); // no input separator
-          inputs.push(query + service.inputSeparator + filter.name + value); // no filter separator
           inputs.push(
             query +
-              service.inputSeparator +
               filter.name +
-              service.filterSeparator +
+              service.searchInterpreter.filterSeparator +
+              value
+          ); // no input separator
+          inputs.push(
+            query +
+              service.searchInterpreter.inputSeparator +
+              filter.name +
+              value
+          ); // no filter separator
+          inputs.push(
+            query +
+              service.searchInterpreter.inputSeparator +
+              filter.name +
+              service.searchInterpreter.filterSeparator +
               value +
-              service.filterSeparator +
+              service.searchInterpreter.filterSeparator +
               value
           ); // to many filter separators
         } else
           inputs +=
-            service.inputSeparator +
+            service.searchInterpreter.inputSeparator +
             filter.name +
-            service.filterSeparator +
+            service.searchInterpreter.filterSeparator +
             value;
       });
     });
     return inputs;
   };
 
-  // returns a search object and the corresponding query object
-  const getQueryData = () => {
-    const search: Search = {query: 'repo', filters: []};
-    const expectedQueryObject = {query: search.query};
+  /*
+   * returns a search object and the corresponding query object
+   * @param addQuery If true, adds a query in the expected query object
+   */
+  const getRouteData = (addQuery?: boolean) => {
+    const expectedQueryObject = addQuery ? {query: 'repo'} : {};
+    const search = {query: 'repo', filters: []} as Search;
+    const expectedParams = {queries: ['query'], filters: []} as ExpectedParams;
 
-    service.filters.forEach(filter => {
+    service.searchInterpreter.filters.forEach(filter => {
       filter.possibleValues.forEach(value => {
         expectedQueryObject[filter.name] = value;
 
@@ -67,28 +81,33 @@ describe('InterpretationService', () => {
           _filter => _filter.name === filter.name
         );
         if (oldFilter) oldFilter.value = value;
-        else search.filters.push({name: filter.name, value: value});
+        else {
+          search.filters.push({name: filter.name, value: value});
+          expectedParams.filters.push(filter.name);
+        }
       });
     });
 
-    return {search: search, queryObject: expectedQueryObject};
+    return {search: search, queryObject: expectedQueryObject, expectedParams};
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(InterpretationService);
-    service.filters = possiblefilters;
+    service.searchInterpreter.filters = possiblefilters;
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('parse', () => {
+  describe('parseSearchInput', () => {
     it('should parse and return the right filters', () => {
       const inputs: string = getPossibleInputs(false) as string;
-      const interpretedInput = service.parse(inputs);
-      const splittedInputs = inputs.split(service.inputSeparator);
+      const interpretedInput = service.parseSearchInput(inputs);
+      const splittedInputs = inputs.split(
+        service.searchInterpreter.inputSeparator
+      );
       const query = splittedInputs.shift();
 
       expect(query).toEqual(interpretedInput.query);
@@ -97,7 +116,9 @@ describe('InterpretationService', () => {
         const filter = interpretedInput.filters[index];
         expect(filter).not.toBeUndefined();
 
-        const splittedInput = input.split(service.filterSeparator);
+        const splittedInput = input.split(
+          service.searchInterpreter.filterSeparator
+        );
         expect(filter.name).toEqual(splittedInput[0]);
         expect(filter.value).toEqual(splittedInput[1]);
       });
@@ -107,22 +128,22 @@ describe('InterpretationService', () => {
       const query = 'query';
       const filter1 =
         possiblefilters[0].name +
-        service.filterSeparator +
+        service.searchInterpreter.filterSeparator +
         possiblefilters[0].possibleValues[0];
       const filter2 =
         possiblefilters[0].name +
-        service.filterSeparator +
+        service.searchInterpreter.filterSeparator +
         possiblefilters[0].possibleValues[1];
 
       // query between filters
       const input: string =
         filter1 +
-        service.inputSeparator +
+        service.searchInterpreter.inputSeparator +
         query +
-        service.inputSeparator +
+        service.searchInterpreter.inputSeparator +
         filter2;
 
-      const interpretedInput = service.parse(input);
+      const interpretedInput = service.parseSearchInput(input);
 
       expect(interpretedInput.query).toEqual(query);
       expect(interpretedInput.filters.length).toEqual(2);
@@ -135,9 +156,11 @@ describe('InterpretationService', () => {
 
     it('should not be case-sensitive', () => {
       const inputs: string = (getPossibleInputs(false) as string).toUpperCase(); // upper case input
-      const interpretedInput = service.parse(inputs);
+      const interpretedInput = service.parseSearchInput(inputs);
 
-      const splittedInputs = inputs.split(service.inputSeparator);
+      const splittedInputs = inputs.split(
+        service.searchInterpreter.inputSeparator
+      );
       const query = splittedInputs.shift();
 
       expect(query).toEqual(interpretedInput.query);
@@ -149,7 +172,7 @@ describe('InterpretationService', () => {
         // the filters should have been lowercased
         const splittedInput = input
           .toLowerCase()
-          .split(service.filterSeparator);
+          .split(service.searchInterpreter.filterSeparator);
         expect(filter.name).toEqual(splittedInput[0]);
         expect(filter.value).toEqual(splittedInput[1]);
       });
@@ -159,11 +182,13 @@ describe('InterpretationService', () => {
       const wrongInputs = getPossibleInputs(true) as string[];
 
       wrongInputs.forEach(wrongInput => {
-        const interpretedInput = service.parse(wrongInput);
-        const splittedInputs = wrongInput.split(service.inputSeparator);
+        const interpretedInput = service.parseSearchInput(wrongInput);
+        const splittedInputs = wrongInput.split(
+          service.searchInterpreter.inputSeparator
+        );
         const query = splittedInputs.shift();
 
-        if (query.includes(service.filterSeparator))
+        if (query.includes(service.searchInterpreter.filterSeparator))
           expect(interpretedInput.query).toEqual('');
         else expect(query).toEqual(interpretedInput.query);
         expect(interpretedInput.filters.length).toEqual(0);
@@ -171,42 +196,61 @@ describe('InterpretationService', () => {
     });
 
     it('should not parse an empty input', () => {
-      const interpretedInput = service.parse('');
+      const interpretedInput = service.parseSearchInput('');
 
       expect(interpretedInput.query).toEqual('');
       expect(interpretedInput.filters.length).toEqual(0);
     });
   });
 
-  describe('parseQueryObject', () => {
-    it('should parse and return the right filters', () => {
-      const {search: expectedSearch, queryObject} = getQueryData();
+  describe('parseRouteParam', () => {
+    it('should parse and return the right params', () => {
+      const {
+        search: expectedSearch,
+        queryObject,
+        expectedParams,
+      } = getRouteData(true);
 
-      const search = service.parseQueryObject(queryObject);
+      const foundParams = service.parseRouteParam(queryObject, expectedParams);
 
-      expect(search).toEqual(jasmine.objectContaining(expectedSearch));
+      expect(foundParams.queries.get('query')).toEqual(expectedSearch.query);
+      expect(foundParams.filters).toEqual(expectedSearch.filters);
     });
 
-    it('should not parse wrong filters', () => {
-      const badQueryObject = {
-        query: 'repo',
-        'not a filter': 'y',
-        badFilter: 'y',
-      };
+    it('should return an empty strings for missing queries', () => {
+      const {
+        search: expectedSearch,
+        queryObject,
+        expectedParams,
+      } = getRouteData(true);
+      const missingQueryName = 'missing query';
+      expectedParams.queries.push(missingQueryName);
 
-      const search = service.parseQueryObject(badQueryObject);
+      const foundParams = service.parseRouteParam(queryObject, expectedParams);
 
-      expect(search).toEqual(
-        jasmine.objectContaining({query: badQueryObject.query})
-      );
+      expect(foundParams.queries.get(missingQueryName)).toEqual('');
+      expect(foundParams.filters).toEqual(expectedSearch.filters);
+    });
+
+    it('should return empty strings for missing filters', () => {
+      const {
+        search: expectedSearch,
+        queryObject,
+        expectedParams,
+      } = getRouteData(true);
+
+      expectedParams.filters.push('missing filter name');
+
+      const foundParams = service.parseRouteParam(queryObject, expectedParams);
+      expect(foundParams.filters).toEqual(expectedSearch.filters);
     });
   });
 
-  describe('getQueryObject', () => {
+  describe('getRouteParam', () => {
     it('should parse and return the right query object', () => {
-      const {search, queryObject: expectedQueryObject} = getQueryData();
+      const {search, queryObject: expectedQueryObject} = getRouteData();
 
-      const queryObject = service.getQueryObject(search);
+      const queryObject = service.getRouteParam(search.filters);
 
       expect(queryObject).toEqual(
         jasmine.objectContaining(expectedQueryObject)

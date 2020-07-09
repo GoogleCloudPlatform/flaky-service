@@ -24,6 +24,7 @@ export interface Repository extends DefaultRepository {
   repoId?: string;
   numtestcases?: number;
   url?: string;
+  environments?: BuildEnvironment;
 }
 
 export interface Filter {
@@ -34,4 +35,37 @@ export interface Filter {
 export interface Search {
   filters: Filter[];
   query: string;
+}
+
+export interface Test {
+  name: string;
+  flaky: boolean;
+  failing: boolean;
+  percentpassing: number;
+  environment: BuildEnvironment;
+}
+
+export interface BuildEnvironment {
+  os: string;
+  environment?: string;
+  ref?: string;
+  tag?: string;
+}
+
+export interface Build {
+  buildId: string;
+  environment: BuildEnvironment;
+  flaky: number;
+  timestamp: {_seconds: number};
+  percentpassing: number;
+  successes?: string[];
+  tests?: Test[];
+  numfails: number;
+  // TODO: temporary fields. Remove when the format is fully clear.
+  numPass: number;
+}
+
+export interface ApiRepository {
+  metadata: Repository;
+  builds: Build[];
 }

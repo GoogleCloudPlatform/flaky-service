@@ -13,21 +13,24 @@
 // limitations under the License.
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {TestDetailsComponent} from './test-details.component';
+import {MatDialogModule, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MatDividerModule} from '@angular/material/divider';
 
-import {SingleRepositoryComponent} from './single-repository.component';
-
-describe('SingleRepositoryComponent', () => {
-  let component: SingleRepositoryComponent;
-  let fixture: ComponentFixture<SingleRepositoryComponent>;
+describe('TestDetailsComponent', () => {
+  let component: TestDetailsComponent;
+  let fixture: ComponentFixture<TestDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [SingleRepositoryComponent],
+      providers: [{provide: MAT_DIALOG_DATA, useValue: {}}],
+      declarations: [TestDetailsComponent],
+      imports: [MatDialogModule, MatDividerModule],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SingleRepositoryComponent);
+    fixture = TestBed.createComponent(TestDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

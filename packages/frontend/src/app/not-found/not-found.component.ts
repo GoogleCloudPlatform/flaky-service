@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
+import {Location} from '@angular/common';
 
 @Component({
-  selector: 'app-single-repository',
-  templateUrl: './single-repository.component.html',
-  styleUrls: ['./single-repository.component.css'],
+  selector: 'app-not-found',
+  templateUrl: './not-found.component.html',
+  styleUrls: ['./not-found.component.css'],
 })
-export class SingleRepositoryComponent implements OnInit {
-  constructor() {}
+export class NotFoundComponent {
+  constructor(public location: Location) {}
 
-  ngOnInit(): void {}
+  headBack() {
+    this.location.back();
+  }
 }

@@ -13,34 +13,56 @@
 // limitations under the License.
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {TestsListComponent} from './tests-list.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
   MatPaginatorModule,
   MatPaginator,
   PageEvent,
 } from '@angular/material/paginator';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {RepoListComponent} from './repo-list.component';
-import {Repository} from 'src/app/services/search/interfaces';
 import {AppRoutingModule} from 'src/app/app-routing.module';
+import {Component} from '@angular/core';
 import {MatDialogModule} from '@angular/material/dialog';
+import {By} from '@angular/platform-browser';
 
-describe('RepoListComponent', () => {
-  let component: RepoListComponent;
-  let fixture: ComponentFixture<RepoListComponent>;
+// Mock components
+@Component({
+  selector: 'app-test-details',
+})
+class TestDetailsComponent {}
 
-  const mockRepositories: Repository[] = [
+describe('TestsListComponent', () => {
+  let component: TestsListComponent;
+  let fixture: ComponentFixture<TestsListComponent>;
+
+  const mockTests = [
     {
-      name: '',
-      organization: '',
-      flaky: 0,
-      numfails: 0,
-      numtestcases: 10,
+      name: 'should update the rendered pages on input change',
+      flaky: true,
+      failing: true,
+      percentpassing: 98,
+      environment: {os: 'windows', ref: 'dev'},
+    },
+    {
+      name:
+        'should not return to the first page when the paginator is not ready',
+      flaky: false,
+      failing: true,
+      percentpassing: 92,
+      environment: {os: 'windows', ref: 'dev'},
+    },
+    {
+      name: 'should set the new filters when a repository is found',
+      flaky: true,
+      failing: false,
+      percentpassing: 53,
+      environment: {os: 'windows', ref: 'dev'},
     },
   ];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [RepoListComponent],
+      declarations: [TestsListComponent, TestDetailsComponent],
       imports: [
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -51,7 +73,7 @@ describe('RepoListComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RepoListComponent);
+    fixture = TestBed.createComponent(TestsListComponent);
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
     component.paginator = {
@@ -72,9 +94,9 @@ describe('RepoListComponent', () => {
     component.pageIndex = 1;
     const expectedPageSize: number = component.pageSize;
 
-    component.repositories = mockRepositories;
+    component.tests = mockTests;
 
-    expect(component._elements).toEqual(mockRepositories);
+    expect(component._elements).toEqual(mockTests);
     // reset the index
     expect(component.pageIndex).toEqual(0);
     // didn't change the page size
@@ -86,8 +108,27 @@ describe('RepoListComponent', () => {
     component.paginator = undefined;
     component.pageIndex = expectedPageIndex;
 
-    component.repositories = mockRepositories;
+    component.tests = mockTests;
 
     expect(component.pageIndex).toEqual(expectedPageIndex);
+  });
+
+  it('should open the tests details when user clicks on a test', async () => {
+    component.tests = mockTests;
+
+    await fixture.whenStable();
+
+    const dialogSpy = spyOn(component.dialog, 'open');
+    const testDiv = fixture.debugElement.queryAll(By.css('div.test'))[0]
+      .nativeElement;
+
+    testDiv.click();
+
+    await fixture.whenStable();
+
+    expect(dialogSpy).toHaveBeenCalledTimes(1);
+    expect(dialogSpy.calls.mostRecent().args[1]).toEqual(
+      jasmine.objectContaining({data: mockTests[0]})
+    );
   });
 });

@@ -40,7 +40,7 @@ describe('SearchComponent', () => {
   // Mock services
   const mockSearchService = {};
   const mockInterpretationService = {
-    parse: input => {
+    parseSearchInput: input => {
       return {query: input, filters: []};
     },
   };

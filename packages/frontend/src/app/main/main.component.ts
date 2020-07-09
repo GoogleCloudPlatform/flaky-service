@@ -16,7 +16,10 @@ import {Component, OnInit, NgZone} from '@angular/core';
 import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {InterpretationService} from '../services/interpretation/interpretation.service';
+import {
+  expectedParams,
+  InterpretationService,
+} from '../services/interpretation/interpretation.service';
 
 @Component({
   selector: 'app-main',
@@ -34,15 +37,31 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.searchService
-        .search(this.interpreter.parseQueryObject(params))
-        .subscribe();
+      const foundParams = this.interpreter.parseRouteParam(
+        params,
+        expectedParams.get('main')
+      );
+      const org = foundParams.queries.get('org');
+      const repo = foundParams.queries.get('repo');
+
+      const search = {
+        query: repo,
+        filters: foundParams.filters,
+      };
+
+      if (org) search.filters.push({name: 'org', value: org});
+
+      this.searchService.search(search).subscribe();
     });
   }
 
   onSearchOptionSelected(option: Search): void {
     this.ngZone.run(() => {
-      this.router.navigate(['search', this.interpreter.getQueryObject(option)]);
+      option.filters.push({name: 'query', value: option.query});
+      this.router.navigate([
+        'search',
+        this.interpreter.getRouteParam(option.filters),
+      ]);
     });
   }
 }

@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#repos-container {
+#tests-container {
     border: 1px solid #d9d9d9;
     padding: 5px;
 }
 
-.repo {
+.test {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -29,51 +29,60 @@ limitations under the License.
     padding: 5px;
     background-color: #fefefe;
     cursor: pointer;
+    overflow: hidden;
 }
-.repo:hover {
+.test:hover {
     background-color: #f8f8f8;
 }
 
-.flaky-repo {
+.flaky {
     background-color: #fff4e0;
 }
-.failing-repo {
+.failing {
     background-color: #ffdede;
 }
 
+/* Keep the initial details in line*/
 .details > div {
     display: inline-block;
 }
 
-.names {
+.test-name {
     margin-right: 10px;
+    /*Hide long names*/
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 400px;
 }
-.names > a {
+.test-name > a {
     color: #0075FF;
     text-decoration: none;
 }
-.names > a:hover {
+.test-name > a:hover {
     text-decoration: underline;
+}
+@media (min-height: 555px) {
+    .test-name {
+        max-width: 93vw;
+    }
 }
 
 .description {
     font-size: smaller;
     color: dimgrey;
+    margin-right: 6px;
 }
 
 td {
     text-align: center;
 }
 
+.percent-passing-indicator {
+    color: dimgrey;
+}
 .indicator {
     padding-right: 6px;
-}
-
-.failing-tests-indicator {
-    color: red;
-}
-.flaky-tests-indicator {
-    color: orange;
 }
 
 .last-update {

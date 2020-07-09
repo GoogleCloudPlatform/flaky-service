@@ -17,14 +17,18 @@ import {Routes, RouterModule} from '@angular/router';
 import {HomeComponent} from './home/home.component';
 import {LicenseComponent} from './license/license.component';
 import {MainComponent} from './main/main.component';
-import {SingleRepositoryComponent} from './single-repository/single-repository.component';
+import {RepositoryComponent} from './repository/repository.component';
+import {BuildComponent} from './build/build.component';
+import {NotFoundComponent} from './not-found/not-found.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'license', component: LicenseComponent},
   {path: 'search', component: MainComponent},
-  {path: 'repo', component: SingleRepositoryComponent},
-  {path: '**', redirectTo: '', component: HomeComponent},
+  {path: 'org/:org/:repo', component: RepositoryComponent},
+  {path: 'org/:org', component: MainComponent},
+  {path: 'org/:org/:repo/:build', component: BuildComponent},
+  {path: '**', component: NotFoundComponent},
 ];
 
 @NgModule({

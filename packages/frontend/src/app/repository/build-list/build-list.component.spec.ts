@@ -13,47 +13,43 @@
 // limitations under the License.
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {BuildListComponent} from './build-list.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
   MatPaginatorModule,
   MatPaginator,
   PageEvent,
 } from '@angular/material/paginator';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {RepoListComponent} from './repo-list.component';
-import {Repository} from 'src/app/services/search/interfaces';
+import {Build} from 'src/app/services/search/interfaces';
 import {AppRoutingModule} from 'src/app/app-routing.module';
-import {MatDialogModule} from '@angular/material/dialog';
 
-describe('RepoListComponent', () => {
-  let component: RepoListComponent;
-  let fixture: ComponentFixture<RepoListComponent>;
+describe('BuildListComponent', () => {
+  let component: BuildListComponent;
+  let fixture: ComponentFixture<BuildListComponent>;
 
-  const mockRepositories: Repository[] = [
+  const mockBuilds: Build[] = [
     {
-      name: '',
-      organization: '',
-      flaky: 0,
+      buildId: '146946',
+      environment: {os: 'linux'},
+      flaky: 1,
+      timestamp: {_seconds: 1592268304},
+      percentpassing: 80,
+      numPass: 45,
       numfails: 0,
-      numtestcases: 10,
     },
   ];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [RepoListComponent],
-      imports: [
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatPaginatorModule,
-        MatDialogModule,
-      ],
+      declarations: [BuildListComponent],
+      imports: [AppRoutingModule, BrowserAnimationsModule, MatPaginatorModule],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RepoListComponent);
+    fixture = TestBed.createComponent(BuildListComponent);
     component = fixture.componentInstance;
-    fixture.autoDetectChanges(true);
+    fixture.detectChanges();
     component.paginator = {
       firstPage: () => {
         component.updatePage({
@@ -72,9 +68,9 @@ describe('RepoListComponent', () => {
     component.pageIndex = 1;
     const expectedPageSize: number = component.pageSize;
 
-    component.repositories = mockRepositories;
+    component.builds = mockBuilds;
 
-    expect(component._elements).toEqual(mockRepositories);
+    expect(component._elements).toEqual(mockBuilds);
     // reset the index
     expect(component.pageIndex).toEqual(0);
     // didn't change the page size
@@ -86,7 +82,7 @@ describe('RepoListComponent', () => {
     component.paginator = undefined;
     component.pageIndex = expectedPageIndex;
 
-    component.repositories = mockRepositories;
+    component.builds = mockBuilds;
 
     expect(component.pageIndex).toEqual(expectedPageIndex);
   });

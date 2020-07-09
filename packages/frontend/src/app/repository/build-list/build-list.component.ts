@@ -13,21 +13,31 @@
 // limitations under the License.
 
 import {Component, Input, ViewChild} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {Repository} from 'src/app/services/search/interfaces';
-import {PaginatedListComponent} from 'src/app/paginated-list/paginated-list.component';
+import {Build} from 'src/app/services/search/interfaces';
+import {
+  MatPaginator,
+  PaginatedListComponent,
+} from 'src/app/paginated-list/paginated-list.component';
+import * as moment from 'moment';
 
 @Component({
-  selector: 'app-repo-list',
-  templateUrl: './repo-list.component.html',
-  styleUrls: ['./repo-list.component.css'],
+  selector: 'app-build-list',
+  templateUrl: './build-list.component.html',
+  styleUrls: ['./build-list.component.css'],
 })
-export class RepoListComponent extends PaginatedListComponent<Repository> {
+export class BuildListComponent extends PaginatedListComponent<Build> {
   @ViewChild('paginator') paginator: MatPaginator;
 
-  @Input() set repositories(value: Repository[]) {
+  @Input() repoName = '';
+  @Input() orgName = '';
+
+  @Input() set builds(value: Build[]) {
     this._elements = value;
     this.updatePage();
     this.paginator?.firstPage();
+  }
+
+  toLiteralDate(timestamp: number) {
+    return moment.unix(timestamp).fromNow();
   }
 }

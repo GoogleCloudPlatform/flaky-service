@@ -27,6 +27,7 @@ import {AppRoutingModule} from '../app-routing.module';
 import {of} from 'rxjs';
 import {By} from '@angular/platform-browser';
 import {Location} from '@angular/common';
+import {ActivatedRoute} from '@angular/router';
 
 // Mock the inner components
 @Component({
@@ -50,10 +51,14 @@ describe('MainComponent', () => {
 
   // Mock services
   const mockSearchService = {repositories: [], search: () => of([])};
+  const mockRoute = {params: of()};
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [{provide: SearchService, useValue: mockSearchService}],
+      providers: [
+        {provide: SearchService, useValue: mockSearchService},
+        {provide: ActivatedRoute, useValue: mockRoute},
+      ],
       declarations: [MainComponent, RepoListComponent, SearchComponent],
       imports: [AppRoutingModule],
     }).compileComponents();
@@ -64,18 +69,38 @@ describe('MainComponent', () => {
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
     location = TestBed.get(Location);
+    mockSearchService.search = () => of([]);
+    mockRoute.params = of({});
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initiate a search when initializing', () => {
-    spyOn(mockSearchService, 'search').and.callThrough();
+  describe('ngOnInit', () => {
+    it('should initiate a search when initializing', () => {
+      spyOn(mockSearchService, 'search').and.callThrough();
 
-    component.ngOnInit();
+      component.ngOnInit();
 
-    expect(mockSearchService.search).toHaveBeenCalled();
+      expect(mockSearchService.search).toHaveBeenCalled();
+    });
+
+    it('should initiate a search when initializing', () => {
+      const searchSpy = spyOn(mockSearchService, 'search').and.callThrough();
+      const orgName = 'org';
+      mockRoute.params = of({org: orgName});
+
+      component.ngOnInit();
+
+      expect(mockSearchService.search).toHaveBeenCalled();
+      const search = (searchSpy.calls.mostRecent().args as Array<
+        object
+      >)[0] as Search;
+      expect(search.filters).toContain(
+        jasmine.objectContaining({name: 'org', value: orgName})
+      );
+    });
   });
 
   it('should refresh with the new query and filters when the user validates a search in the search bar', fakeAsync(() => {
@@ -91,7 +116,7 @@ describe('MainComponent', () => {
 
     tick();
 
-    let newLocation = '/search;query=' + searchResult.query;
+    let newLocation = '/search';
     searchResult.filters.forEach(
       filter => (newLocation += ';' + filter.name + '=' + filter.value)
     );

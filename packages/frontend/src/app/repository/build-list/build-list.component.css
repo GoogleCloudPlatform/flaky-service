@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#repos-container {
+#build-container {
     border: 1px solid #d9d9d9;
     padding: 5px;
 }
 
-.repo {
+.build {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -30,43 +30,41 @@ limitations under the License.
     background-color: #fefefe;
     cursor: pointer;
 }
-.repo:hover {
+.build:hover {
     background-color: #f8f8f8;
 }
 
-.flaky-repo {
+.flaky {
     background-color: #fff4e0;
 }
-.failing-repo {
+.failing {
     background-color: #ffdede;
 }
 
+/* Keep the initial details in line*/
 .details > div {
     display: inline-block;
 }
 
-.names {
+.build-id {
     margin-right: 10px;
 }
-.names > a {
+.build-id > a {
     color: #0075FF;
     text-decoration: none;
 }
-.names > a:hover {
+.build-id > a:hover {
     text-decoration: underline;
 }
 
 .description {
     font-size: smaller;
     color: dimgrey;
+    margin-right: 6px;
 }
 
 td {
     text-align: center;
-}
-
-.indicator {
-    padding-right: 6px;
 }
 
 .failing-tests-indicator {
@@ -74,6 +72,12 @@ td {
 }
 .flaky-tests-indicator {
     color: orange;
+}
+.passing-tests-indicator {
+    color: green;
+}
+.indicator {
+    padding-right: 6px;
 }
 
 .last-update {

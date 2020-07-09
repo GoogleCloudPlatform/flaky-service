@@ -28,6 +28,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatDividerModule} from '@angular/material/divider';
+import {MatExpansionModule} from '@angular/material/expansion';
 import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {MatListModule} from '@angular/material/list';
@@ -35,6 +36,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatRippleModule} from '@angular/material/core';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSelectModule} from '@angular/material/select';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -43,8 +45,14 @@ import {HomeComponent} from './home/home.component';
 import {SearchComponent} from './search/search.component';
 import {LicenseComponent} from './license/license.component';
 import {MainComponent} from './main/main.component';
-import {SingleRepositoryComponent} from './single-repository/single-repository.component';
 import {RepoListComponent} from './main/repo-list/repo-list.component';
+import {FormsModule} from '@angular/forms';
+import {RepositoryComponent} from './repository/repository.component';
+import {BuildListComponent} from './repository/build-list/build-list.component';
+import {BuildComponent} from './build/build.component';
+import {TestsListComponent} from './build/tests-list/tests-list.component';
+import {TestDetailsComponent} from './build/tests-list/test-details/test-details.component';
+import {FiltersComponent} from './filters/filters.component';
 
 @NgModule({
   declarations: [
@@ -53,8 +61,13 @@ import {RepoListComponent} from './main/repo-list/repo-list.component';
     SearchComponent,
     LicenseComponent,
     MainComponent,
-    SingleRepositoryComponent,
+    RepositoryComponent,
     RepoListComponent,
+    BuildListComponent,
+    BuildComponent,
+    TestsListComponent,
+    TestDetailsComponent,
+    FiltersComponent,
   ],
   imports: [
     BrowserModule,
@@ -69,6 +82,7 @@ import {RepoListComponent} from './main/repo-list/repo-list.component';
     MatButtonToggleModule,
     MatDialogModule,
     MatDividerModule,
+    MatExpansionModule,
     MatIconModule,
     MatInputModule,
     MatListModule,
@@ -76,10 +90,12 @@ import {RepoListComponent} from './main/repo-list/repo-list.component';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatRippleModule,
+    MatSelectModule,
     MatSidenavModule,
     MatSnackBarModule,
     MatToolbarModule,
     MatTooltipModule,
+    FormsModule,
   ],
   entryComponents: [LicenseComponent],
   providers: [],

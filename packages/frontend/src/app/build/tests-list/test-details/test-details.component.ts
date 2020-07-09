@@ -12,20 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {environment} from '../../../environments/environment';
+import {Component, Inject} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Test} from 'src/app/services/search/interfaces';
 
-interface ApiLinks {
-  get: {
-    repositories: string;
-    builds: (repoName: string, orgName: string) => string;
-  };
+@Component({
+  selector: 'app-test-details',
+  templateUrl: './test-details.component.html',
+  styleUrls: ['./test-details.component.css'],
+})
+export class TestDetailsComponent {
+  constructor(@Inject(MAT_DIALOG_DATA) public test: Test) {}
 }
-
-export const apiBaseLink = environment.baseUrl + '/api/';
-export const apiLinks: ApiLinks = {
-  get: {
-    repositories: apiBaseLink + 'repo',
-    builds: (repoName: string, orgName: string) =>
-      apiBaseLink + 'repo/' + orgName + '/' + repoName,
-  },
-};
