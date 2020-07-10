@@ -230,11 +230,13 @@ describe('Add-Build', () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?limit=1');
 
       const respText = await resp.text();
-      const sol = '[{"buildId": "33333","sha": "789","flaky": 0, "percentpassing":0,"successes":[],"failures":{"a%2F2":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)","a%2F5":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)"},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}}]';
 
       const ansObj = JSON.parse(respText).builds;
-      delete ansObj[0].timestamp;
-      assert.deepStrictEqual(ansObj, JSON.parse(sol));
+
+      assert.strictEqual(ansObj.length, 1);
+      assert.strictEqual(ansObj[0].buildId, '33333');
+      assert.strictEqual(ansObj[0].percentpassing, 0);
+      assert.strictEqual(ansObj[0].tests.length, 2);
 
       const solMeta = { name: 'node', repoId: 'nodejs/node', organization: 'nodejs', numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
 
@@ -245,12 +247,16 @@ describe('Add-Build', () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
       const respText = await resp.text();
 
-      const sol = '[{"buildId": "33333","sha": "789","flaky": 0, "percentpassing":0,"successes":[],"failures":{"a%2F2":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)","a%2F5":"TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)"},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}},{"buildId": "22222","sha": "456","flaky": 0,"percentpassing":1,"successes":["a%2F1","a%2F2"],"failures":{},"environment":{"matrix":{"node-version":"12.0"},"os":"linux-banana","tag":"xyz","ref":"master"}}]';
-
       const ansObj = JSON.parse(respText).builds;
-      delete ansObj[0].timestamp;
-      delete ansObj[1].timestamp;
-      assert.deepStrictEqual(ansObj, JSON.parse(sol));
+
+      assert.strictEqual(ansObj.length, 2);
+      assert.strictEqual(ansObj[0].buildId, '33333');
+      assert.strictEqual(ansObj[0].percentpassing, 0);
+      assert.strictEqual(ansObj[0].tests.length, 2);
+
+      assert.strictEqual(ansObj[1].buildId, '22222');
+      assert.strictEqual(ansObj[1].percentpassing, 1);
+      assert.strictEqual(ansObj[1].tests.length, 2);
     });
   });
 

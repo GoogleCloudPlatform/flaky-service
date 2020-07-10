@@ -79,8 +79,10 @@ describe('Posting Builds', () => {
       body: JSON.stringify(botchedPayload),
       headers: { 'Content-Type': 'application/json' }
     });
+
     assert.strictEqual(resp.status, 401);
   });
+
 
   it('it responds to a valid POST on the /build path with valid token', async () => {
     const resp = await fetch('http://127.0.0.1:3000/api/build', {
@@ -102,7 +104,7 @@ describe('Posting Builds', () => {
     assert.strictEqual(repositoryInfo.data().url, parsedPayloadRaw.metadata.github.repositoryUrl);
 
     var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').doc(buildId).get();
-    assert.deepStrictEqual(new Set(buildInfo.data().successes), new Set([firebaseEncode(parsedPayload.data[0].name), firebaseEncode(parsedPayload.data[1].name)]));
+    assert.strictEqual(buildInfo.data().tests.length, 2);
     assert.strictEqual(buildInfo.data().percentpassing, 1);
 
     for (var i = 0; i < 2; i++) {

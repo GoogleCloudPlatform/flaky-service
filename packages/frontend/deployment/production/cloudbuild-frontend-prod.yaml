@@ -25,5 +25,5 @@ steps:
 
   #Deploy to Firebase
 - name: 'gcr.io/${_PROJECT_ID}/firebase'
-  dir: 'packages/frontend'
+  dir: 'packages/frontend/deployment/production'
   args: ['deploy', '--project=${_PROJECT_ID}', '--only=hosting']

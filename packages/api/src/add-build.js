@@ -77,6 +77,7 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
 
   var failures = {};
   var successes = [];
+  var alltests = [];
 
   let flakyBuild = 0; // if a flaky test has failed this time
   let flakyRepo = 0; // if any test is marked as flaky (could have been successes for last 5 runs)
@@ -125,6 +126,13 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     // update information for flakybuild and flakyrepo;
     flakyBuild = (buildtestCaseAnalytics.computeIsFlaky() && !testCase.successful) ? 1 + flakyBuild : flakyBuild;
     flakyRepo = (updateObj.flaky) ? 1 + flakyRepo : flakyRepo;
+    alltests.push({
+      name: testCase.name,
+      passed: testCase.successful,
+      flaky: updateObj.flaky,
+      percentpassing: updateObj.percentpassing,
+      status: testCase.successful ? 'OK' : testCase.failureMessage
+    });
   }
 
   // For the Builds
@@ -132,8 +140,7 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     percentpassing: buildPassingPercent(successes, failures),
     environment: buildInfo.environment,
     timestamp: buildInfo.timestamp,
-    successes: successes,
-    failures: failures,
+    tests: alltests,
     sha: decodeURIComponent(buildInfo.sha),
     buildId: decodeURIComponent(buildInfo.buildId),
     flaky: flakyBuild
