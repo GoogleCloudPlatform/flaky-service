@@ -20,6 +20,8 @@ import {MainComponent} from './main/main.component';
 import {RepositoryComponent} from './repository/repository.component';
 import {BuildComponent} from './build/build.component';
 import {NotFoundComponent} from './not-found/not-found.component';
+import {apiLinks} from './services/com/api';
+import {LoginGuard} from './route-guards/LoginGuard';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -28,11 +30,18 @@ const routes: Routes = [
   {path: 'org/:org/:repo', component: RepositoryComponent},
   {path: 'org/:org', component: MainComponent},
   {path: 'org/:org/:repo/:build', component: BuildComponent},
+  {
+    path: 'login',
+    canActivate: [LoginGuard],
+    data: {url: apiLinks.get.loginLink},
+    component: HomeComponent,
+  },
   {path: '**', component: NotFoundComponent},
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
+  providers: [LoginGuard],
 })
 export class AppRoutingModule {}
