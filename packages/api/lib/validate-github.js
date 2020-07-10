@@ -16,7 +16,7 @@ const fetch = require('node-fetch');
 
 // checks to see if installation token is valid and is linked to this repository
 async function validateGithub (token, repo) {
-  /* Equivalent to
+  /* Equivalent to doing
   *  curl -i -H "Authorization: token MYTOKENHERE" -H "Accept: application/vnd.github.machine-man-preview+json" https://api.github.com/installation/repositories
   *  see https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-an-installation
   */
