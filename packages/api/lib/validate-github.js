@@ -37,11 +37,11 @@ async function validateGithub (token, repo) {
     return false;
   }
 
-  for (const repo of respJSON.repositories) {
-    if (!repo.full_name) {
+  for (const repoListed of respJSON.repositories) {
+    if (!repoListed.full_name) {
       return false;
     }
-    if (repo.full_name.toLowerCase() === repo.toLowerCase()) {
+    if (repoListed.full_name.toLowerCase() === repo.toLowerCase()) {
       return true;
     }
   }
