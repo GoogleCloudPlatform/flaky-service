@@ -83,7 +83,6 @@ describe('Posting Builds', () => {
     assert.strictEqual(resp.status, 401);
   });
 
-
   it('it responds to a valid POST on the /build path with valid token', async () => {
     const resp = await fetch('http://127.0.0.1:3000/api/build', {
       method: 'post',
