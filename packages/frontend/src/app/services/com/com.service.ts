@@ -16,7 +16,13 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {apiLinks} from './api';
 import {Observable} from 'rxjs';
-import {Search, Repository, ApiRepository, Filter} from '../search/interfaces';
+import {
+  Search,
+  Repository,
+  ApiRepository,
+  Filter,
+  SessionStatus,
+} from '../search/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -45,5 +51,9 @@ export class COMService {
         params: params,
       }
     );
+  }
+
+  public fetchSessionStatus(): Observable<SessionStatus> {
+    return this.http.get<SessionStatus>(apiLinks.get.sessionStatus);
   }
 }
