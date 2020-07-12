@@ -29,6 +29,7 @@ import {Location} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
 import {expectedParams} from '../services/interpretation/interpretation.service';
+import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
 // Mock the inner components
 @Component({
@@ -64,11 +65,13 @@ describe('RepositoryComponent', () => {
   const getFilters = () => {
     const filters = [];
     let expectedRouteParams = '';
-    expectedParams.get('repo').filters.forEach(filterName => {
-      const filterValue = filterName + 'val';
-      filters.push({name: filterName, value: filterValue});
-      expectedRouteParams += ';' + filterName + '=' + filterValue;
-    });
+    expectedParams
+      .get(RouteProvider.routes.repo.name)
+      .filters.forEach(filterName => {
+        const filterValue = filterName + 'val';
+        filters.push({name: filterName, value: filterValue});
+        expectedRouteParams += ';' + filterName + '=' + filterValue;
+      });
     return {filters, expectedRouteParams};
   };
 

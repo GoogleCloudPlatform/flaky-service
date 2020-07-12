@@ -22,6 +22,7 @@ import {
 import {FiltersComponent} from '../filters/filters.component';
 import {Filter} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
+import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
 @Component({
   selector: 'app-repository',
@@ -87,7 +88,7 @@ export class RepositoryComponent implements OnInit {
     this.route.params.subscribe(params => {
       const foundParams = this.interpreter.parseRouteParam(
         params,
-        expectedParams.get('repo')
+        expectedParams.get(RouteProvider.routes.repo.name)
       );
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');

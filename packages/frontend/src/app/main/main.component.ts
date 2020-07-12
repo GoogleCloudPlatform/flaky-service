@@ -20,6 +20,7 @@ import {
   expectedParams,
   InterpretationService,
 } from '../services/interpretation/interpretation.service';
+import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
 @Component({
   selector: 'app-main',
@@ -39,7 +40,7 @@ export class MainComponent implements OnInit {
     this.route.params.subscribe(params => {
       const foundParams = this.interpreter.parseRouteParam(
         params,
-        expectedParams.get('main')
+        expectedParams.get(RouteProvider.routes.main.name)
       );
       const org = foundParams.queries.get('org');
       const repo = foundParams.queries.get('repo');
