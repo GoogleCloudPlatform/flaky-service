@@ -21,7 +21,7 @@ import {of, Observable} from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class SessionService {
+export class UserService {
   status: SessionStatus;
 
   constructor(private com: COMService) {
@@ -30,42 +30,35 @@ export class SessionService {
     };
   }
 
-  update(): Observable<void> {
+  get loggedIn(): Observable<boolean> {
+    if (this._loggedIn()) {
+      return of(true);
+    } else {
+      this.updateSession().subscribe(() => {
+        return of(this._loggedIn());
+      });
+    }
+  }
+
+  updateSession(): Observable<void> {
     return new Observable(subscriber => {
-      if (this.passedExpirationDate()) {
-        this.com
-          .fetchSessionStatus()
-          .pipe(
-            catchError(err => {
-              subscriber.error(err);
-              return of(this.status);
-            })
-          )
-          .subscribe(newStatus => {
-            this.updateStatus(newStatus);
-            subscriber.next();
-          });
-      } else {
-        subscriber.next();
-      }
+      this.com
+        .fetchSessionStatus()
+        .subscribe(newStatus => {
+          this.updateStatus(newStatus);
+          subscriber.next();
+        });
     });
   }
 
-  private passedExpirationDate(): boolean {
-    const noExpirationDate = !this.status.expiration;
-    const passedExpirationDate =
-      this.status.permitted &&
-      this.status.expiration &&
+  private _loggedIn(): boolean {
+     const expired = this.status.expiration &&
       Date.now() > this.status.expiration.getTime();
-    return !this.status.permitted || noExpirationDate || passedExpirationDate;
+    return this.status.permitted && !expired;
   }
 
   private updateStatus(newStatus: SessionStatus): void {
     this.status.permitted = newStatus.permitted;
     this.status.expiration = newStatus.expiration;
   }
-}
-
-export interface User {
-  loggedIn: boolean;
 }
