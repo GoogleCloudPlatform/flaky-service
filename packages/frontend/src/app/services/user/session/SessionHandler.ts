@@ -13,47 +13,55 @@
 // limitations under the License.
 
 import {Injectable} from '@angular/core';
-import {COMService} from '../com/com.service';
-import {SessionStatus} from '../search/interfaces';
+import {COMService} from '../../com/com.service';
+import {SessionStatus} from '../../search/interfaces';
 import {catchError} from 'rxjs/operators';
 import {of, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class SessionHandler {
   status: SessionStatus;
 
   constructor(private com: COMService) {
     this.status = {
       permitted: false,
+      login: '',
     };
   }
 
-  loggedIn(): Observable<boolean> {
+  get loggedIn(): Observable<boolean> {
     return new Observable(subscriber => {
       if (this._loggedIn()) {
         subscriber.next(true);
       } else {
-        this.com
-          .fetchSessionStatus()
-          .pipe(catchError(err => of(this.status)))
-          .subscribe(newStatus => {
-            this.updateStatus(newStatus);
-            subscriber.next(newStatus.permitted);
-          });
+        this.fetchSession().subscribe(newStatus => {
+          this.updateStatus(newStatus);
+          subscriber.next(this.status.permitted);
+        });
       }
     });
   }
 
   private _loggedIn(): boolean {
-     const expired = this.status.expiration &&
-      Date.now() > this.status.expiration.getTime();
+    const expired =
+      this.status.expiration && Date.now() > this.status.expiration.getTime();
     return this.status.permitted && !expired;
+  }
+
+  private fetchSession(): Observable<SessionStatus> {
+    return this.com.fetchSessionStatus().pipe(
+      catchError(() => {
+        this.status.permitted = false;
+        return of(this.status);
+      })
+    );
   }
 
   private updateStatus(newStatus: SessionStatus): void {
     this.status.permitted = newStatus.permitted;
     this.status.expiration = newStatus.expiration;
+    this.status.login = newStatus.login;
   }
 }
