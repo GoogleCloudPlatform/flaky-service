@@ -13,17 +13,18 @@
 // limitations under the License.
 
 import {TestBed} from '@angular/core/testing';
-import {SessionService} from './session.service';
+import {UserService} from './user.service';
 import {of, throwError} from 'rxjs';
 import {SessionStatus} from '../search/interfaces';
 import {COMService} from '../com/com.service';
 import {catchError} from 'rxjs/operators';
 
-describe('SessionService', () => {
-  let service: SessionService;
+describe('UserService', () => {
+  let service: UserService;
   const sessionStatus: SessionStatus = {
     permitted: false,
     expiration: new Date(),
+    login: '',
   };
 
   const mockCOMService = {};
@@ -36,7 +37,7 @@ describe('SessionService', () => {
     TestBed.configureTestingModule({
       providers: [{provide: COMService, useValue: mockCOMService}],
     });
-    service = TestBed.inject(SessionService);
+    service = TestBed.inject(UserService);
     mockCOMService['fetchSessionStatus'] = () => of(sessionStatus);
   });
 
@@ -44,58 +45,64 @@ describe('SessionService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('update', () => {
+  describe('loggedIn', () => {
     it('should update the status with the new session status', done => {
       sessionStatus.permitted = true;
       sessionStatus.expiration = getFutureDate(1);
 
-      service.update().subscribe(() => {
-        expect(service.status.permitted).toEqual(sessionStatus.permitted);
-        expect(service.status.expiration).toEqual(sessionStatus.expiration);
+      service.loggedIn.subscribe(loggedIn => {
+        expect(loggedIn).toEqual(sessionStatus.permitted);
+        expect(service.session.status.expiration).toEqual(
+          sessionStatus.expiration
+        );
         done();
       });
     });
 
     it("should not update the status if the session hasn't expired", done => {
-      service.status.permitted = true;
-      service.status.expiration = getFutureDate(1);
+      service.session.status.permitted = true;
+      service.session.status.expiration = getFutureDate(1);
 
       // save status
-      const expectedLogginStatus = service.status.permitted;
-      const expectedexpirationDate = service.status.expiration;
+      const expectedLogginStatus = service.session.status.permitted;
+      const expectedexpirationDate = service.session.status.expiration;
 
       // set new status (should not be updated)
-      sessionStatus.permitted = !service.status.permitted;
+      sessionStatus.permitted = !service.session.status.permitted;
       sessionStatus.expiration = getFutureDate(2);
 
-      service.update().subscribe(() => {
-        expect(service.status.permitted).toEqual(expectedLogginStatus);
-        expect(service.status.expiration).toEqual(expectedexpirationDate);
+      service.loggedIn.subscribe(loggedIn => {
+        expect(loggedIn).toEqual(expectedLogginStatus);
+        expect(service.session.status.expiration).toEqual(
+          expectedexpirationDate
+        );
         done();
       });
     });
 
-    it('should save the current session status if an error occurs and reject a promise', done => {
-      const expectedLogginStatus = true;
+    it('should return false if an error occurs', done => {
+      const initialLogginStatus = true;
       const expectedexpirationDate = new Date(1900, 4);
 
-      service.status.permitted = expectedLogginStatus;
-      service.status.expiration = expectedexpirationDate;
+      service.session.status.permitted = initialLogginStatus;
+      service.session.status.expiration = expectedexpirationDate;
 
       mockCOMService['fetchSessionStatus'] = () => throwError('');
 
-      service
-        .update()
+      service.loggedIn
         .pipe(
           catchError(() => {
-            expect(service.status.permitted).toEqual(expectedLogginStatus);
-            expect(service.status.expiration).toEqual(expectedexpirationDate);
-            done();
+            fail();
             return of();
           })
         )
-        .subscribe(() => {
-          fail();
+        .subscribe(loggedIn => {
+          expect(loggedIn).toEqual(!initialLogginStatus);
+          // saved the expiration date
+          expect(service.session.status.expiration).toEqual(
+            expectedexpirationDate
+          );
+          done();
         });
     });
   });

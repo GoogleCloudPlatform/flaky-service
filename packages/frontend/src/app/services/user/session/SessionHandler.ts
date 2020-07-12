@@ -13,59 +13,55 @@
 // limitations under the License.
 
 import {Injectable} from '@angular/core';
-import {COMService} from '../com/com.service';
-import {SessionStatus} from '../search/interfaces';
+import {COMService} from '../../com/com.service';
+import {SessionStatus} from '../../search/interfaces';
 import {catchError} from 'rxjs/operators';
 import {of, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SessionService {
+export class SessionHandler {
   status: SessionStatus;
 
   constructor(private com: COMService) {
     this.status = {
       permitted: false,
+      login: '',
     };
   }
 
-  update(): Observable<void> {
+  get loggedIn(): Observable<boolean> {
     return new Observable(subscriber => {
-      if (this.passedExpirationDate()) {
-        this.com
-          .fetchSessionStatus()
-          .pipe(
-            catchError(err => {
-              subscriber.error(err);
-              return of(this.status);
-            })
-          )
-          .subscribe(newStatus => {
-            this.updateStatus(newStatus);
-            subscriber.next();
-          });
+      if (this._loggedIn()) {
+        subscriber.next(true);
       } else {
-        subscriber.next();
+        this.fetchSession().subscribe(newStatus => {
+          this.updateStatus(newStatus);
+          subscriber.next(this.status.permitted);
+        });
       }
     });
   }
 
-  private passedExpirationDate(): boolean {
-    const noExpirationDate = !this.status.expiration;
-    const passedExpirationDate =
-      this.status.permitted &&
-      this.status.expiration &&
-      Date.now() > this.status.expiration.getTime();
-    return !this.status.permitted || noExpirationDate || passedExpirationDate;
+  private _loggedIn(): boolean {
+    const expired =
+      this.status.expiration && Date.now() > this.status.expiration.getTime();
+    return this.status.permitted && !expired;
+  }
+
+  private fetchSession(): Observable<SessionStatus> {
+    return this.com.fetchSessionStatus().pipe(
+      catchError(() => {
+        this.status.permitted = false;
+        return of(this.status);
+      })
+    );
   }
 
   private updateStatus(newStatus: SessionStatus): void {
     this.status.permitted = newStatus.permitted;
     this.status.expiration = newStatus.expiration;
+    this.status.login = newStatus.login;
   }
-}
-
-export interface User {
-  loggedIn: boolean;
 }
