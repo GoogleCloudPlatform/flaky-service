@@ -22,14 +22,14 @@ import {BuildComponent} from '../build/build.component';
 import {NotFoundComponent} from '../not-found/not-found.component';
 import {apiLinks} from '../services/com/api';
 import {LoginGuard} from './route-guards/LoginGuard';
+import {RouteProvider} from './route-provider/RouteProvider';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'license', component: LicenseComponent},
-  {path: 'search', component: MainComponent},
-  {path: 'org/:org/:repo', component: RepositoryComponent},
-  {path: 'org/:org', component: MainComponent},
   {path: 'org/:org/:repo/:build', component: BuildComponent},
+  {path: RouteProvider.routes.repo.path, component: RepositoryComponent},
+  {path: RouteProvider.routes.main.path, component: MainComponent},
   {
     path: 'login',
     canActivate: [LoginGuard],
