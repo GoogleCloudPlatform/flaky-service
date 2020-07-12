@@ -30,24 +30,19 @@ export class UserService {
     };
   }
 
-  get loggedIn(): Observable<boolean> {
-    if (this._loggedIn()) {
-      return of(true);
-    } else {
-      this.updateSession().subscribe(() => {
-        return of(this._loggedIn());
-      });
-    }
-  }
-
-  updateSession(): Observable<void> {
+  loggedIn(): Observable<boolean> {
     return new Observable(subscriber => {
-      this.com
-        .fetchSessionStatus()
-        .subscribe(newStatus => {
-          this.updateStatus(newStatus);
-          subscriber.next();
-        });
+      if (this._loggedIn()) {
+        subscriber.next(true);
+      } else {
+        this.com
+          .fetchSessionStatus()
+          .pipe(catchError(err => of(this.status)))
+          .subscribe(newStatus => {
+            this.updateStatus(newStatus);
+            subscriber.next(newStatus.permitted);
+          });
+      }
     });
   }
 

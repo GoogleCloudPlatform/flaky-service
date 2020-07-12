@@ -13,14 +13,14 @@
 // limitations under the License.
 
 import {TestBed} from '@angular/core/testing';
-import {SessionService} from './session.service';
+import {UserService} from './session.service';
 import {of, throwError} from 'rxjs';
 import {SessionStatus} from '../search/interfaces';
 import {COMService} from '../com/com.service';
 import {catchError} from 'rxjs/operators';
 
-describe('SessionService', () => {
-  let service: SessionService;
+describe('UserService', () => {
+  let service: UserService;
   const sessionStatus: SessionStatus = {
     permitted: false,
     expiration: new Date(),
@@ -36,7 +36,7 @@ describe('SessionService', () => {
     TestBed.configureTestingModule({
       providers: [{provide: COMService, useValue: mockCOMService}],
     });
-    service = TestBed.inject(SessionService);
+    service = TestBed.inject(UserService);
     mockCOMService['fetchSessionStatus'] = () => of(sessionStatus);
   });
 
@@ -44,12 +44,12 @@ describe('SessionService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('update', () => {
+  describe('loggedIn', () => {
     it('should update the status with the new session status', done => {
       sessionStatus.permitted = true;
       sessionStatus.expiration = getFutureDate(1);
 
-      service.update().subscribe(() => {
+      service.loggedIn().subscribe((loggedIn) => {
         expect(service.status.permitted).toEqual(sessionStatus.permitted);
         expect(service.status.expiration).toEqual(sessionStatus.expiration);
         done();
@@ -68,7 +68,7 @@ describe('SessionService', () => {
       sessionStatus.permitted = !service.status.permitted;
       sessionStatus.expiration = getFutureDate(2);
 
-      service.update().subscribe(() => {
+      service.loggedIn().subscribe(() => {
         expect(service.status.permitted).toEqual(expectedLogginStatus);
         expect(service.status.expiration).toEqual(expectedexpirationDate);
         done();
@@ -85,7 +85,7 @@ describe('SessionService', () => {
       mockCOMService['fetchSessionStatus'] = () => throwError('');
 
       service
-        .update()
+        .loggedIn()
         .pipe(
           catchError(() => {
             expect(service.status.permitted).toEqual(expectedLogginStatus);
