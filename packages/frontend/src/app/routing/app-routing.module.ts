@@ -14,13 +14,13 @@
 
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {HomeComponent} from './home/home.component';
-import {LicenseComponent} from './license/license.component';
-import {MainComponent} from './main/main.component';
-import {RepositoryComponent} from './repository/repository.component';
-import {BuildComponent} from './build/build.component';
-import {NotFoundComponent} from './not-found/not-found.component';
-import {apiLinks} from './services/com/api';
+import {HomeComponent} from '../home/home.component';
+import {LicenseComponent} from '../license/license.component';
+import {MainComponent} from '../main/main.component';
+import {RepositoryComponent} from '../repository/repository.component';
+import {BuildComponent} from '../build/build.component';
+import {NotFoundComponent} from '../not-found/not-found.component';
+import {apiLinks} from '../services/com/api';
 import {LoginGuard} from './route-guards/LoginGuard';
 
 const routes: Routes = [

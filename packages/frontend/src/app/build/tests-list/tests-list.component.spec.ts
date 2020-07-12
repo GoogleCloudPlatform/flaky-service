@@ -20,7 +20,7 @@ import {
   MatPaginator,
   PageEvent,
 } from '@angular/material/paginator';
-import {AppRoutingModule} from 'src/app/app-routing.module';
+import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {Component} from '@angular/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {By} from '@angular/platform-browser';

@@ -21,7 +21,7 @@ import {
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RepoListComponent} from './repo-list.component';
 import {Repository} from 'src/app/services/search/interfaces';
-import {AppRoutingModule} from 'src/app/app-routing.module';
+import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 
 describe('RepoListComponent', () => {

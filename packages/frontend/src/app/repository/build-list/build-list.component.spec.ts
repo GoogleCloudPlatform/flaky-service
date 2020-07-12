@@ -21,7 +21,7 @@ import {
   PageEvent,
 } from '@angular/material/paginator';
 import {Build} from 'src/app/services/search/interfaces';
-import {AppRoutingModule} from 'src/app/app-routing.module';
+import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 
 describe('BuildListComponent', () => {
   let component: BuildListComponent;

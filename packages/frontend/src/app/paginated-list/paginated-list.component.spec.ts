@@ -17,7 +17,7 @@ import {Repository} from '../services/search/interfaces';
 import {PageEvent} from '@angular/material/paginator';
 import {TestBed, async, ComponentFixture} from '@angular/core/testing';
 import {environment} from 'src/environments/environment';
-import {AppRoutingModule} from '../app-routing.module';
+import {AppRoutingModule} from '../routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 
 // Extend to use an instance

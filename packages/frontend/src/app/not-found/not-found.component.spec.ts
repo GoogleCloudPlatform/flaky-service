@@ -23,7 +23,7 @@ import {Location} from '@angular/common';
 import {NotFoundComponent} from './not-found.component';
 import {By} from '@angular/platform-browser';
 import {Router} from '@angular/router';
-import {AppRoutingModule} from '../app-routing.module';
+import {AppRoutingModule} from '../routing/app-routing.module';
 import {NgZone} from '@angular/core';
 
 describe('NotFoundComponent', () => {

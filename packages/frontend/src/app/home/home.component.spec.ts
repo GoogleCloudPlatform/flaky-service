@@ -20,7 +20,7 @@ import {
   fakeAsync,
 } from '@angular/core/testing';
 import {HomeComponent} from './home.component';
-import {AppRoutingModule} from '../app-routing.module';
+import {AppRoutingModule} from '../routing/app-routing.module';
 import {Router} from '@angular/router';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
