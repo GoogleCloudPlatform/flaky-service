@@ -20,16 +20,10 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {SessionService} from '../services/session/session.service';
-import {of} from 'rxjs';
 
 describe('AppComponent', () => {
   let fixture;
   let app: AppComponent;
-
-  const mockSessionService = {
-    update: () => of(''),
-  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -41,7 +35,6 @@ describe('AppComponent', () => {
         MatSidenavModule,
         MatListModule,
       ],
-      providers: [{provide: SessionService, useValue: mockSessionService}],
       declarations: [AppComponent],
     }).compileComponents();
 
@@ -50,17 +43,6 @@ describe('AppComponent', () => {
   }));
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
     expect(app).toBeTruthy();
-  });
-
-  it('should fetch the session status at initialization', () => {
-    spyOn(mockSessionService, 'update').and.returnValue(of(''));
-
-    app.ngOnInit();
-
-    expect(mockSessionService.update).toHaveBeenCalledTimes(1);
-    expect(mockSessionService.update).toHaveBeenCalledWith();
   });
 });
