@@ -37,13 +37,6 @@ class RepoListComponent {
   @Input() repositories = [];
 }
 
-@Component({
-  selector: 'app-search',
-})
-class SearchComponent {
-  @Output() searchOptionSelected = new EventEmitter<Search>();
-}
-
 describe('MainComponent', () => {
   let component: MainComponent;
   let fixture: ComponentFixture<MainComponent>;
@@ -59,7 +52,7 @@ describe('MainComponent', () => {
         {provide: SearchService, useValue: mockSearchService},
         {provide: ActivatedRoute, useValue: mockRoute},
       ],
-      declarations: [MainComponent, RepoListComponent, SearchComponent],
+      declarations: [MainComponent, RepoListComponent],
       imports: [AppRoutingModule],
     }).compileComponents();
   }));
@@ -102,25 +95,4 @@ describe('MainComponent', () => {
       );
     });
   });
-
-  it('should refresh with the new query and filters when the user validates a search in the search bar', fakeAsync(() => {
-    const searchComponent: SearchComponent = fixture.debugElement.query(
-      By.css('app-search')
-    ).componentInstance;
-    const searchResult = {
-      query: 'repo',
-      filters: [{name: 'flaky', value: 'n'}],
-    };
-
-    searchComponent.searchOptionSelected.emit(searchResult);
-
-    tick();
-
-    let newLocation = '/search';
-    searchResult.filters.forEach(
-      filter => (newLocation += ';' + filter.name + '=' + filter.value)
-    );
-
-    expect(location.path()).toEqual(newLocation);
-  }));
 });
