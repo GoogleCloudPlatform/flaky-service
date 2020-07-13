@@ -24,7 +24,6 @@ import {NotFoundComponent} from './not-found/not-found.component';
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'license', component: LicenseComponent},
-  {path: 'search', component: MainComponent},
   {path: 'org/:org/:repo', component: RepositoryComponent},
   {path: 'org/:org', component: MainComponent},
   {path: 'org/:org/:repo/:build', component: BuildComponent},
