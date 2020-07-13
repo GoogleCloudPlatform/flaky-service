@@ -18,8 +18,8 @@
 * and builds
 * returns analytics object and adds such data to database
 */
-const { Firestore } = require('@google-cloud/firestore');
 const { buildPassingPercent, TestCaseAnalytics } = require('../lib/analytics.js');
+const Firestore = require('@google-cloud/firestore');
 
 function listifySnapshot (snapshot) {
   const results = [];

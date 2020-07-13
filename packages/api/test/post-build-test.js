@@ -18,9 +18,9 @@ const EXAMPLE_PAYLOAD_RAW = '{"type":"TAP","data":"1..2\\nok 1 Testing Box shoul
 // NOTE: the distinction is just the github.repository so the testing doesnt collide
 
 const { describe, before, after, it } = require('mocha');
-const { Firestore } = require('@google-cloud/firestore');
 const { v4: uuidv4 } = require('uuid');
 const firebaseEncode = require('../lib/firebase-encode');
+const client = require('../src/firestore.js');
 const nock = require('nock');
 const validNockResponse = require('./res/sample-validate-resp.json');
 
@@ -31,11 +31,7 @@ const assert = require('assert');
 const fetch = require('node-fetch');
 
 describe('Posting Builds', () => {
-  let client;
   before(async () => {
-    client = new Firestore({
-      projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
-    });
     global.headCollection = 'repositories-testsuite-' + uuidv4();
 
     nock('https://api.github.com', {
