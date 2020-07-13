@@ -85,7 +85,7 @@ export class BreadcrumbsComponent implements OnInit {
 
     // [':param1',] => ['param1',]
     const paramsNames = [];
-    paramsNamesWithColons.forEach(param => {
+    paramsNamesWithColons?.forEach(param => {
       paramsNames.push(param.substring(1, param.length));
     });
 
