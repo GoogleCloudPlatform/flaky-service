@@ -40,3 +40,14 @@ mat-sidenav-container {
     margin-top: 56px;
     padding-top: 8px;
 }
+
+#search-bar {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    margin-top: 5px;
+}
+app-search {
+    width: 100%;
+    max-width: 400px;
+}
