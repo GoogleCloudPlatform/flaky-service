@@ -28,7 +28,10 @@ export class SearchService {
 
   quickSearch(query: string, orgName: string): Observable<Repository[]> {
     return this.com
-      .fetchRepositories({query: query, filters: [{name: 'org', value: orgName}]})
+      .fetchRepositories({
+        query: query,
+        filters: [{name: 'org', value: orgName}],
+      })
       .pipe(catchError(() => of([])));
   }
 

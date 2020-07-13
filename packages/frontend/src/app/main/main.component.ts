@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import {Component, OnInit, NgZone} from '@angular/core';
-import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {

@@ -20,12 +20,11 @@ import {
   tick,
 } from '@angular/core/testing';
 import {MainComponent} from './main.component';
-import {Component, Output, EventEmitter, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {of} from 'rxjs';
-import {By} from '@angular/platform-browser';
 import {Location} from '@angular/common';
 import {ActivatedRoute} from '@angular/router';
 
@@ -40,7 +39,6 @@ class RepoListComponent {
 describe('MainComponent', () => {
   let component: MainComponent;
   let fixture: ComponentFixture<MainComponent>;
-  let location: Location;
 
   // Mock services
   const mockSearchService = {repositories: [], search: () => of([])};
@@ -61,7 +59,6 @@ describe('MainComponent', () => {
     fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
-    location = TestBed.get(Location);
     mockSearchService.search = () => of([]);
     mockRoute.params = of({});
   });

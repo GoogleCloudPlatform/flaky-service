@@ -15,7 +15,10 @@
 import {Component, EventEmitter, OnInit, Output, NgZone} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {map, filter, debounceTime, switchMap} from 'rxjs/operators';
-import {InterpretationService, expectedParams} from '../services/interpretation/interpretation.service';
+import {
+  InterpretationService,
+  expectedParams,
+} from '../services/interpretation/interpretation.service';
 import {
   DefaultRepository,
   Repository,
@@ -23,7 +26,7 @@ import {
 } from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {Router, NavigationEnd, ActivatedRoute} from '@angular/router';
-import { RouteProvider } from '../routing/route-provider/RouteProvider';
+import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
 @Component({
   selector: 'app-search',
@@ -60,19 +63,19 @@ export class SearchComponent implements OnInit {
 
   private setupListeners() {
     this.inputControl.valueChanges
-    .pipe(
-      debounceTime(this.debounceTime),
-      map(value => this.updateOptions(value)),
-      filter(value => this.canBeAutoCompleted(value)),
-      switchMap(value => this.searchService.quickSearch(value, this.orgName))
-    )
-    .subscribe(newOptions => {
-      if (this.inputControl.value)
-        this.filteredOptions = newOptions.concat([this.defaultOption]);
-    });
+      .pipe(
+        debounceTime(this.debounceTime),
+        map(value => this.updateOptions(value)),
+        filter(value => this.canBeAutoCompleted(value)),
+        switchMap(value => this.searchService.quickSearch(value, this.orgName))
+      )
+      .subscribe(newOptions => {
+        if (this.inputControl.value)
+          this.filteredOptions = newOptions.concat([this.defaultOption]);
+      });
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => this.updateOrg());
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => this.updateOrg());
   }
 
   private updateOrg() {
@@ -103,8 +106,7 @@ export class SearchComponent implements OnInit {
     this.inputControl.setValue(option);
     const isADefaultOption = option === this.defaultOption.name;
     if (isADefaultOption) this.inputControl.setValue('');
-    else
-      this.launchSearch(this.interpreter.parseSearchInput(option));
+    else this.launchSearch(this.interpreter.parseSearchInput(option));
   }
 
   private launchSearch(option: Search): void {

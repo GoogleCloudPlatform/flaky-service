@@ -32,7 +32,9 @@ export class COMService {
 
   public fetchRepositories(search: Search): Observable<Repository[]> {
     let params: HttpParams = new HttpParams().set('startswith', search.query);
-    search.filters.forEach(filter => params = params.set(filter.name, filter.value));
+    search.filters.forEach(
+      filter => (params = params.set(filter.name, filter.value))
+    );
     return this.http.get<Repository[]>(apiLinks.get.repositories, {
       params: params,
     });
@@ -44,7 +46,7 @@ export class COMService {
     filters: Filter[]
   ): Observable<ApiRepository> {
     let params: HttpParams = new HttpParams();
-    filters.forEach(filter => params = params.set(filter.name, filter.value));
+    filters.forEach(filter => (params = params.set(filter.name, filter.value)));
     return this.http.get<ApiRepository>(
       apiLinks.get.builds(repoName, orgName),
       {

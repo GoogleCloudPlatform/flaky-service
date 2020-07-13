@@ -37,8 +37,8 @@ describe('COMService', () => {
       'startswith',
       search.query
     );
-    search.filters.forEach(filter =>
-      queryParams = queryParams.set(filter.name, filter.value)
+    search.filters.forEach(
+      filter => (queryParams = queryParams.set(filter.name, filter.value))
     );
 
     const serverResponse: Repository[] = [
