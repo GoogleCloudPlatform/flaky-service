@@ -55,14 +55,4 @@ export class MainComponent implements OnInit {
       this.searchService.search(search).subscribe();
     });
   }
-
-  onSearchOptionSelected(option: Search): void {
-    this.ngZone.run(() => {
-      option.filters.push({name: 'query', value: option.query});
-      this.router.navigate([
-        'search',
-        this.interpreter.getRouteParam(option.filters),
-      ]);
-    });
-  }
 }
