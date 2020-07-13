@@ -12,20 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  async,
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MainComponent} from './main.component';
 import {Component, Input} from '@angular/core';
 import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {of} from 'rxjs';
-import {Location} from '@angular/common';
 import {ActivatedRoute} from '@angular/router';
 
 // Mock the inner components
