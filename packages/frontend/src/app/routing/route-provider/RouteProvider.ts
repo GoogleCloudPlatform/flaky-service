@@ -27,3 +27,9 @@ export class RouteProvider {
     },
   };
 }
+
+export interface RouteData {
+  name: string;
+  path: string;
+  link: Function;
+}

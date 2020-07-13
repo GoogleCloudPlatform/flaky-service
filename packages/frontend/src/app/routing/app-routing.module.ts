@@ -28,8 +28,23 @@ const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'license', component: LicenseComponent},
   {path: 'org/:org/:repo/:build', component: BuildComponent},
-  {path: RouteProvider.routes.repo.path, component: RepositoryComponent},
-  {path: RouteProvider.routes.main.path, component: MainComponent},
+  {
+    path: RouteProvider.routes.repo.path,
+    component: RepositoryComponent,
+    data: {
+      breadCrumbPaths: [
+        RouteProvider.routes.main.name,
+        RouteProvider.routes.repo.name,
+      ],
+    },
+  },
+  {
+    path: RouteProvider.routes.main.path,
+    component: MainComponent,
+    data: {
+      breadCrumbPaths: [RouteProvider.routes.main.name],
+    },
+  },
   {
     path: 'login',
     canActivate: [LoginGuard],
