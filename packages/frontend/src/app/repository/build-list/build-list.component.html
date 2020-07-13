@@ -87,6 +87,7 @@ limitations under the License.
         [pageSize]="pageSize"
         [pageSizeOptions]="[10, 25, 50, 100]"
         [pageIndex]="pageIndex"
-        (page)="updatePage($event)">
+        (page)="updatePage($event)"
+        *ngIf="showPaginator">
     </mat-paginator>
 </div>
