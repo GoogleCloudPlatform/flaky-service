@@ -22,6 +22,9 @@ import {MatListModule} from '@angular/material/list';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
+  let fixture;
+  let app: AppComponent;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -34,11 +37,12 @@ describe('AppComponent', () => {
       ],
       declarations: [AppComponent],
     }).compileComponents();
+
+    fixture = TestBed.createComponent(AppComponent);
+    app = fixture.componentInstance;
   }));
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 });
