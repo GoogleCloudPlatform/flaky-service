@@ -51,12 +51,11 @@ app.use(
 );
 
 app.all('/api/protected/*', (req, res, next) => {
-  if(req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
-    console.log("AUTHENTICATED");
+  if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
+    console.log('AUTHENTICATED');
     next();
-  }
-  else {
-    console.log("NON AUTHENTICATED");
+  } else {
+    console.log('NON AUTHENTICATED');
     res.status(401).end();
   }
 });

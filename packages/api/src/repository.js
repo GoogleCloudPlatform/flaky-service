@@ -121,10 +121,13 @@ class Repository {
     const batch = client.batch();
     await snapshot.docs.forEach(async (doc) => {
       console.log('DATA: ' + doc.data().data);
-      const data = await JSON.parse(doc.data().data);
-      const expiration = data.expires;
-      if (expiration == null || moment().isAfter(moment(expiration))) {
-        console.log('DELETE IT!');
+      try {
+        const data = await JSON.parse(doc.data().data);
+        const expiration = data.expires;
+        if (expiration == null || moment().isAfter(moment(expiration))) {
+          batch.delete(doc.ref);
+        }
+      } catch (err) {
         batch.delete(doc.ref);
       }
     });

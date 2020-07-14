@@ -88,16 +88,16 @@ describe('Repository', () => {
   });
 
   describe('deleteCollection', async () => {
-    it('deletes a small collection of documents', async () => {
-      await repo.createDoc('fake-path/one', {});
-      await repo.createDoc('fake-path/two', {});
-      await repo.createDoc('fake-path/three', {});
+    it('deletes a small collection of documents with no expiration', async () => {
+      await repo.createDoc('express-sessions-cp/one', {});
+      await repo.createDoc('express-sessions-cp/two', {});
+      await repo.createDoc('express-sessions-cp/three', {});
 
-      await repo.deleteCollection('fake-path', 100);
+      await repo.deleteExpiredSessions('fake-path');
 
-      const one = await repo.getDoc('fake-path/one');
-      const two = await repo.getDoc('fake-path/two');
-      const three = await repo.getDoc('fake-path/three');
+      const one = await repo.getDoc('express-sessions-cp/one');
+      const two = await repo.getDoc('express-sessions-cp/two');
+      const three = await repo.getDoc('express-sessions-cp/three');
 
       assert.deepStrictEqual((one == null && two == null && three == null), true);
     });

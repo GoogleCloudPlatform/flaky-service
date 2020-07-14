@@ -18,6 +18,7 @@ const { describe, it } = require('mocha');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
+const nock = require('nock');
 
 describe('flaky express server', () => {
   const frontendUrl = 'https://flaky-dashboard.web.app/home';
@@ -28,7 +29,7 @@ describe('flaky express server', () => {
   });
   describe('/repos', async () => {
     it('returns a json object with the list of repositories, when you call GET on /repos', async () => {
-      const resp = await fetch('http://0.0.0.0:3000/api/repos', {
+      const resp = await fetch('http://0.0.0.0:3000/api/protected/repos', {
         headers: { 'Content-Type': 'application/json' }
       });
       const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
@@ -57,7 +58,7 @@ describe('flaky express server', () => {
 
   describe('/api/session', async () => {
     it('returns 200 state when request session info', async () => {
-      const resp = await fetch('http://0.0.0.0:3000/api/session');
+      const resp = await fetch('http://0.0.0.0:3000/api/protected/session');
       assert.strictEqual(resp.status, 200);
     });
   });
