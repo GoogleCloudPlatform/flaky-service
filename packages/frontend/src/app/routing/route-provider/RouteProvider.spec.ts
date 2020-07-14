@@ -15,25 +15,13 @@
 import {RouteProvider} from './RouteProvider';
 
 describe('RouteProvider', () => {
-  const getLinkArgs = (argsCount: number) => {
-    const args = [];
-    let argsString = '';
-
-    for (let index = 0; index < argsCount; index++) {
-      const arg = 'arg' + index;
-      args.push(arg);
-      argsString += '/' + arg;
-    }
-    return {args, argsString};
-  };
-
   it('should return a route link corresponding to the provided parameters', () => {
-    Object.keys(RouteProvider.routes).forEach(route => {
-      const routeLinkProvider: Function = RouteProvider.routes[route].link;
-      const {args, argsString} = getLinkArgs(routeLinkProvider.length);
-      const link = routeLinkProvider.apply(this, args);
+    const orgName = 'org';
+    const repoName = 'repo';
 
-      expect(link).toContain(argsString);
-    });
+    expect(RouteProvider.routes.main.link(orgName)).toEqual('org/' + orgName);
+    expect(RouteProvider.routes.repo.link(orgName, repoName)).toEqual(
+      'org/' + orgName + '/' + repoName
+    );
   });
 });

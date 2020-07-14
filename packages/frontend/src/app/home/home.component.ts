@@ -33,8 +33,6 @@ export class HomeComponent implements OnInit {
 
   openLicenseDialog(): void {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.height = '500px';
-    dialogConfig.width = '800px';
     dialogConfig.id = 'license-dialog';
 
     this.dialog.open(LicenseComponent, dialogConfig);

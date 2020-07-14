@@ -22,9 +22,12 @@ const fs = require('fs');
 const path = require('path');
 const tapParser = require('./../lib/tap-parser.js');
 const { Firestore } = require('@google-cloud/firestore');
+const addBuild = require('../src/add-build');
+const firebaseEncode = require('../lib/firebase-encode');
+
 const argv = require('yargs')
   .option('collection', {
-    default: 'repositories-fake',
+    default: 'testing-buildsget',
     describe: 'collection to store test data in'
   })
   .option('repo', {
@@ -33,15 +36,31 @@ const argv = require('yargs')
   })
   .argv;
 
+const allOrgs = ['alphaorg', 'betaorg'];
+const allRepos = ['project', 'codebase', 'server', 'backend', 'actionitem', 'morerepos1', 'morerepo2', 'prefixaaa', 'prefixbbb', 'prefixaab'];
+
 const directory = argv._[0] || path.resolve(__dirname, 'testing_logs/');
 const repositoryCollection = argv.collection;
-const repoIdentifier = encodeURIComponent(argv.repo);
+const repoIdentifier = firebaseEncode(argv.repo);
 const repoURL = 'https://github.com/' + argv.repo;
-const organization = (argv.repo.indexOf('/') > 1) ? argv.repo.substring(0, argv.repo.indexOf('/')) : 'No organization found';
-
+const organization = (argv.repo.indexOf('/') > 1) ? argv.repo.substring(0, argv.repo.indexOf('/')) : 'NoORG';
+const repo = (argv.repo.indexOf('/') > 1) ? argv.repo.substring(argv.repo.indexOf('/') + 1) : 'NoREPO';
 console.log('Populating Firestore with TAP files from \ndirectory: ' + directory);
 console.log('Putting into ' + argv.collection + ' collection');
-console.log('Marked a ' + repoIdentifier + ' repo in ' + organization + ' organization');
+console.log('Marked ' + decodeURIComponent(repoIdentifier) + ' as primary repo');
+
+const buildInfoTemplate = {
+  repoId: repoIdentifier,
+  organization: organization,
+  url: repoURL,
+  environment: {
+    os: 'Linux',
+    tag: 'NA',
+    matrix: '{Node: 11}',
+    ref: 'branch/master'
+  },
+  name: repo
+};
 
 fs.readdir(directory, function (err, files) {
   if (err) {
@@ -50,42 +69,31 @@ fs.readdir(directory, function (err, files) {
 
   var client = new Firestore();
 
-  // first initialize repository information
-  client.collection(repositoryCollection).doc(repoIdentifier).set({
-    url: repoURL,
-    organization: organization
-  });
-
   files.forEach(function (file) {
-    var testCases = tapParser.getTestCases(directory + '/' + file, file);
-
-    var failures = {};
-    var successes = [];
-
-    testCases.forEach(function (testCase) {
-      client.collection(repositoryCollection).doc(repoIdentifier).collection('tests').doc(testCase.encodedName)
-        .collection('runs').doc(testCase.buildid).set({
-          timestamp: testCase.timestamp,
-          environment: testCase.environment,
-          status: testCase.successful ? 'OK' : testCase.failureMessage
-        });
-
-      client.collection(repositoryCollection).doc(repoIdentifier).collection('tests').doc(testCase.encodedName).update({
-        environments: Firestore.FieldValue.arrayUnion(testCase.environment)
-      }, { merge: true });
-
-      if (testCase.successful) {
-        successes.push(testCase.encodedName);
-      } else {
-        failures[testCase.encodedName] = testCase.failureMessage;
+    const testCases = tapParser.getTestCases(directory + '/' + file, file);
+    var testCasesUse = [];
+    for (const tc of testCases) {
+      if (tc.name.startsWith('a')) {
+        testCasesUse.push(tc);
       }
-    });
+    }
 
-    client.collection(repositoryCollection).doc(repoIdentifier).collection('builds').doc(testCases[0].buildid).set({
-      environment: testCases[0].environment,
-      timestamp: testCases[0].timestamp,
-      successes: successes,
-      failures: failures
-    });
+    var buildInfo = JSON.parse(JSON.stringify(buildInfoTemplate));
+    buildInfo.timestamp = new Date();
+    buildInfo.sha = Math.random().toString(36).substring(2, 15);
+    buildInfo.buildId = Math.random().toString(36).substring(2, 15);
+    buildInfo.environment.os = (Math.random() > 0.5) ? 'Linux' : 'Windows';
+    buildInfo.environment.ref = (Math.random() > 0.66) ? 'ref/master' : ((Math.random() > 0.5) ? 'ref/a' : 'ref/b');
+    buildInfo.environment.matrix = (Math.random() > 0.5) ? '{Node:10}}' : '{Node:11}';
+
+    // put half of tests in default repo/org
+    if (Math.random() > 0.5) {
+      buildInfo.organization = allOrgs[Math.floor(Math.random() * allOrgs.length)];
+      buildInfo.name = allRepos[Math.floor(Math.random() * allRepos.length)];
+      buildInfo.repoId = firebaseEncode(buildInfo.organization + '/' + buildInfo.name);
+      buildInfo.repoURL = 'http://github.com/' + buildInfo.organization + '/' + buildInfo.name;
+    }
+
+    addBuild(testCasesUse, buildInfo, client, repositoryCollection);
   });
 });
