@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "prod-build": "ng build --prod",
+    "stage-build": "ng build --configuration=staging",
     "test": "ng test --code-coverage --sourceMap=true",
     "lint": "gts check",
     "e2e": "ng e2e",

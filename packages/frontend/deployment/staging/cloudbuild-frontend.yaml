@@ -1,5 +1,4 @@
 steps:
-  
   #Install Dependencies
 - name: 'node'
   entrypoint: 'npm'
@@ -22,7 +21,7 @@ steps:
 - name: 'node'
   entrypoint: 'npm'
   dir: 'packages/frontend'
-  args: ['run', 'build']
+  args: ['run', 'stage-build']
 
   #Deploy to Firebase
 - name: 'gcr.io/${_PROJECT_ID}/firebase'
