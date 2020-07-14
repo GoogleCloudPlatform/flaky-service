@@ -14,21 +14,37 @@
 
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {HomeComponent} from './home/home.component';
-import {LicenseComponent} from './license/license.component';
-import {MainComponent} from './main/main.component';
-import {RepositoryComponent} from './repository/repository.component';
-import {BuildComponent} from './build/build.component';
-import {NotFoundComponent} from './not-found/not-found.component';
-import {apiLinks} from './services/com/api';
+import {HomeComponent} from '../home/home.component';
+import {LicenseComponent} from '../license/license.component';
+import {MainComponent} from '../main/main.component';
+import {RepositoryComponent} from '../repository/repository.component';
+import {BuildComponent} from '../build/build.component';
+import {NotFoundComponent} from '../not-found/not-found.component';
+import {apiLinks} from '../services/com/api';
 import {LoginGuard} from './route-guards/LoginGuard';
+import {RouteProvider} from './route-provider/RouteProvider';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'license', component: LicenseComponent},
-  {path: 'org/:org/:repo', component: RepositoryComponent},
-  {path: 'org/:org', component: MainComponent},
   {path: 'org/:org/:repo/:build', component: BuildComponent},
+  {
+    path: RouteProvider.routes.repo.path,
+    component: RepositoryComponent,
+    data: {
+      breadCrumbPaths: [
+        RouteProvider.routes.main.name,
+        RouteProvider.routes.repo.name,
+      ],
+    },
+  },
+  {
+    path: RouteProvider.routes.main.path,
+    component: MainComponent,
+    data: {
+      breadCrumbPaths: [RouteProvider.routes.main.name],
+    },
+  },
   {
     path: 'login',
     canActivate: [LoginGuard],

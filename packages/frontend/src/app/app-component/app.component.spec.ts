@@ -20,6 +20,13 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {Component} from '@angular/core';
+
+// Mock the inner components
+@Component({
+  selector: 'app-breadcrumbs',
+})
+class BreadcrumbsComponent {}
 
 describe('AppComponent', () => {
   let fixture;
@@ -35,7 +42,7 @@ describe('AppComponent', () => {
         MatSidenavModule,
         MatListModule,
       ],
-      declarations: [AppComponent],
+      declarations: [AppComponent, BreadcrumbsComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);

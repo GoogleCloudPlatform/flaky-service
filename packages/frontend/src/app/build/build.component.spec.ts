@@ -24,7 +24,7 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Filter} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {of} from 'rxjs';
-import {AppRoutingModule} from '../app-routing.module';
+import {AppRoutingModule} from '../routing/app-routing.module';
 import {Location} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';

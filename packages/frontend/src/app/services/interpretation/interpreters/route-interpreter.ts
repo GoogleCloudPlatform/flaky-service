@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import {Filter} from '../../search/interfaces';
+import {RouteProvider} from 'src/app/routing/route-provider/RouteProvider';
 
 export class RouteInterpreter {
   parseRouteParam(
@@ -61,7 +62,10 @@ export interface FoundParams {
 }
 
 export const expectedParams: Map<string, ExpectedParams> = new Map([
-  ['main', {queries: ['org', 'repo'], filters: []}],
-  ['repo', {queries: ['org', 'repo'], filters: ['tag', 'matrix', 'ref', 'os']}],
+  [RouteProvider.routes.main.name, {queries: ['org', 'repo'], filters: []}],
+  [
+    RouteProvider.routes.repo.name,
+    {queries: ['org', 'repo'], filters: ['tag', 'matrix', 'ref', 'os']},
+  ],
   ['build', {queries: ['org', 'repo', 'build'], filters: ['order by']}],
 ]);

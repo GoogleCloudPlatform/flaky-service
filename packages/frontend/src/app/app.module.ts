@@ -15,7 +15,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 
-import {AppRoutingModule} from './app-routing.module';
+import {AppRoutingModule} from './routing/app-routing.module';
 import {AppComponent} from './app-component/app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
@@ -53,6 +53,7 @@ import {BuildComponent} from './build/build.component';
 import {TestsListComponent} from './build/tests-list/tests-list.component';
 import {TestDetailsComponent} from './build/tests-list/test-details/test-details.component';
 import {FiltersComponent} from './filters/filters.component';
+import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import {FiltersComponent} from './filters/filters.component';
     TestsListComponent,
     TestDetailsComponent,
     FiltersComponent,
+    BreadcrumbsComponent,
   ],
   imports: [
     BrowserModule,

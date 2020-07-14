@@ -23,7 +23,7 @@ import {MainComponent} from './main.component';
 import {Component, Output, EventEmitter, Input} from '@angular/core';
 import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
-import {AppRoutingModule} from '../app-routing.module';
+import {AppRoutingModule} from '../routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
 import {By} from '@angular/platform-browser';
