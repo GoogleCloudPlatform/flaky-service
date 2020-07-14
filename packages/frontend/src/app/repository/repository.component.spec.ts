@@ -24,6 +24,7 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Search, Filter} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {of} from 'rxjs';
+import {MatDialogModule} from '@angular/material/dialog';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {Location} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
@@ -98,7 +99,7 @@ describe('RepositoryComponent', () => {
         SearchComponent,
         FiltersComponent,
       ],
-      imports: [AppRoutingModule, NoopAnimationsModule],
+      imports: [AppRoutingModule, MatDialogModule, NoopAnimationsModule],
     }).compileComponents();
   }));
 

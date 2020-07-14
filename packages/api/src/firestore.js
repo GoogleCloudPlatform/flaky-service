@@ -1,3 +1,4 @@
+
 // Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,9 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
-class TestRun {
-  isFlaky () {
-  }
-}
-*/
+const Firestore = require('@google-cloud/firestore');
+
+const id = process.env.FLAKY_DB_PROJECT || 'flaky-dev-development';
+
+const client = new Firestore({
+  projectId: id
+});
+
+module.exports = client;

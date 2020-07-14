@@ -28,11 +28,21 @@ class ResourceNotFoundError extends Error {
   }
 }
 
+class UnauthorizedError extends Error {
+  constructor (message) {
+    super(message);
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
 function handleError (res, err) {
   if (err instanceof InvalidParameterError) {
     res.status(400).send({ error: 'Bad Request' });
   } else if (err instanceof ResourceNotFoundError) {
     res.status(404).send({ error: 'Not Found' });
+  } else if (err instanceof UnauthorizedError) {
+    res.status(401).send({ error: 'Unauthorized' });
   } else {
     console.error(err.stack);
     res.status(500).send({ error: 'Unknown Error' });
@@ -42,5 +52,6 @@ function handleError (res, err) {
 module.exports = {
   InvalidParameterError,
   ResourceNotFoundError,
+  UnauthorizedError,
   handleError
 };

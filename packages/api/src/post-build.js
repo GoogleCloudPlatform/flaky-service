@@ -21,7 +21,8 @@ const TestCaseRun = require('../lib/testrun');
 var Parser = require('tap-parser');
 const Readable = require('stream').Readable;
 const firebaseEncode = require('../lib/firebase-encode');
-const { InvalidParameterError, handleError } = require('../lib/errors');
+const { InvalidParameterError, UnauthorizedError, handleError } = require('../lib/errors');
+const { validateGithub } = require('../lib/validate-github');
 
 class PostBuildHandler {
   constructor (app, client) {
@@ -105,24 +106,18 @@ class PostBuildHandler {
   }
 
   listen () {
-    // route for when parsed in action
-    this.app.post('/api/buildparsed', async (req, res, next) => {
-      try {
-        var buildInfo = this.parseBuildInfo(req.body.metadata);
-        var testCases = this.parseTestCases(req.body.data);
-        await addBuild(testCases, buildInfo, this.client, global.headCollection);
-        res.send({ message: 'successfully added build' });
-      } catch (err) {
-        handleError(res, err);
-      }
-    });
-
     // route for parsing test input server side
     this.app.post('/api/build', async (req, res, next) => {
       try {
-        var buildInfo = this.parseBuildInfo(req.body.metadata);
-        var parsedRaw = await this.parseRawOutput(req.body.data, req.body.type);
-        var testCases = this.parseTestCases(parsedRaw);
+        const buildInfo = this.parseBuildInfo(req.body.metadata);
+        const parsedRaw = await this.parseRawOutput(req.body.data, req.body.type);
+        const testCases = this.parseTestCases(parsedRaw);
+
+        const isValid = await validateGithub(req.body.metadata.github.token, req.body.metadata.github.repository);
+        if (!isValid) {
+          throw new UnauthorizedError('Must have valid Github Token to post build');
+        }
+
         await addBuild(testCases, buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {

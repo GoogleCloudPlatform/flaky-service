@@ -62,18 +62,6 @@ describe('flaky express server', () => {
     });
   });
 
-  it('it responds to a GET on the / path', async () => {
-    const resp = await fetch('http://localhost:3000/api', {
-      method: 'post',
-      body: JSON.stringify({
-        message: 'goodnight moon'
-      }),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const respJSON = await resp.json();
-    assert.strictEqual(respJSON.message, 'goodnight moon');
-  });
-
   it('it returns a single repository, when you call GET on /repository/:id');
   it('it creates a repository, when you call POST on /repository');
 });
