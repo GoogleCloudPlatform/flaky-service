@@ -23,7 +23,7 @@ limitations under the License.
             class="build"
             [class.flaky]="!build.numfails && build.flaky"
             [class.failing]="build.numfails"
-            (click)="onElementClick('/'.concat(orgName, '/', repoName, '/', build.buildId), $event)">
+            (click)="onElementClick(location.path() + '/' + build.buildId, $event)">
 
             <!-- BUILD DETAILS -->
             <div class="details">

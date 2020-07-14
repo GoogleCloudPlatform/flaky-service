@@ -17,36 +17,7 @@ File with utilities for parsing Tap files and outputting them as Csv or more rea
 */
 
 var fs = require('fs');
-
-// class representing single test case
-class TestCaseRun {
-  constructor (okMessage, number, name) {
-    this.successful = (okMessage === 'ok');
-    this.number = number;
-    this.name = name;
-    this.time = 0;
-    this.timestamp = new Date();
-
-    // additionally compute a likely but not necessarily unique substring that
-    // is the part of the test after the last slash
-    var n = this.name.lastIndexOf('/');
-    this.shortenedName = (n >= 0) ? this.name.substring(n + 1) : this.name;
-    this.encodedName = encodeURIComponent(this.name);
-
-    this.environment = 'TODO'; // TODO
-    this.buildid = 99999; // TODO
-    this.failureMessage = 'TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)';
-  }
-
-  display () {
-    return this.number + ', ' + this.name + ', ' + this.time + ', ' + (this.successful ? '1' : '0');
-  }
-
-  setTime (time) {
-    this.time = time;
-    this.timestamp = new Date(time);
-  }
-}
+const TestCaseRun = require('./testrun');
 
 // saves list of test cases to the specified file path
 function saveToCsv (fileName, testCases) {
@@ -74,14 +45,6 @@ function getTestCases (inputFilePath, fileName) {
     if (dateMatch !== null && determinedDate == null) {
       determinedDate = Date.parse(outcome[i]);
     }
-  }
-
-  // set all test cases to have the appropriate time
-
-  for (i = 0; i < testCases.length; i++) {
-    testCases[i].setTime(determinedDate);
-    testCases[i].buildid = encodeURIComponent(fileName);
-    testCases[i].environment = 'linux-' + fileName.substr(-1);
   }
 
   return testCases;

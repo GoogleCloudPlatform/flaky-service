@@ -15,6 +15,8 @@
 import {Component, OnInit, ViewChild, NgZone} from '@angular/core';
 import {SearchService} from '../services/search/search.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {LicenseComponent} from '../license/license.component';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {
   InterpretationService,
   expectedParams,
@@ -76,7 +78,8 @@ export class RepositoryComponent implements OnInit {
     private router: Router,
     private ngZone: NgZone,
     private interpreter: InterpretationService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public dialog: MatDialog
   ) {}
 
   @ViewChild(FiltersComponent) filterComponent;
@@ -102,6 +105,13 @@ export class RepositoryComponent implements OnInit {
           );
         });
     });
+  }
+
+  openLicenseDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.id = 'license-dialog';
+
+    this.dialog.open(LicenseComponent, dialogConfig);
   }
 
   onFiltersChanged(filters: Filter[]) {

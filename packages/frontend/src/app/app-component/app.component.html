@@ -15,13 +15,10 @@ limitations under the License.
 -->
 
 <div id="main-container">
-  <!--HEADER-->
   <mat-toolbar id="header">
     <span id="title">{{ title }}</span>
   </mat-toolbar>
 
-
-  <!-- SIDE NAVBAR -->
   <mat-sidenav-container>
 
     <mat-sidenav #snav mode="over" fixedTopGap="56">
@@ -33,13 +30,12 @@ limitations under the License.
     </mat-sidenav>
 
     <mat-sidenav-content>
-      
-      <!-- BREADCRUMBS -->
-      <app-breadcrumbs></app-breadcrumbs>
-
-      <!-- SEARCH BAR -->
-      <div id="search-bar">
-        <app-search></app-search>
+      <div id="fixed-header">
+        <app-breadcrumbs></app-breadcrumbs>
+  
+        <div id="search-bar">
+          <app-search></app-search>
+        </div>
       </div>
 
       <!-- The routed views render in the <router-outlet>-->

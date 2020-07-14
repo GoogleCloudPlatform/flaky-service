@@ -18,6 +18,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {UtilsService} from '../services/utils.service';
 import {MatDialog} from '@angular/material/dialog';
+import {Location} from '@angular/common';
 export {MatPaginator} from '@angular/material/paginator';
 
 @Component({template: ''})
@@ -32,7 +33,8 @@ export class PaginatedListComponent<Elements> implements OnInit {
     public sanitizer: DomSanitizer,
     public router: Router,
     public utils: UtilsService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public location: Location
   ) {}
 
   ngOnInit(): void {
