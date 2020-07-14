@@ -79,8 +79,9 @@ class Repository {
     return document.delete();
   }
 
-  async deleteQueryBatch (query, resolve) {
+  async deleteQueryBatchExpired (query, resolve) {
     const snapshot = await query.get();
+    console.log("NUM DOCS: " + snapshot.size);
 
     const batchSize = snapshot.size;
     if (batchSize === 0) {
@@ -91,25 +92,44 @@ class Repository {
 
     // Delete documents in a batch
     const batch = client.batch();
-    snapshot.docs.forEach((doc) => {
-      batch.delete(doc.ref);
+    await snapshot.docs.forEach(async (doc) => {
+      console.log("DATA: " + doc.data().data);
+      const data = await JSON.parse(doc.data().data);
+      const expiration = data.expires;
+      if(expiration == null || moment().isAfter(moment(expiration))) {
+        console.log("DELETE IT!");
+        batch.delete(doc.ref);
+      }
     });
     await batch.commit();
 
     // Recurse on the next process tick, to avoid
     // exploding the stack.
     process.nextTick(() => {
-      this.deleteQueryBatch(query, resolve);
+      this.deleteQueryBatchExpired(query, resolve);
     });
   }
 
-  async deleteCollection (path, batchSize) {
-    const collectionRef = client.collection(path);
-    const query = collectionRef.orderBy('__name__').limit(batchSize);
+  async deleteExpiredSessions() {
+    console.log("DELETE EXPIRED");
+    const collectionRef = client.collection('express-sessions');
+    const snapshot = await collectionRef.get();
+    // const query = collectionRef.where(data.expires==null || moment().isAfter(moment(data.expires))).orderBy('__name__').limit(100);
 
-    return new Promise((resolve, reject) => {
-      this.deleteQueryBatch(query, resolve).catch(reject);
+    console.log("NUM DOCS: " + snapshot.size);
+
+    // Delete documents in a batch
+    const batch = client.batch();
+    await snapshot.docs.forEach(async (doc) => {
+      console.log("DATA: " + doc.data().data);
+      const data = await JSON.parse(doc.data().data);
+      const expiration = data.expires;
+      if(expiration == null || moment().isAfter(moment(expiration))) {
+        console.log("DELETE IT!");
+        batch.delete(doc.ref);
+      }
     });
+    await batch.commit();
   }
 }
 

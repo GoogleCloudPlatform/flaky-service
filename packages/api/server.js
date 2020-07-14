@@ -26,6 +26,7 @@ const GetBuildHandler = require('./src/get-build.js');
 const GetRepoOrgsHandler = require('./src/get-repo-orgs.js');
 const GetTestHandler = require('./src/get-test.js');
 const client = require('./src/firestore.js');
+const cron = require('node-cron');
 
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const { v4 } = require('uuid');
@@ -49,11 +50,19 @@ app.use(
   })
 );
 
+// Delete sessions every five minutes
+cron.schedule('*/5 * * * *', () => {
+  console.log("CRON");
+  const repository = new Repository();
+  repository.deleteExpiredSessions();
+  // await repository.deleteCollection('express-sessions', 100);
+});
+
 app.get('/api/repos', async (req, res) => {
   if (!req.session || !req.session.user) {
     console.log('No user!');
   }
-  const repository = new Repository(null);
+  const repository = new Repository();
   const result = await repository.getCollection('dummy-repositories');
 
   const repoNames = [];
