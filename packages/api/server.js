@@ -126,10 +126,10 @@ app.get('/api/callback', async (req, res) => {
     return;
   }
 
-  req.session.user = resultJSON.login;
   const repository = new Repository();
   const permitted = await repository.mayAccess('github', resultJSON.login);
   if (permitted) {
+    req.session.user = resultJSON.login; //Only store login in the session if they are an admin
     req.session.expires = moment().add(4, 'hours').format();
   } else {
     req.session.expires = null;
