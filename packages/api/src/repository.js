@@ -78,6 +78,39 @@ class Repository {
     const document = client.doc(path);
     return document.delete();
   }
+
+  async deleteQueryBatch (query, resolve) {
+    const snapshot = await query.get();
+
+    const batchSize = snapshot.size;
+    if (batchSize === 0) {
+    // When there are no documents left, we are done
+      resolve();
+      return;
+    }
+
+    // Delete documents in a batch
+    const batch = client.batch();
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+
+    // Recurse on the next process tick, to avoid
+    // exploding the stack.
+    process.nextTick(() => {
+      deleteQueryBatch(query, resolve);
+    });
+  }
+
+  async deleteCollection (path, batchSize) {
+    const collectionRef = client.collection(path);
+    const query = collectionRef.orderBy('__name__').limit(batchSize);
+
+    return new Promise((resolve, reject) => {
+      deleteQueryBatch(query, resolve).catch(reject);
+    });
+  }
 }
 
 module.exports = Repository;

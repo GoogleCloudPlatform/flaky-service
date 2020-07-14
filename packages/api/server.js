@@ -50,8 +50,8 @@ app.use(
 );
 
 app.get('/api/repos', async (req, res) => {
-  if(!req.session || !req.session.user) {
-    console.log("No user!");
+  if (!req.session || !req.session.user) {
+    console.log('No user!');
   }
   const repository = new Repository(null);
   const result = await repository.getCollection('dummy-repositories');
@@ -148,6 +148,7 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';
 const server = app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`));
 
-module.exports = (req, res, next) => {
-  next();
-};
+module.exports = server;
+// module.exports = (req, res, next) => {
+//   next();
+// };

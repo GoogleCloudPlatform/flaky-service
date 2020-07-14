@@ -15,9 +15,10 @@
 const { before, after } = require('mocha');
 
 let server;
-let func;
+// let func;
 before(() => {
-  {func, server} = require('../server');
+  // {func, server} = require('../server');
+  server = require('../server');
 });
 
 after(() => {
