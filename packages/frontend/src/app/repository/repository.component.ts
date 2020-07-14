@@ -22,7 +22,7 @@ import {
   expectedParams,
 } from '../services/interpretation/interpretation.service';
 import {FiltersComponent} from '../filters/filters.component';
-import {Filter} from '../services/search/interfaces';
+import {Filter, Test} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
@@ -32,43 +32,49 @@ import {RouteProvider} from '../routing/route-provider/RouteProvider';
   styleUrls: ['./repository.component.css'],
 })
 export class RepositoryComponent implements OnInit {
-  // mock builds until the data is fully formatted
-  mockBuilds = [
+  mockTests: Test[] = [
     {
-      buildId: '140035861',
-      environment: {os: 'windows', ref: 'master'},
-      timestamp: {_seconds: 1593591570},
-      percentpassing: 80,
-      flaky: 3,
-      numPass: 36,
-      numfails: 6,
+      name: 'should update the rendered pages on input change',
+      flaky: true,
+      failing: true,
+      percentpassing: 98,
+      environment: {os: 'windows', ref: 'dev'},
     },
     {
-      buildId: '140029127',
-      environment: {os: 'windows', ref: 'master'},
-      timestamp: {_seconds: 1593591570},
-      percentpassing: 80,
-      flaky: 0,
-      numPass: 41,
-      numfails: 4,
+      name:
+        'should not return to the first page when the paginator is not ready',
+      flaky: false,
+      failing: true,
+      percentpassing: 92,
+      environment: {os: 'windows', ref: 'dev'},
     },
     {
-      buildId: '140019029',
-      environment: {os: 'linux', ref: 'master'},
-      timestamp: {_seconds: 1593532000},
+      name: 'should set the new filters when a repository is found',
+      flaky: true,
+      failing: false,
+      percentpassing: 53,
+      environment: {os: 'windows', ref: 'dev'},
+    },
+    {
+      name: 'should redirect/refresh when the filters selection changes',
+      flaky: true,
+      failing: false,
+      percentpassing: 66,
+      environment: {os: 'windows', ref: 'dev'},
+    },
+    {
+      name: 'should create',
+      flaky: false,
+      failing: false,
       percentpassing: 100,
-      flaky: 1,
-      numPass: 45,
-      numfails: 0,
+      environment: {os: 'windows', ref: 'dev'},
     },
     {
-      buildId: '140005799',
-      environment: {os: 'mac', ref: 'master'},
-      timestamp: {_seconds: 1593432000},
+      name: 'should initialize view',
+      flaky: false,
+      failing: false,
       percentpassing: 100,
-      flaky: 0,
-      numPass: 45,
-      numfails: 0,
+      environment: {os: 'windows', ref: 'dev'},
     },
   ];
 
