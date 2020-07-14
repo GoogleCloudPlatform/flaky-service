@@ -86,4 +86,20 @@ describe('Repository', () => {
 
     it('returns not permitted if the expiration date is in the past');
   });
+
+  describe('deleteCollection', async () => {
+    it('deletes a small collection of documents', async () => {
+      await repo.createDoc('fake-path/one', {});
+      await repo.createDoc('fake-path/two', {});
+      await repo.createDoc('fake-path/three', {});
+
+      await repo.deleteCollection('fake-path', 100);
+
+      const one = await repo.getDoc('fake-path/one');
+      const two = await repo.getDoc('fake-path/two');
+      const three = await repo.getDoc('fake-path/three');
+
+      assert.deepStrictEqual((one == null && two == null && three == null), true);
+    });
+  });
 });

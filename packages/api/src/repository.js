@@ -99,7 +99,7 @@ class Repository {
     // Recurse on the next process tick, to avoid
     // exploding the stack.
     process.nextTick(() => {
-      deleteQueryBatch(query, resolve);
+      this.deleteQueryBatch(query, resolve);
     });
   }
 
@@ -108,7 +108,7 @@ class Repository {
     const query = collectionRef.orderBy('__name__').limit(batchSize);
 
     return new Promise((resolve, reject) => {
-      deleteQueryBatch(query, resolve).catch(reject);
+      this.deleteQueryBatch(query, resolve).catch(reject);
     });
   }
 }
