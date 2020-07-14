@@ -24,6 +24,7 @@ import {Component, Output, EventEmitter, Input} from '@angular/core';
 import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {AppRoutingModule} from '../app-routing.module';
+import {MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
 import {By} from '@angular/platform-browser';
 import {Location} from '@angular/common';
@@ -60,7 +61,7 @@ describe('MainComponent', () => {
         {provide: ActivatedRoute, useValue: mockRoute},
       ],
       declarations: [MainComponent, RepoListComponent, SearchComponent],
-      imports: [AppRoutingModule],
+      imports: [AppRoutingModule, MatDialogModule],
     }).compileComponents();
   }));
 

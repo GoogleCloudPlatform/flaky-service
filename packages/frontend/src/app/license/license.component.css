@@ -30,22 +30,12 @@ limitations under the License.
 
 #license-text1 {
 	display: flex;
-	overflow: auto;
 }
 
 #section1-indent {
 	padding-left: 50px;
-	overflow: auto;
-}
-
-#license-text2 {
-	overflow: auto;
 }
 
 #section4-indent {
 	padding-left: 50px;
-}
-
-#licensee-text3 {
-	overflow: auto;
 }

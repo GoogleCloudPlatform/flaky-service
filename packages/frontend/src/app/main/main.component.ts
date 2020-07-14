@@ -13,9 +13,11 @@
 // limitations under the License.
 
 import {Component, OnInit, NgZone} from '@angular/core';
+import {LicenseComponent} from '../license/license.component';
 import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {
   expectedParams,
   InterpretationService,
@@ -32,7 +34,8 @@ export class MainComponent implements OnInit {
     private route: ActivatedRoute,
     private interpreter: InterpretationService,
     private ngZone: NgZone,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +56,13 @@ export class MainComponent implements OnInit {
 
       this.searchService.search(search).subscribe();
     });
+  }
+
+  openLicenseDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.id = 'license-dialog';
+
+    this.dialog.open(LicenseComponent, dialogConfig);
   }
 
   onSearchOptionSelected(option: Search): void {
