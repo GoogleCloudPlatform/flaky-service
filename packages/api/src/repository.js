@@ -12,28 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const { Firestore } = require('@google-cloud/firestore');
 const moment = require('moment');
+const client = require('./firestore.js');
 
 class Repository {
-  constructor (client) {
-    if (!client) {
-      this.client = new Firestore({
-        projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
-      });
-    } else {
-      this.client = client;
-    }
-  }
-
   async createDoc (identifier, params) {
     // TODO: DANGER we should have validation and what not at some point
     // before we do this, probably before this is called by the server too.
-    return this.client.doc(identifier).set(params);
+    return client.doc(identifier).set(params);
   }
 
   async getDoc (identifier) {
-    const document = await this.client.doc(identifier).get();
+    const document = await client.doc(identifier).get();
     if (!document.exists) {
       return null;
     }
@@ -42,7 +32,7 @@ class Repository {
 
   async getCollection (identifier) {
     const result = [];
-    const snapshot = await this.client.collection(`${identifier}`).get();
+    const snapshot = await client.collection(`${identifier}`).get();
     if (snapshot.empty) {
       return result;
     }
@@ -54,14 +44,14 @@ class Repository {
   }
 
   async mayAccess (platform, login) {
-    const collection = this.client.collection('permitted-users/' + platform + '/users').where('login', '==', login);
+    const collection = client.collection('permitted-users/' + platform + '/users').where('login', '==', login);
 
     const querySnapshot = await collection.get();
     return (querySnapshot.size === 1);
   }
 
   async sessionPermissions (sessionID) {
-    const docRef = this.client.doc('express-sessions/' + sessionID);
+    const docRef = client.doc('express-sessions/' + sessionID);
     const solution = { permitted: false, expiration: null, login: null };
     const doc = await docRef.get();
     let data;
@@ -85,7 +75,7 @@ class Repository {
   }
 
   async deleteDoc (path) {
-    const document = this.client.doc(path);
+    const document = client.doc(path);
     return document.delete();
   }
 }

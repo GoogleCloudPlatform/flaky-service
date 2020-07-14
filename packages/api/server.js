@@ -25,16 +25,12 @@ const PostBuildHandler = require('./src/post-build.js');
 const GetBuildHandler = require('./src/get-build.js');
 const GetRepoOrgsHandler = require('./src/get-repo-orgs.js');
 const GetTestHandler = require('./src/get-test.js');
+const client = require('./src/firestore.js');
 
-const { Firestore } = require('@google-cloud/firestore');
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const { v4 } = require('uuid');
 
 const cors = require('cors');
-
-const client = new Firestore({
-  projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
-});
 
 global.headCollection = process.env.HEAD_COLLECTION || 'testing-buildsget';
 
@@ -44,7 +40,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(
   session({
     store: new FirestoreStore({
-      dataset: new Firestore(),
+      dataset: client,
       kind: 'express-sessions'
     }),
     secret: process.env.SESSION_SECRET,
@@ -54,7 +50,6 @@ app.use(
 );
 
 app.get('/api/repos', async (req, res) => {
-  // TODO: Make it return more information about the repos, beyond just their names
   const repository = new Repository(null);
   const result = await repository.getCollection('dummy-repositories');
 
@@ -64,8 +59,6 @@ app.get('/api/repos', async (req, res) => {
     const id = result[index].repositoryid;
     repoNames.push(id);
   }
-
-  // repoNames = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
 
   const jsonObject = { repoNames: repoNames };
   // TODO allow the requester to give search/filter criterion!
@@ -139,27 +132,6 @@ app.get('/api/session', async (req, res) => {
   res.status(200).send(result);
 });
 
-app.get('/', (req, res) => {
-  res.send('Welcome to the home page!');
-});
-
-app.get('/api', (req, res) => {
-  const message = req.body.message ? req.body.message : 'hello world';
-  res
-    .status(200)
-    .send(message)
-    .end();
-});
-
-// GET: fetching some resource.
-// POST: creating or updating a resource.
-// PUT: creating or updating a resource.
-
-app.post('/api', (req, res) => {
-  res.send({
-    message: req.body.message ? req.body.message : 'hello world'
-  });
-});
 const postBuildHandler = new PostBuildHandler(app, client);
 postBuildHandler.listen();
 const getBuildHandler = new GetBuildHandler(app, client);

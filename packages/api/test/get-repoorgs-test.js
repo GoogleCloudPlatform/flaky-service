@@ -14,9 +14,9 @@
 // limitations under the License.
 
 const { describe, before, after, it } = require('mocha');
-const { Firestore } = require('@google-cloud/firestore');
 const { v4: uuidv4 } = require('uuid');
 const firebaseEncode = require('../lib/firebase-encode');
+const client = require('../src/firestore.js');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
@@ -36,11 +36,7 @@ const data = [
 ];
 
 describe('Getting Repos and Orgs', () => {
-  let client;
   before(async () => {
-    client = new Firestore({
-      projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
-    });
     global.headCollection = 'repositories-testsuite-' + uuidv4();
     global.headCollection += '/allinfo/repositories';
 

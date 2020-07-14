@@ -13,9 +13,9 @@
 // limitations under the License.
 
 const { describe, it, after, before } = require('mocha');
-const { Firestore } = require('@google-cloud/firestore');
 const assert = require('assert');
 const { v4: uuidv4 } = require('uuid');
+const client = require('../src/firestore.js');
 
 const TestCaseRun = require('../lib/testrun');
 const addBuild = require('../src/add-build');
@@ -87,12 +87,7 @@ const buildInfo = [
 ];
 
 describe('Add-Build', () => {
-  let client;
-
   before(async () => {
-    client = new Firestore({
-      projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
-    });
     global.headCollection = TESTING_COLLECTION_BASE + uuidv4(); // random collection name for concurrent testing
   });
 
