@@ -14,17 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#search-bar {
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    margin-top: 20px;
-}
-app-search {
-    width: 100%;
-    max-width: 400px;
-}
-
 .repo-list-container {
     display: flex;
     justify-content: center;

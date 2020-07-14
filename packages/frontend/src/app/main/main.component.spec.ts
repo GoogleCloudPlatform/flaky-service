@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  async,
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MainComponent} from './main.component';
-import {Component, Output, EventEmitter, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
-import {By} from '@angular/platform-browser';
-import {Location} from '@angular/common';
 import {ActivatedRoute} from '@angular/router';
 
 // Mock the inner components
@@ -38,17 +30,9 @@ class RepoListComponent {
   @Input() repositories = [];
 }
 
-@Component({
-  selector: 'app-search',
-})
-class SearchComponent {
-  @Output() searchOptionSelected = new EventEmitter<Search>();
-}
-
 describe('MainComponent', () => {
   let component: MainComponent;
   let fixture: ComponentFixture<MainComponent>;
-  let location: Location;
 
   // Mock services
   const mockSearchService = {repositories: [], search: () => of([])};
@@ -60,7 +44,7 @@ describe('MainComponent', () => {
         {provide: SearchService, useValue: mockSearchService},
         {provide: ActivatedRoute, useValue: mockRoute},
       ],
-      declarations: [MainComponent, RepoListComponent, SearchComponent],
+      declarations: [MainComponent, RepoListComponent],
       imports: [AppRoutingModule, MatDialogModule],
     }).compileComponents();
   }));
@@ -69,7 +53,6 @@ describe('MainComponent', () => {
     fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
-    location = TestBed.get(Location);
     mockSearchService.search = () => of([]);
     mockRoute.params = of({});
   });
@@ -103,25 +86,4 @@ describe('MainComponent', () => {
       );
     });
   });
-
-  it('should refresh with the new query and filters when the user validates a search in the search bar', fakeAsync(() => {
-    const searchComponent: SearchComponent = fixture.debugElement.query(
-      By.css('app-search')
-    ).componentInstance;
-    const searchResult = {
-      query: 'repo',
-      filters: [{name: 'flaky', value: 'n'}],
-    };
-
-    searchComponent.searchOptionSelected.emit(searchResult);
-
-    tick();
-
-    let newLocation = '/search';
-    searchResult.filters.forEach(
-      filter => (newLocation += ';' + filter.name + '=' + filter.value)
-    );
-
-    expect(location.path()).toEqual(newLocation);
-  }));
 });

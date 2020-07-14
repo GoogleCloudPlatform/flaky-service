@@ -14,11 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<!-- SEARCH BAR -->
-<div id="search-bar">
-    <app-search (searchOptionSelected)="onSearchOptionSelected($event)"></app-search>
-</div>
-
 <!-- REPOSITORIES LIST -->
 <div class="repo-list-container">
     <app-repo-list [repositories]="searchService.repositories"></app-repo-list>

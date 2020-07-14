@@ -44,8 +44,9 @@ describe('SearchService', () => {
 
   describe('quickSearch', () => {
     it('should return the fetched repositories', done => {
-      const targetRepo = 'repo';
-      service.quickSearch(targetRepo).subscribe(repos => {
+      const targetRepo = 'repo',
+        targetOrg = 'org';
+      service.quickSearch(targetRepo, targetOrg).subscribe(repos => {
         expect(repos.length).toEqual(repositories.length);
 
         repos.forEach((repo, index) => {
@@ -60,8 +61,9 @@ describe('SearchService', () => {
       mockCOMService.fetchRepositories = () => throwError('');
 
       // query a normal repo
-      const targetRepo = 'repo';
-      service.quickSearch(targetRepo).subscribe(repos => {
+      const targetRepo = 'repo',
+        targetOrg = 'org';
+      service.quickSearch(targetRepo, targetOrg).subscribe(repos => {
         expect(repos.length).toEqual(0); // empty array
         done();
       });

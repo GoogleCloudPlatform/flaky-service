@@ -28,6 +28,11 @@ import {Component} from '@angular/core';
 })
 class BreadcrumbsComponent {}
 
+@Component({
+  selector: 'app-search',
+})
+class SearchComponent {}
+
 describe('AppComponent', () => {
   let fixture;
   let app: AppComponent;
@@ -42,7 +47,7 @@ describe('AppComponent', () => {
         MatSidenavModule,
         MatListModule,
       ],
-      declarations: [AppComponent, BreadcrumbsComponent],
+      declarations: [AppComponent, BreadcrumbsComponent, SearchComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);

@@ -26,9 +26,12 @@ export class SearchService {
 
   constructor(private com: COMService) {}
 
-  quickSearch(query: string): Observable<Repository[]> {
+  quickSearch(query: string, orgName: string): Observable<Repository[]> {
     return this.com
-      .fetchRepositories({query: query, filters: []})
+      .fetchRepositories({
+        query: query,
+        filters: [{name: 'org', value: orgName}],
+      })
       .pipe(catchError(() => of([])));
   }
 

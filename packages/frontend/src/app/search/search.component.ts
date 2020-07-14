@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, NgZone} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {map, filter, debounceTime, switchMap} from 'rxjs/operators';
-import {InterpretationService} from '../services/interpretation/interpretation.service';
+import {
+  InterpretationService,
+  expectedParams,
+} from '../services/interpretation/interpretation.service';
 import {
   DefaultRepository,
   Repository,
   Search,
 } from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
+import {Router, NavigationEnd, ActivatedRoute} from '@angular/router';
+import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
 @Component({
   selector: 'app-search',
@@ -40,24 +45,47 @@ export class SearchComponent implements OnInit {
   filteredOptions: Repository[];
   debounceTime = 200;
 
+  orgName = '';
+  showSearchBar = true;
+
   constructor(
     private searchService: SearchService,
-    private interpreter: InterpretationService
+    private interpreter: InterpretationService,
+    private ngZone: NgZone,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.filteredOptions = [this.defaultOption];
+    this.setupListeners();
+  }
+
+  private setupListeners() {
     this.inputControl.valueChanges
       .pipe(
         debounceTime(this.debounceTime),
         map(value => this.updateOptions(value)),
         filter(value => this.canBeAutoCompleted(value)),
-        switchMap(value => this.searchService.quickSearch(value))
+        switchMap(value => this.searchService.quickSearch(value, this.orgName))
       )
       .subscribe(newOptions => {
         if (this.inputControl.value)
           this.filteredOptions = newOptions.concat([this.defaultOption]);
       });
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => this.updateOrg());
+  }
+
+  private updateOrg() {
+    const route = this.route.root.firstChild.snapshot;
+    const foundParams = this.interpreter.parseRouteParam(
+      route.params,
+      expectedParams.get(RouteProvider.routes.main.name)
+    );
+    this.orgName = foundParams.queries.get(RouteProvider.routes.main.name);
+    this.showSearchBar = this.orgName !== '';
   }
 
   private canBeAutoCompleted(input: string): boolean {
@@ -71,15 +99,25 @@ export class SearchComponent implements OnInit {
   }
 
   onEnterKeyUp(option: string): void {
-    this.searchOptionSelected.emit(this.interpreter.parseSearchInput(option));
+    this.launchSearch(this.interpreter.parseSearchInput(option));
   }
 
   onSearchOptionSelected(option: string): void {
     this.inputControl.setValue(option);
     const isADefaultOption = option === this.defaultOption.name;
     if (isADefaultOption) this.inputControl.setValue('');
-    else
-      this.searchOptionSelected.emit(this.interpreter.parseSearchInput(option));
+    else this.launchSearch(this.interpreter.parseSearchInput(option));
+  }
+
+  private launchSearch(option: Search): void {
+    this.ngZone.run(() => {
+      option.filters.push({name: 'repo', value: option.query});
+      const link = RouteProvider.routes.main.link(this.orgName);
+      this.router.navigate([
+        link,
+        this.interpreter.getRouteParam(option.filters),
+      ]);
+    });
   }
 }
 

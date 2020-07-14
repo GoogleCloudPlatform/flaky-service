@@ -33,12 +33,12 @@ describe('COMService', () => {
       ],
     };
 
-    const queryParams: HttpParams = new HttpParams().set(
+    let queryParams: HttpParams = new HttpParams().set(
       'startswith',
       search.query
     );
-    search.filters.forEach(filter =>
-      queryParams.set(filter.name, filter.value)
+    search.filters.forEach(
+      filter => (queryParams = queryParams.set(filter.name, filter.value))
     );
 
     const serverResponse: Repository[] = [

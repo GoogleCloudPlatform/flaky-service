@@ -14,7 +14,6 @@
 
 import {Component, OnInit, NgZone} from '@angular/core';
 import {LicenseComponent} from '../license/license.component';
-import {Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
@@ -64,15 +63,5 @@ export class MainComponent implements OnInit {
     dialogConfig.id = 'license-dialog';
 
     this.dialog.open(LicenseComponent, dialogConfig);
-  }
-
-  onSearchOptionSelected(option: Search): void {
-    this.ngZone.run(() => {
-      option.filters.push({name: 'query', value: option.query});
-      this.router.navigate([
-        'search',
-        this.interpreter.getRouteParam(option.filters),
-      ]);
-    });
   }
 }
