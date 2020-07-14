@@ -51,7 +51,7 @@ class Repository {
   }
 
   async sessionPermissions (sessionID) {
-    const docRef = client.doc('express-sessions/' + sessionID);
+    const docRef = client.doc('express-sessions-cp/' + sessionID);
     const solution = { permitted: false, expiration: null, login: null };
     const doc = await docRef.get();
     let data;
@@ -81,7 +81,7 @@ class Repository {
 
   async deleteQueryBatchExpired (query, resolve) {
     const snapshot = await query.get();
-    console.log("NUM DOCS: " + snapshot.size);
+    console.log('NUM DOCS: ' + snapshot.size);
 
     const batchSize = snapshot.size;
     if (batchSize === 0) {
@@ -93,11 +93,10 @@ class Repository {
     // Delete documents in a batch
     const batch = client.batch();
     await snapshot.docs.forEach(async (doc) => {
-      console.log("DATA: " + doc.data().data);
+      console.log('DATA: ' + doc.data().data);
       const data = await JSON.parse(doc.data().data);
       const expiration = data.expires;
-      if(expiration == null || moment().isAfter(moment(expiration))) {
-        console.log("DELETE IT!");
+      if (expiration == null || moment().isAfter(moment(expiration))) {
         batch.delete(doc.ref);
       }
     });
@@ -110,22 +109,22 @@ class Repository {
     });
   }
 
-  async deleteExpiredSessions() {
-    console.log("DELETE EXPIRED");
-    const collectionRef = client.collection('express-sessions');
+  async deleteExpiredSessions () {
+    console.log('DELETE EXPIRED');
+    const collectionRef = client.collection('express-sessions-cp');
     const snapshot = await collectionRef.get();
     // const query = collectionRef.where(data.expires==null || moment().isAfter(moment(data.expires))).orderBy('__name__').limit(100);
 
-    console.log("NUM DOCS: " + snapshot.size);
+    console.log('NUM DOCS: ' + snapshot.size);
 
     // Delete documents in a batch
     const batch = client.batch();
     await snapshot.docs.forEach(async (doc) => {
-      console.log("DATA: " + doc.data().data);
+      console.log('DATA: ' + doc.data().data);
       const data = await JSON.parse(doc.data().data);
       const expiration = data.expires;
-      if(expiration == null || moment().isAfter(moment(expiration))) {
-        console.log("DELETE IT!");
+      if (expiration == null || moment().isAfter(moment(expiration))) {
+        console.log('DELETE IT!');
         batch.delete(doc.ref);
       }
     });

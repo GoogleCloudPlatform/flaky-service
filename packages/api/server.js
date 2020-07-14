@@ -42,7 +42,7 @@ app.use(
   session({
     store: new FirestoreStore({
       dataset: client,
-      kind: 'express-sessions'
+      kind: 'express-sessions-cp'
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -50,18 +50,27 @@ app.use(
   })
 );
 
+app.all('/api/protected/*', (req, res, next) => {
+  if(req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
+    console.log("AUTHENTICATED");
+    next();
+  }
+  else {
+    console.log("NON AUTHENTICATED");
+    res.status(401).end();
+  }
+});
+
 // Delete sessions every five minutes
+// cron.schedule('* * * * * *', () => {
 cron.schedule('*/5 * * * *', () => {
-  console.log("CRON");
+  console.log('CRON');
   const repository = new Repository();
   repository.deleteExpiredSessions();
   // await repository.deleteCollection('express-sessions', 100);
 });
 
-app.get('/api/repos', async (req, res) => {
-  if (!req.session || !req.session.user) {
-    console.log('No user!');
-  }
+app.get('/api/protected/repos', async (req, res) => {
   const repository = new Repository();
   const result = await repository.getCollection('dummy-repositories');
 
@@ -81,8 +90,7 @@ app.get('/api/repos', async (req, res) => {
 });
 
 app.get('/api/auth', (req, res) => {
-  const state = v4();
-  req.session.authState = state;
+  req.session.authState = v4();
   const url = 'http://github.com/login/oauth/authorize?client_id=' + process.env.CLIENT_ID + '&state=' + req.session.authState + '&allow_signup=false';
   res.status(302).redirect(url);
 });
@@ -129,16 +137,17 @@ app.get('/api/callback', async (req, res) => {
   const repository = new Repository();
   const permitted = await repository.mayAccess('github', resultJSON.login);
   if (permitted) {
-    req.session.user = resultJSON.login; //Only store login in the session if they are an admin
+    console.log('PERMITTED');
+    req.session.user = resultJSON.login; // Only store login in the session if they are an admin
     req.session.expires = moment().add(4, 'hours').format();
   } else {
-    req.session.expires = null;
+    repository.deleteDoc('express-sessions/' + req.sessionID);
   }
   // await repository.storeSessionPermission(req.sessionID, permitted);
   res.status(200).redirect(redirect);
 });
 
-app.get('/api/session', async (req, res) => {
+app.get('/api/protected/session', async (req, res) => {
   const repository = new Repository();
   const result = await repository.sessionPermissions(req.sessionID);
   res.status(200).send(result);
@@ -158,6 +167,3 @@ const host = '0.0.0.0';
 const server = app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`));
 
 module.exports = server;
-// module.exports = (req, res, next) => {
-//   next();
-// };
