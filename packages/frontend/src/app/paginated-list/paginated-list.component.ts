@@ -27,6 +27,7 @@ export class PaginatedListComponent<Elements> implements OnInit {
   renderedElements: Elements[] = [];
   pageIndex = 0;
   pageSize = 10;
+  showPaginator = false;
 
   constructor(
     public sanitizer: DomSanitizer,
@@ -52,6 +53,7 @@ export class PaginatedListComponent<Elements> implements OnInit {
       this.pageSize = page.pageSize;
     }
     this.renderedElements = this._elements.slice(startIndex, endIndex);
+    this.showPaginator = this._elements.length > this.pageSize;
   }
 
   onElementClick(link: string, event: MouseEvent) {
