@@ -47,6 +47,8 @@ export class BuildComponent implements OnInit {
       flaky: true,
       failing: true,
       percentpassing: 98,
+      numfails: 2,
+      timestamp: {_seconds: 2220},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -55,6 +57,8 @@ export class BuildComponent implements OnInit {
       flaky: false,
       failing: true,
       percentpassing: 92,
+      numfails: 3,
+      timestamp: {_seconds: 3340},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -62,6 +66,8 @@ export class BuildComponent implements OnInit {
       flaky: true,
       failing: false,
       percentpassing: 53,
+      numfails: 7,
+      timestamp: {_seconds: 5460},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -69,6 +75,8 @@ export class BuildComponent implements OnInit {
       flaky: true,
       failing: false,
       percentpassing: 66,
+      numfails: 5,
+      timestamp: {_seconds: 3790},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -76,6 +84,8 @@ export class BuildComponent implements OnInit {
       flaky: false,
       failing: false,
       percentpassing: 100,
+      numfails: 0,
+      timestamp: {_seconds: 1370},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -83,6 +93,8 @@ export class BuildComponent implements OnInit {
       flaky: false,
       failing: false,
       percentpassing: 100,
+      numfails: 2,
+      timestamp: {_seconds: 999},
       environment: {os: 'windows', ref: 'dev'},
     },
   ];

@@ -24,12 +24,18 @@ limitations under the License.
             [class.failing]="test.failing"
             (click)="onTestClick(test)">
 
-            <!-- BUILD DETAILS -->
+            <!-- TEST DETAILS -->
             <div class="details">
 
                 <!-- NAME -->
                 <div class="test-name">
                     <a *ngIf="test.name" routerLink=".">{{test.name}}</a>
+                </div>
+
+                <!-- TIMESTAMP -->
+                <div class="last-run">
+                    <span class="last-run-label">last run:&nbsp</span>
+                    <span class="last-run-date" [innerHTML]="toLiteralDate(test.timestamp._seconds)"></span>
                 </div>
             </div>
             

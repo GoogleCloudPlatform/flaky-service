@@ -25,6 +25,7 @@ import {FiltersComponent} from '../filters/filters.component';
 import {Filter, Test} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
+import { COMService } from '../services/com/com.service';
 
 @Component({
   selector: 'app-repository',
@@ -32,12 +33,15 @@ import {RouteProvider} from '../routing/route-provider/RouteProvider';
   styleUrls: ['./repository.component.css'],
 })
 export class RepositoryComponent implements OnInit {
+  /*
   mockTests: Test[] = [
     {
       name: 'should update the rendered pages on input change',
       flaky: true,
       failing: true,
       percentpassing: 98,
+      numfails: 4,
+      timestamp: {_seconds: 5400},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -46,6 +50,8 @@ export class RepositoryComponent implements OnInit {
       flaky: false,
       failing: true,
       percentpassing: 92,
+      numfails: 6,
+      timestamp: {_seconds: 5400},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -53,6 +59,8 @@ export class RepositoryComponent implements OnInit {
       flaky: true,
       failing: false,
       percentpassing: 53,
+      numfails: 13,
+      timestamp: {_seconds: 2220},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -60,6 +68,8 @@ export class RepositoryComponent implements OnInit {
       flaky: true,
       failing: false,
       percentpassing: 66,
+      numfails: 7,
+      timestamp: {_seconds: 1593432000},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -67,6 +77,8 @@ export class RepositoryComponent implements OnInit {
       flaky: false,
       failing: false,
       percentpassing: 100,
+      numfails: 0,
+      timestamp: {_seconds: 1593331000},
       environment: {os: 'windows', ref: 'dev'},
     },
     {
@@ -74,12 +86,16 @@ export class RepositoryComponent implements OnInit {
       flaky: false,
       failing: false,
       percentpassing: 100,
+      numfails: 0,
+      timestamp: {_seconds: 2820},
       environment: {os: 'windows', ref: 'dev'},
     },
   ];
+  */
 
   constructor(
     public searchService: SearchService,
+    private comService: COMService,
     private route: ActivatedRoute,
     private router: Router,
     private ngZone: NgZone,
@@ -125,5 +141,9 @@ export class RepositoryComponent implements OnInit {
       const route = this.orgName + '/' + this.repoName;
       this.router.navigate([route, this.interpreter.getRouteParam(filters)]);
     });
+  }
+
+  getTests(): Test[] {
+    return this.comService.fetchTests(repoName, orgName);
   }
 }

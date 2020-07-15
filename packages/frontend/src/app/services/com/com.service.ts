@@ -58,4 +58,11 @@ export class COMService {
   public fetchSessionStatus(): Observable<SessionStatus> {
     return this.http.get<SessionStatus>(apiLinks.get.sessionStatus);
   }
+
+  public fetchTests(
+    repoName:string,
+    orgName: string,
+  ): Observable<ApiRepository> {
+    return this.http.get<ApiRepository>(apiLinks.get.tests(repoName, orgName));
+  }
 }

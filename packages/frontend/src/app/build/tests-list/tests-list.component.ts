@@ -18,6 +18,7 @@ import {
   MatPaginator,
 } from 'src/app/paginated-list/paginated-list.component';
 import {Test} from 'src/app/services/search/interfaces';
+import * as moment from 'moment';
 import {TestDetailsComponent} from './test-details/test-details.component';
 
 @Component({
@@ -38,5 +39,9 @@ export class TestsListComponent extends PaginatedListComponent<Test> {
     this.dialog.open<TestDetailsComponent>(TestDetailsComponent, {
       data: test,
     });
+  }
+
+  toLiteralDate(timestamp: number) {
+    return moment.unix(timestamp).fromNow();
   }
 }

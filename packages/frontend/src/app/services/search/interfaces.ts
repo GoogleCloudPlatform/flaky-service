@@ -41,7 +41,9 @@ export interface Test {
   name: string;
   flaky: boolean;
   failing: boolean;
+  numfails: number;
   percentpassing: number;
+  timestamp: {_seconds: number};
   environment: BuildEnvironment;
 }
 
