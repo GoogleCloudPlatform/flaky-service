@@ -26,13 +26,13 @@ const buildInfo = {
   name: 'repo',
   sha: '123',
   url: 'https://github.com/nodejs/WRONG', // URL starts off wrong
+  description: 'Repository description',
   environment: {
     os: 'linux-apple',
     matrix: { 'node-version': '12.0' },
     ref: 'master',
     tag: 'abc'
   }
-
 };
 // testcases a, b, c, d
 // 0 is one recent failure
