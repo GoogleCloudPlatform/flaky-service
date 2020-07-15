@@ -22,5 +22,6 @@ before(() => {
 });
 
 after(() => {
-  server.close();
+  console.log('AFTER');
+  server(); // Close server
 });

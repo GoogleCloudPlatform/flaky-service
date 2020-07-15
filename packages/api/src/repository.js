@@ -14,6 +14,7 @@
 
 const moment = require('moment');
 const client = require('./firestore.js');
+// require('./cron.js');
 
 class Repository {
   async createDoc (identifier, params) {

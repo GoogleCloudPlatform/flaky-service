@@ -26,12 +26,21 @@ const GetBuildHandler = require('./src/get-build.js');
 const GetRepoOrgsHandler = require('./src/get-repo-orgs.js');
 const GetTestHandler = require('./src/get-test.js');
 const client = require('./src/firestore.js');
-const cron = require('node-cron');
+// require('./src/cron.js');
 
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const { v4 } = require('uuid');
 
 const cors = require('cors');
+const cron = require('node-cron');
+
+// Delete sessions every five minutes
+// const task = cron.schedule('* * * * * *', () => {
+const task = cron.schedule('*/5 * * * *', () => {
+  console.log('CRON');
+  const repository = new Repository();
+  repository.deleteExpiredSessions();
+});
 
 global.headCollection = process.env.HEAD_COLLECTION || 'testing-buildsget';
 
@@ -50,7 +59,7 @@ app.use(
   })
 );
 
-app.all('/api/protected/*', (req, res, next) => {
+app.use('/api/protected/*', (req, res, next) => {
   if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
     console.log('AUTHENTICATED');
     next();
@@ -60,16 +69,8 @@ app.all('/api/protected/*', (req, res, next) => {
   }
 });
 
-// Delete sessions every five minutes
-// cron.schedule('* * * * * *', () => {
-cron.schedule('*/5 * * * *', () => {
-  console.log('CRON');
-  const repository = new Repository();
-  repository.deleteExpiredSessions();
-  // await repository.deleteCollection('express-sessions', 100);
-});
-
 app.get('/api/protected/repos', async (req, res) => {
+  console.log('MADE IT INTO SERVER!');
   const repository = new Repository();
   const result = await repository.getCollection('dummy-repositories');
 
@@ -165,4 +166,23 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';
 const server = app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`));
 
-module.exports = server;
+// process.on('SIGTERM', () => {
+//   server.close(() => {
+//     task.stop();
+//   })
+// })
+const toClose = () => {
+  task.stop();
+  server.close();
+};
+module.exports = toClose;
+
+// module.exports = (req, res, next) => {
+//   if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
+//     console.log('AUTHENTICATED');
+//     next();
+//   } else {
+//     console.log('NON AUTHENTICATED');
+//     res.status(401).end();
+//   };
+// }

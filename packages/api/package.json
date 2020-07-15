@@ -33,6 +33,7 @@
     "express-session": "^1.17.1",
     "moment": "^2.27.0",
     "node-cron": "^2.0.3",
+    "supertest": "^4.0.2",
     "tap-parser": "^10.0.1",
     "uuid": "^8.2.0"
   },
