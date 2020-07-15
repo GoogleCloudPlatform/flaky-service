@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.build-list-container, #metadata-container {
+.tests-list-container, #metadata-container {
     display: flex;
     justify-content: center;
 }
-app-build-list, #metadata-subcontainer {
+app-tests-list, #metadata-subcontainer {
     width: 100%;
     max-width: 800px;
 }
