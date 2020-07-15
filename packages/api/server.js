@@ -59,7 +59,10 @@ app.use(
   })
 );
 
-app.use('/api/protected/*', (req, res, next) => {
+app.all('/api/protected/*', (req, res, next) => {
+  console.log("AUTH MIDDLEWARE");
+  req.session.login='fakke';
+  console.log("SESSION: " + JSON.stringify(req.session));
   if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
     console.log('AUTHENTICATED');
     next();

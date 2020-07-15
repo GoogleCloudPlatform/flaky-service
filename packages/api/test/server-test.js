@@ -15,11 +15,14 @@
 process.env.SESSION_SECRET = 'fake secret';
 process.env.FRONTEND_URL = 'https://flaky-dashboard.web.app/home';
 const { describe, it } = require('mocha');
+const chai = require('chai');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
+const mockSession = require('mock-session');
 // const express = require('express');
 // const app = require('../server.js');
+const moment = require('moment');
 
 describe('flaky express server', () => {
   // var parentServer;
@@ -36,6 +39,12 @@ describe('flaky express server', () => {
   //         sessionID: 'fake-id'
   //       };
 
+  //       const resp = await fetch('http://0.0.0.0:2000/api/protected/repos', {
+  //       headers: { 'Content-Type': 'application/json' }
+  //     });
+
+  //       req.status(200).send(resp);
+
   //     });
   //     console.log("APP: " + app);
   //     const port = process.env.PORT ? Number(process.env.PORT) : 2000;
@@ -47,16 +56,28 @@ describe('flaky express server', () => {
     assert.strictEqual(process.env.SESSION_SECRET, 'fake secret');
     assert.strictEqual(process.env.FRONTEND_URL, frontendUrl);
   });
+
   describe('/repos', async () => {
-    // it('returns a json object with the list of repositories, when you call GET on /repos', async () => {
-    //   const resp = await fetch('http://0.0.0.0:2000/api/protected/repos', {
-    //     headers: { 'Content-Type': 'application/json' }
-    //   });
-    //   const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
-    //   console.log("RESPONSE: " + resp)
-    //   const respJSON = await resp.json();
-    //   assert.deepStrictEqual(respJSON.repoNames, sol);
-    // });
+    it('returns a json object with the list of repositories, when you call GET on /repos', async () => {
+      // let cookie = mockSession('my-session', 'my-secret', {
+      //   'expires': moment().add(4, 'hours').format(),
+      //   'login': 'demo-login',
+      //   'sessionID': 'fake-id'
+      // });
+
+      // chai.request()
+      const resp = await fetch('http://0.0.0.0:3000/api/protected/repos', {
+        headers: { 
+          'Content-Type': 'application/json',
+          'session': '{}',
+          'cookie': 'expires=' + moment().add(4, 'hours').format() + '; login=demo-login; sessionID=fakeId' 
+        }
+      });
+      const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
+      console.log("RESPONSE: " + JSON.stringify(resp));
+      const respJSON = await JSON.stringify(resp);;
+      assert.deepStrictEqual(respJSON.repoNames, sol);
+    });
   });
 
   describe('/auth', async () => {
