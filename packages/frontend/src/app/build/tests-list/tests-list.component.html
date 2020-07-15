@@ -20,8 +20,8 @@ limitations under the License.
 
         <div
             class="test"
-            [class.flaky]="!test.failing && test.flaky"
-            [class.failing]="test.failing"
+            [class.flaky]="test.passed && test.flaky"
+            [class.failing]="!test.passed"
             (click)="onTestClick(test)">
 
             <!-- TEST DETAILS -->
@@ -35,7 +35,7 @@ limitations under the License.
                 <!-- TIMESTAMP -->
                 <div class="last-run">
                     <span class="last-run-label">last run:&nbsp</span>
-                    <span class="last-run-date" [innerHTML]="toLiteralDate(test.timestamp._seconds)"></span>
+                    <span class="last-run-date" [innerHTML]="toLiteralDate(test.lastupdate._seconds)"></span>
                 </div>
             </div>
             

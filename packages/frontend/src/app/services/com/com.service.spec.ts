@@ -16,7 +16,7 @@ import {TestBed} from '@angular/core/testing';
 import {COMService} from './com.service';
 import {HttpClientModule} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Search, Repository} from '../search/interfaces';
+import {Search, Repository, Test} from '../search/interfaces';
 import {of} from 'rxjs';
 import {apiLinks} from './api';
 
@@ -104,4 +104,44 @@ describe('COMService', () => {
       );
     });
   });
+
+  describe('fetchTests', () => {
+    it('should send a GET request', () => {
+      const repoName = 'repoName';
+      const orgName = 'orgame';
+      const mockTest: Test[]= [
+        {
+          name: 'should set the new filters when a repository is found',
+          flaky: true,
+          passed: true,
+          percentpassing: 53,
+          searchindex: 0,
+          lifetimepasscount: 8,
+          lifetimefailcount: 7,
+          lastupdate: {_seconds: 5460, _nanoseconds: 0},
+          environment: {os: 'windows', ref: 'dev'},
+        },{
+          name: 'should redirect/refresh when the filters selection changes',
+          flaky: true,
+          passed: true,
+          percentpassing: 66,
+          searchindex: 0,
+          lifetimepasscount: 8,
+          lifetimefailcount: 5,
+          lastupdate: {_seconds: 3790, _nanoseconds: 0},
+          environment: {os: 'windows', ref: 'dev'},
+        }
+      ];
+
+
+      httpClientSpy.get.and.returnValue(of(mockTest));
+
+      service
+        .fetchTests(repoName, orgName)
+        .subscribe(tests => {
+          expect(tests.length).toBe(2);
+          expect(tests).toEqual(mockTest);
+        });
+    })
+  })
 });

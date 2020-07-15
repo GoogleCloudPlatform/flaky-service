@@ -40,11 +40,13 @@ export interface Search {
 export interface Test {
   name: string;
   flaky: boolean;
-  failing: boolean;
-  numfails: number;
+  passed: boolean;
+  searchindex: number;
+  lifetimefailcount: number;
+  lifetimepasscount: number;
   percentpassing: number;
-  timestamp: {_seconds: number};
   environment: BuildEnvironment;
+  lastupdate: {_seconds: number, _nanoseconds: number};
 }
 
 export interface BuildEnvironment {

@@ -22,6 +22,7 @@ import {
   expectedParams,
 } from '../services/interpretation/interpretation.service';
 import {FiltersComponent} from '../filters/filters.component';
+import {Observable} from 'rxjs';
 import {Filter, Test} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
@@ -143,7 +144,7 @@ export class RepositoryComponent implements OnInit {
     });
   }
 
-  getTests(): Test[] {
-    return this.comService.fetchTests(repoName, orgName);
+  getTests(): Observable<Test[]> {
+    return this.comService.fetchTests(this.repoName, this.orgName);
   }
 }
