@@ -18,8 +18,8 @@
 * and builds
 * returns analytics object and adds such data to database
 */
+const { Firestore } = require('@google-cloud/firestore');
 const { buildPassingPercent, TestCaseAnalytics } = require('../lib/analytics.js');
-const Firestore = require('@google-cloud/firestore');
 
 function listifySnapshot (snapshot) {
   const results = [];
@@ -61,6 +61,7 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   repoUpdate.url = buildInfo.url;
   repoUpdate.repoId = decodeURIComponent(buildInfo.repoId);
   repoUpdate.name = buildInfo.name;
+  repoUpdate.description = buildInfo.description;
   repoUpdate.lower = {
     repoId: decodeURIComponent(buildInfo.repoId).toLowerCase(),
     name: buildInfo.name.toLowerCase(),
@@ -138,6 +139,8 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   // For the Builds
   await dbRepo.collection('builds').doc(buildInfo.buildId).set({
     percentpassing: buildPassingPercent(successes, failures),
+    passcount: successes.length,
+    failcount: Object.keys(failures).length,
     environment: buildInfo.environment,
     timestamp: buildInfo.timestamp,
     tests: alltests,
