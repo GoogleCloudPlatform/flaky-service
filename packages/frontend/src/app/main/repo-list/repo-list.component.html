@@ -19,7 +19,7 @@ limitations under the License.
         class="repo"
         [class.flaky-repo]="!repo.numfails && repo.flaky"
         [class.failing-repo]="repo.numfails"
-        (click)="onElementClick(location.path() + '/' + repo.name, $event)">
+        (click)="onElementClick(routes.repo.link(repo.organization, repo.name), $event)">
 
         <div class="details">
             <!-- NAMES -->
