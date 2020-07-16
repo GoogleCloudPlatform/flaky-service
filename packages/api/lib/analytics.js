@@ -56,6 +56,14 @@ class TestCaseAnalytics {
 
     return condition1 && condition2;
   }
+
+  isCurrentlyPassing () {
+    return this.snapshotData[0].status === 'OK';
+  }
+
+  getLastUpdate () {
+    return this.snapshotData[0].timestamp;
+  }
 }
 
 /*
