@@ -33,6 +33,6 @@ export const apiLinks: ApiLinks = {
     loginLink: apiBaseLink + 'auth?redirect=' + environment.baseUrl,
     sessionStatus: apiBaseLink + 'session',
     tests: (repoName: string, orgName: string) =>
-      apiBaseLink + 'repo/' + orgName + '/' + repoName + '/test',
+      apiBaseLink + 'repo/' + orgName + '/' + repoName + '/tests',
   },
 };

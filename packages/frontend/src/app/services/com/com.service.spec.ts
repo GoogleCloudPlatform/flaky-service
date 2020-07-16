@@ -106,34 +106,45 @@ describe('COMService', () => {
   });
 
   describe('fetchTests', () => {
-    it('should send a GET request', () => {
-      const repoName = 'repoName';
-      const orgName = 'orgame';
-      const mockTest: Test[]= [
-        {
-          name: 'should set the new filters when a repository is found',
-          flaky: true,
-          passed: true,
-          percentpassing: 53,
-          searchindex: 0,
-          lifetimepasscount: 8,
-          lifetimefailcount: 7,
-          lastupdate: {_seconds: 5460, _nanoseconds: 0},
-          environment: {os: 'windows', ref: 'dev'},
-        },{
-          name: 'should redirect/refresh when the filters selection changes',
-          flaky: true,
-          passed: true,
-          percentpassing: 66,
-          searchindex: 0,
-          lifetimepasscount: 8,
-          lifetimefailcount: 5,
-          lastupdate: {_seconds: 3790, _nanoseconds: 0},
-          environment: {os: 'windows', ref: 'dev'},
-        }
-      ];
+    const repoName = 'repoName';
+    const orgName = 'orgName';
+    const mockTest: Test[]= [
+      {
+        name: 'should set the new filters when a repository is found',
+        flaky: true,
+        passed: true,
+        percentpassing: 53,
+        searchindex: 0,
+        lifetimepasscount: 8,
+        lifetimefailcount: 7,
+        lastupdate: {_seconds: 5460, _nanoseconds: 0},
+        environment: {os: 'windows', ref: 'dev'},
+      },{
+        name: 'should redirect/refresh when the filters selection changes',
+        flaky: true,
+        passed: true,
+        percentpassing: 66,
+        searchindex: 0,
+        lifetimepasscount: 8,
+        lifetimefailcount: 5,
+        lastupdate: {_seconds: 3790, _nanoseconds: 0},
+        environment: {os: 'windows', ref: 'dev'},
+      }
+    ];
 
+    it('should call the right link when sending a GET request', () => {
+      httpClientSpy.get.and.returnValue(of(mockTest));
 
+      service
+        .fetchTests(repoName, orgName).subscribe();
+
+      //called the right link
+      expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
+        apiLinks.get.tests(repoName, orgName)
+      );
+    });
+
+    it('should get the test data', () => {
       httpClientSpy.get.and.returnValue(of(mockTest));
 
       service
