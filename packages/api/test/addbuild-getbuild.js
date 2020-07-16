@@ -44,7 +44,8 @@ const buildInfo = [
       new TestCaseRun('not ok', 2, 'a/2'),
       new TestCaseRun('ok', 3, 'a/3'),
       new TestCaseRun('not ok', 4, 'a/4')
-    ]
+    ],
+    description: 'nodejs repository'
   },
   {
     repoId: encodeURIComponent('nodejs/node'),
@@ -63,7 +64,8 @@ const buildInfo = [
     testCases: [
       new TestCaseRun('ok', 1, 'a/1'),
       new TestCaseRun('ok', 2, 'a/2') // this test is now passing
-    ]
+    ],
+    description: 'nodejs repository'
   },
   {
     repoId: encodeURIComponent('nodejs/node'),
@@ -82,7 +84,8 @@ const buildInfo = [
     testCases: [
       new TestCaseRun('not ok', 1, 'a/5'),
       new TestCaseRun('not ok', 2, 'a/2') // this test is now passing
-    ]
+    ],
+    description: 'nodejs repository'
   }
 ];
 
@@ -99,10 +102,13 @@ describe('Add-Build', () => {
       const organization = await client.collection(global.headCollection).doc(buildInfo[0].repoId).get();
       assert.strictEqual(organization.data().organization, buildInfo[0].organization);
       assert.strictEqual(organization.data().url, buildInfo[0].url);
+      assert.strictEqual(organization.data().description, buildInfo[0].description);
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('builds').doc(buildInfo[0].buildId).get();
       assert.strictEqual(builds.data().percentpassing, 0.5);
+      assert.strictEqual(builds.data().passcount, 2);
+      assert.strictEqual(builds.data().failcount, 2);
       assert.deepStrictEqual(builds.data().environment, buildInfo[0].environment);
     });
 
@@ -112,10 +118,13 @@ describe('Add-Build', () => {
       // ensure repository was initialized
       const organization = await client.collection(global.headCollection).doc(buildInfo[1].repoId).get();
       assert.strictEqual(organization.data().url, buildInfo[1].url);
+      assert.strictEqual(organization.data().description, buildInfo[1].description);
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
       assert.strictEqual(builds.data().percentpassing, 1.0);
+      assert.strictEqual(builds.data().passcount, 2);
+      assert.strictEqual(builds.data().failcount, 0);
       assert.deepStrictEqual(builds.data().environment, buildInfo[1].environment);
     });
 
@@ -220,11 +229,13 @@ describe('Add-Build', () => {
     });
   });
 
-  describe('GetBuildHandler', async () => {
+  describe('GetRepoHandler', async () => {
     it('Can get limit and sort by date', async () => {
-      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?limit=1');
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/builds?limit=1');
+      const respMeta = await fetch('http://localhost:3000/api/repo/nodejs/node');
 
       const respText = await resp.text();
+      const respTextMeta = await respMeta.text();
 
       const ansObj = JSON.parse(respText).builds;
 
@@ -233,13 +244,14 @@ describe('Add-Build', () => {
       assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
-      const solMeta = { name: 'node', repoId: 'nodejs/node', organization: 'nodejs', numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
-
-      assert.deepStrictEqual(JSON.parse(respText).metadata, solMeta);
+      const solMeta = { name: 'node', repoId: 'nodejs/node', description: 'nodejs repository', organization: 'nodejs', numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
+      const solActual = JSON.parse(respTextMeta);
+      delete solActual.lastupdate;
+      assert.deepStrictEqual(solActual, solMeta);
     });
 
     it('Can use random combinations of queries', async () => {
-      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/builds?os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
       const respText = await resp.text();
 
       const ansObj = JSON.parse(respText).builds;
@@ -295,6 +307,24 @@ describe('Add-Build', () => {
 
       assert('error' in ansObj);
       assert.strictEqual(resp.status, 404);
+    });
+
+    it('Can return all tests in the right order', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/tests');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText).tests;
+
+      assert(ansObj[0].name === 'a/5' || ansObj[0].name === 'a/2'); // both failed on most recent build
+      assert(ansObj[1].name === 'a/5' || ansObj[1].name === 'a/2'); // both failed on most recent build
+
+      assert(ansObj[2].name === 'a/4'); // failed on build before the last build
+
+      assert(ansObj[3].name === 'a/3' || ansObj[3].name === 'a/1'); // both failed on most recent build
+      assert(ansObj[4].name === 'a/3' || ansObj[4].name === 'a/1'); // both failed on most recent build
+
+      // make sure their are the newly added fields
+      assert.strictEqual(ansObj[2].lifetimepasscount, 0);
+      assert.strictEqual(ansObj[2].lifetimefailcount, 1);
     });
   });
 

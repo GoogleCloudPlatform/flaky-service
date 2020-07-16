@@ -16,17 +16,16 @@ limitations under the License.
 
 <div id="main-container">
   <mat-toolbar id="header">
+    <span></span>
     <span id="title">{{ title }}</span>
+    <span *ngIf="!showConfigWheel"></span>
+    <mat-icon matRipple aria-hidden="false" aria-label="menu" (click)="snav.toggle()" id="setting-button" *ngIf="showConfigWheel">settings</mat-icon>
   </mat-toolbar>
 
   <mat-sidenav-container>
 
-    <mat-sidenav #snav mode="over" fixedTopGap="56">
-      <mat-nav-list>
-        <a mat-list-item routerLink=".">Login with GitHub</a>
-        <a mat-list-item routerLink=".">Help</a>
-        <a mat-list-item routerLink="/license">License</a>
-      </mat-nav-list>
+    <mat-sidenav #snav mode="over" fixedTopGap="56" position="end" (openedStart)="config.onConfigsOpening()">
+      <app-config #config></app-config>
     </mat-sidenav>
 
     <mat-sidenav-content>

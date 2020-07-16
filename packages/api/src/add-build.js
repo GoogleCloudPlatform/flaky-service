@@ -18,8 +18,8 @@
 * and builds
 * returns analytics object and adds such data to database
 */
+const { Firestore } = require('@google-cloud/firestore');
 const { buildPassingPercent, TestCaseAnalytics } = require('../lib/analytics.js');
-const Firestore = require('@google-cloud/firestore');
 
 function listifySnapshot (snapshot) {
   const results = [];
@@ -43,6 +43,13 @@ function listifySnapshot (snapshot) {
 async function addBuild (testCases, buildInfo, client, collectionName = 'repositories-fake') {
   var dbRepo = client.collection(collectionName).doc(buildInfo.repoId);
 
+  // if this build has already been posted, skip
+  const thisBuildExists = await dbRepo.collection('builds').doc(buildInfo.buildId).get();
+  if (thisBuildExists.exists) {
+    console.log('skipping because build already exists');
+    return;
+  }
+
   // if this build is not the most recent build, than update test cases based on ALL repos, update build info based on RPREVIOUS builds, and ignore repo
   let mostRecent = true;
   let prevMostRecent = await dbRepo.collection('builds').orderBy('timestamp', 'desc').limit(1).get();
@@ -61,6 +68,9 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   repoUpdate.url = buildInfo.url;
   repoUpdate.repoId = decodeURIComponent(buildInfo.repoId);
   repoUpdate.name = buildInfo.name;
+  repoUpdate.description = buildInfo.description;
+  repoUpdate.lastupdate = buildInfo.timestamp;
+
   repoUpdate.lower = {
     repoId: decodeURIComponent(buildInfo.repoId).toLowerCase(),
     name: buildInfo.name.toLowerCase(),
@@ -121,6 +131,15 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     }
     updateObj.percentpassing = testCaseAnalytics.computePassingPercent();
     updateObj.flaky = testCaseAnalytics.computeIsFlaky();
+    updateObj.passed = testCaseAnalytics.isCurrentlyPassing();
+    updateObj.searchindex = (updateObj.flaky) ? 1 : 0;
+    if (!updateObj.passed) {
+      updateObj.searchindex = 2; // higher number appears first in test view
+    }
+    updateObj.lastupdate = testCaseAnalytics.getLastUpdate();
+    updateObj.name = testCase.name;
+    updateObj.lifetimepasscount = (testCase.successful) ? Firestore.FieldValue.increment(1) : Firestore.FieldValue.increment(0);
+    updateObj.lifetimefailcount = (testCase.successful) ? Firestore.FieldValue.increment(0) : Firestore.FieldValue.increment(1);
     await dbRepo.collection('tests').doc(testCase.encodedName).update(updateObj, { merge: true });
 
     // update information for flakybuild and flakyrepo;
@@ -138,6 +157,8 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   // For the Builds
   await dbRepo.collection('builds').doc(buildInfo.buildId).set({
     percentpassing: buildPassingPercent(successes, failures),
+    passcount: successes.length,
+    failcount: Object.keys(failures).length,
     environment: buildInfo.environment,
     timestamp: buildInfo.timestamp,
     tests: alltests,

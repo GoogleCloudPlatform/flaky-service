@@ -20,15 +20,31 @@ const { InvalidParameterError, handleError } = require('../lib/errors');
 const { isJson } = require('../util/validation');
 const FILTERS_ALLOWED = ['tag', 'ref', 'os', 'limit', 'matrix'];
 
-class GetBuildHandler {
+class GetRepoHandler {
   constructor (app, client) {
     this.app = app;
     this.client = client;
   }
 
   listen () {
-    // return the recent builds based on parameters
     this.app.get('/api/repo/:orgname/:reponame', async (req, res, next) => {
+      try {
+        const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
+
+        const metadata = await this.client.collection(global.headCollection).doc(repoid).get();
+
+        if (metadata.data()) {
+          res.send(metadata.data());
+        } else {
+          res.status(404).send({ error: 'Did not find repo' });
+        }
+      } catch (err) {
+        handleError(res, err);
+      }
+    });
+
+    // return the recent builds based on parameters
+    this.app.get('/api/repo/:orgname/:reponame/builds', async (req, res, next) => {
       try {
         const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
         let limit = 30;
@@ -57,13 +73,7 @@ class GetBuildHandler {
         const resp = [];
         snapshot.forEach(doc => resp.push(doc.data()));
 
-        var metadata = await this.client.collection(global.headCollection).doc(repoid).get();
-
-        if (metadata.data()) {
-          res.send({ metadata: metadata.data(), builds: resp });
-        } else {
-          res.status(404).send({ error: 'Did not find repo' });
-        }
+        res.send({ builds: resp });
       } catch (err) {
         handleError(res, err);
       }
@@ -87,4 +97,4 @@ class GetBuildHandler {
   }
 }
 
-module.exports = GetBuildHandler;
+module.exports = GetRepoHandler;

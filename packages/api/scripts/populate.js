@@ -59,7 +59,8 @@ const buildInfoTemplate = {
     matrix: '{Node: 11}',
     ref: 'branch/master'
   },
-  name: repo
+  name: repo,
+  description: 'A repository that is a repository... more description'
 };
 
 fs.readdir(directory, function (err, files) {
@@ -74,6 +75,10 @@ fs.readdir(directory, function (err, files) {
     var testCasesUse = [];
     for (const tc of testCases) {
       if (tc.name.startsWith('a')) {
+        if (Math.random() < 0.2) {
+          tc.successful = false;
+          tc.failureMessage = 'Error message stack trace\nline number';
+        }
         testCasesUse.push(tc);
       }
     }
@@ -93,6 +98,7 @@ fs.readdir(directory, function (err, files) {
       buildInfo.repoId = firebaseEncode(buildInfo.organization + '/' + buildInfo.name);
       buildInfo.repoURL = 'http://github.com/' + buildInfo.organization + '/' + buildInfo.name;
     }
+    buildInfo.description = 'Description for the repository of ' + decodeURIComponent(buildInfo.repoId);
 
     addBuild(testCasesUse, buildInfo, client, repositoryCollection);
   });

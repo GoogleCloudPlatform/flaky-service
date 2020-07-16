@@ -57,7 +57,8 @@ class PostBuildHandler {
       environment: this.parseEnvironment(metadata),
       buildId: firebaseEncode(metadata.github.run_id),
       sha: metadata.github.sha,
-      name: metadata.github.event.repository.name
+      name: metadata.github.event.repository.name,
+      description: metadata.github.event.repository.description
     };
 
     // validate data

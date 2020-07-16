@@ -24,7 +24,7 @@ limitations under the License.
 #header {
     display: flex;
     color: #0075FF;
-    justify-content: center;
+    justify-content: space-between;
     border-bottom: 1px solid #0075FF;
     background-color: white;
     position: fixed;
@@ -39,6 +39,15 @@ mat-sidenav-container {
     flex: 1 0 auto;
     margin-top: 56px;
     padding-top: 8px;
+}
+
+mat-sidenav {
+    padding-top: 10px;
+}
+
+#setting-button {
+    border-radius: 20px;
+    cursor: pointer;
 }
 
 #search-bar {

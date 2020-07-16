@@ -22,8 +22,8 @@ const app = express();
 const moment = require('moment');
 const bodyParser = require('body-parser');
 const PostBuildHandler = require('./src/post-build.js');
-const GetBuildHandler = require('./src/get-build.js');
-const GetRepoOrgsHandler = require('./src/get-repo-orgs.js');
+const GetRepoHandler = require('./src/get-repo.js');
+const GetOrgHandler = require('./src/get-org.js');
 const GetTestHandler = require('./src/get-test.js');
 const client = require('./src/firestore.js');
 
@@ -43,7 +43,7 @@ app.use(
       dataset: client,
       kind: 'express-sessions'
     }),
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'no secret',
     resave: false,
     saveUninitialized: true
   })
@@ -134,10 +134,10 @@ app.get('/api/session', async (req, res) => {
 
 const postBuildHandler = new PostBuildHandler(app, client);
 postBuildHandler.listen();
-const getBuildHandler = new GetBuildHandler(app, client);
-getBuildHandler.listen();
-const getRepoOrgsHandler = new GetRepoOrgsHandler(app, client);
-getRepoOrgsHandler.listen();
+const getRepoHandler = new GetRepoHandler(app, client);
+getRepoHandler.listen();
+const getOrgHandler = new GetOrgHandler(app, client);
+getOrgHandler.listen();
 const getTestHandler = new GetTestHandler(app, client);
 getTestHandler.listen();
 

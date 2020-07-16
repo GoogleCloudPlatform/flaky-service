@@ -23,6 +23,12 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {Component} from '@angular/core';
 
 // Mock the inner components
+
+@Component({
+  selector: 'app-config',
+})
+class ConfigComponent {}
+
 @Component({
   selector: 'app-breadcrumbs',
 })
@@ -47,7 +53,12 @@ describe('AppComponent', () => {
         MatSidenavModule,
         MatListModule,
       ],
-      declarations: [AppComponent, BreadcrumbsComponent, SearchComponent],
+      declarations: [
+        AppComponent,
+        BreadcrumbsComponent,
+        SearchComponent,
+        ConfigComponent,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
