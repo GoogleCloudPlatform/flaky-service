@@ -22,17 +22,11 @@ import {
   expectedParams,
 } from '../services/interpretation/interpretation.service';
 import {FiltersComponent} from '../filters/filters.component';
-<<<<<<< HEAD
 import {Observable} from 'rxjs';
 import {Filter, Test} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import { COMService } from '../services/com/com.service';
-=======
-import {Filter, Test} from '../services/search/interfaces';
-import {UtilsService} from '../services/utils.service';
-import {RouteProvider} from '../routing/route-provider/RouteProvider';
->>>>>>> 8a46679004e00da5794a1cd239ebfe3ca789bdb8
 
 @Component({
   selector: 'app-repository',
