@@ -34,77 +34,6 @@ import { COMService } from '../services/com/com.service';
   styleUrls: ['./repository.component.css'],
 })
 export class RepositoryComponent implements OnInit {
-  mockTests: Test[] = [
-    {
-      name: 'should update the rendered pages on input change',
-      flaky: true,
-      passed: true,
-      searchindex: 0,
-      lifetimepasscount: 10,
-      percentpassing: 98,
-      lifetimefailcount: 2,
-      lastupdate: {_seconds: 2220, _nanoseconds: 0},
-
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name:
-        'should not return to the first page when the paginator is not ready',
-      flaky: false,
-      passed: true,
-      percentpassing: 92,
-      searchindex: 0,
-      lifetimepasscount: 10,
-      lifetimefailcount: 3,
-      lastupdate: {_seconds: 3340, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should set the new filters when a repository is found',
-      flaky: true,
-      passed: true,
-      percentpassing: 53,
-      searchindex: 0,
-      lifetimepasscount: 8,
-      lifetimefailcount: 7,
-      lastupdate: {_seconds: 5460, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should redirect/refresh when the filters selection changes',
-      flaky: true,
-      passed: true,
-      percentpassing: 66,
-      searchindex: 0,
-      lifetimepasscount: 8,
-      lifetimefailcount: 5,
-      lastupdate: {_seconds: 3790, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should create',
-      flaky: false,
-      passed: true,
-      percentpassing: 100,
-      lifetimefailcount: 0,
-      searchindex: 0,
-      lifetimepasscount: 10,
-      lastupdate: {_seconds: 1370, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should initialize view',
-      flaky: false,
-      passed: true,
-      percentpassing: 100,
-      searchindex: 0,
-      lifetimepasscount: 10,
-      lifetimefailcount: 2,
-      lastupdate: {_seconds: 999, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
-    },
-  ];
-  
   constructor(
     public searchService: SearchService,
     private comService: COMService,
@@ -118,8 +47,8 @@ export class RepositoryComponent implements OnInit {
 
   @ViewChild(FiltersComponent) filterComponent;
 
-  repoName = '';
-  orgName = '';
+  repoName = ' ';
+  orgName = ' ';
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {

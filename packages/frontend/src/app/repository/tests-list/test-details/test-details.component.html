@@ -1,0 +1,73 @@
+<!--
+Copyright 2020 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!-- CLOSE BUTTON -->
+<div id="close-btn-container">
+    <mat-icon id="close-btn" [mat-dialog-close]="true">close</mat-icon>
+</div>
+
+<!-- NAME -->
+<div class=".outer-field">
+    <span
+        id="name"
+        [class.failing]="!test.passed"
+        [class.flaky]="test.passed && test.flaky"
+        [class.success]="test.passed && !test.flaky">
+        {{test.name}}
+    </span>
+</div>
+
+<mat-divider></mat-divider>
+
+<!-- FAILURE DETAILS -->
+<div *ngIf="!test.passed" class=".outer-field">
+    <section>
+        <!-- HEADER -->
+        <header id="error-header">Error message</header>
+
+        <!-- MESSAGE -->
+        <textarea readonly id="error-msg-textarea" rows="5" >Error with ...&#013;&#010;Unable to ...
+        </textarea>
+    </section>
+</div>
+
+<!-- REPORT -->
+<div class="outer-field">
+
+    <span *ngIf="!test.passed">Otherwise, this test&nbsp;</span>
+    <span *ngIf="test.passed">This test&nbsp;</span>
+
+    <span>passes&nbsp;</span>
+
+    <span *ngIf="test.flaky" class="flaky">only&nbsp;</span>
+
+    <!-- PASSING PERCENTAGE -->
+    <span
+        [class.flaky]="test.flaky"
+        [class.success]="!test.flaky">
+        {{test.percentpassing}}% of the time
+    </span>
+
+    <span>&nbsp;and is considered&nbsp;</span>
+
+    <!-- FLAKINESS -->
+    <span *ngIf="test.flaky" class="flaky">FLAKY</span>
+    <span *ngIf="!test.flaky" class="success">NOT FLAKY</span>
+
+    <span>.</span>
+</div>
+
+

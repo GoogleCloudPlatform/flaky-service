@@ -12,29 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, Input, ViewChild} from '@angular/core';
-import {Build} from 'src/app/services/search/interfaces';
+import {Component, ViewChild, Input} from '@angular/core';
 import {
-  MatPaginator,
   PaginatedListComponent,
+  MatPaginator,
 } from 'src/app/paginated-list/paginated-list.component';
+import {Test} from 'src/app/services/search/interfaces';
 import * as moment from 'moment';
+import {TestDetailsComponent} from './test-details/test-details.component';
 
 @Component({
-  selector: 'app-build-list',
-  templateUrl: './build-list.component.html',
-  styleUrls: ['./build-list.component.css'],
+  selector: 'app-tests-list',
+  templateUrl: './tests-list.component.html',
+  styleUrls: ['./tests-list.component.css'],
 })
-export class BuildListComponent extends PaginatedListComponent<Build> {
+export class TestsListComponent extends PaginatedListComponent<Test> {
   @ViewChild('paginator') paginator: MatPaginator;
 
-  @Input() repoName = '';
-  @Input() orgName = '';
-
-  @Input() set builds(value: Build[]) {
+  @Input() set tests(value: Test[]) {
     this._elements = value;
     this.updatePage();
     this.paginator?.firstPage();
+  }
+
+  onTestClick(test: Test) {
+    this.dialog.open<TestDetailsComponent>(TestDetailsComponent, {
+      data: test,
+    });
   }
 
   toLiteralDate(timestamp: number) {

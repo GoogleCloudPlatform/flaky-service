@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#build-container {
+#tests-container {
     border: 1px solid #d9d9d9;
     padding: 5px;
 }
 
-.build {
+.test {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -29,8 +29,9 @@ limitations under the License.
     padding: 5px;
     background-color: #fefefe;
     cursor: pointer;
+    overflow: hidden;
 }
-.build:hover {
+.test:hover {
     background-color: #f8f8f8;
 }
 
@@ -46,15 +47,34 @@ limitations under the License.
     display: inline-block;
 }
 
-.build-id {
+.test-name {
     margin-right: 10px;
+    position: absolute;
+    margin-bottom: 15px;
+    /*Hide long names*/
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 400px;
 }
-.build-id > a {
+.test-name > a {
     color: #0075FF;
     text-decoration: none;
 }
-.build-id > a:hover {
+.test-name > a:hover {
     text-decoration: underline;
+}
+@media (min-height: 555px) {
+    .test-name {
+        max-width: 93vw;
+    }
+}
+
+.last-run {
+    margin-right: 10px;
+    position: absolute;
+    font-size: smaller;
+    color: dimgrey;
 }
 
 .description {
@@ -67,14 +87,8 @@ td {
     text-align: center;
 }
 
-.failing-tests-indicator {
-    color: red;
-}
-.flaky-tests-indicator {
-    color: orange;
-}
-.passing-tests-indicator {
-    color: green;
+.percent-passing-indicator {
+    color: dimgrey;
 }
 .indicator {
     padding-right: 6px;

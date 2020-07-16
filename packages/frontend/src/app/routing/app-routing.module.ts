@@ -28,6 +28,7 @@ const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'license', component: LicenseComponent},
   {path: 'org/:org/:repo/:build', component: BuildComponent},
+  {path: 'org/:org/:repo', component: RepositoryComponent},
   {
     path: RouteProvider.routes.repo.path,
     component: RepositoryComponent,
