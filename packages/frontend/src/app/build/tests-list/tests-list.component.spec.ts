@@ -116,7 +116,7 @@ describe('TestsListComponent', () => {
   it('should open the tests details when user clicks on a test', async () => {
     component.tests = mockTests;
 
-    await fixture.whenStable();
+    await fixture.detectChanges();
 
     const dialogSpy = spyOn(component.dialog, 'open');
     const testDiv = fixture.debugElement.queryAll(By.css('div.test'))[0]

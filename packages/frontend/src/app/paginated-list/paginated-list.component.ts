@@ -19,6 +19,7 @@ import {Router} from '@angular/router';
 import {UtilsService} from '../services/utils.service';
 import {MatDialog} from '@angular/material/dialog';
 import {Location} from '@angular/common';
+import {RouteProvider} from '../routing/route-provider/RouteProvider';
 export {MatPaginator} from '@angular/material/paginator';
 
 @Component({template: ''})
@@ -27,6 +28,8 @@ export class PaginatedListComponent<Elements> implements OnInit {
   renderedElements: Elements[] = [];
   pageIndex = 0;
   pageSize = 10;
+  showPaginator = false;
+  routes = RouteProvider.routes;
 
   constructor(
     public sanitizer: DomSanitizer,
@@ -52,6 +55,7 @@ export class PaginatedListComponent<Elements> implements OnInit {
       this.pageSize = page.pageSize;
     }
     this.renderedElements = this._elements.slice(startIndex, endIndex);
+    this.showPaginator = this._elements.length > this.pageSize;
   }
 
   onElementClick(link: string, event: MouseEvent) {

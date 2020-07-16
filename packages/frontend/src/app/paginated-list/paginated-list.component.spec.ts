@@ -82,6 +82,46 @@ describe('PaginatedListComponent', () => {
       expect(component.pageIndex).toEqual(expectedPageIndex);
       expect(component.pageSize).toEqual(expectedPageSize);
     });
+
+    it('should hide the paginator when there is only 1 page to show', () => {
+      // fill with the exact page size
+      component.showPaginator = true;
+      component.pageSize = 5;
+      component._elements = [];
+      for (let index = 0; index < component.pageSize; index++) {
+        component._elements.push({name: '', organization: ''});
+      }
+
+      component.updatePage();
+
+      expect(component.showPaginator).toBeFalse();
+
+      // fill with a smaller page size
+      component.showPaginator = true;
+      component.pageSize = 5;
+      component._elements = [];
+      for (let index = 0; index < component.pageSize; index++) {
+        component._elements.push({name: '', organization: ''});
+      }
+
+      component.updatePage();
+
+      expect(component.showPaginator).toBeFalse();
+    });
+
+    it('should show the paginator when there is more than 1 page to show', () => {
+      // fill with the exact page size
+      component.showPaginator = false;
+      component.pageSize = 5;
+      component._elements = [];
+      for (let index = 0; index < component.pageSize + 1; index++) {
+        component._elements.push({name: '', organization: ''});
+      }
+
+      component.updatePage();
+
+      expect(component.showPaginator).toBeTrue();
+    });
   });
 
   describe('onElementClick', () => {

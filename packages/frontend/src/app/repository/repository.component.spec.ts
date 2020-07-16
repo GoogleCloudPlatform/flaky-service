@@ -34,12 +34,10 @@ import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
 // Mock the inner components
 @Component({
-  selector: 'app-build-list',
+  selector: 'app-tests-list',
 })
-class BuildListComponent {
-  @Input() builds = [];
-  @Input() repoName = '';
-  @Input() orgName = '';
+class TestsListComponent {
+  @Input() tests = [];
 }
 
 @Component({
@@ -95,7 +93,7 @@ describe('RepositoryComponent', () => {
       providers: [{provide: SearchService, useValue: mockSearchService}],
       declarations: [
         RepositoryComponent,
-        BuildListComponent,
+        TestsListComponent,
         SearchComponent,
         FiltersComponent,
       ],

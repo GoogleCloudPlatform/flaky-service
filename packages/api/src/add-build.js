@@ -70,6 +70,7 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   repoUpdate.name = buildInfo.name;
   repoUpdate.description = buildInfo.description;
   repoUpdate.lastupdate = buildInfo.timestamp;
+
   repoUpdate.lower = {
     repoId: decodeURIComponent(buildInfo.repoId).toLowerCase(),
     name: buildInfo.name.toLowerCase(),
