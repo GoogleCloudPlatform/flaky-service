@@ -15,7 +15,8 @@
 // class to receive POSTS with build information
 const { InvalidParameterError, handleError } = require('../lib/errors');
 
-class GetRepoOrgsHandler {
+// methods for org page
+class GetOrgHandler {
   constructor (app, client) {
     this.app = app;
     this.client = client;
@@ -98,4 +99,4 @@ class GetRepoOrgsHandler {
   }
 }
 
-module.exports = GetRepoOrgsHandler;
+module.exports = GetOrgHandler;

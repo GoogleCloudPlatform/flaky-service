@@ -229,11 +229,13 @@ describe('Add-Build', () => {
     });
   });
 
-  describe('GetBuildHandler', async () => {
+  describe('GetRepoHandler', async () => {
     it('Can get limit and sort by date', async () => {
-      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?limit=1');
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/builds?limit=1');
+      const respMeta = await fetch('http://localhost:3000/api/repo/nodejs/node');
 
       const respText = await resp.text();
+      const respTextMeta = await respMeta.text();
 
       const ansObj = JSON.parse(respText).builds;
 
@@ -243,12 +245,13 @@ describe('Add-Build', () => {
       assert.strictEqual(ansObj[0].tests.length, 2);
 
       const solMeta = { name: 'node', repoId: 'nodejs/node', description: 'nodejs repository', organization: 'nodejs', numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
-
-      assert.deepStrictEqual(JSON.parse(respText).metadata, solMeta);
+      const solActual = JSON.parse(respTextMeta);
+      delete solActual.lastupdate;
+      assert.deepStrictEqual(solActual, solMeta);
     });
 
     it('Can use random combinations of queries', async () => {
-      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node?os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/builds?os=linux-banana&matrix={%22node-version%22:%2212.0%22}');
       const respText = await resp.text();
 
       const ansObj = JSON.parse(respText).builds;
@@ -304,6 +307,24 @@ describe('Add-Build', () => {
 
       assert('error' in ansObj);
       assert.strictEqual(resp.status, 404);
+    });
+
+    it('Can returns all tests in the right order', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/tests');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText).tests;
+
+      assert(ansObj[0].name === 'a/5' || ansObj[0].name === 'a/2'); // both failed on most recent build
+      assert(ansObj[1].name === 'a/5' || ansObj[1].name === 'a/2'); // both failed on most recent build
+
+      assert(ansObj[2].name === 'a/4'); // failed on build before the last build
+
+      assert(ansObj[3].name === 'a/3' || ansObj[3].name === 'a/1'); // both failed on most recent build
+      assert(ansObj[4].name === 'a/3' || ansObj[4].name === 'a/1'); // both failed on most recent build
+
+      // make sure their are the newly added fields
+      assert.strictEqual(ansObj[2].lifetimepasscount, 0);
+      assert.strictEqual(ansObj[2].lifetimefailcount, 1);
     });
   });
 

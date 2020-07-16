@@ -78,6 +78,23 @@ class GetTestHandler {
         handleError(res, err);
       }
     });
+
+    // returns all tests that failed or are flaky, and then any remaining tests
+    this.app.get('/api/repo/:orgname/:reponame/tests', async (req, res, next) => {
+      try {
+        const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
+        const limit = 30;
+
+        const failingTests = await this.client.collection(global.headCollection).doc(repoid).collection('tests')
+          .orderBy('searchindex', 'desc').orderBy('lastupdate', 'desc').limit(limit).get();
+
+        const resp = [];
+        failingTests.forEach(doc => resp.push(doc.data()));
+        res.send({ tests: resp });
+      } catch (err) {
+        handleError(res, err);
+      }
+    });
   }
 }
 
