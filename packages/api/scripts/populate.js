@@ -75,9 +75,9 @@ fs.readdir(directory, function (err, files) {
     var testCasesUse = [];
     for (const tc of testCases) {
       if (tc.name.startsWith('a')) {
-        if(Math.random() < .2){
+        if (Math.random() < 0.2) {
           tc.successful = false;
-          tc.failureMessage = "Error message stack trace\nline number";
+          tc.failureMessage = 'Error message stack trace\nline number';
         }
         testCasesUse.push(tc);
       }

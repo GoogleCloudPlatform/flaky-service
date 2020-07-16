@@ -248,7 +248,6 @@ describe('Add-Build', () => {
       const solActual = JSON.parse(respTextMeta);
       delete solActual.lastupdate;
       assert.deepStrictEqual(solActual, solMeta);
-
     });
 
     it('Can use random combinations of queries', async () => {
