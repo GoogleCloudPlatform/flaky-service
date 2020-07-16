@@ -84,12 +84,12 @@ class GetTestHandler {
       try {
         const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
         let limit = 30;
-        if(req.query.limit){
-            if (isNaN(req.query['limit'])) {
-              throw new InvalidParameterError('limit parameter must be integer');
-            }else{
-              limit = parseInt(req.query['limit'])
-            }
+        if (req.query.limit) {
+          if (isNaN(req.query.limit)) {
+            throw new InvalidParameterError('limit parameter must be integer');
+          } else {
+            limit = parseInt(req.query.limit);
+          }
         }
 
         const failingTests = await this.client.collection(global.headCollection).doc(repoid).collection('tests')
