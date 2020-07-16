@@ -83,7 +83,14 @@ class GetTestHandler {
     this.app.get('/api/repo/:orgname/:reponame/tests', async (req, res, next) => {
       try {
         const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
-        const limit = 30;
+        let limit = 30;
+        if(req.query.limit){
+            if (isNaN(req.query['limit'])) {
+              throw new InvalidParameterError('limit parameter must be integer');
+            }else{
+              limit = parseInt(req.query['limit'])
+            }
+        }
 
         const failingTests = await this.client.collection(global.headCollection).doc(repoid).collection('tests')
           .orderBy('searchindex', 'desc').orderBy('lastupdate', 'desc').limit(limit).get();

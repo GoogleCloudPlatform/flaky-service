@@ -31,11 +31,7 @@ class GetRepoHandler {
       try {
         const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
 
-        const d = new Date();
         const metadata = await this.client.collection(global.headCollection).doc(repoid).get();
-        const d2 = new Date();
-        const totalTime = d2.getTime() - d.getTime();
-        console.log('this took ' + totalTime);
 
         if (metadata.data()) {
           res.send(metadata.data());
