@@ -20,11 +20,11 @@ class TestCaseRun {
     this.number = number;
     this.name = name;
     this.encodedName = firebaseEncode(this.name);
-    this.failureMessage = 'TODO ERROR MESSAGE, (e.g. stackoverflow error line 13)';
+    this.failureMessage = 'Successful';
   }
 
   display () {
-    return this.number + ', ' + this.name + ', ' + this.time + ', ' + (this.successful ? '1' : '0');
+    return this.number + ', ' + this.name + ', ' + this.time + ', ' + (this.successful ? '1' : '0') + ', ' + this.failureMessage;
   }
 }
 
