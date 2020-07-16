@@ -49,6 +49,7 @@ export class RepositoryComponent implements OnInit {
 
   repoName = ' ';
   orgName = ' ';
+  testList : Test[];
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -68,6 +69,11 @@ export class RepositoryComponent implements OnInit {
           );
         });
     });
+
+    this.comService.fetchTests(this.repoName, this.orgName)
+      .subscribe(tests => {
+        this.testList = tests
+      });
   }
 
   openLicenseDialog(): void {
@@ -82,9 +88,5 @@ export class RepositoryComponent implements OnInit {
       const route = this.orgName + '/' + this.repoName;
       this.router.navigate([route, this.interpreter.getRouteParam(filters)]);
     });
-  }
-
-  getTests(): Observable<Test[]> {
-    return this.comService.fetchTests(this.repoName, this.orgName);
   }
 }
