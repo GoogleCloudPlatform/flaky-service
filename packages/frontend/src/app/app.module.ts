@@ -23,9 +23,9 @@ import {ReactiveFormsModule} from '@angular/forms';
 
 import {A11yModule} from '@angular/cdk/a11y';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatCardModule} from '@angular/material/card';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatExpansionModule} from '@angular/material/expansion';
@@ -46,6 +46,7 @@ import {SearchComponent} from './search/search.component';
 import {LicenseComponent} from './license/license.component';
 import {MainComponent} from './main/main.component';
 import {RepoListComponent} from './main/repo-list/repo-list.component';
+import {ConfigComponent} from './app-component/config/config.component';
 import {FormsModule} from '@angular/forms';
 import {RepositoryComponent} from './repository/repository.component';
 import {BuildListComponent} from './repository/build-list/build-list.component';
@@ -64,6 +65,7 @@ import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
     MainComponent,
     RepositoryComponent,
     RepoListComponent,
+    ConfigComponent,
     BuildListComponent,
     BuildComponent,
     TestsListComponent,
@@ -79,9 +81,9 @@ import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
     ReactiveFormsModule,
     A11yModule,
     MatAutocompleteModule,
-    MatBottomSheetModule,
     MatButtonModule,
     MatButtonToggleModule,
+    MatCardModule,
     MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
