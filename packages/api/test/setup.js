@@ -14,14 +14,14 @@
 
 const { before, after } = require('mocha');
 
-let server;
-// let func;
+let serverObject;
+
 before(() => {
-  // {func, server} = require('../server');
-  server = require('../server');
+  serverObject = require('../server');
+  // server = require('../server');
 });
 
 after(() => {
   console.log('AFTER');
-  server(); // Close server
+  serverObject.close(); // Close server
 });

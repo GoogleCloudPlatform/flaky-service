@@ -33,6 +33,7 @@ const { v4 } = require('uuid');
 
 const cors = require('cors');
 const cron = require('node-cron');
+const isLoggedIn = require('./src/isLoggedIn.js');
 
 // Delete sessions every five minutes
 // const task = cron.schedule('* * * * * *', () => {
@@ -59,20 +60,21 @@ app.use(
   })
 );
 
-app.all('/api/protected/*', (req, res, next) => {
-  console.log("AUTH MIDDLEWARE");
-  req.session.login='fakke';
-  console.log("SESSION: " + JSON.stringify(req.session));
-  if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
-    console.log('AUTHENTICATED');
-    next();
-  } else {
-    console.log('NON AUTHENTICATED');
-    res.status(401).end();
-  }
-});
+// const protected = (req,res,next) => {
+//   console.log('AUTH MIDDLEWARE');
+//   // console.log(res);
+//   // req.session.login='fakke';
+//   console.log('SESSION: ' + JSON.stringify(req.session));
+//   if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
+//     console.log('AUTHENTICATED');
+//     next();
+//   } else {
+//     console.log('NON AUTHENTICATED');
+//     res.status(401).end();
+//   }
+// };
 
-app.get('/api/protected/repos', async (req, res) => {
+app.get('/api/repos', isLoggedIn, async (req, res) => {
   console.log('MADE IT INTO SERVER!');
   const repository = new Repository();
   const result = await repository.getCollection('dummy-repositories');
@@ -150,7 +152,7 @@ app.get('/api/callback', async (req, res) => {
   res.status(200).redirect(redirect);
 });
 
-app.get('/api/protected/session', async (req, res) => {
+app.get('/api/session', isLoggedIn, async (req, res) => {
   const repository = new Repository();
   const result = await repository.sessionPermissions(req.sessionID);
   res.status(200).send(result);
@@ -174,11 +176,17 @@ const server = app.listen(port, host, () => console.log(`Example app listening a
 //     task.stop();
 //   })
 // })
-const toClose = () => {
-  task.stop();
-  server.close();
+// const toClose = () => {
+//   task.stop();
+//   server.close();
+// };
+module.exports = {
+  close: () => {
+    task.stop();
+    server.close();
+  },
+  server: server
 };
-module.exports = toClose;
 
 // module.exports = (req, res, next) => {
 //   if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
