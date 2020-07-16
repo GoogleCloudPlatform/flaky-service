@@ -309,7 +309,7 @@ describe('Add-Build', () => {
       assert.strictEqual(resp.status, 404);
     });
 
-    it('Can returns all tests in the right order', async () => {
+    it('Can return all tests in the right order', async () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/tests');
       const respText = await resp.text();
       const ansObj = JSON.parse(respText).tests;
