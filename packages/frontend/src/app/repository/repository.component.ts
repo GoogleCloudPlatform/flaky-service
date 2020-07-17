@@ -74,6 +74,7 @@ export class RepositoryComponent implements OnInit {
       .subscribe(tests => {
         this.testList = tests
       });
+      
   }
 
   openLicenseDialog(): void {
