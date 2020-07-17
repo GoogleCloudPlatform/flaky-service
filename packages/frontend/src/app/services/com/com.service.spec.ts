@@ -17,8 +17,9 @@ import {COMService} from './com.service';
 import {HttpClientModule} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Search, Repository, Test} from '../search/interfaces';
-import {of} from 'rxjs';
+import {of, asyncScheduler} from 'rxjs';
 import {apiLinks} from './api';
+import {Test} from 'mocha';
 
 describe('COMService', () => {
   let service: COMService;
@@ -118,7 +119,7 @@ describe('COMService', () => {
         lifetimepasscount: 8,
         lifetimefailcount: 7,
         lastupdate: {_seconds: 5460, _nanoseconds: 0},
-        environment: {os: 'windows', ref: 'dev'},
+        environments: {os: 'windows', ref: 'dev'},
       },{
         name: 'should redirect/refresh when the filters selection changes',
         flaky: true,
@@ -128,7 +129,7 @@ describe('COMService', () => {
         lifetimepasscount: 8,
         lifetimefailcount: 5,
         lastupdate: {_seconds: 3790, _nanoseconds: 0},
-        environment: {os: 'windows', ref: 'dev'},
+        environments: {os: 'windows', ref: 'dev'},
       }
     ];
 
@@ -149,10 +150,11 @@ describe('COMService', () => {
 
       service
         .fetchTests(repoName, orgName)
-        .subscribe(tests => {
-          expect(tests.length).toBe(2);
-          expect(tests).toEqual(mockTest);
+        .subscribe(result => {
+          value = result.tests;
         });
+        expect(value.length).toBe(2);
+        expect(value.tests).toEqual(mockTest);
     })
   })
 });

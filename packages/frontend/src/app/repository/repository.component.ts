@@ -56,6 +56,7 @@ export class RepositoryComponent implements OnInit {
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');
 
+      
       this.searchService
         .searchBuilds(this.repoName, this.orgName, foundParams.filters)
         .subscribe(repository => {

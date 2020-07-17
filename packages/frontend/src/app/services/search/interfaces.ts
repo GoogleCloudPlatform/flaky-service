@@ -37,6 +37,10 @@ export interface Search {
   query: string;
 }
 
+export interface Tests {
+  tests: Test[];
+}
+
 export interface Test {
   name: string;
   flaky: boolean;
@@ -45,7 +49,7 @@ export interface Test {
   lifetimefailcount: number;
   lifetimepasscount: number;
   percentpassing: number;
-  environment: BuildEnvironment;
+  environments?: BuildEnvironment;
   lastupdate: {_seconds: number, _nanoseconds: number};
 }
 

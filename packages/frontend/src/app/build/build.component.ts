@@ -51,7 +51,7 @@ export class BuildComponent implements OnInit {
       percentpassing: 98,
       lifetimefailcount: 2,
       lastupdate: {_seconds: 2220, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
+      environments: {os: 'windows', ref: 'dev'},
     },
     {
       name:
@@ -63,7 +63,7 @@ export class BuildComponent implements OnInit {
       lifetimepasscount: 10,
       lifetimefailcount: 3,
       lastupdate: {_seconds: 3340, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
+      environments: {os: 'windows', ref: 'dev'},
     },
     {
       name: 'should set the new filters when a repository is found',
@@ -74,7 +74,7 @@ export class BuildComponent implements OnInit {
       lifetimepasscount: 8,
       lifetimefailcount: 7,
       lastupdate: {_seconds: 5460, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
+      environments: {os: 'windows', ref: 'dev'},
     },
     {
       name: 'should redirect/refresh when the filters selection changes',
@@ -85,7 +85,7 @@ export class BuildComponent implements OnInit {
       lifetimepasscount: 8,
       lifetimefailcount: 5,
       lastupdate: {_seconds: 3790, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
+      environments: {os: 'windows', ref: 'dev'},
     },
     {
       name: 'should create',
@@ -96,7 +96,7 @@ export class BuildComponent implements OnInit {
       searchindex: 0,
       lifetimepasscount: 10,
       lastupdate: {_seconds: 1370, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
+      environments: {os: 'windows', ref: 'dev'},
     },
     {
       name: 'should initialize view',
@@ -107,7 +107,7 @@ export class BuildComponent implements OnInit {
       lifetimepasscount: 10,
       lifetimefailcount: 2,
       lastupdate: {_seconds: 999, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
+      environments: {os: 'windows', ref: 'dev'},
     },
   ];
 

@@ -106,8 +106,6 @@ describe('TestsListComponent', () => {
     component.pageIndex = 1;
     const expectedPageSize: number = component.pageSize;
 
-    component.tests = mockTests;
-
     expect(component._elements).toEqual(mockTests);
     // reset the index
     expect(component.pageIndex).toEqual(0);
@@ -120,13 +118,10 @@ describe('TestsListComponent', () => {
     component.paginator = undefined;
     component.pageIndex = expectedPageIndex;
 
-    component.tests = mockTests;
-
     expect(component.pageIndex).toEqual(expectedPageIndex);
   });
 
   it('should open the tests details when user clicks on a test', async () => {
-    component.tests = mockTests;
 
     await fixture.detectChanges();
 

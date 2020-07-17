@@ -57,8 +57,13 @@ limitations under the License.
     <!-- PASSING PERCENTAGE -->
     <span
         [class.flaky]="test.flaky"
+        [class.success]="!test.flaky"
+        [innerHTML]="toPercentage(test.percentpassing)">
+    </span>
+    <span
+        [class.flaky]="test.flaky"
         [class.success]="!test.flaky">
-        {{test.percentpassing}}% of the time
+        % of the time
     </span>
 
     <span>&nbsp;and is considered&nbsp;</span>

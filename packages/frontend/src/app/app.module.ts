@@ -51,7 +51,7 @@ import {FormsModule} from '@angular/forms';
 import {RepositoryComponent} from './repository/repository.component';
 import {BuildComponent} from './build/build.component';
 import {TestsListComponent} from './repository/tests-list/tests-list.component';
-import {TestDetailsComponent} from './build/tests-list/test-details/test-details.component';
+import {TestDetailsComponent} from './repository/tests-list/test-details/test-details.component';
 import {FiltersComponent} from './filters/filters.component';
 import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
 

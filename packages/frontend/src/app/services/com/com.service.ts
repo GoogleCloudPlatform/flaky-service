@@ -21,7 +21,7 @@ import {
   Repository,
   ApiRepository,
   Filter,
-  Test,
+  Tests,
   SessionStatus,
 } from '../search/interfaces';
 
@@ -63,7 +63,7 @@ export class COMService {
   public fetchTests(
     repoName:string,
     orgName: string,
-  ): Observable<Test[]> {
-    return this.http.get<Test[]>(apiLinks.get.tests(repoName, orgName));
+  ): Observable<Tests> {
+    return this.http.get<Tests>(apiLinks.get.tests(repoName, orgName));
   }
 }

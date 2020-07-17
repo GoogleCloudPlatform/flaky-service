@@ -49,13 +49,12 @@ limitations under the License.
 
 .test-name {
     margin-right: 10px;
-    position: absolute;
-    margin-bottom: 15px;
     /*Hide long names*/
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     max-width: 400px;
+    justify-content: left;
 }
 .test-name > a {
     color: #0075FF;
@@ -71,10 +70,13 @@ limitations under the License.
 }
 
 .last-run {
-    margin-right: 10px;
-    position: absolute;
     font-size: smaller;
     color: dimgrey;
+    justify-content: left;
+}
+
+.details > table {
+    line-height: 13px;
 }
 
 .description {
@@ -83,7 +85,7 @@ limitations under the License.
     margin-right: 6px;
 }
 
-td {
+.indicators > table > tr > td {
     text-align: center;
 }
 
