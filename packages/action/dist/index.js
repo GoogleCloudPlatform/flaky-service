@@ -205,9 +205,6 @@ async function main() {
 
 
 
-    // await timeout(1000*60*10);
-
-
     const outcome = await fetch('https://flaky-dashboard.web.app/api/build', {
       method: 'POST',
       body: JSON.stringify(sendMe),
@@ -221,20 +218,6 @@ async function main() {
     core.setFailed(error.message);
   }
 }
-
-/*
-pause
-
-
-*/
-/**
- * sleeps if necessary
- * @param {int} ms Time to wait
- * @return {Promise} a promise to wait until
- */
-// function timeout(ms) {
-//   return new Promise((resolve) => setTimeout(resolve, ms));
-// }
 
 
 main();
