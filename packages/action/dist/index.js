@@ -203,9 +203,6 @@ async function main() {
     const sendMe = {type: fileType, data: data, metadata: metaData};
 
 
-    console.log('SENDING:\n' + JSON.stringify(sendMe));
-    console.log(metaData.github.token.substring(0, 4) + '!!' +
-       metaData.github.token.substring(4));
 
 
     // await timeout(1000*60*10);
