@@ -19,6 +19,7 @@ const client = require('../src/firestore.js');
 
 const TestCaseRun = require('../lib/testrun');
 const addBuild = require('../src/add-build');
+const { deleteRepo } = require('../lib/deleter');
 
 const buildInfo = {
   repoId: encodeURIComponent('flaky/repo'),
@@ -152,28 +153,6 @@ describe('Flaky-Analytics', () => {
   });
 
   after(async () => {
-    // must delete each collection individually
-    const deletePaths = [
-      'tests/{testcase}/runs/{buildid}',
-      'tests/{testcase}',
-      'builds/{buildid}'
-    ];
-    const buildIds = ['0', '1', '2', '3', '1.5'];
-    const testCaseIds = [];
-    for (let j = 0; j < testCases[0].length; j++) {
-      testCaseIds.push(j.toString());
-    }
-    // Delete all possible documents, okay to delete document that doesnt exist
-    for (let a = 0; a < deletePaths.length; a++) {
-      for (let b = 0; b < buildIds.length; b++) {
-        for (let c = 0; c < testCaseIds.length; c++) {
-          const { deletePath, buildId, testCase } = { deletePath: deletePaths[a], buildId: buildIds[b], testCase: testCaseIds[c] };
-          const deletePathUse = deletePath.replace('{testcase}', encodeURIComponent(testCase)).replace('{buildid}', buildId);
-          await client.collection(global.headCollection).doc(buildInfo.repoId + '/' + deletePathUse).delete();
-        }
-      }
-    }
-
-    await client.collection(global.headCollection).doc(buildInfo.repoId).delete();
+    await deleteRepo(client, decodeURIComponent(buildInfo.repoId));
   });
 });
