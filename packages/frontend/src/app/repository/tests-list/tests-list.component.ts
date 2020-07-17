@@ -29,11 +29,22 @@ import {TestDetailsComponent} from './test-details/test-details.component';
 export class TestsListComponent extends PaginatedListComponent<Test> {
   @ViewChild('paginator') paginator: MatPaginator;
 
-  @Input() set tests(value: Test[]) {
+  @Input() tests(value: Test[]) {
     this._elements = value;
     this.updatePage();
     this.paginator?.firstPage();
   }
+
+  @Input() repoName: string;
+  @Input() orgName: string;
+
+  @Input()
+    set element(){
+      this.comService.fetchTests(this.repoName, this.orgName)
+        .subscribe(tests => {
+          this._elements = tests
+        });
+    }
 
   onTestClick(test: Test) {
     this.dialog.open<TestDetailsComponent>(TestDetailsComponent, {

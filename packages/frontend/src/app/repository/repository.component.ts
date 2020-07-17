@@ -22,11 +22,9 @@ import {
   expectedParams,
 } from '../services/interpretation/interpretation.service';
 import {FiltersComponent} from '../filters/filters.component';
-import {Observable} from 'rxjs';
 import {Filter, Test} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
-import { COMService } from '../services/com/com.service';
 
 @Component({
   selector: 'app-repository',
@@ -36,7 +34,6 @@ import { COMService } from '../services/com/com.service';
 export class RepositoryComponent implements OnInit {
   constructor(
     public searchService: SearchService,
-    private comService: COMService,
     private route: ActivatedRoute,
     private router: Router,
     private ngZone: NgZone,
@@ -49,7 +46,6 @@ export class RepositoryComponent implements OnInit {
 
   repoName = ' ';
   orgName = ' ';
-  testList : Test[];
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -68,13 +64,7 @@ export class RepositoryComponent implements OnInit {
             foundParams.filters
           );
         });
-    });
-
-    this.comService.fetchTests(this.repoName, this.orgName)
-      .subscribe(tests => {
-        this.testList = tests
-      });
-      
+    }); 
   }
 
   openLicenseDialog(): void {
