@@ -14,6 +14,13 @@ inputs:
     required: true
   logtype:
     description: 'Type of Log.. e.g. (TAP, XML, ... TODO)'
+    required: true
+  filepath:
+    description: 'location of the testing file'
+    required: true
+  endpoint:
+    description: 'post url'
+    required: false
 
 runs:
   using: 'node12'
