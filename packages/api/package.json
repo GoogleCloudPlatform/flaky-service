@@ -36,8 +36,11 @@
     "moment": "^2.27.0",
     "nock": "^13.0.2",
     "node-cron": "^2.0.3",
+    "proxyquire": "^2.1.3",
+    "sinon": "^9.0.2",
     "supertest": "^4.0.2",
     "tap-parser": "^10.0.1",
+    "url": "^0.11.0",
     "uuid": "^8.2.0"
   },
   "devDependencies": {

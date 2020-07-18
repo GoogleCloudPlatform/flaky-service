@@ -43,6 +43,10 @@ const task = cron.schedule('*/5 * * * *', () => {
   repository.deleteExpiredSessions();
 });
 
+app.use('/protected', (req, res, next) => {
+  isLoggedIn.isLoggedIn(req, res, next);
+});
+
 global.headCollection = process.env.HEAD_COLLECTION || 'testing-buildsget';
 
 app.use(cors());
@@ -60,21 +64,7 @@ app.use(
   })
 );
 
-// const protected = (req,res,next) => {
-//   console.log('AUTH MIDDLEWARE');
-//   // console.log(res);
-//   // req.session.login='fakke';
-//   console.log('SESSION: ' + JSON.stringify(req.session));
-//   if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
-//     console.log('AUTHENTICATED');
-//     next();
-//   } else {
-//     console.log('NON AUTHENTICATED');
-//     res.status(401).end();
-//   }
-// };
-
-app.get('/api/repos', isLoggedIn, async (req, res) => {
+app.get('/protected/api/repos', async (req, res) => {
   console.log('MADE IT INTO SERVER!');
   const repository = new Repository();
   const result = await repository.getCollection('dummy-repositories');
@@ -95,18 +85,26 @@ app.get('/api/repos', isLoggedIn, async (req, res) => {
 });
 
 app.get('/api/auth', (req, res) => {
+  console.log('AUTH SESSION ID: ' + req.sessionID);
+  // res.setHeader('Access-Control-Allow-Credentials', 'true');
   req.session.authState = v4();
   const url = 'http://github.com/login/oauth/authorize?client_id=' + process.env.CLIENT_ID + '&state=' + req.session.authState + '&allow_signup=false';
+  // console.log('AUTH URL: ' + url);
   res.status(302).redirect(url);
 });
 
 app.get('/api/callback', async (req, res) => {
+  console.log('CALLBACK SESSION ID: ' + req.sessionID);
   const redirect = process.env.FRONTEND_URL;
+  console.log('/callback receives state: ' + req.param('state') + ' and code: ' + req.param('code'));
 
   if (req.param('state') !== req.session.authState) {
+    console.log('failed first check. authState is: ' + req.session.authState);
     res.status(401).redirect(redirect);
     return;
   }
+
+  console.log('made past first check');
 
   const resp = await fetch('https://github.com/login/oauth/access_token', {
     method: 'post',
@@ -152,7 +150,7 @@ app.get('/api/callback', async (req, res) => {
   res.status(200).redirect(redirect);
 });
 
-app.get('/api/session', isLoggedIn, async (req, res) => {
+app.get('/protected/api/session', async (req, res) => {
   const repository = new Repository();
   const result = await repository.sessionPermissions(req.sessionID);
   res.status(200).send(result);
@@ -171,29 +169,11 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';
 const server = app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`));
 
-// process.on('SIGTERM', () => {
-//   server.close(() => {
-//     task.stop();
-//   })
-// })
-// const toClose = () => {
-//   task.stop();
-//   server.close();
-// };
 module.exports = {
   close: () => {
+    console.log('Closing Server: ' + port);
     task.stop();
     server.close();
   },
   server: server
 };
-
-// module.exports = (req, res, next) => {
-//   if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
-//     console.log('AUTHENTICATED');
-//     next();
-//   } else {
-//     console.log('NON AUTHENTICATED');
-//     res.status(401).end();
-//   };
-// }
