@@ -1,0 +1,6 @@
+> c8@7.2.1 test /Users/bencoe/oss/c8
+> node ./bin/c8.js mocha --reporter=tap --timeout=8000 ./test/*.js
+
+ok 1 c8 reports coverage for script that exits normally
+ok 2 c8 supports exeternally set NODE_V8_COVERAGE
+ok 3 c8 merges reports from subprocesses together

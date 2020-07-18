@@ -140,7 +140,7 @@ class PostBuildHandler {
     const output = await new Promise(resolve => {
       var process = cp.exec('tap-parser -f -t', (error, stdout, stderr) => {
         if (error || stderr) {
-          throw new InvalidParameterError('Could not parse and flatten tap');
+          // not necessarily an error, could just mean tap was not properly formatted but still somewhat parsable
         }
         resolve(stdout);
       });

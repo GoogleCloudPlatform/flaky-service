@@ -21,6 +21,7 @@ var path = require('path');
 const EXAMPLE_TAP_ERRORS = fs.readFileSync(path.join(__dirname, 'res/sampletap.tap'), 'utf8');
 const EXAMPLE_TAP_MANGLED = fs.readFileSync(path.join(__dirname, 'res/mangledtap.tap'), 'utf8');
 const EXAMPLE_TAP_NESTED = fs.readFileSync(path.join(__dirname, 'res/nestedtap.tap'), 'utf8');
+const EXAMPLE_STUFF_ON_TOP = fs.readFileSync(path.join(__dirname, 'res/stuffontoptap.tap'), 'utf8');
 
 const { describe, before, after, it } = require('mocha');
 const { v4: uuidv4 } = require('uuid');
@@ -102,6 +103,14 @@ describe('Posting Builds', () => {
     assert.strictEqual(testcases.length, 6);
 
     assert.strictEqual(PostBuildHandler.removeDuplicateTestCases(testcases).length, 4);
+  });
+
+  it('should handle a test with other stuff at the top', async () => {
+    const flattenedLog = await PostBuildHandler.flattenTap(EXAMPLE_STUFF_ON_TOP);
+    const parsedRaw = await PostBuildHandler.parseRawOutput(flattenedLog, 'TAP');
+    const testcases = PostBuildHandler.parseTestCases(parsedRaw, flattenedLog);
+
+    assert.strictEqual(testcases.length, 3);
   });
 
   it('should send back an error code when being sent invalid metadata', async () => {
