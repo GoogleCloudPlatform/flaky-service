@@ -50,10 +50,11 @@ class PostBuildHandler {
 
   static parseBuildInfo (metadata) {
     // buildInfo must have attributes of organization, timestamp, url, environment, buildId
-    var returnVal = {
+    const now = metadata.github.event.head_commit ? new Date(metadata.github.event.head_commit.timestamp) : new Date();
+    const returnVal = {
       repoId: firebaseEncode(metadata.github.repository),
       organization: metadata.github.repository_owner,
-      timestamp: new Date(metadata.github.event.head_commit.timestamp),
+      timestamp: now,
       url: metadata.github.repositoryUrl,
       environment: PostBuildHandler.parseEnvironment(metadata),
       buildId: firebaseEncode(metadata.github.run_id),
