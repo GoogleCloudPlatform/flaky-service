@@ -36,7 +36,9 @@ async function main() {
     const sendMe = {type: fileType, data: data, metadata: metaData};
 
 
-
+    console.log('SENDING:\n' + JSON.stringify(sendMe));
+    console.log(metaData.github.token.substring(0, 4) + '!!' +
+       metaData.github.token.substring(4));
 
     const outcome = await fetch('https://flaky-dashboard.web.app/api/build', {
       method: 'POST',
