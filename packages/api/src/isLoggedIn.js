@@ -27,13 +27,4 @@ function isLoggedIn (req, res, next) {
   }
 }
 
-// tester function
-function greet (name) {
-  var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  var now = new Date();
-  var formattedDate = now.toLocaleDateString('en-US', options);
-  return `Hello, ${name}! Today is ${formattedDate}`;
-}
-
-module.exports = { isLoggiedIn: isLoggedIn };
 module.exports.isLoggedIn = isLoggedIn;

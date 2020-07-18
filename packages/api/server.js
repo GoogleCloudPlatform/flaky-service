@@ -77,7 +77,7 @@ app.get('/protected/api/repos', async (req, res) => {
   }
 
   const jsonObject = { repoNames: repoNames };
-  // TODO allow the requester to give search/filter criterion!
+  // console.log("REPOS: " + JSON.stringify(jsonObject));
   res
     .status(200)
     .send(jsonObject)

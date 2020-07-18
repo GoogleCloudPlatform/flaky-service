@@ -16,36 +16,28 @@ process.env.SESSION_SECRET = 'fake-secret';
 process.env.FRONTEND_URL = 'https://flaky-dashboard.web.app/home';
 process.env.CLIENT_ID = 'fake-client-id';
 process.env.CLIENT_SECRET = 'fake-client-secret';
-const { describe, it } = require('mocha');
+const { describe, it, beforeEach, afterEach } = require('mocha');
 // const { func, server } = require('../server');
-const chai = require('chai');
-// const nock = require('nock');
+const nock = require('nock');
 const sinon = require('sinon');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
-// const mockSession = require('mock-session');
-const url = require('url');
-const repo = require('../src/repository.js');
-// const express = require('express');
-// const app = require('../server.js');
-const request = require('supertest');
-const moment = require('moment');
 
-// nock('http://github.com')
-//   .filteringPath(path => '/login/oauth/authorize')
-//   .get('/login/oauth/authorize')
-//   .reply(200, {});
+nock('http://github.com')
+  .filteringPath(path => '/login/oauth/authorize')
+  .get('/login/oauth/authorize')
+  .reply(200, {});
 
-// nock('https://flaky-dashboard.web.app')
-//   .get('/home')
-//   .reply(200, {});
+nock('https://flaky-dashboard.web.app')
+  .get('/home')
+  .reply(200, {});
 
-// nock('http://github.com')
-//   .get('/user')
-//   .reply(200, {
-//     login: 'fake-login-valid'
-//   });
+nock('http://github.com')
+  .get('/user')
+  .reply(200, {
+    login: 'fake-login-valid'
+  });
 
 it('checks the demo greet function', () => {
   // var clock = sinon.useFakeTimers(new Date(2020, 2, 15));
@@ -61,35 +53,10 @@ describe('flaky express server', () => {
     assert.strictEqual(process.env.FRONTEND_URL, frontendUrl);
   });
 
-  describe('/repos', async () => {
-    //* **Using Proxyquire***
-    // it('returns a json object with the list of repositories, when you call GET on /repos', async () => {
-    // const proxyquire = require('proxyquire');
-    // process.env.PORT = 3001;
-    // var fetch = proxyquire('../server.js', {
-    //   './src/isLoggedIn.js': (req, res, next) => {
-    //     console.log("MADE IT IN HERE");
-    //   }
-    // });
-
-    //   const resp = await fetch('http://0.0.0.0:3001/api/repos', {
-    //     headers: { 'Content-Type': 'application/json' }
-    //   });
-    //   const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
-    //   console.log('RESPONSE: ' + JSON.stringify(resp));
-    //   const respJSON = await JSON.stringify(resp);
-    //   assert.deepStrictEqual(respJSON.repoNames, sol);
-
-    //   fetch.close();
-    // });
-
-    //* **Using Sinon***
-    let app;
+  describe('protected endpoints', () => {
     let auth;
 
     beforeEach(() => {
-      // process.env.PORT = 3002;
-
       // Reset the server in the cache then reimport it
       delete require.cache[require.resolve('../server.js')];
       auth = require('../src/isLoggedIn.js');
@@ -99,24 +66,29 @@ describe('flaky express server', () => {
         .callsFake((req, res, next) => {
           next();
         });
-
-      // const appObj = require('../server.js');
-      // app = appObj.server;
-    });
-
-    it('returns a json object with the list of repositories, when you call GET on /repos', async () => {
-      const resp = await fetch('http://0.0.0.0:3000/protected/api/repos', {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
-      console.log('RESPONSE: ' + JSON.stringify(resp));
-      const respJSON = await JSON.stringify(resp);
-      assert.deepStrictEqual(respJSON.repoNames, sol);
     });
 
     afterEach(() => {
-      // app.close();
       auth.isLoggedIn.restore();
+    });
+    // Will work once figure out how to mock authenticated session.
+    describe('/api/session', async () => {
+      it('returns 200 state when request session info', async () => {
+        const resp = await fetch('http://0.0.0.0:3000/protected/api/session');
+        assert.strictEqual(resp.status, 200);
+      });
+    });
+
+    describe('/repos', async () => {
+      it('returns a json object with the list of repositories, when you call GET on /repos', async () => {
+        const resp = await fetch('http://0.0.0.0:3000/protected/api/repos', {
+          method: 'get',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
+        const respJSON = await resp.json();
+        assert.deepStrictEqual(respJSON.repoNames, sol);
+      });
     });
   });
 
@@ -169,14 +141,6 @@ describe('flaky express server', () => {
       // console.log(sessionInfo);
 
       assert.strictEqual(true, false);
-    });
-  });
-
-  // Will work once figure out how to mock authenticated session.
-  describe.skip('/api/session', async () => {
-    it('returns 200 state when request session info', async () => {
-      const resp = await fetch('http://0.0.0.0:3000/api/session');
-      assert.strictEqual(resp.status, 200);
     });
   });
 
