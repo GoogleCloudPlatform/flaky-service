@@ -427,8 +427,6 @@ describe('Add-Build', () => {
           }
         }
       }
-
-      // assert.strictEqual(respText, TRICKY_EXPORT);
     });
   });
 
