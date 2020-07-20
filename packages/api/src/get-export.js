@@ -125,7 +125,7 @@ class GetExportHandler {
         for (const key in builds) {
           stringSolution.push(builds[key].toString(allMatrixList));
         }
-        // res.set({ 'Content-Disposition': 'attachment; filename="' + decodeURIComponent(repoid) + '.csv"' });
+        res.set({ 'Content-Disposition': 'attachment; filename="' + decodeURIComponent(repoid) + '.csv"' });
         res.send(stringSolution.join('\n'));
       } catch (err) {
         handleError(res, err);
