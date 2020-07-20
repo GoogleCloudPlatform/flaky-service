@@ -106,7 +106,7 @@ export class SearchComponent implements OnInit {
     this.inputControl.setValue(option);
     const isADefaultOption = option === this.defaultOption.name;
     if (isADefaultOption) this.inputControl.setValue('');
-    else this.launchSearch(this.interpreter.parseSearchInput(option));
+    else this.openRepo(option);
   }
 
   private launchSearch(option: Search): void {
@@ -117,6 +117,13 @@ export class SearchComponent implements OnInit {
         link,
         this.interpreter.getRouteParam(option.filters),
       ]);
+    });
+  }
+
+  private openRepo(repoName: string) {
+    this.ngZone.run(() => {
+      const link = RouteProvider.routes.repo.link(this.orgName, repoName);
+      this.router.navigateByUrl(link);
     });
   }
 }

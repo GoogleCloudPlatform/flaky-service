@@ -207,9 +207,8 @@ describe('SearchComponent', () => {
             await fixture.whenStable();
 
             // redirected to the search page
-            let expectedLocation =
-              '/' + RouteProvider.routes.main.link(orgName);
-            expectedLocation += ';repo=' + repoName;
+            const expectedLocation =
+              '/' + RouteProvider.routes.repo.link(orgName, repoName);
             expect(location.path()).toEqual(expectedLocation);
             done();
           }, component.debounceTime + 200);
