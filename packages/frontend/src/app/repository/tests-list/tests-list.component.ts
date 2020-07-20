@@ -31,7 +31,6 @@ export class TestsListComponent extends PaginatedListComponent<Test> {
 
   @Input() repoName: string;
   @Input() orgName: string;
-  tests = [];
 
   ngOnInit() {
     this.comService.fetchTests(this.repoName, this.orgName)

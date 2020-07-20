@@ -27,6 +27,7 @@ import {By} from '@angular/platform-browser';
 import {COMService} from 'src/app/services/com/com.service';
 import {mockTests} from './mockTests.spec';
 import {of} from 'rxjs';
+import {HttpClientModule} from '@angular/common/http';
 
 // Mock components
 @Component({
@@ -47,6 +48,7 @@ describe('TestsListComponent', () => {
       declarations: [TestsListComponent, TestDetailsComponent],
       imports: [
         AppRoutingModule,
+        HttpClientModule,
         BrowserAnimationsModule,
         MatPaginatorModule,
         MatDialogModule,

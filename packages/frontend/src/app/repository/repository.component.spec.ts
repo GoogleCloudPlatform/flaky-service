@@ -38,7 +38,8 @@ import {HttpClientModule} from '@angular/common/http';
   selector: 'app-tests-list',
 })
 class TestsListComponent {
-  @Input() tests = [];
+  @Input() repoName = ' ';
+  @Input() orgName = ' ';
 }
 
 @Component({
