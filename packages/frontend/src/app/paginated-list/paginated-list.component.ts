@@ -19,7 +19,7 @@ import {Router} from '@angular/router';
 import {UtilsService} from '../services/utils.service';
 import {MatDialog} from '@angular/material/dialog';
 import {Location} from '@angular/common';
-import { COMService } from '../services/com/com.service';
+import {COMService} from '../services/com/com.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 export {MatPaginator} from '@angular/material/paginator';
 

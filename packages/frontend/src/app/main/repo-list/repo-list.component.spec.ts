@@ -23,6 +23,8 @@ import {RepoListComponent} from './repo-list.component';
 import {Repository} from 'src/app/services/search/interfaces';
 import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
+import {HttpClientModule} from '@angular/common/http';
+
 
 describe('RepoListComponent', () => {
   let component: RepoListComponent;
@@ -45,6 +47,7 @@ describe('RepoListComponent', () => {
         AppRoutingModule,
         BrowserAnimationsModule,
         MatPaginatorModule,
+        HttpClientModule,
         MatDialogModule,
       ],
     }).compileComponents();

@@ -24,6 +24,9 @@ import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {Component} from '@angular/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {By} from '@angular/platform-browser';
+import {COMService} from 'src/app/services/com/com.service';
+import {mockTests} from './mockTests.spec';
+import {of} from 'rxjs';
 
 // Mock components
 @Component({
@@ -31,46 +34,13 @@ import {By} from '@angular/platform-browser';
 })
 class TestDetailsComponent {}
 
+const COMServiceMock = {
+  fetchTests: () => of({test: mockTests}),
+};
+
 describe('TestsListComponent', () => {
   let component: TestsListComponent;
   let fixture: ComponentFixture<TestsListComponent>;
-
-  const mockTests = [
-    {
-      name: 'should update the rendered pages on input change',
-      flaky: true,
-      passed: false,
-      percentpassing: 98,
-      searchindex: 0,
-      lifetimefailcount: 2,
-      lifetimepasscount: 18,
-      lastupdate: {_seconds: 53400, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name:
-        'should not return to the first page when the paginator is not ready',
-      flaky: false,
-      passed: false,
-      percentpassing: 92,
-      searchindex: 0,
-      lifetimefailcount: 1,
-      lifetimepasscount: 9,
-      lastupdate: {_seconds: 63400, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should set the new filters when a repository is found',
-      flaky: true,
-      passed: true,
-      percentpassing: 53,
-      searchindex: 0,
-      lifetimefailcount: 10,
-      lifetimepasscount: 12,
-      lastupdate: {_seconds: 63400, _nanoseconds: 0},
-      environment: {os: 'windows', ref: 'dev'},
-    },
-  ];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -81,6 +51,9 @@ describe('TestsListComponent', () => {
         MatPaginatorModule,
         MatDialogModule,
       ],
+      providers: [
+        { provide: COMService, useClass: COMServiceMock },
+      ]
     }).compileComponents();
   }));
 
@@ -102,11 +75,34 @@ describe('TestsListComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should update the page with test data', done => {
+    COMServiceMock.fetchTests = () => of({test: mockTests});
+
+    component.ngOnInit();
+    const getTests = fixture.debugElement.queryAll(
+      By.css('.tests')
+    );
+
+    setTimeout(() => {
+      expect(getTests.length).toEqual(3);
+      expect(
+        getTests[0].query(By.css('.test-name')).nativeElement.textContent
+      ).toEqual(mockTests.tests[0].name);
+      expect(
+        getTests[1].query(By.css('.test-name')).nativeElement.textContent
+      ).toEqual(mockTests.tests[1].name);
+      expect(
+        getTests[2].query(By.css('.test-name')).nativeElement.textContent
+      ).toEqual(mockTests.tests[2].name);
+      done();
+    });
+  });
+
   it('should update the rendered pages on input change', () => {
     component.pageIndex = 1;
     const expectedPageSize: number = component.pageSize;
 
-    expect(component._elements).toEqual(mockTests);
+    expect(component._elements).toEqual(mockTests.tests);
     // reset the index
     expect(component.pageIndex).toEqual(0);
     // didn't change the page size
