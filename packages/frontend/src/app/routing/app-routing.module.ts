@@ -36,6 +36,7 @@ const routes: Routes = [
         RouteProvider.routes.main.name,
         RouteProvider.routes.repo.name,
       ],
+      setGitLink: true,
     },
   },
   {

@@ -23,6 +23,7 @@ import {
   RouteProvider,
   RouteData,
 } from '../routing/route-provider/RouteProvider';
+import {UtilsService} from '../services/utils.service';
 
 @Component({
   selector: 'app-breadcrumbs',
@@ -33,11 +34,17 @@ export class BreadcrumbsComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private interpreter: InterpretationService
+    private interpreter: InterpretationService,
+    public utils: UtilsService
   ) {}
 
   crumbs: Crumb[] = [];
   showCrumbs = true;
+
+  gitLink: GitLink = {
+    show: false,
+    value: '',
+  };
 
   ngOnInit(): void {
     this.router.events
@@ -53,6 +60,8 @@ export class BreadcrumbsComponent implements OnInit {
     if (paths) {
       this.crumbs = this.getCrumbs(paths);
     }
+
+    this.updateGitLink(route.data.setGitLink);
   }
 
   private getCrumbs(paths: string[]) {
@@ -114,9 +123,24 @@ export class BreadcrumbsComponent implements OnInit {
     );
     return foundParams;
   }
+
+  private updateGitLink(showLink: boolean): void {
+    this.gitLink.show = showLink;
+
+    if (showLink) {
+      const orgName = this.crumbs[0].name;
+      const repoName = this.crumbs[0].name;
+      this.gitLink.value = 'https://github.com/' + orgName + '/' + repoName;
+    }
+  }
 }
 
 interface Crumb {
   name: string;
   path: string;
+}
+
+interface GitLink {
+  show: boolean;
+  value: string;
 }

@@ -65,12 +65,13 @@ describe('BreadcrumbsComponent', () => {
   };
 
   const mockRoutingModule = RouterTestingModule.withRoutes([
-    // static route with breadcrumb data
+    // static route with breadcrumb data and git link
     {
       path: mockRouteProvider.routes.route4.path,
       component: BreadcrumbsComponent,
       data: {
         breadCrumbPaths: [mockRouteProvider.routes.route4.name],
+        setGitLink: true,
       },
     },
 
@@ -241,4 +242,36 @@ describe('BreadcrumbsComponent', () => {
       done();
     });
   });
+
+  it('should show the git link on a page with the required data', fakeAsync(() => {
+    ngZone.run(() => {
+      router.navigate([mockRouteProvider.routes.route4.testPath]);
+      tick();
+
+      fixture.detectChanges();
+      tick();
+
+      const gitCrumb = fixture.debugElement.query(
+        By.css('#git-link-container')
+      );
+
+      expect(gitCrumb).not.toBeNull();
+    });
+  }));
+
+  it('should hide the git link on a page missing the required data', fakeAsync(() => {
+    ngZone.run(() => {
+      router.navigate([mockRouteProvider.routes.route1.testPath]);
+      tick();
+
+      fixture.detectChanges();
+      tick();
+
+      const gitCrumb = fixture.debugElement.query(
+        By.css('#git-link-container')
+      );
+
+      expect(gitCrumb).toBeNull();
+    });
+  }));
 });
