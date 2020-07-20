@@ -376,8 +376,8 @@ describe('Add-Build', () => {
       const linesExpected = SIMPLE_EXPORT.split(/\n/);
       assert.strictEqual(linesReal.length, linesExpected.length);
       for (let i = 0; i < linesReal.length; i++) {
-        const rowReal = linesReal[i].split(/\s,/);
-        const rowExpected = linesExpected[i].split(/\s,/);
+        const rowReal = linesReal[i].split(/,\s/);
+        const rowExpected = linesExpected[i].split(/,\s/);
         assert.strictEqual(rowReal.length, rowExpected.length);
         for (let k = 0; k < rowReal.length; k++) {
           if (k !== 1) { // ignore timestamp
@@ -418,8 +418,8 @@ describe('Add-Build', () => {
       const linesExpected = TRICKY_EXPORT.split(/\n/);
       assert.strictEqual(linesReal.length, linesExpected.length);
       for (let i = 0; i < linesReal.length; i++) {
-        const rowReal = linesReal[i].split(/\s,/);
-        const rowExpected = linesExpected[i].split(/\s,/);
+        const rowReal = linesReal[i].split(/,\s/);
+        const rowExpected = linesExpected[i].split(/,\s/);
         assert.strictEqual(rowReal.length, rowExpected.length);
         for (let k = 0; k < rowReal.length; k++) {
           if (k !== 1) { // ignore timestamp
