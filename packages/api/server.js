@@ -53,7 +53,7 @@ app.use(
   session({
     store: new FirestoreStore({
       dataset: client,
-      kind: 'express-sessions-cp'
+      kind: 'express-sessions'
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,

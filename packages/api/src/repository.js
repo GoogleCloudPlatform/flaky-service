@@ -51,7 +51,7 @@ class Repository {
   }
 
   async sessionPermissions (sessionID) {
-    const docRef = client.doc('express-sessions-cp/' + sessionID);
+    const docRef = client.doc('express-sessions/' + sessionID);
     const solution = { permitted: false, expiration: null, login: null };
     const doc = await docRef.get();
     let data;
@@ -79,7 +79,7 @@ class Repository {
     return document.delete();
   }
 
-  async deleteQueryBatchExpired (query, resolve) {
+  async deleteQueryBatch (query, resolve) {
     const snapshot = await query.get();
 
     const batchSize = snapshot.size;
@@ -91,38 +91,52 @@ class Repository {
 
     // Delete documents in a batch
     const batch = client.batch();
-    await snapshot.docs.forEach(async (doc) => {
-      const data = await JSON.parse(doc.data().data);
-      const expiration = data.expires;
-      if (expiration == null || moment().isAfter(moment(expiration))) {
-        batch.delete(doc.ref);
-      }
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
     });
     await batch.commit();
 
     // Recurse on the next process tick, to avoid
     // exploding the stack.
-    process.nextTick(() => {
-      this.deleteQueryBatchExpired(query, resolve);
+    process.nextTick(() => this.deleteQueryBatch(query, resolve));
+  }
+
+  async deleteCollection (collectionPath, batchSize) {
+    const collectionRef = client.collection(collectionPath);
+    const query = collectionRef.limit(batchSize);
+    return new Promise((resolve, reject) => {
+      this.deleteQueryBatch(query, resolve).catch(reject);
     });
   }
 
   async deleteExpiredSessions () {
     console.log('Deleting Expired Sessions'); // Not deleted because it's useful to see when the crob job runs.
-    const collectionRef = client.collection('express-sessions-cp');
+    const collectionRef = client.collection('express-sessions');
     const snapshot = await collectionRef.get();
 
     // Delete documents in a batch
-    const batch = client.batch();
+    let batch = client.batch();
+    let numSeen = 0;
     await snapshot.docs.forEach(async (doc) => {
       try {
         const data = await JSON.parse(doc.data().data);
+        console.log('DATA: ' + data);
         const expiration = data.expires;
         if (expiration == null || moment().isAfter(moment(expiration))) {
-          batch.delete(doc.ref);
+          await batch.delete(doc.ref);
+          console.log('DELETING');
+          numSeen++;
         }
       } catch (err) {
-        batch.delete(doc.ref);
+        await batch.delete(doc.ref);
+        console.log('DELETING');
+        numSeen++;
+      }
+      if (numSeen >= 300) {
+        console.log('COMMITTING');
+        await batch.commit();
+        batch = client.batch();
+        numSeen = 0;
       }
     });
     await batch.commit();

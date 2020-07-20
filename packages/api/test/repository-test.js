@@ -87,17 +87,17 @@ describe('Repository', () => {
     it('returns not permitted if the expiration date is in the past');
   });
 
-  describe('deleteCollection', async () => {
+  describe.only('deleteCollection', async () => {
     it('deletes a small collection of documents with no expiration', async () => {
-      await repo.createDoc('express-sessions-cp/one', {});
-      await repo.createDoc('express-sessions-cp/two', {});
-      await repo.createDoc('express-sessions-cp/three', {});
+      await repo.createDoc('express-sessions/one', {});
+      await repo.createDoc('express-sessions/two', {});
+      await repo.createDoc('express-sessions/three', {});
 
-      await repo.deleteExpiredSessions('fake-path');
+      await repo.deleteExpiredSessions();
 
-      const one = await repo.getDoc('express-sessions-cp/one');
-      const two = await repo.getDoc('express-sessions-cp/two');
-      const three = await repo.getDoc('express-sessions-cp/three');
+      const one = await repo.getDoc('express-sessions/one');
+      const two = await repo.getDoc('express-sessions/two');
+      const three = await repo.getDoc('express-sessions/three');
 
       assert.deepStrictEqual((one == null && two == null && three == null), true);
     });
