@@ -12,21 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// process.env.SESSION_SECRET = 'fake-secret';
-// process.env.FRONTEND_URL = 'https://flaky-dashboard.web.app/home';
-// process.env.CLIENT_ID = 'fake-client-id';
-// process.env.CLIENT_SECRET = 'fake-client-secret';
-// const { describe, it, beforeEach, afterEach } = require('mocha');
-// // const { func, server } = require('../server');
-// const nock = require('nock');
-// const sinon = require('sinon');
-
-// const assert = require('assert');
-// const fetch = require('node-fetch');
 const assert = require('assert');
 const fetch = require('node-fetch');
-const isLoggedIn = require('../src/isLoggedIn.js');
-const { describe, it} = require('mocha');
+const { describe, it } = require('mocha');
 
 describe('flaky express server', () => {
   it('rejects unauthorized session', async () => {

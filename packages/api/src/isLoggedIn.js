@@ -14,17 +14,10 @@
 
 const moment = require('moment');
 
-function isLoggedIn (req, res, next) {
-  console.log('AUTH MIDDLEWARE');
-  console.log('SESSION: ' + JSON.stringify(req.session));
+module.exports.isLoggedIn = (req, res, next) => {
   if (req.session && req.session.expires != null && moment().isBefore(moment(req.session.expires))) {
-    console.log('AUTHENTICATED');
     next();
   } else {
-    console.log('NON AUTHENTICATED');
-    // req.session.destroy();
     res.status(401).send('Unauthorized');
   }
-}
-
-module.exports.isLoggedIn = isLoggedIn;
+};

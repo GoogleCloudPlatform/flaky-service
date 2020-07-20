@@ -14,7 +14,6 @@
 
 const moment = require('moment');
 const client = require('./firestore.js');
-// require('./cron.js');
 
 class Repository {
   async createDoc (identifier, params) {
@@ -82,7 +81,6 @@ class Repository {
 
   async deleteQueryBatchExpired (query, resolve) {
     const snapshot = await query.get();
-    console.log('NUM DOCS: ' + snapshot.size);
 
     const batchSize = snapshot.size;
     if (batchSize === 0) {
@@ -94,7 +92,6 @@ class Repository {
     // Delete documents in a batch
     const batch = client.batch();
     await snapshot.docs.forEach(async (doc) => {
-      console.log('DATA: ' + doc.data().data);
       const data = await JSON.parse(doc.data().data);
       const expiration = data.expires;
       if (expiration == null || moment().isAfter(moment(expiration))) {
@@ -111,17 +108,13 @@ class Repository {
   }
 
   async deleteExpiredSessions () {
-    console.log('DELETE EXPIRED');
+    console.log('Deleting Expired Sessions'); // Not deleted because it's useful to see when the crob job runs.
     const collectionRef = client.collection('express-sessions-cp');
     const snapshot = await collectionRef.get();
-    // const query = collectionRef.where(data.expires==null || moment().isAfter(moment(data.expires))).orderBy('__name__').limit(100);
-
-    console.log('NUM DOCS: ' + snapshot.size);
 
     // Delete documents in a batch
     const batch = client.batch();
     await snapshot.docs.forEach(async (doc) => {
-      console.log('DATA: ' + doc.data().data);
       try {
         const data = await JSON.parse(doc.data().data);
         const expiration = data.expires;

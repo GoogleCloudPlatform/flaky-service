@@ -26,7 +26,6 @@ const GetBuildHandler = require('./src/get-build.js');
 const GetRepoOrgsHandler = require('./src/get-repo-orgs.js');
 const GetTestHandler = require('./src/get-test.js');
 const client = require('./src/firestore.js');
-// require('./src/cron.js');
 
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const { v4 } = require('uuid');
@@ -36,9 +35,7 @@ const cron = require('node-cron');
 const isLoggedIn = require('./src/isLoggedIn.js');
 
 // Delete sessions every five minutes
-// const task = cron.schedule('* * * * * *', () => {
 const task = cron.schedule('*/5 * * * *', () => {
-  console.log('CRON');
   const repository = new Repository();
   repository.deleteExpiredSessions();
 });
@@ -65,7 +62,6 @@ app.use(
 );
 
 app.get('/protected/api/repos', async (req, res) => {
-  console.log('MADE IT INTO SERVER!');
   const repository = new Repository();
   const result = await repository.getCollection('dummy-repositories');
 
@@ -77,7 +73,6 @@ app.get('/protected/api/repos', async (req, res) => {
   }
 
   const jsonObject = { repoNames: repoNames };
-  // console.log("REPOS: " + JSON.stringify(jsonObject));
   res
     .status(200)
     .send(jsonObject)
@@ -85,26 +80,18 @@ app.get('/protected/api/repos', async (req, res) => {
 });
 
 app.get('/api/auth', (req, res) => {
-  console.log('AUTH SESSION ID: ' + req.sessionID);
-  // res.setHeader('Access-Control-Allow-Credentials', 'true');
   req.session.authState = v4();
   const url = 'http://github.com/login/oauth/authorize?client_id=' + process.env.CLIENT_ID + '&state=' + req.session.authState + '&allow_signup=false';
-  // console.log('AUTH URL: ' + url);
   res.status(302).redirect(url);
 });
 
 app.get('/api/callback', async (req, res) => {
-  console.log('CALLBACK SESSION ID: ' + req.sessionID);
   const redirect = process.env.FRONTEND_URL;
-  console.log('/callback receives state: ' + req.param('state') + ' and code: ' + req.param('code'));
 
   if (req.param('state') !== req.session.authState) {
-    console.log('failed first check. authState is: ' + req.session.authState);
     res.status(401).redirect(redirect);
     return;
   }
-
-  console.log('made past first check');
 
   const resp = await fetch('https://github.com/login/oauth/access_token', {
     method: 'post',
@@ -140,13 +127,11 @@ app.get('/api/callback', async (req, res) => {
   const repository = new Repository();
   const permitted = await repository.mayAccess('github', resultJSON.login);
   if (permitted) {
-    console.log('PERMITTED');
     req.session.user = resultJSON.login; // Only store login in the session if they are an admin
     req.session.expires = moment().add(4, 'hours').format();
   } else {
     repository.deleteDoc('express-sessions/' + req.sessionID);
   }
-  // await repository.storeSessionPermission(req.sessionID, permitted);
   res.status(200).redirect(redirect);
 });
 

@@ -17,9 +17,9 @@ process.env.FRONTEND_URL = 'https://flaky-dashboard.web.app/home';
 process.env.CLIENT_ID = 'fake-client-id';
 process.env.CLIENT_SECRET = 'fake-client-secret';
 const { describe, it, beforeEach, afterEach } = require('mocha');
-// const { func, server } = require('../server');
 const nock = require('nock');
 const sinon = require('sinon');
+const url = require('url');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
@@ -38,12 +38,6 @@ nock('http://github.com')
   .reply(200, {
     login: 'fake-login-valid'
   });
-
-it('checks the demo greet function', () => {
-  // var clock = sinon.useFakeTimers(new Date(2020, 2, 15));
-  // const greeter = require('../src/isLoggedIn.js');
-  // assert.equal(greeter.greet('Alice'), 'Hello, Alice! Today is Sunday, March 15, 2020');
-});
 
 describe('flaky express server', () => {
   const frontendUrl = 'https://flaky-dashboard.web.app/home';
@@ -111,22 +105,20 @@ describe('flaky express server', () => {
 
     // Second major issue: test auth
     it.skip('successfully does auth process', async () => {
-      // const initial = await fetch('http://0.0.0.0:3000/api/auth', {
-      //   headers: { redirect: 'manual' },
-      //   credentials: 'include'
-      // });
-      // const queryObject = url.parse(initial.url, true).query;
-      // console.log("Returned after calling /auth (what Github receives): ");
-      // console.log(queryObject);
+      const initial = await fetch('http://0.0.0.0:3000/api/auth', {
+        headers: { redirect: 'manual' },
+        credentials: 'include'
+      });
+      const queryObject = url.URL(initial.url, true).query;
 
-      // nock('http://github.com')
-      //   .post('/login/oauth/access_token', {
-      //     code: 'fakecode',
-      //     client_id: process.env.CLIENT_ID,
-      //     client_secret: process.env.CLIENT_SECRET,
-      //     state: queryObject.state
-      //   })
-      //   .reply(200, 'access_token=fake-access-token');
+      nock('http://github.com')
+        .post('/login/oauth/access_token', {
+          code: 'fakecode',
+          client_id: process.env.CLIENT_ID,
+          client_secret: process.env.CLIENT_SECRET,
+          state: queryObject.state
+        })
+        .reply(200, 'access_token=fake-access-token');
 
       // const callback = await fetch('http://0.0.0.0:3000/api/callback?state=' + queryObject.state + '&code=fakecode', {
       //   headers: { redirect: 'manual' },
@@ -138,16 +130,10 @@ describe('flaky express server', () => {
       //   credentials: 'include'
       // });
 
-      // console.log(sessionInfo);
-
       assert.strictEqual(true, false);
     });
   });
 
   it('it returns a single repository, when you call GET on /repository/:id');
   it('it creates a repository, when you call POST on /repository');
-
-  // afterEach(() => {
-  //   parentServer.close();
-  // })
 });

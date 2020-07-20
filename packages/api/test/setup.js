@@ -18,10 +18,8 @@ let serverObject;
 
 before(() => {
   serverObject = require('../server');
-  // server = require('../server');
 });
 
 after(() => {
-  console.log('AFTER');
   serverObject.close(); // Close server
 });
