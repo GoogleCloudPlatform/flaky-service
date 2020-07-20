@@ -36,7 +36,7 @@ class CsvRow {
   toString (allMatrixList) {
     const infoAsList = [this.buildId, this.timestamp.toString(), this.environment.ref, this.environment.os, this.environment.tag];
     const parsedMatrix = this.environment.matrix;
-    for (const key in allMatrixList) {
+    for (const key of allMatrixList) {
       if (key in parsedMatrix) {
         infoAsList.push(parsedMatrix[key]);
       } else {
@@ -120,12 +120,12 @@ class GetExportHandler {
         }
 
         const allMatrixList = Array.from(allMatrix);
-
-        const stringSolution = [CsvRow.getHeader(testNamesInOrder, allMatrixList.map(x => 'Matrix.' + x))];
+        const allMatrixListPrepended = allMatrixList.map(x => 'Matrix.' + x);
+        const stringSolution = [CsvRow.getHeader(testNamesInOrder, allMatrixListPrepended)];
         for (const key in builds) {
           stringSolution.push(builds[key].toString(allMatrixList));
         }
-        res.set({ 'Content-Disposition': 'attachment; filename="' + decodeURIComponent(repoid) + '.csv"' });
+        // res.set({ 'Content-Disposition': 'attachment; filename="' + decodeURIComponent(repoid) + '.csv"' });
         res.send(stringSolution.join('\n'));
       } catch (err) {
         handleError(res, err);

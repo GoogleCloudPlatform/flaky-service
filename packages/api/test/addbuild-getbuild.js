@@ -384,7 +384,7 @@ describe('Add-Build', () => {
         url: 'https://github.com/nodejs/node',
         environment: {
           os: 'linux-banana',
-          matrix: { 'node-version': '12.0', 'other, field': '12.0' }, // ensures comma isnt problematic
+          matrix: { 'node-version': '12.0', 'other field': '12.0' },
           ref: 'master',
           tag: 'xyz'
         },
