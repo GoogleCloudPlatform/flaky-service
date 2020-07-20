@@ -60,9 +60,8 @@ export interface Build {
   percentpassing: number;
   successes?: string[];
   tests?: Test[];
-  numfails: number;
-  // TODO: temporary fields. Remove when the format is fully clear.
-  numPass: number;
+  failcount: number;
+  passcount: number;
 }
 
 export interface ApiRepository {

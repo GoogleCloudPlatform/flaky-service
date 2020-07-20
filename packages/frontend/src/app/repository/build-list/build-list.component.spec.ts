@@ -34,8 +34,8 @@ describe('BuildListComponent', () => {
       flaky: 1,
       timestamp: {_seconds: 1592268304},
       percentpassing: 80,
-      numPass: 45,
-      numfails: 0,
+      passcount: 45,
+      failcount: 0,
     },
   ];
 
