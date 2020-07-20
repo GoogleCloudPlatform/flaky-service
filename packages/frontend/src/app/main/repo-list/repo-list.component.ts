@@ -16,6 +16,7 @@ import {Component, Input, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {Repository} from 'src/app/services/search/interfaces';
 import {PaginatedListComponent} from 'src/app/paginated-list/paginated-list.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-repo-list',
@@ -29,5 +30,9 @@ export class RepoListComponent extends PaginatedListComponent<Repository> {
     this._elements = value;
     this.updatePage();
     this.paginator?.firstPage();
+  }
+
+  getLastUpdate(repo: Repository) {
+    return moment.unix(repo.lastupdate._seconds).format('MMM D, YYYY');
   }
 }

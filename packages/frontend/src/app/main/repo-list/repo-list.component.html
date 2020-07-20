@@ -19,14 +19,13 @@ limitations under the License.
         class="repo"
         [class.flaky-repo]="!repo.numfails && repo.flaky"
         [class.failing-repo]="repo.numfails"
-        (click)="onElementClick(routes.repo.link(repo.organization, repo.name), $event)">
+        (click)="onElementClick(routes.repo.link(repo.organization, repo.name), $event)"
+        (auxclick)="onElementClick(routes.repo.link(repo.organization, repo.name), $event, true)">
 
         <div class="details">
             <!-- NAMES -->
-            <div class="names">
-                <a *ngIf="repo.organization" routerLink=".">{{repo.organization}}</a>
-                <span *ngIf="repo.organization">/</span>
-                <a [href]="utils.parseUrl(repo.url)">{{repo.name}}</a>
+            <div class="name">
+                {{repo.name}}
             </div>
     
             <!-- DESCRIPTION -->
@@ -37,22 +36,24 @@ limitations under the License.
         <div class="indicators">
             <table>
                 <tr>
-                    <!-- NUMBER OF FAILING TEST -->
+                    <td class="indicator passing-tests-indicator">
+                        <span>{{repo.numtestcases - repo.numfails}}</span>
+                        <span>&nbsp; passing</span>
+                    </td>
+
                     <td class="indicator failing-tests-indicator" *ngIf="repo.numfails">
                         <span>{{repo.numfails}}</span>
                         <span>&nbsp; failing</span>
                     </td>
 
-                    <!-- NUMBER OF FLAKY TESTS -->
                     <td class="indicator flaky-tests-indicator" *ngIf="repo.flaky">
                         <span>{{repo.flaky}}</span>
                         <span>&nbsp;flaky</span>
                     </td>
 
-                    <!-- LAST RUN TIME -->
                     <td class="last-update">
                         <span class="last-update-label">last update on&nbsp;</span>
-                        <span class="last-update-date">May 19, 2020</span>
+                        <span class="last-update-date">{{getLastUpdate(repo)}}</span>
                     </td>
                 </tr>
             </table>

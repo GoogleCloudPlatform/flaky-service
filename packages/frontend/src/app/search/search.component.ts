@@ -19,11 +19,7 @@ import {
   InterpretationService,
   expectedParams,
 } from '../services/interpretation/interpretation.service';
-import {
-  DefaultRepository,
-  Repository,
-  Search,
-} from '../services/search/interfaces';
+import {Repository, Search} from '../services/search/interfaces';
 import {SearchService} from '../services/search/search.service';
 import {Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
@@ -38,10 +34,6 @@ export class SearchComponent implements OnInit {
 
   inputControl = new FormControl();
   options: Repository[] = [];
-  defaultOption: DefaultRepository = {
-    name: 'See all repositories',
-    organization: '',
-  };
   filteredOptions: Repository[];
   debounceTime = 200;
 
@@ -57,7 +49,7 @@ export class SearchComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.filteredOptions = [this.defaultOption];
+    this.filteredOptions = [];
     this.setupListeners();
   }
 
@@ -70,8 +62,7 @@ export class SearchComponent implements OnInit {
         switchMap(value => this.searchService.quickSearch(value, this.orgName))
       )
       .subscribe(newOptions => {
-        if (this.inputControl.value)
-          this.filteredOptions = newOptions.concat([this.defaultOption]);
+        if (this.inputControl.value) this.filteredOptions = newOptions;
       });
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -94,7 +85,7 @@ export class SearchComponent implements OnInit {
 
   private updateOptions(value: string): string {
     if (!value || (value && value.toString().includes(' ')))
-      this.filteredOptions = [this.defaultOption];
+      this.filteredOptions = [];
     return value;
   }
 
@@ -104,9 +95,7 @@ export class SearchComponent implements OnInit {
 
   onSearchOptionSelected(option: string): void {
     this.inputControl.setValue(option);
-    const isADefaultOption = option === this.defaultOption.name;
-    if (isADefaultOption) this.inputControl.setValue('');
-    else this.openRepo(option);
+    this.openRepo(option);
   }
 
   private launchSearch(option: Search): void {

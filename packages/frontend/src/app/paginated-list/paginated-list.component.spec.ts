@@ -152,5 +152,16 @@ describe('PaginatedListComponent', () => {
 
       expect(component.router.navigateByUrl).not.toHaveBeenCalled();
     });
+
+    it('should open a new window if the blank is true', () => {
+      const windowOpen = spyOn(window, 'open');
+      const event = ({
+        srcElement: document.createElement('b'),
+      } as unknown) as MouseEvent;
+
+      component.onElementClick(newLocation, event, true);
+
+      expect(windowOpen).toHaveBeenCalledWith(newLocation, '_blank');
+    });
   });
 });

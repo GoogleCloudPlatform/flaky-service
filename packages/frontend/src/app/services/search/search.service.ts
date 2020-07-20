@@ -16,14 +16,12 @@ import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {COMService} from '../com/com.service';
 import {Repository, Search, ApiRepository, Filter} from './interfaces';
-import {map, catchError} from 'rxjs/operators';
+import {catchError} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
-  repositories: Repository[] = [];
-
   constructor(private com: COMService) {}
 
   quickSearch(query: string, orgName: string): Observable<Repository[]> {
@@ -36,12 +34,7 @@ export class SearchService {
   }
 
   search(search: Search): Observable<Repository[]> {
-    return this.com.fetchRepositories(search).pipe(
-      map(repos => {
-        this.repositories = repos;
-        return repos;
-      })
-    );
+    return this.com.fetchRepositories(search);
   }
 
   searchBuilds(

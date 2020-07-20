@@ -12,7 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import {MainComponent} from './main.component';
 import {Component, Input} from '@angular/core';
 import {Search} from '../services/search/interfaces';
@@ -21,6 +27,8 @@ import {AppRoutingModule} from '../routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
+import {By} from '@angular/platform-browser';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 // Mock the inner components
 @Component({
@@ -37,6 +45,7 @@ describe('MainComponent', () => {
   // Mock services
   const mockSearchService = {repositories: [], search: () => of([])};
   const mockRoute = {params: of()};
+  const orgName = 'org';
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -45,7 +54,7 @@ describe('MainComponent', () => {
         {provide: ActivatedRoute, useValue: mockRoute},
       ],
       declarations: [MainComponent, RepoListComponent],
-      imports: [AppRoutingModule, MatDialogModule],
+      imports: [AppRoutingModule, MatDialogModule, MatProgressSpinnerModule],
     }).compileComponents();
   }));
 
@@ -54,7 +63,7 @@ describe('MainComponent', () => {
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
     mockSearchService.search = () => of([]);
-    mockRoute.params = of({});
+    mockRoute.params = of({org: orgName});
   });
 
   it('should create', () => {
@@ -70,10 +79,8 @@ describe('MainComponent', () => {
       expect(mockSearchService.search).toHaveBeenCalled();
     });
 
-    it('should initiate a search when initializing', () => {
+    it('should initiate a search with the provided filters when initializing', () => {
       const searchSpy = spyOn(mockSearchService, 'search').and.callThrough();
-      const orgName = 'org';
-      mockRoute.params = of({org: orgName});
 
       component.ngOnInit();
 
@@ -85,5 +92,38 @@ describe('MainComponent', () => {
         jasmine.objectContaining({name: 'org', value: orgName})
       );
     });
+
+    it('should hide the spinner when repositories are received', fakeAsync(() => {
+      spyOn(mockSearchService, 'search').and.returnValue(of([{}]));
+
+      component.ngOnInit();
+      fixture.detectChanges();
+      tick();
+
+      const spinner = fixture.debugElement.query(By.css('#spinner'));
+      expect(spinner).toBeNull();
+    }));
+
+    it('should show the no-repo text when no repositories were found', fakeAsync(() => {
+      spyOn(mockSearchService, 'search').and.returnValue(of([]));
+
+      component.ngOnInit();
+      fixture.detectChanges();
+      tick();
+
+      const noRepoText = fixture.debugElement.query(By.css('#no-repo-found'));
+      expect(noRepoText).not.toBeNull();
+    }));
+
+    it('should hide the no-repo text when repositories were found', fakeAsync(() => {
+      spyOn(mockSearchService, 'search').and.returnValue(of([{}]));
+
+      component.ngOnInit();
+      fixture.detectChanges();
+      tick();
+
+      const noRepoText = fixture.debugElement.query(By.css('#no-repo-found'));
+      expect(noRepoText).toBeNull();
+    }));
   });
 });

@@ -17,6 +17,10 @@ export interface DefaultRepository {
   organization: string;
 }
 
+interface Timestamp {
+  _seconds: number;
+}
+
 export interface Repository extends DefaultRepository {
   description?: string;
   flaky?: number;
@@ -25,6 +29,7 @@ export interface Repository extends DefaultRepository {
   numtestcases?: number;
   url?: string;
   environments?: BuildEnvironment;
+  lastupdate?: Timestamp;
 }
 
 export interface Filter {
@@ -56,7 +61,7 @@ export interface Build {
   buildId: string;
   environment: BuildEnvironment;
   flaky: number;
-  timestamp: {_seconds: number};
+  timestamp: Timestamp;
   percentpassing: number;
   successes?: string[];
   tests?: Test[];

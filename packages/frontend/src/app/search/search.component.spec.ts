@@ -43,31 +43,22 @@ describe('SearchComponent', () => {
   // Mock services
   const mockSearchService = {};
 
-  const expectOnlyTheDefaultOption = () => {
+  const expectNoOption = () => {
     const options = fixture.debugElement.queryAll(By.css('.repo-name'));
 
-    // contains only 1 option
-    expect(options.length).toEqual(1);
-
-    // the only option is the default option
-    const repositoryName = options[0].nativeElement.textContent;
-    expect(repositoryName).toEqual(component.defaultOption.name);
+    // contains no option
+    expect(options.length).toEqual(0);
   };
   const expectAllOptions = () => {
     const options = fixture.debugElement.queryAll(By.css('.repo-name'));
 
     // contains all options + the default option
-    expect(options.length).toEqual(mockRepositories.length + 1);
+    expect(options.length).toEqual(mockRepositories.length);
 
     // contains the rigth repository names
     options.forEach((option, index) => {
       const repositoryName = option.nativeElement.textContent;
-      const isTheDefaultOption = index === mockRepositories.length;
-      expect(repositoryName).toEqual(
-        isTheDefaultOption
-          ? component.defaultOption.name
-          : mockRepositories[index].name
-      );
+      expect(repositoryName).toEqual(mockRepositories[index].name);
     });
   };
 
@@ -96,7 +87,6 @@ describe('SearchComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-    expect(component.filteredOptions).toEqual([component.defaultOption]);
   });
 
   it('should update the options when the input value changes', done => {
@@ -123,7 +113,7 @@ describe('SearchComponent', () => {
         setTimeout(async () => {
           await input.focus();
 
-          expectOnlyTheDefaultOption();
+          expectNoOption();
           done();
         });
       });
@@ -137,7 +127,7 @@ describe('SearchComponent', () => {
           await input.enterText('r'); // enter a text
           await (await input.host()).clear(); // clear the input
 
-          expectOnlyTheDefaultOption();
+          expectNoOption();
           done();
         });
       });
@@ -150,24 +140,7 @@ describe('SearchComponent', () => {
         setTimeout(async () => {
           await input.enterText('repo ');
 
-          expectOnlyTheDefaultOption();
-          done();
-        });
-      });
-  });
-
-  it('should empty the input when the default option is selected', done => {
-    loader
-      .getHarness(MatAutocompleteHarness)
-      .then((input: MatAutocompleteHarness) => {
-        setTimeout(async () => {
-          await input.focus();
-
-          await input.selectOption({
-            text: new RegExp(component.defaultOption.name),
-          });
-
-          expect(await input.getValue()).toEqual('');
+          expectNoOption();
           done();
         });
       });
@@ -186,7 +159,7 @@ describe('SearchComponent', () => {
 
           await input.enterText('r'); // enter a text
 
-          expectOnlyTheDefaultOption();
+          expectNoOption();
           done();
         });
       });
