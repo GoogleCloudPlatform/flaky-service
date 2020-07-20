@@ -46,15 +46,15 @@ describe('TestsListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestsListComponent, TestDetailsComponent],
+      providers: [
+        { provide: COMService, useValue: COMServiceMock },
+      ],
       imports: [
         AppRoutingModule,
         HttpClientModule,
         BrowserAnimationsModule,
         MatPaginatorModule,
         MatDialogModule,
-      ],
-      providers: [
-        { provide: COMService, useClass: COMServiceMock },
       ]
     }).compileComponents();
   }));
