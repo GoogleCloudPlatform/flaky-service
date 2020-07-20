@@ -25,6 +25,11 @@ const { deleteTest, deleteRepo } = require('../lib/deleter');
 const fetch = require('node-fetch');
 const TESTING_COLLECTION_BASE = 'repositories-testsuite-';
 
+const fs = require('fs');
+var path = require('path');
+const SIMPLE_EXPORT = fs.readFileSync(path.join(__dirname, 'res/simpleexport.csv'), 'utf8');
+const TRICKY_EXPORT = fs.readFileSync(path.join(__dirname, 'res/trickyexport.csv'), 'utf8');
+
 // The three builds that will be added
 const buildInfo = [
   {
@@ -358,6 +363,44 @@ describe('Add-Build', () => {
 
       assert('error' in ansObj);
       assert.strictEqual(resp.status, 404);
+    });
+  });
+
+  describe('GetExportHandler', async () => {
+    it('Can get a csv export', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/csv');
+
+      const respText = await resp.text();
+      assert.strictEqual(respText, SIMPLE_EXPORT);
+    });
+
+    it('Can handle exports with tricky matrix parameter', async () => {
+      const buildInfoExport = {
+        repoId: encodeURIComponent('nodejs/node'),
+        organization: 'nodejs',
+        name: 'node',
+        buildId: '44444',
+        sha: '999',
+        url: 'https://github.com/nodejs/node',
+        environment: {
+          os: 'linux-banana',
+          matrix: { 'node-version': '12.0', 'other, field': '12.0' }, // ensures comma isnt problematic
+          ref: 'master',
+          tag: 'xyz'
+        },
+        timestamp: new Date('01/01/2004'),
+        testCases: [
+          new TestCaseRun('not ok', 1, 'a/5'),
+          new TestCaseRun('not ok', 2, 'a/2') // this test is now passing
+        ],
+        description: 'nodejs repository'
+      };
+      await addBuild(buildInfoExport.testCases, buildInfoExport, client, global.headCollection);
+
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/csv');
+
+      const respText = await resp.text();
+      assert.strictEqual(respText, TRICKY_EXPORT);
     });
   });
 

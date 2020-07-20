@@ -46,7 +46,6 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   // if this build has already been posted, skip
   const thisBuildExists = await dbRepo.collection('builds').doc(buildInfo.buildId).get();
   if (thisBuildExists.exists) {
-    console.log('skipping because build already exists');
     return;
   }
 

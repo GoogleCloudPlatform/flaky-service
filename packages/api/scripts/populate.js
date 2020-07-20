@@ -56,7 +56,7 @@ const buildInfoTemplate = {
   environment: {
     os: 'Linux',
     tag: 'NA',
-    matrix: '{Node: 11}',
+    matrix: JSON.stringify({ Node: 11 }),
     ref: 'branch/master'
   },
   name: repo,
@@ -89,7 +89,7 @@ fs.readdir(directory, function (err, files) {
     buildInfo.buildId = Math.random().toString(36).substring(2, 15);
     buildInfo.environment.os = (Math.random() > 0.5) ? 'Linux' : 'Windows';
     buildInfo.environment.ref = (Math.random() > 0.66) ? 'ref/master' : ((Math.random() > 0.5) ? 'ref/a' : 'ref/b');
-    buildInfo.environment.matrix = (Math.random() > 0.5) ? '{Node:10}}' : '{Node:11}';
+    buildInfo.environment.matrix = (Math.random() > 0.5) ? JSON.stringify({ Node: 11 }) : JSON.stringify({ Node: 10 });
 
     // put half of tests in default repo/org
     if (Math.random() > 0.5) {

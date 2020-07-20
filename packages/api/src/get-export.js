@@ -15,7 +15,7 @@
 // class to receive POSTS with build information
 
 const firebaseEncode = require('../lib/firebase-encode');
-const { handleError } = require('../lib/errors');
+const { ResourceNotFoundError, handleError } = require('../lib/errors');
 const client = require('./firestore.js');
 
 // 1 = pass, 0 = fail, -1 = not run
@@ -33,13 +33,21 @@ class CsvRow {
     this.testResults[testIndex] = (status === 'OK') ? 1 : 0;
   }
 
-  toString () {
-    const infoAsList = [this.buildId, this.timestamp.toString(), this.environment.ref, this.environment.os, this.environment.tag, this.environment.matrix];
+  toString (allMatrixList) {
+    const infoAsList = [this.buildId, this.timestamp.toString(), this.environment.ref, this.environment.os, this.environment.tag];
+    const parsedMatrix = this.environment.matrix;
+    for (const key in allMatrixList) {
+      if (key in parsedMatrix) {
+        infoAsList.push(parsedMatrix[key]);
+      } else {
+        infoAsList.push('None');
+      }
+    }
     return infoAsList.concat(this.testResults).join(', ');
   }
 
-  static getHeader (testNamesInOrder) {
-    return ['Build Id', 'Timestamp', 'Ref', 'Os', 'Tag', 'Matrix'].concat(testNamesInOrder).join(', ');
+  static getHeader (testNamesInOrder, allMatrixList) {
+    return ['Build Id', 'Timestamp', 'Ref', 'Os', 'Tag'].concat(allMatrixList).concat(testNamesInOrder).join(', ');
   }
 }
 
@@ -71,6 +79,9 @@ class GetExportHandler {
         let testCount = 0;
 
         const allTests = await this.client.collection(global.headCollection).doc(repoid).collection('tests').get();
+        if (!(allTests.size > 0)) {
+          throw new ResourceNotFoundError('Could not find this resource');
+        }
 
         allTests.forEach(test => {
           getRunOperations.push(this.getTest(client, repoid, firebaseEncode(test.data().name)));
@@ -84,23 +95,38 @@ class GetExportHandler {
 
         // post process into csv
         const builds = {};
+        const allMatrix = new Set();
         for (let i = 0; i < totalTestCount; i++) {
           const testname = testNamesInOrder[i];
           const test = awaitedTests[i];
           test.forEach(run => {
             const runInfo = run.data();
+            if (typeof runInfo.environment.matrix === 'string') { // dont make assumptions about matrix being JSON
+              try {
+                runInfo.environment.matrix = JSON.parse(runInfo.environment.matrix);
+              } catch (e) {
+                runInfo.environment.matrix = { matrix: runInfo.environment.matrix };
+              }
+            }
+
             if (!(runInfo.buildId in builds)) {
               builds[runInfo.buildId] = new CsvRow(runInfo.buildId, runInfo.environment, runInfo.timestamp, totalTestCount, testNameToId);
+              for (const key in runInfo.environment.matrix) {
+                allMatrix.add(key.replace(/,/g, ''));
+              }
             }
             builds[runInfo.buildId].setTestResult(testname, runInfo.status);
-          }); 
+          });
         }
 
-        const stringSolution = [CsvRow.getHeader(testNamesInOrder)];
+        const allMatrixList = Array.from(allMatrix);
+
+        const stringSolution = [CsvRow.getHeader(testNamesInOrder, allMatrixList.map(x => 'Matrix.' + x))];
         for (const key in builds) {
-          stringSolution.push(builds[key].toString());
+          stringSolution.push(builds[key].toString(allMatrixList));
         }
-        res.send(stringSolution.join('<br>'));
+        res.set({ 'Content-Disposition': 'attachment; filename="' + decodeURIComponent(repoid) + '.csv"' });
+        res.send(stringSolution.join('\n'));
       } catch (err) {
         handleError(res, err);
       }
