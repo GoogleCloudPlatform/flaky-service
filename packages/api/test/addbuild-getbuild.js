@@ -371,7 +371,20 @@ describe('Add-Build', () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/csv');
 
       const respText = await resp.text();
-      assert.strictEqual(respText, SIMPLE_EXPORT);
+
+      const linesReal = respText.split(/\n/);
+      const linesExpected = SIMPLE_EXPORT.split(/\n/);
+      assert.strictEqual(linesReal.length, linesExpected.length);
+      for (let i = 0; i < linesReal.length; i++) {
+        const rowReal = linesReal[i].split(/\s,/);
+        const rowExpected = linesExpected[i].split(/\s,/);
+        assert.strictEqual(rowReal.length, rowExpected.length);
+        for (let k = 0; k < rowReal.length; k++) {
+          if (k !== 1) { // ignore timestamp
+            assert.strictEqual(rowReal[k], rowExpected[k]);
+          }
+        }
+      }
     });
 
     it('Can handle exports with tricky matrix parameter', async () => {
@@ -400,7 +413,22 @@ describe('Add-Build', () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/csv');
 
       const respText = await resp.text();
-      assert.strictEqual(respText, TRICKY_EXPORT);
+
+      const linesReal = respText.split(/\n/);
+      const linesExpected = TRICKY_EXPORT.split(/\n/);
+      assert.strictEqual(linesReal.length, linesExpected.length);
+      for (let i = 0; i < linesReal.length; i++) {
+        const rowReal = linesReal[i].split(/\s,/);
+        const rowExpected = linesExpected[i].split(/\s,/);
+        assert.strictEqual(rowReal.length, rowExpected.length);
+        for (let k = 0; k < rowReal.length; k++) {
+          if (k !== 1) { // ignore timestamp
+            assert.strictEqual(rowReal[k], rowExpected[k]);
+          }
+        }
+      }
+
+      // assert.strictEqual(respText, TRICKY_EXPORT);
     });
   });
 
