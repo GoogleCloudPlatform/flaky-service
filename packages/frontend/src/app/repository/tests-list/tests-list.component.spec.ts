@@ -48,6 +48,7 @@ describe('TestsListComponent', () => {
       providers: [{provide: COMService, useValue: COMServiceMock}],
       imports: [
         AppRoutingModule,
+        HttpClientModule,
         BrowserAnimationsModule,
         MatPaginatorModule,
         MatDialogModule,
