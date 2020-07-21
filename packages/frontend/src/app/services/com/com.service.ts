@@ -59,7 +59,7 @@ export class COMService {
   public fetchTests(repoName: string, orgName: string): Observable<Tests> {
     return this.http.get<Tests>(apiLinks.get.tests(repoName, orgName));
   }
-  
+
   public fetchRepository(
     repoName: string,
     orgName: string,
