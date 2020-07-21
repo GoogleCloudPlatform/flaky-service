@@ -30,7 +30,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
 import {expectedParams} from '../services/interpretation/interpretation.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
-import {COMService} from'../services/
+import {COMService} from'../services/com/com.service';
 
 // Mock the inner components
 @Component({
