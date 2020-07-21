@@ -54,6 +54,7 @@ limitations under the License.
     white-space: nowrap;
     overflow: hidden;
     max-width: 400px;
+    justify-content: left;
 }
 .test-name > a {
     color: #0075FF;
@@ -68,13 +69,23 @@ limitations under the License.
     }
 }
 
+.last-run {
+    font-size: smaller;
+    color: dimgrey;
+    justify-content: left;
+}
+
+.details > table {
+    line-height: 13px;
+}
+
 .description {
     font-size: smaller;
     color: dimgrey;
     margin-right: 6px;
 }
 
-td {
+.indicators > table > tr > td {
     text-align: center;
 }
 

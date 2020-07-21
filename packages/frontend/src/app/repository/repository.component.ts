@@ -21,7 +21,7 @@ import {
   expectedParams,
 } from '../services/interpretation/interpretation.service';
 import {FiltersComponent} from '../filters/filters.component';
-import {Filter, Test} from '../services/search/interfaces';
+import {Filter} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import {COMService} from '../services/com/com.service';
@@ -32,52 +32,6 @@ import {COMService} from '../services/com/com.service';
   styleUrls: ['./repository.component.css'],
 })
 export class RepositoryComponent implements OnInit {
-  mockTests: Test[] = [
-    {
-      name: 'should update the rendered pages on input change',
-      flaky: true,
-      failing: true,
-      percentpassing: 98,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name:
-        'should not return to the first page when the paginator is not ready',
-      flaky: false,
-      failing: true,
-      percentpassing: 92,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should set the new filters when a repository is found',
-      flaky: true,
-      failing: false,
-      percentpassing: 53,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should redirect/refresh when the filters selection changes',
-      flaky: true,
-      failing: false,
-      percentpassing: 66,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should create',
-      flaky: false,
-      failing: false,
-      percentpassing: 100,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should initialize view',
-      flaky: false,
-      failing: false,
-      percentpassing: 100,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-  ];
-
   constructor(
     public com: COMService,
     private route: ActivatedRoute,
@@ -90,8 +44,8 @@ export class RepositoryComponent implements OnInit {
 
   @ViewChild(FiltersComponent) filterComponent;
 
-  repoName = '';
-  orgName = '';
+  repoName = ' ';
+  orgName = ' ';
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {

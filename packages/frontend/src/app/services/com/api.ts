@@ -20,6 +20,7 @@ interface ApiLinks {
     builds: (repoName: string, orgName: string) => string;
     loginLink: string;
     sessionStatus: string;
+    tests: (repoName: string, orgName: string) => string;
     repository: (repoName: string, orgName: string) => string;
   };
 }
@@ -32,6 +33,8 @@ export const apiLinks: ApiLinks = {
       apiBaseLink + 'repo/' + orgName + '/' + repoName,
     loginLink: apiBaseLink + 'auth?redirect=' + environment.baseUrl,
     sessionStatus: apiBaseLink + 'session',
+    tests: (repoName: string, orgName: string) =>
+      apiBaseLink + 'repo/' + orgName + '/' + repoName + '/tests',
     repository: (repoName: string, orgName: string) =>
       apiBaseLink + 'repo/' + orgName + '/' + repoName,
   },

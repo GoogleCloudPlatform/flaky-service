@@ -20,17 +20,27 @@ limitations under the License.
 
         <div
             class="test"
-            [class.flaky]="!test.failing && test.flaky"
-            [class.failing]="test.failing"
+            [class.flaky]="test.passed && test.flaky"
+            [class.failing]="!test.passed"
             (click)="onTestClick(test)">
 
-            <!-- BUILD DETAILS -->
+            <!-- TEST DETAILS -->
             <div class="details">
-
-                <!-- NAME -->
-                <div class="test-name">
-                    <a *ngIf="test.name" routerLink=".">{{test.name}}</a>
-                </div>
+                <table>
+                    <tr>
+                        <!-- NAME -->
+                        <td class="test-name">
+                            <a *ngIf="test.name" routerLink="." class="test-name">{{test.name}}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- TIMESTAMP -->
+                        <td class="last-run">
+                            <span class="last-run-label">last run:&nbsp;</span>
+                            <span class="last-run-date" [innerHTML]="toLiteralDate(test.lastupdate._seconds)"></span>
+                        </td>
+                    </tr>
+                </table>
             </div>
             
             <!-- INDICATORS -->
@@ -40,7 +50,7 @@ limitations under the License.
                         <!-- PASSING PERCENTAGE -->
                         <td class="indicator percent-passing-indicator" *ngIf="test.percentpassing">
                             <span>passes&nbsp;</span>
-                            <span>{{test.percentpassing}}</span>
+                            <span [innerHTML]="toPercentage(test.percentpassing)"></span>
                             <span>% of the time</span>
                         </td>
                     </tr>

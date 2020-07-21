@@ -25,7 +25,6 @@ import * as moment from 'moment';
 })
 export class RepoListComponent extends PaginatedListComponent<Repository> {
   @ViewChild('paginator') paginator: MatPaginator;
-
   @Input() set repositories(value: Repository[]) {
     this._elements = value;
     this.updatePage();

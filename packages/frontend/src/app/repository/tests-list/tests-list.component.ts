@@ -18,6 +18,7 @@ import {
   MatPaginator,
 } from 'src/app/paginated-list/paginated-list.component';
 import {Test} from 'src/app/services/search/interfaces';
+import * as moment from 'moment';
 import {TestDetailsComponent} from './test-details/test-details.component';
 
 @Component({
@@ -28,15 +29,31 @@ import {TestDetailsComponent} from './test-details/test-details.component';
 export class TestsListComponent extends PaginatedListComponent<Test> {
   @ViewChild('paginator') paginator: MatPaginator;
 
-  @Input() set tests(value: Test[]) {
-    this._elements = value;
-    this.updatePage();
-    this.paginator?.firstPage();
+  @Input() repoName: string;
+  @Input() orgName: string;
+
+  ngOnInit() {
+    super.ngOnInit();
+    this.comService
+      .fetchTests(this.repoName, this.orgName)
+      .subscribe(result => {
+        this._elements = result.tests;
+        this.updatePage();
+        this.paginator?.firstPage();
+      });
   }
 
   onTestClick(test: Test) {
     this.dialog.open<TestDetailsComponent>(TestDetailsComponent, {
       data: test,
     });
+  }
+
+  toLiteralDate(timestamp: number) {
+    return moment.unix(timestamp).fromNow();
+  }
+
+  toPercentage(percentpassing: number) {
+    return (percentpassing * 100).toFixed(2);
   }
 }

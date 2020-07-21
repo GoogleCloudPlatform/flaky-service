@@ -21,6 +21,7 @@ import {
   Repository,
   ApiRepository,
   Filter,
+  Tests,
   SessionStatus,
 } from '../search/interfaces';
 
@@ -53,6 +54,10 @@ export class COMService {
 
   public fetchSessionStatus(): Observable<SessionStatus> {
     return this.http.get<SessionStatus>(apiLinks.get.sessionStatus);
+  }
+
+  public fetchTests(repoName: string, orgName: string): Observable<Tests> {
+    return this.http.get<Tests>(apiLinks.get.tests(repoName, orgName));
   }
 
   public fetchRepository(

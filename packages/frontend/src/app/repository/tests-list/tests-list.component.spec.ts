@@ -24,6 +24,10 @@ import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {Component} from '@angular/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {By} from '@angular/platform-browser';
+import {COMService} from 'src/app/services/com/com.service';
+import {mockTests} from './mockTests.spec';
+import {of} from 'rxjs';
+import {HttpClientModule} from '@angular/common/http';
 
 // Mock components
 @Component({
@@ -31,40 +35,21 @@ import {By} from '@angular/platform-browser';
 })
 class TestDetailsComponent {}
 
+const COMServiceMock = {
+  fetchTests: () => of(mockTests),
+};
+
 describe('TestsListComponent', () => {
   let component: TestsListComponent;
   let fixture: ComponentFixture<TestsListComponent>;
 
-  const mockTests = [
-    {
-      name: 'should update the rendered pages on input change',
-      flaky: true,
-      failing: true,
-      percentpassing: 98,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name:
-        'should not return to the first page when the paginator is not ready',
-      flaky: false,
-      failing: true,
-      percentpassing: 92,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-    {
-      name: 'should set the new filters when a repository is found',
-      flaky: true,
-      failing: false,
-      percentpassing: 53,
-      environment: {os: 'windows', ref: 'dev'},
-    },
-  ];
-
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestsListComponent, TestDetailsComponent],
+      providers: [{provide: COMService, useValue: COMServiceMock}],
       imports: [
         AppRoutingModule,
+        HttpClientModule,
         BrowserAnimationsModule,
         MatPaginatorModule,
         MatDialogModule,
@@ -90,13 +75,34 @@ describe('TestsListComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should update the page with test data', done => {
+    COMServiceMock.fetchTests = () => of(mockTests);
+    component.ngOnInit();
+
+    const getTests = fixture.debugElement.queryAll(By.css('.test'));
+
+    setTimeout(() => {
+      expect(getTests.length).toEqual(3);
+      expect(
+        getTests[0].query(By.css('.test-name')).nativeElement.textContent
+      ).toEqual(mockTests.tests[0].name);
+      expect(
+        getTests[1].query(By.css('.test-name')).nativeElement.textContent
+      ).toEqual(mockTests.tests[1].name);
+      expect(
+        getTests[2].query(By.css('.test-name')).nativeElement.textContent
+      ).toEqual(mockTests.tests[2].name);
+      done();
+    });
+  });
+
   it('should update the rendered pages on input change', () => {
     component.pageIndex = 1;
     const expectedPageSize: number = component.pageSize;
+    COMServiceMock.fetchTests = () => of(mockTests);
+    component.ngOnInit();
 
-    component.tests = mockTests;
-
-    expect(component._elements).toEqual(mockTests);
+    expect(component._elements).toEqual(mockTests.tests);
     // reset the index
     expect(component.pageIndex).toEqual(0);
     // didn't change the page size
@@ -108,13 +114,12 @@ describe('TestsListComponent', () => {
     component.paginator = undefined;
     component.pageIndex = expectedPageIndex;
 
-    component.tests = mockTests;
-
     expect(component.pageIndex).toEqual(expectedPageIndex);
   });
 
   it('should open the tests details when user clicks on a test', async () => {
-    component.tests = mockTests;
+    COMServiceMock.fetchTests = () => of(mockTests);
+    component.ngOnInit();
 
     await fixture.detectChanges();
 
@@ -128,7 +133,7 @@ describe('TestsListComponent', () => {
 
     expect(dialogSpy).toHaveBeenCalledTimes(1);
     expect(dialogSpy.calls.mostRecent().args[1]).toEqual(
-      jasmine.objectContaining({data: mockTests[0]})
+      jasmine.objectContaining({data: mockTests.tests[0]})
     );
   });
 });

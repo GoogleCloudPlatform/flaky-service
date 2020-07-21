@@ -42,12 +42,20 @@ export interface Search {
   query: string;
 }
 
+export interface Tests {
+  tests: Test[];
+}
+
 export interface Test {
   name: string;
   flaky: boolean;
-  failing: boolean;
+  passed: boolean;
+  searchindex: number;
+  lifetimefailcount: number;
+  lifetimepasscount: number;
   percentpassing: number;
-  environment: BuildEnvironment;
+  environments?: BuildEnvironment;
+  lastupdate: {_seconds: number; _nanoseconds: number};
 }
 
 export interface BuildEnvironment {

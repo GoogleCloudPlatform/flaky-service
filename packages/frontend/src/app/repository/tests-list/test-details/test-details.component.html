@@ -23,9 +23,9 @@ limitations under the License.
 <div class=".outer-field">
     <span
         id="name"
-        [class.failing]="test.failing"
-        [class.flaky]="!test.failing && test.flaky"
-        [class.success]="!test.failing && !test.flaky">
+        [class.failing]="!test.passed"
+        [class.flaky]="test.passed && test.flaky"
+        [class.success]="test.passed && !test.flaky">
         {{test.name}}
     </span>
 </div>
@@ -33,7 +33,7 @@ limitations under the License.
 <mat-divider></mat-divider>
 
 <!-- FAILURE DETAILS -->
-<div *ngIf="test.failing" class=".outer-field">
+<div *ngIf="!test.passed" class=".outer-field">
     <section>
         <!-- HEADER -->
         <header id="error-header">Error message</header>
@@ -47,8 +47,8 @@ limitations under the License.
 <!-- REPORT -->
 <div class="outer-field">
 
-    <span *ngIf="test.failing">Otherwise, this test&nbsp;</span>
-    <span *ngIf="!test.failing">This test&nbsp;</span>
+    <span *ngIf="!test.passed">Otherwise, this test&nbsp;</span>
+    <span *ngIf="test.passed">This test&nbsp;</span>
 
     <span>passes&nbsp;</span>
 
@@ -57,8 +57,13 @@ limitations under the License.
     <!-- PASSING PERCENTAGE -->
     <span
         [class.flaky]="test.flaky"
+        [class.success]="!test.flaky"
+        [innerHTML]="toPercentage(test.percentpassing)">
+    </span>
+    <span
+        [class.flaky]="test.flaky"
         [class.success]="!test.flaky">
-        {{test.percentpassing}}% of the time
+        % of the time
     </span>
 
     <span>&nbsp;and is considered&nbsp;</span>
