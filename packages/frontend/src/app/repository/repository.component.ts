@@ -22,7 +22,7 @@ import {
   expectedParams,
 } from '../services/interpretation/interpretation.service';
 import {FiltersComponent} from '../filters/filters.component';
-import {Filter, Test} from '../services/search/interfaces';
+import {Filter} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
@@ -56,7 +56,6 @@ export class RepositoryComponent implements OnInit {
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');
 
-      
       this.searchService
         .searchBuilds(this.repoName, this.orgName, foundParams.filters)
         .subscribe(repository => {
@@ -65,7 +64,7 @@ export class RepositoryComponent implements OnInit {
             foundParams.filters
           );
         });
-    }); 
+    });
   }
 
   openLicenseDialog(): void {

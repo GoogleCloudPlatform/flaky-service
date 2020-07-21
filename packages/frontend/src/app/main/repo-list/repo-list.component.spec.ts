@@ -25,7 +25,6 @@ import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {HttpClientModule} from '@angular/common/http';
 
-
 describe('RepoListComponent', () => {
   let component: RepoListComponent;
   let fixture: ComponentFixture<RepoListComponent>;

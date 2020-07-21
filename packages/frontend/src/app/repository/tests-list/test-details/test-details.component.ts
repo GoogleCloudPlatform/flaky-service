@@ -24,7 +24,7 @@ import {Test} from 'src/app/services/search/interfaces';
 export class TestDetailsComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public test: Test) {}
 
-  toPercentage(percentpassing: number){
+  toPercentage(percentpassing: number) {
     return (percentpassing * 100).toFixed(2);
   }
 }

@@ -36,7 +36,7 @@ import {HttpClientModule} from '@angular/common/http';
 class TestDetailsComponent {}
 
 const COMServiceMock = {
-  fetchTests: () => of({test: mockTests}),
+  fetchTests: () => of(mockTests),
 };
 
 describe('TestsListComponent', () => {
@@ -46,16 +46,14 @@ describe('TestsListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestsListComponent, TestDetailsComponent],
-      providers: [
-        { provide: COMService, useValue: COMServiceMock },
-      ],
+      providers: [{provide: COMService, useValue: COMServiceMock}],
       imports: [
         AppRoutingModule,
         HttpClientModule,
         BrowserAnimationsModule,
         MatPaginatorModule,
         MatDialogModule,
-      ]
+      ],
     }).compileComponents();
   }));
 
@@ -78,12 +76,10 @@ describe('TestsListComponent', () => {
   });
 
   it('should update the page with test data', done => {
-    COMServiceMock.fetchTests = () => of({test: mockTests});
-
+    COMServiceMock.fetchTests = () => of(mockTests);
     component.ngOnInit();
-    const getTests = fixture.debugElement.queryAll(
-      By.css('.tests')
-    );
+
+    const getTests = fixture.debugElement.queryAll(By.css('.test'));
 
     setTimeout(() => {
       expect(getTests.length).toEqual(3);
@@ -103,6 +99,8 @@ describe('TestsListComponent', () => {
   it('should update the rendered pages on input change', () => {
     component.pageIndex = 1;
     const expectedPageSize: number = component.pageSize;
+    COMServiceMock.fetchTests = () => of(mockTests);
+    component.ngOnInit();
 
     expect(component._elements).toEqual(mockTests.tests);
     // reset the index
@@ -120,6 +118,8 @@ describe('TestsListComponent', () => {
   });
 
   it('should open the tests details when user clicks on a test', async () => {
+    COMServiceMock.fetchTests = () => of(mockTests);
+    component.ngOnInit();
 
     await fixture.detectChanges();
 
@@ -133,7 +133,7 @@ describe('TestsListComponent', () => {
 
     expect(dialogSpy).toHaveBeenCalledTimes(1);
     expect(dialogSpy.calls.mostRecent().args[1]).toEqual(
-      jasmine.objectContaining({data: mockTests[0]})
+      jasmine.objectContaining({data: mockTests.tests[0]})
     );
   });
 });

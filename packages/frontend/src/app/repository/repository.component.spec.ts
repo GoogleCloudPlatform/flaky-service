@@ -99,7 +99,12 @@ describe('RepositoryComponent', () => {
         SearchComponent,
         FiltersComponent,
       ],
-      imports: [AppRoutingModule, HttpClientModule, MatDialogModule, NoopAnimationsModule],
+      imports: [
+        AppRoutingModule,
+        HttpClientModule,
+        MatDialogModule,
+        NoopAnimationsModule,
+      ],
     }).compileComponents();
   }));
 

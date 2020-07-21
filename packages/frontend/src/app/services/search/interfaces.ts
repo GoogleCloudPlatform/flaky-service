@@ -50,7 +50,7 @@ export interface Test {
   lifetimepasscount: number;
   percentpassing: number;
   environments?: BuildEnvironment;
-  lastupdate: {_seconds: number, _nanoseconds: number};
+  lastupdate: {_seconds: number; _nanoseconds: number};
 }
 
 export interface BuildEnvironment {

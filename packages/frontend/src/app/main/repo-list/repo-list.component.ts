@@ -24,7 +24,6 @@ import {PaginatedListComponent} from 'src/app/paginated-list/paginated-list.comp
 })
 export class RepoListComponent extends PaginatedListComponent<Repository> {
   @ViewChild('paginator') paginator: MatPaginator;
-
   @Input() set repositories(value: Repository[]) {
     this._elements = value;
     this.updatePage();

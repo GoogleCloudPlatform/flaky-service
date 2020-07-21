@@ -16,7 +16,7 @@ import {TestBed} from '@angular/core/testing';
 import {COMService} from './com.service';
 import {HttpClientModule} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Search, Repository, Test} from '../search/interfaces';
+import {Search, Repository} from '../search/interfaces';
 import {of} from 'rxjs';
 import {apiLinks} from './api';
 
@@ -110,54 +110,55 @@ describe('COMService', () => {
     const orgName = 'orgName';
     const mockTests = {
       tests: [
-          {
-              name: 'should update the rendered pages on input change',
-              flaky: true,
-              passed: false,
-              percentpassing: 98,
-              searchindex: 0,
-              lifetimefailcount: 2,
-              lifetimepasscount: 18,
-              lastupdate: {_seconds: 53400, _nanoseconds: 0},
-              environment: {os: 'windows', ref: 'dev'},
-          },{
-              name:'should not return to the first page when the paginator is not ready',
-              flaky: false,
-              passed: false,
-              percentpassing: 92,
-              searchindex: 0,
-              lifetimefailcount: 1,
-              lifetimepasscount: 9,
-              lastupdate: {_seconds: 63400, _nanoseconds: 0},
-              environment: {os: 'windows', ref: 'dev'},
-          }, {
-              name: 'should set the new filters when a repository is found',
-              flaky: true,
-              passed: true,
-              percentpassing: 53,
-              searchindex: 0,
-              lifetimefailcount: 10,
-              lifetimepasscount: 12,
-              lastupdate: {_seconds: 63400, _nanoseconds: 0},
-              environment: {os: 'windows', ref: 'dev'},
-          }
-      ]
+        {
+          name: 'should update the rendered pages on input change',
+          flaky: true,
+          passed: false,
+          percentpassing: 98,
+          searchindex: 0,
+          lifetimefailcount: 2,
+          lifetimepasscount: 18,
+          lastupdate: {_seconds: 53400, _nanoseconds: 0},
+          environment: {os: 'windows', ref: 'dev'},
+        },
+        {
+          name:
+            'should not return to the first page when the paginator is not ready',
+          flaky: false,
+          passed: false,
+          percentpassing: 92,
+          searchindex: 0,
+          lifetimefailcount: 1,
+          lifetimepasscount: 9,
+          lastupdate: {_seconds: 63400, _nanoseconds: 0},
+          environment: {os: 'windows', ref: 'dev'},
+        },
+        {
+          name: 'should set the new filters when a repository is found',
+          flaky: true,
+          passed: true,
+          percentpassing: 53,
+          searchindex: 0,
+          lifetimefailcount: 10,
+          lifetimepasscount: 12,
+          lastupdate: {_seconds: 63400, _nanoseconds: 0},
+          environment: {os: 'windows', ref: 'dev'},
+        },
+      ],
     };
 
     it('should get the test data and call the right link', () => {
       httpClientSpy.get.and.returnValue(of(mockTests));
 
-      service
-        .fetchTests(repoName, orgName)
-        .subscribe(result => {
-          expect(result.tests.length).toBe(3);
-          expect(result.tests).toEqual(mockTests.tests);
-        });
+      service.fetchTests(repoName, orgName).subscribe(result => {
+        expect(result.tests.length).toBe(3);
+        expect(result.tests).toEqual(mockTests.tests);
+      });
 
       //called the right link
       expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
         apiLinks.get.tests(repoName, orgName)
       );
-    })
-  })
+    });
+  });
 });

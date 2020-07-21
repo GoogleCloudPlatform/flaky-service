@@ -60,10 +60,7 @@ export class COMService {
     return this.http.get<SessionStatus>(apiLinks.get.sessionStatus);
   }
 
-  public fetchTests(
-    repoName:string,
-    orgName: string,
-  ): Observable<Tests> {
+  public fetchTests(repoName: string, orgName: string): Observable<Tests> {
     return this.http.get<Tests>(apiLinks.get.tests(repoName, orgName));
   }
 }

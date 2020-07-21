@@ -33,12 +33,13 @@ export class TestsListComponent extends PaginatedListComponent<Test> {
   @Input() orgName: string;
 
   ngOnInit() {
-    this.comService.fetchTests(this.repoName, this.orgName)
+    super.ngOnInit();
+    this.comService
+      .fetchTests(this.repoName, this.orgName)
       .subscribe(result => {
         this._elements = result.tests;
         this.updatePage();
         this.paginator?.firstPage();
-        super.ngOnInit();
       });
   }
 
@@ -52,7 +53,7 @@ export class TestsListComponent extends PaginatedListComponent<Test> {
     return moment.unix(timestamp).fromNow();
   }
 
-  toPercentage(percentpassing: number){
+  toPercentage(percentpassing: number) {
     return (percentpassing * 100).toFixed(2);
   }
 }
