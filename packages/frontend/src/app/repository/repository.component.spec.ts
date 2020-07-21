@@ -30,7 +30,6 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
 import {expectedParams} from '../services/interpretation/interpretation.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
-import {HttpClientModule} from '@angular/common/http';
 import {COMService} from '../services/com/com.service';
 
 // Mock the inner components
@@ -99,12 +98,7 @@ describe('RepositoryComponent', () => {
         SearchComponent,
         FiltersComponent,
       ],
-      imports: [
-        AppRoutingModule,
-        HttpClientModule,
-        MatDialogModule,
-        NoopAnimationsModule,
-      ],
+      imports: [AppRoutingModule, MatDialogModule, NoopAnimationsModule],
     }).compileComponents();
   }));
 
@@ -158,9 +152,7 @@ describe('RepositoryComponent', () => {
     expect(location.path()).toEqual(expectedRoute);
   }));
 
-  /*
   it('should redirect to the 404 page if no repository was found', () => {
     // TODO
   });
-  */
 });

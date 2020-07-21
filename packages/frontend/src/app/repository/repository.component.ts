@@ -44,8 +44,8 @@ export class RepositoryComponent implements OnInit {
 
   @ViewChild(FiltersComponent) filterComponent;
 
-  repoName = ' ';
-  orgName = ' ';
+  repoName = '';
+  orgName = '';
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
