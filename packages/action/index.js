@@ -15,27 +15,39 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
 const core = require('@actions/core');
-const path = require('path');
 
+/**
+ * main
+ */
+async function main() {
+  try {
+    // `who-to-greet` input defined in action metadata file
 
-try {
-  // `who-to-greet` input defined in action metadata file
+    const metaData = {
+      github: JSON.parse(core.getInput('github')),
+      os: JSON.parse(core.getInput('os')),
+      matrix: JSON.parse(core.getInput('matrix')),
+    };
+    const fileType = core.getInput('logtype');
+    console.log('reading from: ' + core.getInput('filepath'));
+    const data = fs.readFileSync(
+        core.getInput('filepath'), 'utf8');
 
-  const metaData = {
-    github: JSON.parse(core.getInput('github')),
-    os: JSON.parse(core.getInput('os')),
-    matrix: JSON.parse(core.getInput('matrix')),
-  };
-  const fileType = core.getInput('logtype');
-  const data = fs.readFileSync(
-      path.resolve(__dirname, '../../flaky-tap-log.tap'), 'utf8');
-
-  const sendMe = JSON.stringify(
-      {type: fileType, data: data, metadata: metaData});
-  console.log('SENDING: \n\n' + sendMe);
-
-  fetch('https://ptsv2.com/t/sgsey-1592237741/post', {method: 'POST', body: sendMe})
-      .then((res) => console.log('\n\n Received: \n\n' + res));
-} catch (error) {
-  core.setFailed(error.message);
+    const sendMe = {type: fileType, data: data, metadata: metaData};
+    const endpoint = core.getInput('endpoint') || 'https://flaky-dashboard.web.app/api/build'
+    const outcome = await fetch(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(sendMe),
+      headers: {'Content-Type': 'application/json'},
+    });
+    const outcomeText = await outcome.text();
+    console.log('\nSERVER RESPONSE:');
+    console.log(outcomeText);
+  } catch (error) {
+    console.log(error);
+    core.setFailed(error.message);
+  }
 }
+
+
+main();

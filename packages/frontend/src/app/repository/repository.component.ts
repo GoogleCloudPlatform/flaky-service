@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import {Component, OnInit, ViewChild, NgZone} from '@angular/core';
-import {SearchService} from '../services/search/search.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LicenseComponent} from '../license/license.component';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
@@ -25,6 +24,7 @@ import {FiltersComponent} from '../filters/filters.component';
 import {Filter} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
+import {COMService} from '../services/com/com.service';
 
 @Component({
   selector: 'app-repository',
@@ -33,7 +33,7 @@ import {RouteProvider} from '../routing/route-provider/RouteProvider';
 })
 export class RepositoryComponent implements OnInit {
   constructor(
-    public searchService: SearchService,
+    public com: COMService,
     private route: ActivatedRoute,
     private router: Router,
     private ngZone: NgZone,
@@ -56,11 +56,11 @@ export class RepositoryComponent implements OnInit {
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');
 
-      this.searchService
-        .searchBuilds(this.repoName, this.orgName, foundParams.filters)
+      this.com
+        .fetchRepository(this.repoName, this.orgName, foundParams.filters)
         .subscribe(repository => {
           this.filterComponent?.setFilters(
-            repository.metadata.environments,
+            repository.environments,
             foundParams.filters
           );
         });
@@ -76,7 +76,7 @@ export class RepositoryComponent implements OnInit {
 
   onFiltersChanged(filters: Filter[]) {
     this.ngZone.run(() => {
-      const route = this.orgName + '/' + this.repoName;
+      const route = RouteProvider.routes.repo.link(this.orgName, this.repoName);
       this.router.navigate([route, this.interpreter.getRouteParam(filters)]);
     });
   }

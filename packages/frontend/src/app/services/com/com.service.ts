@@ -46,13 +46,9 @@ export class COMService {
     orgName: string,
     filters: Filter[]
   ): Observable<ApiRepository> {
-    let params: HttpParams = new HttpParams();
-    filters.forEach(filter => (params = params.set(filter.name, filter.value)));
     return this.http.get<ApiRepository>(
       apiLinks.get.builds(repoName, orgName),
-      {
-        params: params,
-      }
+      {params: this.getParams(filters)}
     );
   }
 
@@ -62,5 +58,22 @@ export class COMService {
 
   public fetchTests(repoName: string, orgName: string): Observable<Tests> {
     return this.http.get<Tests>(apiLinks.get.tests(repoName, orgName));
+  }
+  
+  public fetchRepository(
+    repoName: string,
+    orgName: string,
+    filters: Filter[]
+  ): Observable<Repository> {
+    return this.http.get<Repository>(
+      apiLinks.get.repository(repoName, orgName),
+      {params: this.getParams(filters)}
+    );
+  }
+
+  private getParams(filters: Filter[]) {
+    let params: HttpParams = new HttpParams();
+    filters.forEach(filter => (params = params.set(filter.name, filter.value)));
+    return params;
   }
 }

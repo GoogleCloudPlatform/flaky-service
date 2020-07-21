@@ -45,15 +45,10 @@ limitations under the License.
     display: inline-block;
 }
 
-.names {
+.name {
     margin-right: 10px;
-}
-.names > a {
     color: #0075FF;
     text-decoration: none;
-}
-.names > a:hover {
-    text-decoration: underline;
 }
 
 .description {
@@ -69,6 +64,9 @@ td {
     padding-right: 6px;
 }
 
+.passing-tests-indicator {
+    color: #009a06;
+}
 .failing-tests-indicator {
     color: red;
 }

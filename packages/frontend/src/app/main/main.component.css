@@ -43,3 +43,11 @@ app-repo-list {
     background-color: #ffffff;
     cursor: pointer;
 }
+
+#spinner, #no-repo-found {
+    margin-top: 100px;
+}
+#no-repo-found {
+    font-weight: lighter;
+    color: grey;
+}

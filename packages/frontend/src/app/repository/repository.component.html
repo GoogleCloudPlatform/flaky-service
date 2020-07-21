@@ -15,36 +15,8 @@ limitations under the License.
 -->
 
 <!-- REPOSITORY METADATA -->
-<div id="metadata-container">
-    <div id="metadata-subcontainer">
-
-        <!-- METADATA -->
-        <p id="metadata"
-        *ngIf="orgName && repoName && 'https://github.com/' as gitBaseLink">
-            <!-- ORGANISATION NAME -->
-            <a
-                [href]="utils.parseUrl(orgLink)"
-                *ngIf="gitBaseLink.concat(orgName) as orgLink"
-                target="blank"
-                class="names">
-                {{orgName}}
-            </a>
-
-            <span>/</span>
-
-            <!-- REPOSITORY NAME -->
-            <a
-                [href]="utils.parseUrl(repoLink)"
-                *ngIf="gitBaseLink.concat(orgName, '/', repoName) as repoLink"
-                target="blank"
-                class="names">
-                {{repoName}}
-            </a>
-    
-            <!-- DESCRIPTION -->
-            <span id="description">An open source tool to do something.</span>
-        </p>
-    
+<div id="filters-container">
+    <div id="filters-subcontainer">
         <!-- FILTERS -->
         <app-filters (filtersChanged)="onFiltersChanged($event)"></app-filters>
     </div>

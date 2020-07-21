@@ -22,7 +22,6 @@ import {
 import {RepositoryComponent} from './repository.component';
 import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Search, Filter} from '../services/search/interfaces';
-import {SearchService} from '../services/search/search.service';
 import {of} from 'rxjs';
 import {MatDialogModule} from '@angular/material/dialog';
 import {AppRoutingModule} from '../routing/app-routing.module';
@@ -32,6 +31,7 @@ import {By} from '@angular/platform-browser';
 import {expectedParams} from '../services/interpretation/interpretation.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import {HttpClientModule} from '@angular/common/http';
+import {COMService} from '../services/com/com.service';
 
 // Mock the inner components
 @Component({
@@ -86,13 +86,13 @@ describe('RepositoryComponent', () => {
   };
 
   // Mock services
-  const mockSearchService = {
-    searchBuilds: () => of({metadata: {environments: {}}}),
+  const mockComService = {
+    fetchRepository: () => of({environments: {}}),
   };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [{provide: SearchService, useValue: mockSearchService}],
+      providers: [{provide: COMService, useValue: mockComService}],
       declarations: [
         RepositoryComponent,
         TestsListComponent,
@@ -112,7 +112,7 @@ describe('RepositoryComponent', () => {
     fixture = TestBed.createComponent(RepositoryComponent);
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
-    mockSearchService.searchBuilds = () => of({metadata: {environments: {}}});
+    mockComService.fetchRepository = () => of({environments: {}});
     location = TestBed.get(Location);
   });
 
@@ -129,8 +129,8 @@ describe('RepositoryComponent', () => {
       },
     };
 
-    mockSearchService.searchBuilds = () =>
-      of({metadata: {environments: getEnvironments()}});
+    mockComService.fetchRepository = () =>
+      of({environments: getEnvironments()});
 
     component.ngOnInit();
   });
@@ -143,7 +143,10 @@ describe('RepositoryComponent', () => {
     const {filters, expectedRouteParams} = getFilters();
     const orgName = 'org',
       repoName = 'repo';
-    const expectedRoute = '/' + orgName + '/' + repoName + expectedRouteParams;
+    const expectedRoute =
+      '/' +
+      RouteProvider.routes.repo.link(orgName, repoName) +
+      expectedRouteParams;
 
     component.orgName = orgName;
     component.repoName = repoName;

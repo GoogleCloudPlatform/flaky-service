@@ -21,6 +21,7 @@ var path = require('path');
 const EXAMPLE_TAP_ERRORS = fs.readFileSync(path.join(__dirname, 'res/sampletap.tap'), 'utf8');
 const EXAMPLE_TAP_MANGLED = fs.readFileSync(path.join(__dirname, 'res/mangledtap.tap'), 'utf8');
 const EXAMPLE_TAP_NESTED = fs.readFileSync(path.join(__dirname, 'res/nestedtap.tap'), 'utf8');
+const EXAMPLE_STUFF_ON_TOP = fs.readFileSync(path.join(__dirname, 'res/stuffontoptap.tap'), 'utf8');
 
 const { describe, before, after, it } = require('mocha');
 const { v4: uuidv4 } = require('uuid');
@@ -28,6 +29,8 @@ const firebaseEncode = require('../lib/firebase-encode');
 
 const nock = require('nock');
 const validNockResponse = require('./res/sample-validate-resp.json');
+const { deleteRepo } = require('../lib/deleter');
+
 const PostBuildHandler = require('../src/post-build.js');
 const client = require('../src/firestore.js');
 
@@ -102,6 +105,14 @@ describe('Posting Builds', () => {
     assert.strictEqual(PostBuildHandler.removeDuplicateTestCases(testcases).length, 4);
   });
 
+  it('should handle a test with other stuff at the top', async () => {
+    const flattenedLog = await PostBuildHandler.flattenTap(EXAMPLE_STUFF_ON_TOP);
+    const parsedRaw = await PostBuildHandler.parseRawOutput(flattenedLog, 'TAP');
+    const testcases = PostBuildHandler.parseTestCases(parsedRaw, flattenedLog);
+
+    assert.strictEqual(testcases.length, 3);
+  });
+
   it('should send back an error code when being sent invalid metadata', async () => {
     var botchedPayload = JSON.parse(EXAMPLE_PAYLOAD_RAW);
     delete botchedPayload.metadata.github.repositoryUrl;
@@ -160,32 +171,12 @@ describe('Posting Builds', () => {
   });
 
   after(async () => {
-    const deletePaths = [
-      'tests/{testcase}/runs/{buildid}',
-      'tests/{testcase}',
-      'builds/{buildid}'
-    ];
     var parsedPayload = JSON.parse(EXAMPLE_PAYLOAD);
     var parsedPayloadRaw = JSON.parse(EXAMPLE_PAYLOAD_RAW);
-    var repoIds = [firebaseEncode(parsedPayloadRaw.metadata.github.repository), firebaseEncode(parsedPayload.metadata.github.repository)];
-    const buildIds = [parsedPayload.metadata.github.run_id, parsedPayloadRaw.metadata.github.run_id];
-    const testCases = [parsedPayload.data[0].name, parsedPayload.data[1].name];
+    var repoIds = [parsedPayloadRaw.metadata.github.repository, parsedPayload.metadata.github.repository];
 
-    // Delete all possible documents, okay to delete document that doesnt exist
-    for (let a = 0; a < deletePaths.length; a++) {
-      for (let b = 0; b < buildIds.length; b++) {
-        for (let c = 0; c < testCases.length; c++) {
-          for (let d = 0; d < repoIds.length; d++) {
-            const { deletePath, buildId, testCase, repoId } = { deletePath: deletePaths[a], buildId: buildIds[b], testCase: testCases[c], repoId: repoIds[d] };
-            const deletePathUse = deletePath.replace('{testcase}', firebaseEncode(testCase)).replace('{buildid}', buildId);
-            await client.collection(global.headCollection).doc(repoId + '/' + deletePathUse).delete();
-          }
-        }
-      }
-    }
-
-    await client.collection(global.headCollection).doc(repoIds[0]).delete();
-    await client.collection(global.headCollection).doc(repoIds[1]).delete();
+    await deleteRepo(client, repoIds[0]);
+    await deleteRepo(client, repoIds[1]);
 
     nock.restore();
     nock.cleanAll();

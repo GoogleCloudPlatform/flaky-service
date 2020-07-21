@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const { describe, it, after, before } = require('mocha');
+const { describe, it, before } = require('mocha');
 const assert = require('assert');
 const { v4: uuidv4 } = require('uuid');
 const client = require('../src/firestore.js');
+const firebaseEncode = require('../lib/firebase-encode');
 
 const TestCaseRun = require('../lib/testrun');
 const addBuild = require('../src/add-build');
-const fetch = require('node-fetch');
+const { deleteTest, deleteRepo } = require('../lib/deleter');
 
+const fetch = require('node-fetch');
 const TESTING_COLLECTION_BASE = 'repositories-testsuite-';
 
 // The three builds that will be added
@@ -359,26 +361,26 @@ describe('Add-Build', () => {
     });
   });
 
-  after(async () => {
-    // must delete each collection individually
-    const deletePaths = [
-      'tests/{testcase}/runs/{buildid}',
-      'tests/{testcase}',
-      'builds/{buildid}'
-    ];
-    const buildIds = ['11111', '22222', '33333'];
-    const testCases = ['a/1', 'a/2', 'a/3', 'a/4', 'a/5', 'a/6'];
-    // Delete all possible documents, okay to delete document that doesnt exist
-    for (let a = 0; a < deletePaths.length; a++) {
-      for (let b = 0; b < buildIds.length; b++) {
-        for (let c = 0; c < testCases.length; c++) {
-          const { deletePath, buildId, testCase } = { deletePath: deletePaths[a], buildId: buildIds[b], testCase: testCases[c] };
-          const deletePathUse = deletePath.replace('{testcase}', encodeURIComponent(testCase)).replace('{buildid}', buildId);
-          await client.collection(global.headCollection).doc(buildInfo[0].repoId + '/' + deletePathUse).delete();
-        }
-      }
-    }
+  describe('deleter', async () => {
+    it('Can delete a particular test', async () => {
+      await deleteTest(client, decodeURIComponent(buildInfo[0].repoId), 'a/1');
 
-    await client.collection(global.headCollection).doc(buildInfo[0].repoId).delete();
+      // make sure that test is no longer there
+      const testDoc = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('tests').doc(firebaseEncode('a/1')).get();
+
+      assert(!testDoc.exists);
+
+      // make sure the repo doc is still there
+      const repoDoc = await client.collection(global.headCollection).doc(buildInfo[0].repoId).get();
+      assert(repoDoc.exists);
+    });
+
+    it('Can delete an entire repository', async () => {
+      await deleteRepo(client, decodeURIComponent(buildInfo[0].repoId));
+
+      // make sure the repo doc is still there
+      const repoDoc = await client.collection(global.headCollection).doc(buildInfo[0].repoId).get();
+      assert(!repoDoc.exists);
+    });
   });
 });

@@ -21,6 +21,7 @@ interface ApiLinks {
     loginLink: string;
     sessionStatus: string;
     tests: (repoName: string, orgName: string) => string;
+    repository: (repoName: string, orgName: string) => string;
   };
 }
 
@@ -34,5 +35,7 @@ export const apiLinks: ApiLinks = {
     sessionStatus: apiBaseLink + 'session',
     tests: (repoName: string, orgName: string) =>
       apiBaseLink + 'repo/' + orgName + '/' + repoName + '/tests',
+    repository: (repoName: string, orgName: string) =>
+      apiBaseLink + 'repo/' + orgName + '/' + repoName,
   },
 };

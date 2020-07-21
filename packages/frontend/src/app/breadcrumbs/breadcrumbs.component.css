@@ -30,7 +30,7 @@ limitations under the License.
     width: 18px;
 }
 
-.crumb {
+.crumb, #git-link-container {
     display: inline;
 }
 .crumbs-separator {
@@ -45,4 +45,9 @@ a {
 a:hover {
     text-decoration: none;
     color: #002f67
+}
+
+#git-link-container {
+    vertical-align: middle;
+    margin-left: 5px;
 }

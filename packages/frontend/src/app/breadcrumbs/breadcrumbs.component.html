@@ -24,5 +24,11 @@ limitations under the License.
             <a *ngIf="crumb.path" [routerLink]="[crumb.path]">{{crumb.name}}</a>
             <a *ngIf="!crumb.path">{{crumb.name}}</a>
         </div>
+
+        <div id="git-link-container" *ngIf="gitLink.show">
+            <a [href]="utils.parseUrl(gitLink.value)" target="_blank">
+                <img src="assets/img/GitHub-Mark.png" width="20" height="20"/>
+            </a>
+        </div>
     </div>
 </div>

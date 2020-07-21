@@ -14,24 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.tests-list-container, #metadata-container {
+.tests-list-container, #filters-container {
     display: flex;
     justify-content: center;
 }
-app-tests-list, #metadata-subcontainer {
+app-tests-list, #filters-subcontainer {
     width: 100%;
     max-width: 800px;
 }
 
-#metadata-container {
+#filters-container {
     margin-top: 20px;
 }
 
-#metadata-subcontainer {
+#filters-subcontainer {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
 .names {

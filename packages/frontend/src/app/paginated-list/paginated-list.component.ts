@@ -60,8 +60,11 @@ export class PaginatedListComponent<Elements> implements OnInit {
     this.showPaginator = this._elements.length > this.pageSize;
   }
 
-  onElementClick(link: string, event: MouseEvent) {
+  onElementClick(link: string, event: MouseEvent, blank?: boolean) {
     const clickedOnALink = event.srcElement instanceof HTMLAnchorElement;
-    if (!clickedOnALink) this.router.navigateByUrl(link);
+    if (!clickedOnALink) {
+      if (blank) window.open(link, '_blank');
+      else this.router.navigateByUrl(link);
+    }
   }
 }

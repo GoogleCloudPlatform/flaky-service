@@ -50,10 +50,11 @@ class PostBuildHandler {
 
   static parseBuildInfo (metadata) {
     // buildInfo must have attributes of organization, timestamp, url, environment, buildId
-    var returnVal = {
+    const timestamp = metadata.github.event.head_commit ? new Date(metadata.github.event.head_commit.timestamp) : new Date();
+    const returnVal = {
       repoId: firebaseEncode(metadata.github.repository),
       organization: metadata.github.repository_owner,
-      timestamp: new Date(metadata.github.event.head_commit.timestamp),
+      timestamp,
       url: metadata.github.repositoryUrl,
       environment: PostBuildHandler.parseEnvironment(metadata),
       buildId: firebaseEncode(metadata.github.run_id),
@@ -140,7 +141,7 @@ class PostBuildHandler {
     const output = await new Promise(resolve => {
       var process = cp.exec('tap-parser -f -t', (error, stdout, stderr) => {
         if (error || stderr) {
-          throw new InvalidParameterError('Could not parse and flatten tap');
+          // not necessarily an error, could just mean tap was not properly formatted but still somewhat parsable
         }
         resolve(stdout);
       });
