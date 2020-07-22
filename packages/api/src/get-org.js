@@ -90,7 +90,33 @@ class GetOrgHandler {
         if (!req.params.orgname) {
           throw new InvalidParameterError('requires org parameter');
         }
-        const snapshot = await this.client.collection(global.headCollection).where('lower.organization', '==', req.params.orgname.toLowerCase()).get();
+        const limit = parseInt(req.query.limit || 30);
+        const offset = parseInt(req.query.offset || 0);
+
+        let query = this.client.collection(global.headCollection);
+        query = query.where('lower.organization', '==', req.params.orgname.toLowerCase());
+
+        if (req.query.startswith) {
+          const startsWith = req.query.startswith.toLowerCase();
+          query = query.where('lower.name', '>=', startsWith)
+            .where('lower.name', '<', this.alphabeticallyIncrement(startsWith));
+        } else {
+          if (req.query.orderby) {
+            if (req.query.orderby === 'priority') {
+              query = query.orderBy('searchindex', 'desc');
+            }
+            if (req.query.orderby === 'activity') {
+              query = query.orderBy('lastupdate', 'desc');
+            }
+            if (req.query.orderby === 'name') {
+              query = query.orderBy('lower.name');
+            }
+          }
+        }
+
+        query = query.offset(offset).limit(limit);
+
+        const snapshot = await query.get();
         res.send(snapshot.docs.map(doc => doc.data()));
       } catch (err) {
         handleError(res, err);

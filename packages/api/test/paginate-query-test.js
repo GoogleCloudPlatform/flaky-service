@@ -46,8 +46,7 @@ describe('Getting Repos and Orgs', () => {
     client = new Firestore({
       projectId: process.env.FLAKY_DB_PROJECT || 'flaky-dev-development'
     });
-    global.headCollection = 'repositories-testsuite-' + uuidv4();
-    global.headCollection += '/allinfo/repositories';
+    global.headCollection = 'testing/' + 'testing-pagination-' + uuidv4() + '/repos';
 
     for (let k = 0; k < data.length; k++) {
       const repo = data[k];

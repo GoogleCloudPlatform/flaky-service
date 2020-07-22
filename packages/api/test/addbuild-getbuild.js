@@ -93,7 +93,7 @@ const buildInfo = [
 
 describe('Add-Build', () => {
   before(async () => {
-    global.headCollection = TESTING_COLLECTION_BASE + uuidv4(); // random collection name for concurrent testing
+    global.headCollection = 'testing/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
   });
 
   describe('add-build', async () => {
@@ -246,10 +246,17 @@ describe('Add-Build', () => {
       assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
-      const solMeta = { name: 'node', repoId: 'nodejs/node', description: 'nodejs repository', organization: 'nodejs', numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
+      const solMeta = { name: 'node', repoId: 'nodejs/node', description: 'nodejs repository', organization: 'nodejs', searchindex: 2 * 10000, numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
       const solActual = JSON.parse(respTextMeta);
       delete solActual.lastupdate;
       assert.deepStrictEqual(solActual, solMeta);
+    });
+
+    it('Can use offset when getting builds', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/builds?offset=1');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText).builds;
+      assert.strictEqual(ansObj.length, 2);
     });
 
     it('Can use random combinations of queries', async () => {
@@ -327,6 +334,14 @@ describe('Add-Build', () => {
       // make sure their are the newly added fields
       assert.strictEqual(ansObj[2].lifetimepasscount, 0);
       assert.strictEqual(ansObj[2].lifetimefailcount, 1);
+    });
+
+    it('Can use offset parameter for tests', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/tests?offset=3');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText).tests;
+
+      assert.strictEqual(ansObj.length, 2);
     });
   });
 

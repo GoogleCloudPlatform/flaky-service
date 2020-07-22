@@ -42,7 +42,7 @@ const fetch = require('node-fetch');
 
 describe('Posting Builds', () => {
   before(async () => {
-    global.headCollection = 'repositories-testsuite-' + uuidv4();
+    global.headCollection = 'testing/' + 'postingbuild-test-' + uuidv4() + '/repos';
 
     nock('https://api.github.com', {
       reqheaders: {
