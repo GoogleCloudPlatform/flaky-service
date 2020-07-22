@@ -83,19 +83,19 @@ We have implemented a two-pipeline deployment process:
 
 The following environment variables need to be set within the Cloud Run service directly from the Google Cloud Platform console:
 
-* `HEAD\_COLLECTION` = name of head Firestore collection
-* `FLAKY\_DB\_PROJECT` = name of Google Cloud Project with access to Firestore
-* `CLIENT\_ID` = name of secret GitHub Client ID for authentication
-* `CLIENT\_SECRET` = name of GitHub Client Secret for authentication
+* `HEAD_COLLECTION` = name of head Firestore collection
+* `FLAKY_DB_PROJECT` = name of Google Cloud Project with access to Firestore
+* `CLIENT_ID` = name of secret GitHub Client ID for authentication
+* `CLIENT_SECRET` = name of GitHub Client Secret for authentication
 
 The following [substitutions](https://cloud.google.com/cloud-build/docs/configuring-builds/substitute-variable-values) need to be set within the API Cloud Build Trigger directly from the Google Cloud Platform console:
 
-* `\_API\_CONTAINER` = name of API Cloud Run container
-* `\_PROJECT\_ID` = name of Google Cloud Project using Cloud Run
+* `_API_CONTAINER` = name of API Cloud Run container
+* `_PROJECT_ID` = name of Google Cloud Project using Cloud Run
 
 The following substituion needs to be set within the frontend Cloud Build Trigger:
 
-* `\_PROJECT\_ID` = name of Googleee Cloud Project using Firebase Hosting
+* `_PROJECT_ID` = name of Googleee Cloud Project using Firebase Hosting
 
 #### Staging Environment
 
