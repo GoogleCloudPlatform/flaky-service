@@ -127,9 +127,9 @@ export class BreadcrumbsComponent implements OnInit {
   private updateGitLink(showLink: boolean): void {
     this.gitLink.show = showLink;
 
-    if (showLink) {
+    if (showLink && this.crumbs.length >= 2) {
       const orgName = this.crumbs[0].name;
-      const repoName = this.crumbs[0].name;
+      const repoName = this.crumbs[1].name;
       this.gitLink.value = 'https://github.com/' + orgName + '/' + repoName;
     }
   }

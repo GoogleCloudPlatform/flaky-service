@@ -90,7 +90,7 @@ describe('BreadcrumbsComponent', () => {
       },
     },
 
-    // route with breadcrumb data
+    // route with breadcrumb data and git link
     {
       path: mockRouteProvider.routes.route3.path,
       component: BreadcrumbsComponent,
@@ -100,6 +100,7 @@ describe('BreadcrumbsComponent', () => {
           mockRouteProvider.routes.route2.name,
           mockRouteProvider.routes.route3.name,
         ],
+        setGitLink: true,
       },
     },
   ]);
@@ -272,6 +273,25 @@ describe('BreadcrumbsComponent', () => {
       );
 
       expect(gitCrumb).toBeNull();
+    });
+  }));
+
+  it('should set the right git link', fakeAsync(() => {
+    ngZone.run(() => {
+      router.navigate([mockRouteProvider.routes.route3.testPath]);
+      tick();
+
+      fixture.detectChanges();
+      tick();
+
+      const gitAnchor = fixture.debugElement.query(
+        By.css('#git-link-container > a')
+      );
+
+      expect(gitAnchor).not.toBeNull();
+      expect(gitAnchor.attributes['href']).toEqual(
+        'https://github.com/param1/param2'
+      );
     });
   }));
 });
