@@ -45,7 +45,6 @@ describe('MainComponent', () => {
   // Mock services
   const mockSearchService = {repositories: [], search: () => of([])};
   const mockRoute = {params: of()};
-  const orgName = 'org';
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -63,7 +62,7 @@ describe('MainComponent', () => {
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
     mockSearchService.search = () => of([]);
-    mockRoute.params = of({org: orgName});
+    mockRoute.params = of({});
   });
 
   it('should create', () => {
@@ -80,6 +79,7 @@ describe('MainComponent', () => {
     });
 
     it('should initiate a search with the provided filters when initializing', () => {
+      mockRoute.params = of({orderby: 'priority'});
       const searchSpy = spyOn(mockSearchService, 'search').and.callThrough();
 
       component.ngOnInit();
@@ -89,7 +89,7 @@ describe('MainComponent', () => {
         object
       >)[0] as Search;
       expect(search.filters).toContain(
-        jasmine.objectContaining({name: 'org', value: orgName})
+        jasmine.objectContaining({name: 'orderby', value: 'priority'})
       );
     });
 

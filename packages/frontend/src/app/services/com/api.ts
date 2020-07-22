@@ -16,7 +16,7 @@ import {environment} from '../../../environments/environment';
 
 interface ApiLinks {
   get: {
-    repositories: string;
+    repositories: (orgName: string) => string;
     builds: (repoName: string, orgName: string) => string;
     loginLink: string;
     sessionStatus: string;
@@ -28,7 +28,7 @@ interface ApiLinks {
 export const apiBaseLink = environment.baseUrl + '/api/';
 export const apiLinks: ApiLinks = {
   get: {
-    repositories: apiBaseLink + 'repo',
+    repositories: (orgName: string) => apiBaseLink + 'org/' + orgName,
     builds: (repoName: string, orgName: string) =>
       apiBaseLink + 'repo/' + orgName + '/' + repoName,
     loginLink: apiBaseLink + 'auth?redirect=' + environment.baseUrl,

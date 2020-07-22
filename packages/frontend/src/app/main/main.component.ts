@@ -44,10 +44,12 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const search = this.getSearch(params);
-      this.searchService.search(search).subscribe(repositories => {
-        this.loading = false;
-        this.repositories = repositories;
-      });
+      this.searchService
+        .search(search, this.orgName)
+        .subscribe(repositories => {
+          this.loading = false;
+          this.repositories = repositories;
+        });
     });
   }
 
@@ -65,8 +67,6 @@ export class MainComponent implements OnInit {
       query: repo,
       filters: foundParams.filters,
     };
-
-    if (org) search.filters.push({name: 'org', value: org});
 
     return search;
   }
