@@ -23,15 +23,15 @@ class CsvRow {
   constructor (buildId, environment, timestamp, totalTestCount, testNameToId) {
     this.buildId = buildId;
     this.environment = environment;
-    this.testResults = new Array(totalTestCount).fill(-1);  //-1 denotes test did not run
+    this.testResults = new Array(totalTestCount).fill(-1); // -1 denotes test did not run
     this.testNameToId = testNameToId;
     this.timestamp = timestamp.toDate();
   }
 
   setTestResult (testName, status) {
-    if(testName in this.testNameToId){
+    if (testName in this.testNameToId) {
       const testIndex = this.testNameToId[testName];
-      this.testResults[testIndex] = (status === 'OK') ? 1 : 0; //1 = test pass, 0 = test fail
+      this.testResults[testIndex] = (status === 'OK') ? 1 : 0; // 1 = test pass, 0 = test fail
     }
   }
 
