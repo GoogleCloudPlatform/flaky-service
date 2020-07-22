@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// class to receive POSTS with build information
+// class to export build and test data as csv
 
 const firebaseEncode = require('../lib/firebase-encode');
 const { ResourceNotFoundError, handleError } = require('../lib/errors');
@@ -23,14 +23,16 @@ class CsvRow {
   constructor (buildId, environment, timestamp, totalTestCount, testNameToId) {
     this.buildId = buildId;
     this.environment = environment;
-    this.testResults = new Array(totalTestCount).fill(-1);
+    this.testResults = new Array(totalTestCount).fill(-1);  //-1 denotes test did not run
     this.testNameToId = testNameToId;
     this.timestamp = timestamp.toDate();
   }
 
   setTestResult (testName, status) {
-    const testIndex = this.testNameToId[testName];
-    this.testResults[testIndex] = (status === 'OK') ? 1 : 0;
+    if(testName in this.testNameToId){
+      const testIndex = this.testNameToId[testName];
+      this.testResults[testIndex] = (status === 'OK') ? 1 : 0; //1 = test pass, 0 = test fail
+    }
   }
 
   toString (allMatrixList) {
