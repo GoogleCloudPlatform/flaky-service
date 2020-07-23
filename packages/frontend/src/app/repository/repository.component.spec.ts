@@ -56,6 +56,13 @@ class FiltersComponent {
   @Input() set filters(filters) {}
   @Output() filtersChanged = new EventEmitter<Filter[]>();
 }
+@Component({
+  selector: 'app-heat-map',
+})
+class HeatMapComponent {
+  @Input() orgName = '';
+  @Input() repoName = '';
+}
 
 describe('RepositoryComponent', () => {
   let component: RepositoryComponent;
@@ -97,6 +104,7 @@ describe('RepositoryComponent', () => {
         TestsListComponent,
         SearchComponent,
         FiltersComponent,
+        HeatMapComponent,
       ],
       imports: [AppRoutingModule, MatExpansionModule, NoopAnimationsModule],
     }).compileComponents();

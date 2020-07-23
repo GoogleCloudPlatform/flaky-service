@@ -13,3 +13,35 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
+
+<div id="main-container">
+
+  <mat-sidenav-container>
+
+    <mat-sidenav #snav mode="over" position="end">
+      <mat-nav-list>
+      <cdk-virtual-scroll-viewport itemSize="50" id="builds-viewport">
+          <p id="build-view-date">Builds on {{selectedBatchDate}}</p>
+          <mat-divider></mat-divider>
+          <div
+          *cdkVirtualFor="let build of selectedBuilds; "
+          class="build"
+          [class.flaky]="buildIsFlaky(build)"
+          [class.failing]="build.failcount"
+          [class.success]="buildIsPassing(build)">
+          
+          <a [href]="utils.parseUrl(getBuildLink(build.buildId))" class="build-link">{{build.buildId}}</a>
+            
+          </div>
+          <mat-divider></mat-divider>
+        </cdk-virtual-scroll-viewport>
+      </mat-nav-list>
+    </mat-sidenav>
+    
+    
+    <mat-sidenav-content>
+      <div id="data-holder"></div>
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
+</div>

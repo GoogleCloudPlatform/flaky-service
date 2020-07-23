@@ -12,7 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild, Input} from '@angular/core';
+import {
+  Congifuration,
+  HeatMapService,
+} from './services/heat-map/heat-map.service';
+import {BatchService} from './services/batch/batch.service';
+import {BuildBatch, Build} from './services/interfaces';
+import {MatSidenav} from '@angular/material/sidenav';
+import {UtilsService} from '../services/utils.service';
+import {COMService} from '../services/com/com.service';
+import {EventEmitter} from '@angular/core';
 
 @Component({
   selector: 'app-heat-map',
@@ -20,7 +30,69 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./heat-map.component.css'],
 })
 export class HeatMapComponent implements OnInit {
-  constructor() {}
+  readonly dataHolderSelector = '#data-holder';
+  readonly config: Congifuration = {
+    width: 700,
+    height: 110,
+    margins: {top: 15, bottom: 0, right: 5, left: 20},
+    weeksToDisplay: 45,
+    daysToDisplay: 7,
+  };
 
-  ngOnInit(): void {}
+  builds = [];
+  selectedBuilds = [];
+  selectedBatchDate = '';
+
+  @Input() orgName = '';
+  @Input() repoName = '';
+  @ViewChild(MatSidenav) sidenave: MatSidenav;
+
+  constructor(
+    private heatMapService: HeatMapService,
+    private batchService: BatchService,
+    public utils: UtilsService,
+    private com: COMService
+  ) {}
+
+  ngOnInit(): void {
+    this.com.fetchBuilds(this.repoName, this.orgName, []).subscribe(result => {
+      this.drawMap(result.builds.reverse()).subscribe(batch =>
+        this.onBatchClick(batch)
+      );
+    });
+  }
+
+  private drawMap(builds: Build[]): EventEmitter<BuildBatch> {
+    return this.heatMapService.draw(
+      this.config,
+      this.batchService.buildBatches(builds),
+      this.dataHolderSelector
+    );
+  }
+
+  private onBatchClick(batch: BuildBatch) {
+    if (batch.builds.length) {
+      this.selectedBuilds = batch.builds;
+      this.selectedBatchDate = batch.moment.format('MMM D, YYYY');
+      this.sidenave.open();
+    }
+  }
+
+  getBuildLink(buildId) {
+    return 'https://github.com/'.concat(
+      this.orgName,
+      '/',
+      this.repoName,
+      '/actions/runs/',
+      buildId
+    );
+  }
+
+  buildIsFlaky(build: Build) {
+    return !build.failcount && build.flaky;
+  }
+
+  buildIsPassing(build: Build) {
+    return !build.failcount && !build.flaky;
+  }
 }
