@@ -165,6 +165,7 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     tests: alltests,
     sha: decodeURIComponent(buildInfo.sha),
     buildId: decodeURIComponent(buildInfo.buildId),
+    buildmessage: buildInfo.buildmessage,
     flaky: flakyBuild
   });
 

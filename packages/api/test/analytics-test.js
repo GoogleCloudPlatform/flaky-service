@@ -33,7 +33,8 @@ const buildInfo = {
     matrix: { 'node-version': '12.0' },
     ref: 'master',
     tag: 'abc'
-  }
+  },
+  buildmessage: 'Workflow - 99'
 };
 // testcases a, b, c, d
 // 0 is one recent failure
