@@ -33,11 +33,7 @@ import {By} from '@angular/platform-browser';
 import {COMService} from 'src/app/services/com/com.service';
 import {mockTests} from './mockTests.spec';
 import {of} from 'rxjs';
-<<<<<<< HEAD
 import {Test} from 'src/app/services/search/interfaces';
-=======
->>>>>>> 5d00e29d1bb33b901f1cf71c9b0347375f0b1b4d
-
 // Mock components
 @Component({
   selector: 'app-test-details',
@@ -130,7 +126,7 @@ describe('TestsListComponent', () => {
   fit('should expand the tests details when user clicks on a test', fakeAsync (() => {
     COMServiceMock.fetchTests = () => of(mockTests);
     component.ngOnInit();
-    
+
     const panel = fixture.nativeElement.querySelector('mat-expansion-panel');
     panel.click();
     tick();
