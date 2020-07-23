@@ -12,8 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import {TestsListComponent} from './tests-list.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
   MatPaginatorModule,
@@ -21,18 +28,20 @@ import {
   PageEvent,
 } from '@angular/material/paginator';
 import {AppRoutingModule} from 'src/app/routing/app-routing.module';
-import {Component} from '@angular/core';
-import {MatDialogModule} from '@angular/material/dialog';
+import {Component, Input} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {COMService} from 'src/app/services/com/com.service';
 import {mockTests} from './mockTests.spec';
 import {of} from 'rxjs';
+import {Test} from 'src/app/services/search/interfaces';
 
 // Mock components
 @Component({
   selector: 'app-test-details',
 })
-class TestDetailsComponent {}
+class TestDetailsComponent {
+  @Input() test: Test;
+}
 
 const COMServiceMock = {
   fetchTests: () => of(mockTests),
@@ -50,7 +59,7 @@ describe('TestsListComponent', () => {
         AppRoutingModule,
         BrowserAnimationsModule,
         MatPaginatorModule,
-        MatDialogModule,
+        MatExpansionModule,
       ],
     }).compileComponents();
   }));
@@ -115,23 +124,17 @@ describe('TestsListComponent', () => {
     expect(component.pageIndex).toEqual(expectedPageIndex);
   });
 
-  it('should open the tests details when user clicks on a test', async () => {
+  fit('should expand the tests details when user clicks on a test', fakeAsync (() => {
     COMServiceMock.fetchTests = () => of(mockTests);
     component.ngOnInit();
-
-    await fixture.detectChanges();
-
-    const dialogSpy = spyOn(component.dialog, 'open');
-    const testDiv = fixture.debugElement.queryAll(By.css('div.test'))[0]
-      .nativeElement;
-
-    testDiv.click();
-
-    await fixture.whenStable();
-
-    expect(dialogSpy).toHaveBeenCalledTimes(1);
-    expect(dialogSpy.calls.mostRecent().args[1]).toEqual(
-      jasmine.objectContaining({data: mockTests.tests[0]})
-    );
-  });
+    
+    const panel = fixture.nativeElement.querySelector('mat-expansion-panel');
+    panel.click();
+    tick();
+    fixture.detectChanges();
+    
+    const content = fixture.nativeElement.querySelector('div .mat-expansion-panel-body');
+    
+    expect(content.textContent).toBeTruthy();
+  }));
 });

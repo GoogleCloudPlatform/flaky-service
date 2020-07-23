@@ -19,7 +19,6 @@ import {
 } from 'src/app/paginated-list/paginated-list.component';
 import {Test} from 'src/app/services/search/interfaces';
 import * as moment from 'moment';
-import {TestDetailsComponent} from './test-details/test-details.component';
 
 @Component({
   selector: 'app-tests-list',
@@ -41,12 +40,6 @@ export class TestsListComponent extends PaginatedListComponent<Test> {
         this.updatePage();
         this.paginator?.firstPage();
       });
-  }
-
-  onTestClick(test: Test) {
-    this.dialog.open<TestDetailsComponent>(TestDetailsComponent, {
-      data: test,
-    });
   }
 
   toLiteralDate(timestamp: number) {

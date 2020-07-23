@@ -14,24 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<!-- CLOSE BUTTON -->
-<div id="close-btn-container">
-    <mat-icon id="close-btn" [mat-dialog-close]="true">close</mat-icon>
-</div>
-
-<!-- NAME -->
-<div class=".outer-field">
-    <span
-        id="name"
-        [class.failing]="!test.passed"
-        [class.flaky]="test.passed && test.flaky"
-        [class.success]="test.passed && !test.flaky">
-        {{test.name}}
-    </span>
-</div>
-
-<mat-divider></mat-divider>
-
 <!-- FAILURE DETAILS -->
 <div *ngIf="!test.passed" class=".outer-field">
     <section>

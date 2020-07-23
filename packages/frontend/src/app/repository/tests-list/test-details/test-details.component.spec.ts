@@ -14,8 +14,6 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {TestDetailsComponent} from './test-details.component';
-import {MatDialogModule, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {MatDividerModule} from '@angular/material/divider';
 
 describe('TestDetailsComponent', () => {
   let component: TestDetailsComponent;
@@ -23,9 +21,7 @@ describe('TestDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [{provide: MAT_DIALOG_DATA, useValue: {}}],
       declarations: [TestDetailsComponent],
-      imports: [MatDialogModule, MatDividerModule],
     }).compileComponents();
   }));
 

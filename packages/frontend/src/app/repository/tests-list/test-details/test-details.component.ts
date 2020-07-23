@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Component, Input} from '@angular/core';
 import {Test} from 'src/app/services/search/interfaces';
 
 @Component({
@@ -22,7 +21,7 @@ import {Test} from 'src/app/services/search/interfaces';
   styleUrls: ['./test-details.component.css'],
 })
 export class TestDetailsComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public test: Test) {}
+  @Input() test: Test;
 
   toPercentage(percentpassing: number) {
     return (percentpassing * 100).toFixed(2);
