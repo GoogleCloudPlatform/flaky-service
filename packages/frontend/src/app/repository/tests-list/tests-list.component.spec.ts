@@ -129,7 +129,7 @@ describe('TestsListComponent', () => {
 
     fixture.detectChanges();
 
-    const panel = fixture.nativeElement.querySelector('mat-expansion-panel');
+    const panel = fixture.nativeElement.querySelector('mat-expansion-panel-header');
     panel.click();
     tick();
 
