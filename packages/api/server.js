@@ -32,7 +32,7 @@ const { v4 } = require('uuid');
 
 const cors = require('cors');
 
-global.headCollection = process.env.HEAD_COLLECTION || 'testing-buildsget';
+global.headCollection = process.env.HEAD_COLLECTION || 'testing/main/repos';
 
 app.use(cors());
 app.use(bodyParser.json());

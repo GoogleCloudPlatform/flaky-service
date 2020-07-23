@@ -67,14 +67,14 @@ export interface BuildEnvironment {
 
 export interface Build {
   buildId: string;
-  environment: BuildEnvironment;
-  flaky: number;
-  timestamp: Timestamp;
-  percentpassing: number;
+  environment?: BuildEnvironment;
+  flaky?: number;
+  timestamp?: Timestamp;
+  percentpassing?: number;
   successes?: string[];
   tests?: Test[];
-  failcount: number;
-  passcount: number;
+  failcount?: number;
+  passcount?: number;
 }
 
 export interface ApiRepository {

@@ -27,7 +27,7 @@ const firebaseEncode = require('../lib/firebase-encode');
 
 const argv = require('yargs')
   .option('collection', {
-    default: 'testing-buildsget',
+    default: 'testing/main/repos',
     describe: 'collection to store test data in'
   })
   .option('repo', {

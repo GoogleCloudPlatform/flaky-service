@@ -31,12 +31,15 @@ import {
 export class COMService {
   constructor(private http: HttpClient) {}
 
-  public fetchRepositories(search: Search): Observable<Repository[]> {
+  public fetchRepositories(
+    search: Search,
+    orgName: string
+  ): Observable<Repository[]> {
     let params: HttpParams = new HttpParams().set('startswith', search.query);
     search.filters.forEach(
       filter => (params = params.set(filter.name, filter.value))
     );
-    return this.http.get<Repository[]>(apiLinks.get.repositories, {
+    return this.http.get<Repository[]>(apiLinks.get.repositories(orgName), {
       params: params,
     });
   }

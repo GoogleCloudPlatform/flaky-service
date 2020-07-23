@@ -18,7 +18,7 @@
 const firebaseEncode = require('../lib/firebase-encode');
 const { InvalidParameterError, handleError } = require('../lib/errors');
 const { isJson } = require('../util/validation');
-const FILTERS_ALLOWED = ['tag', 'ref', 'os', 'limit', 'matrix'];
+const FILTERS_ALLOWED = ['tag', 'ref', 'os', 'limit', 'matrix', 'offset'];
 
 class GetRepoHandler {
   constructor (app, client) {
@@ -48,6 +48,7 @@ class GetRepoHandler {
       try {
         const repoid = firebaseEncode(req.params.orgname + '/' + req.params.reponame);
         let limit = 30;
+        let offset = 0;
         let starterQuery = this.client.collection(global.headCollection).doc(repoid).collection('builds');
 
         for (const prop in req.query) {
@@ -60,6 +61,11 @@ class GetRepoHandler {
               throw new InvalidParameterError('limit parameter must be integer');
             }
             limit = parseInt(req.query[prop]);
+          } else if (prop === 'offset') {
+            if (isNaN(req.query[prop])) {
+              throw new InvalidParameterError('offset parameter must be integer');
+            }
+            offset = parseInt(req.query[prop]);
           } else if (prop === 'matrix') {
             if (!isJson(req.query[prop])) {
               throw new InvalidParameterError('matrix parameter must be json');
@@ -69,7 +75,7 @@ class GetRepoHandler {
             starterQuery = starterQuery.where('environment.' + firebaseEncode(prop), '==', req.query[prop]);
           }
         }
-        const snapshot = await starterQuery.orderBy('timestamp', 'desc').limit(limit).get();
+        const snapshot = await starterQuery.orderBy('timestamp', 'desc').offset(offset).limit(limit).get();
         const resp = [];
         snapshot.forEach(doc => resp.push(doc.data()));
 

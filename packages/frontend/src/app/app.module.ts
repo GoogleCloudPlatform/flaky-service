@@ -54,6 +54,7 @@ import {TestsListComponent} from './repository/tests-list/tests-list.component';
 import {TestDetailsComponent} from './repository/tests-list/test-details/test-details.component';
 import {FiltersComponent} from './filters/filters.component';
 import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
+import {HeatMapComponent} from './heat-map/heat-map.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
     TestDetailsComponent,
     FiltersComponent,
     BreadcrumbsComponent,
+    HeatMapComponent,
   ],
   imports: [
     BrowserModule,

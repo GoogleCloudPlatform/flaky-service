@@ -62,7 +62,10 @@ export interface FoundParams {
 }
 
 export const expectedParams: Map<string, ExpectedParams> = new Map([
-  [RouteProvider.routes.main.name, {queries: ['org', 'repo'], filters: []}],
+  [
+    RouteProvider.routes.main.name,
+    {queries: ['org', 'repo'], filters: ['orderby']},
+  ],
   [
     RouteProvider.routes.repo.name,
     {queries: ['org', 'repo'], filters: ['tag', 'matrix', 'ref', 'os']},
