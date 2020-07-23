@@ -55,6 +55,7 @@ import {TestDetailsComponent} from './repository/tests-list/test-details/test-de
 import {FiltersComponent} from './filters/filters.component';
 import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
 import {HeatMapComponent} from './heat-map/heat-map.component';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -100,6 +101,7 @@ import {HeatMapComponent} from './heat-map/heat-map.component';
     MatToolbarModule,
     MatTooltipModule,
     FormsModule,
+    ScrollingModule,
   ],
   entryComponents: [LicenseComponent],
   providers: [],
