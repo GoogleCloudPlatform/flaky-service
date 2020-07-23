@@ -127,10 +127,14 @@ describe('TestsListComponent', () => {
     COMServiceMock.fetchTests = () => of(mockTests);
     component.ngOnInit();
 
+    fixture.detectChanges();
+
     const panel = fixture.nativeElement.querySelector('mat-expansion-panel');
     panel.click();
     tick();
+
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('.conditional'))).not.toBeNull();         
+
+    expect(fixture.debugElement.query(By.css('.test-details'))).not.toBeNull();         
   }));
 });
