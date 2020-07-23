@@ -1,0 +1,5 @@
+Build Id, Timestamp, Ref, Os, Tag, Matrix.node-version, Matrix.other field, a/1, a/2, a/3, a/4, a/5
+11111, Mon Jan 01 2001 00:00:00 GMT-0700 (Mountain Standard Time), master, linux-apple, abc, 12.0, None, 1, 0, 1, 0, -1
+22222, Sat Jan 01 2000 00:00:00 GMT-0700 (Mountain Standard Time), master, linux-banana, xyz, 12.0, None, 1, 1, -1, -1, -1
+33333, Tue Jan 01 2002 00:00:00 GMT-0700 (Mountain Standard Time), master, linux-banana, xyz, 12.0, None, -1, 0, -1, -1, 0
+44444, Thu Jan 01 2004 00:00:00 GMT-0700 (Mountain Standard Time), master, linux-banana, xyz, 12.0, 12.0, -1, 0, -1, -1, 0
