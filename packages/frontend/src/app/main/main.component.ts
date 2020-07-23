@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, NgZone} from '@angular/core';
 import {LicenseComponent} from '../license/license.component';
 import {SearchService} from '../services/search/search.service';
-import {ActivatedRoute, Params} from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {
   expectedParams,
   InterpretationService,
 } from '../services/interpretation/interpretation.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
-import {Repository} from '../services/search/interfaces';
+import {Repository, Filter} from '../services/search/interfaces';
 
 @Component({
   selector: 'app-main',
@@ -34,12 +34,18 @@ export class MainComponent implements OnInit {
     public searchService: SearchService,
     private route: ActivatedRoute,
     private interpreter: InterpretationService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   repositories: Repository[] = [];
   loading = true;
   orgName = '';
+  repoName = '';
+  filters = {
+    orderby: ['activity', 'name', 'priority'],
+  };
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -59,16 +65,22 @@ export class MainComponent implements OnInit {
       expectedParams.get(RouteProvider.routes.main.name)
     );
 
-    const org = foundParams.queries.get('org');
-    const repo = foundParams.queries.get('repo');
-    this.orgName = org;
+    this.orgName = foundParams.queries.get('org');
+    this.repoName = foundParams.queries.get('repo');
 
     const search = {
-      query: repo,
+      query: this.repoName,
       filters: foundParams.filters,
     };
 
     return search;
+  }
+
+  onFiltersChanged(filters: Filter[]) {
+    this.ngZone.run(() => {
+      const route = RouteProvider.routes.main.link(this.orgName);
+      this.router.navigate([route, this.interpreter.getRouteParam(filters)]);
+    });
   }
 
   openLicenseDialog(): void {
