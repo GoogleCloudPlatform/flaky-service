@@ -30,7 +30,7 @@ export const apiLinks: ApiLinks = {
   get: {
     repositories: (orgName: string) => apiBaseLink + 'org/' + orgName,
     builds: (repoName: string, orgName: string) =>
-      apiBaseLink + 'repo/' + orgName + '/' + repoName,
+      apiBaseLink + 'repo/' + orgName + '/' + repoName + '/builds',
     loginLink: apiBaseLink + 'auth?redirect=' + environment.baseUrl,
     sessionStatus: apiBaseLink + 'session',
     tests: (repoName: string, orgName: string) =>

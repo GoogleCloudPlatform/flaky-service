@@ -29,6 +29,7 @@ export {Congifuration};
 export class HeatMapService {
   config: Congifuration;
   batches: BuildBatch[];
+  svgSelector = 'heat-map-svg';
 
   providers: Providers = {
     domain: new DomainsProvider(),
@@ -50,7 +51,7 @@ export class HeatMapService {
   }
 
   private clearMap() {
-    d3.select('svg').remove();
+    d3.select('svg' + '.' + this.svgSelector).remove();
     this.config?.tooltip?.remove();
   }
 
@@ -84,6 +85,7 @@ export class HeatMapService {
     this.config.svg = d3
       .select(selector)
       .append('svg')
+      .attr('class', this.svgSelector)
       .attr(
         'width',
         this.config.width + this.config.margins.left + this.config.margins.right

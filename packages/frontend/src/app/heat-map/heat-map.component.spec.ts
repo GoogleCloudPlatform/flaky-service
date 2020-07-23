@@ -14,24 +14,264 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {HeatMapComponent} from './heat-map.component';
+import {of} from 'rxjs';
+import {COMService} from '../services/com/com.service';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {MatDividerModule} from '@angular/material/divider';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatListModule} from '@angular/material/list';
+import {By} from '@angular/platform-browser';
+import {mockBuilds} from './mockBuilds.spec';
+import * as moment from 'moment';
 
 describe('HeatMapComponent', () => {
   let component: HeatMapComponent;
   let fixture: ComponentFixture<HeatMapComponent>;
 
+  // mock services
+  const mockCOMService = {
+    fetchBuilds: () => of({builds: mockBuilds.none}),
+  };
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [HeatMapComponent],
+      providers: [{provide: COMService, useValue: mockCOMService}],
+      imports: [
+        BrowserAnimationsModule,
+        MatSidenavModule,
+        ScrollingModule,
+        MatDividerModule,
+        MatListModule,
+      ],
     }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HeatMapComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture.autoDetectChanges(true);
+    component.config.weeksToDisplay = 2;
+    component.config.daysToDisplay = 7;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should render every cell', () => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds.none});
+    const cols = 10,
+      rows = 7,
+      expectedCellsCount = cols * rows;
+    component.config.weeksToDisplay = cols;
+    component.config.daysToDisplay = rows;
+
+    component.ngOnInit();
+
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    expect(dataHolder.queryAll(By.css('rect')).length).toEqual(
+      expectedCellsCount
+    );
+  });
+
+  it('should set the right colors in the cells', () => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
+    component.ngOnInit();
+
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    // ignore the first week
+    const rects = dataHolder.queryAll(By.css('rect')).reverse().slice(7);
+
+    mockBuilds._3PreviousDays.forEach(build => {
+      expect(rects[build.row].styles['fill']).toEqual(build.expectedColor);
+    });
+  });
+
+  it('should show the builds when a valid cell is selected', done => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
+    component.ngOnInit();
+
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    // click on a valid cell
+    const rects = dataHolder.queryAll(By.css('rect')).reverse().slice(7);
+    rects[mockBuilds._3PreviousDays[0].row].nativeElement.dispatchEvent(
+      new Event('click')
+    );
+    fixture.detectChanges();
+
+    setTimeout(() => {
+      const builds = fixture.debugElement.queryAll(By.css('.build'));
+      expect(builds.length).toEqual(2);
+      expect(
+        builds[0].query(By.css('.build-link')).nativeElement.textContent
+      ).toEqual(mockBuilds._3PreviousDays[0].buildId);
+      expect(
+        builds[1].query(By.css('.build-link')).nativeElement.textContent
+      ).toEqual(mockBuilds._3PreviousDays[1].buildId);
+      done();
+    });
+  });
+
+  it('should not show the builds when an invalid cell is selected', done => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
+    component.ngOnInit();
+
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    const rects = dataHolder.queryAll(By.css('rect')).reverse();
+    rects[0].nativeElement.dispatchEvent(new Event('click'));
+    fixture.detectChanges();
+
+    setTimeout(() => {
+      const builds = fixture.debugElement.queryAll(By.css('.build'));
+      expect(builds.length).toEqual(0);
+      done();
+    });
+  });
+
+  it('should show the tooltip when the mouse hovers a cell', done => {
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    const rects = dataHolder.queryAll(By.css('rect')).reverse();
+    rects[0].nativeElement.dispatchEvent(new Event('mouseover'));
+    fixture.detectChanges();
+
+    setTimeout(() => {
+      const tooltip = fixture.debugElement.query(By.css('.tooltip'));
+      expect(tooltip.styles['visibility']).toEqual('visible');
+      done();
+    });
+  });
+
+  it('should hide the tooltip when the mouse leaves a cell', done => {
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+    const tooltip = fixture.debugElement.query(By.css('.tooltip'));
+    tooltip.styles['visibility'] = 'visible';
+
+    const rects = dataHolder.queryAll(By.css('rect')).reverse();
+    rects[0].nativeElement.dispatchEvent(new Event('mouseleave'));
+    fixture.detectChanges();
+
+    setTimeout(() => {
+      expect(tooltip.styles['visibility']).toEqual('hidden');
+      done();
+    });
+  });
+
+  it('should show the right text in the tooltip when the mouse hovers a success cell', done => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
+    component.ngOnInit();
+
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    const build = mockBuilds._3PreviousDays[0];
+    const rects = dataHolder.queryAll(By.css('rect')).reverse().slice(7);
+
+    rects[build.row].nativeElement.dispatchEvent(new Event('mousemove'));
+    fixture.detectChanges();
+
+    setTimeout(() => {
+      const tooltip = fixture.debugElement.query(By.css('.tooltip'));
+      const buildTime = moment
+        .unix(build.timestamp._seconds)
+        .utc()
+        .format('MMM D, YYYY');
+      const expectedText = '2 passing on ' + buildTime;
+      expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);
+      done();
+    });
+  });
+
+  it('should show the right text in the tooltip when the mouse hovers a flaky cell', done => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
+    component.ngOnInit();
+
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    const build = mockBuilds._3PreviousDays[3];
+    const rects = dataHolder.queryAll(By.css('rect')).reverse().slice(7);
+
+    rects[build.row].nativeElement.dispatchEvent(new Event('mousemove'));
+    fixture.detectChanges();
+
+    setTimeout(() => {
+      const tooltip = fixture.debugElement.query(By.css('.tooltip'));
+      const buildTime = moment
+        .unix(build.timestamp._seconds)
+        .utc()
+        .format('MMM D, YYYY');
+      const expectedText = '1 flaky on ' + buildTime;
+      expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);
+      done();
+    });
+  });
+
+  it('should show the right text in the tooltip when the mouse hovers a failling cell', done => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
+    component.ngOnInit();
+
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    const build = mockBuilds._3PreviousDays[2];
+    const rects = dataHolder.queryAll(By.css('rect')).reverse().slice(7);
+
+    rects[build.row].nativeElement.dispatchEvent(new Event('mousemove'));
+    fixture.detectChanges();
+
+    setTimeout(() => {
+      const tooltip = fixture.debugElement.query(By.css('.tooltip'));
+      const buildTime = moment
+        .unix(build.timestamp._seconds)
+        .utc()
+        .format('MMM D, YYYY');
+      const expectedText = '1 failing on ' + buildTime;
+      expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);
+      done();
+    });
+  });
+
+  it('should show the right text in the tooltip when the mouse hovers a blank cell', done => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
+    component.ngOnInit();
+
+    const dataHolder = fixture.debugElement.query(
+      By.css(component.dataHolderSelector)
+    );
+
+    const rects = dataHolder.queryAll(By.css('rect')).reverse();
+
+    rects[0].nativeElement.dispatchEvent(new Event('mousemove'));
+    fixture.detectChanges();
+
+    setTimeout(() => {
+      const tooltip = fixture.debugElement.query(By.css('.tooltip'));
+      expect(
+        tooltip.nativeElement.textContent.trim().startsWith('No build on ')
+      ).toBeTrue();
+      done();
+    });
   });
 });

@@ -13,3 +13,56 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+#main-container {
+    display: flex;
+    justify-content: center;
+}
+@media (max-width: 695px) {
+    #main-container {
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+#data-holder, mat-sidenav-content, .mat-drawer-container {
+    overflow: visible;
+}
+
+#builds-viewport {
+    height: 105px;
+    width: 120px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#build-view-date {
+    height: 20px;
+    margin: 0px;
+    margin-bottom: 3px;
+    font-size: 0.8em;
+    color: grey;
+}
+
+.build-link {
+    outline: none;
+    color: #0075FF;
+}
+.build-link:hover {
+    text-decoration: underline;
+}
+
+mat-sidenav-container {
+    background-color: inherit;
+}
+
+.flaky {
+    background-color: #fff4e0;
+}
+.failing {
+    background-color: #ffdede;
+}
+.success {
+    background-color: greenyellow;
+}
