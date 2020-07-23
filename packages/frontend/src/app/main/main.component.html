@@ -14,6 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
+<div id="filters-container" *ngIf="!loading && repositories.length >= 2 && !repoName">
+    <div id="filters-subcontainer">
+        <!-- FILTERS -->
+        <app-filters [filters]="filters" (filtersChanged)="onFiltersChanged($event)"></app-filters>
+    </div>
+</div>
+
 <!-- REPOSITORIES LIST -->
 <div class="repo-list-container">
     <app-repo-list [repositories]="repositories" *ngIf="!loading && repositories.length"></app-repo-list>

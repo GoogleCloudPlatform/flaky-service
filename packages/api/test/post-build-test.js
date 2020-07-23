@@ -114,7 +114,7 @@ describe('Posting Builds', () => {
   });
 
   it('should send back an error code when being sent invalid metadata', async () => {
-    var botchedPayload = JSON.parse(EXAMPLE_PAYLOAD_RAW);
+    const botchedPayload = JSON.parse(EXAMPLE_PAYLOAD_RAW);
     delete botchedPayload.metadata.github.repositoryUrl;
 
     const resp = await fetch('http://127.0.0.1:3000/api/build', {
@@ -126,9 +126,41 @@ describe('Posting Builds', () => {
   });
 
   it('should send back an error code if token is incorrect', async () => {
-    var botchedPayload = JSON.parse(EXAMPLE_PAYLOAD_RAW);
+    const botchedPayload = JSON.parse(EXAMPLE_PAYLOAD_RAW);
     botchedPayload.metadata.github.token = 'WRONGTOKEN';
 
+    const resp = await fetch('http://127.0.0.1:3000/api/build', {
+      method: 'post',
+      body: JSON.stringify(botchedPayload),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    assert.strictEqual(resp.status, 401);
+  });
+
+  it('it can post without a description', async () => {
+    const botchedPayload = JSON.parse(EXAMPLE_PAYLOAD_RAW);
+    delete botchedPayload.metadata.github.event.repository.description;
+    delete botchedPayload.metadata.os.os;
+    const repoId = 'other/repo';
+    botchedPayload.metadata.github.repository = repoId;
+
+    const resp = await fetch('http://127.0.0.1:3000/api/build', {
+      method: 'post',
+      body: JSON.stringify(botchedPayload),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    const respJSON = await resp.json();
+    assert.strictEqual(respJSON.message, 'successfully added build');
+
+    var repositoryInfo = await client.collection(global.headCollection).doc(firebaseEncode(repoId)).get();
+    assert.strictEqual(repositoryInfo.data().description, 'None');
+  });
+
+  it('should not post data for private repos', async () => {
+    var botchedPayload = JSON.parse(EXAMPLE_PAYLOAD_RAW);
+    botchedPayload.metadata.github.event.repository.private = true;
     const resp = await fetch('http://127.0.0.1:3000/api/build', {
       method: 'post',
       body: JSON.stringify(botchedPayload),
@@ -173,7 +205,7 @@ describe('Posting Builds', () => {
   after(async () => {
     var parsedPayload = JSON.parse(EXAMPLE_PAYLOAD);
     var parsedPayloadRaw = JSON.parse(EXAMPLE_PAYLOAD_RAW);
-    var repoIds = [parsedPayloadRaw.metadata.github.repository, parsedPayload.metadata.github.repository];
+    var repoIds = [parsedPayloadRaw.metadata.github.repository, parsedPayload.metadata.github.repository, 'other/repo'];
 
     await deleteRepo(client, repoIds[0]);
     await deleteRepo(client, repoIds[1]);
