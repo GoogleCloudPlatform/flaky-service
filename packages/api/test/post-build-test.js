@@ -138,6 +138,19 @@ describe('Posting Builds', () => {
     assert.strictEqual(resp.status, 401);
   });
 
+  it('should not post data for private repos', async () => {
+    var botchedPayload = JSON.parse(EXAMPLE_PAYLOAD_RAW);
+    botchedPayload.metadata.github.event.repository.private = true;
+
+    const resp = await fetch('http://127.0.0.1:3000/api/build', {
+      method: 'post',
+      body: JSON.stringify(botchedPayload),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    assert.strictEqual(resp.status, 401);
+  });
+
   it('it responds to a valid POST on the /build path with valid token', async () => {
     const resp = await fetch('http://127.0.0.1:3000/api/build', {
       method: 'post',

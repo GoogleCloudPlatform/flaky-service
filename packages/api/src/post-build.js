@@ -180,6 +180,10 @@ class PostBuildHandler {
           throw new UnauthorizedError('Must have valid Github Token to post build');
         }
 
+        if (req.body.metadata.github.event.repository.private) {
+          throw new UnauthorizedError('Flaky does not store tests for private repos');
+        }
+
         await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
