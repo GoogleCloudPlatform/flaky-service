@@ -123,18 +123,18 @@ describe('TestsListComponent', () => {
     expect(component.pageIndex).toEqual(expectedPageIndex);
   });
 
-  fit('should expand the tests details when user clicks on a test', fakeAsync (() => {
+  fit('should expand the tests details when user clicks on a test', fakeAsync(() => {
     COMServiceMock.fetchTests = () => of(mockTests);
     component.ngOnInit();
 
     fixture.detectChanges();
 
-    const panel = fixture.nativeElement.querySelector('mat-expansion-panel-header');
+    const panel = fixture.nativeElement.querySelector(
+      'mat-expansion-panel-header'
+    );
     panel.click();
     tick();
-
     fixture.detectChanges();
-
-    expect(fixture.debugElement.query(By.css('.test-details'))).not.toBeNull();         
+    expect(fixture.debugElement.query(By.css('.test-details'))).not.toBeNull();
   }));
 });

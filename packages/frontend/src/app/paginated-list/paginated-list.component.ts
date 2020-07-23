@@ -17,7 +17,6 @@ import {PageEvent} from '@angular/material/paginator';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {UtilsService} from '../services/utils.service';
-import {MatExpansionModule} from '@angular/material/expansion';
 import {Location} from '@angular/common';
 import {COMService} from '../services/com/com.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';

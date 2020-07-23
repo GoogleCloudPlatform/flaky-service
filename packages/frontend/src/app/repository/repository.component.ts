@@ -39,7 +39,7 @@ export class RepositoryComponent implements OnInit {
     private ngZone: NgZone,
     private interpreter: InterpretationService,
     public utils: UtilsService,
-    public dialog: MatDialog,
+    public dialog: MatDialog
   ) {}
 
   @ViewChild(FiltersComponent) filterComponent;
