@@ -58,7 +58,7 @@ const testCases = [
 
 describe('Flaky-Analytics', () => {
   before(async () => {
-    global.headCollection = 'analytics-testsuite-' + uuidv4(); // random collection name for concurrent testing
+    global.headCollection = 'testing/' + 'analytics-testsuite-' + uuidv4() + '/repos'; // random collection name for concurrent testing
 
     for (let i = 0; i < testCases.length; i++) {
       const testCaseObjs = [];

@@ -98,6 +98,7 @@ describe('RepositoryComponent', () => {
         SearchComponent,
         FiltersComponent,
       ],
+<<<<<<< HEAD
       imports: [AppRoutingModule, MatExpansionModule, NoopAnimationsModule],
     }).compileComponents();
   }));

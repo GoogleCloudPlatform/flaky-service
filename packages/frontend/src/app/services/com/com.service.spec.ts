@@ -66,18 +66,21 @@ describe('COMService', () => {
   });
 
   describe('fetchRepositories', () => {
+    const orgName = 'org';
     it('should send a GET request with the provided filters', () => {
       const searchData = getSearchData();
       httpClientSpy.get.and.returnValue(of(searchData.expectedServerResponse));
 
-      service.fetchRepositories(searchData.search).subscribe(response => {
-        // received the right response
-        expect(response).toEqual(searchData.expectedServerResponse);
-      });
+      service
+        .fetchRepositories(searchData.search, orgName)
+        .subscribe(response => {
+          // received the right response
+          expect(response).toEqual(searchData.expectedServerResponse);
+        });
 
       // called the right link
       expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
-        apiLinks.get.repositories
+        apiLinks.get.repositories(orgName)
       );
 
       // sent the right filters

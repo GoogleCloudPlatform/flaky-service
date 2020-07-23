@@ -33,7 +33,10 @@ import {By} from '@angular/platform-browser';
 import {COMService} from 'src/app/services/com/com.service';
 import {mockTests} from './mockTests.spec';
 import {of} from 'rxjs';
+<<<<<<< HEAD
 import {Test} from 'src/app/services/search/interfaces';
+=======
+>>>>>>> 5d00e29d1bb33b901f1cf71c9b0347375f0b1b4d
 
 // Mock components
 @Component({

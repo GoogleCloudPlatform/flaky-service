@@ -76,13 +76,14 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     name: buildInfo.name.toLowerCase(),
     organization: buildInfo.organization.toLowerCase()
   };
+  let repoNumFails = 0;
   if (mostRecent) {
     repoUpdate.numtestcases = testCases.length;
-    repoUpdate.numfails = 0;
     testCases.forEach(tc => {
-      repoUpdate.numfails += (tc.successful) ? 0 : 1;
+      repoNumFails += (tc.successful) ? 0 : 1;
     });
   }
+
   await dbRepo.update(repoUpdate, { merge: true });
 
   var failures = {};
@@ -169,8 +170,16 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
 
   // lastly update whether the repo is flaky
   // must update repo information in two steps to first make sure it is there before making queries on it which affect this field
-
-  await dbRepo.update({ flaky: flakyRepo }, { merge: true });
+  const repoUpdateObj = { flaky: flakyRepo }; // update flaky status no matter what
+  if (mostRecent) {
+    repoUpdateObj.numfails = repoNumFails;
+    repoUpdateObj.searchindex = repoNumFails * 10000 + flakyRepo;
+    // note: in extremely rare circumstances this results in incorrect ordering -
+    // when a build is added non chronologically that makes multiple tests flaky, and two repos have the same number of
+    // failing test cases in most recent build, then their secondary ordering based on flakiness would be wrong, but it is not worth the extra
+    // db read operation to fix this. This would only be visible when ordering by priority on org page.
+  }
+  await dbRepo.update(repoUpdateObj, { merge: true });
 }
 
 module.exports = addBuild;
