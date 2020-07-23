@@ -62,8 +62,10 @@ limitations under the License.
             </mat-expansion-panel-header>
 
             <!--TEST DETAILS-->
-            <ng-template matExpansionPanelContent>
-                <app-test-details [test]="test"></app-test-details>
+            <ng-template matExpansionPanelContent class="conditional">
+                <div class="test-details">
+                    <app-test-details [test]="test"></app-test-details>
+                </div>
             </ng-template>
 
         </mat-expansion-panel>

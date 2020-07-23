@@ -131,9 +131,6 @@ describe('TestsListComponent', () => {
     panel.click();
     tick();
     fixture.detectChanges();
-    
-    const content = fixture.nativeElement.querySelector('div .mat-expansion-panel-body');
-    
-    expect(content.textContent).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('.conditional'))).not.toBeNull();         
   }));
 });
