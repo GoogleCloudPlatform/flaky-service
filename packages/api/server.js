@@ -25,6 +25,7 @@ const PostBuildHandler = require('./src/post-build.js');
 const GetRepoHandler = require('./src/get-repo.js');
 const GetOrgHandler = require('./src/get-org.js');
 const GetTestHandler = require('./src/get-test.js');
+const GetExportHandler = require('./src/get-export.js');
 const client = require('./src/firestore.js');
 
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
@@ -140,6 +141,8 @@ const getOrgHandler = new GetOrgHandler(app, client);
 getOrgHandler.listen();
 const getTestHandler = new GetTestHandler(app, client);
 getTestHandler.listen();
+const getExportHandler = new GetExportHandler(app, client);
+getExportHandler.listen();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';
