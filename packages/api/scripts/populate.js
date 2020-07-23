@@ -73,9 +73,10 @@ fs.readdir(directory, function (err, files) {
   files.forEach(function (file) {
     const testCases = tapParser.getTestCases(directory + '/' + file, file);
     var testCasesUse = [];
+    const allTrue = Math.random() > 0.3;
     for (const tc of testCases) {
       if (tc.name.startsWith('a')) {
-        if (Math.random() < 0.2) {
+        if (Math.random() < 0.3 && !allTrue) {
           tc.successful = false;
           tc.failureMessage = 'Error message stack trace\nline number';
         }
@@ -85,6 +86,7 @@ fs.readdir(directory, function (err, files) {
 
     var buildInfo = JSON.parse(JSON.stringify(buildInfoTemplate));
     buildInfo.timestamp = new Date();
+    buildInfo.timestamp.setDate(buildInfo.timestamp.getDate() - Math.floor(Math.random() * 100));
     buildInfo.sha = Math.random().toString(36).substring(2, 15);
     buildInfo.buildId = Math.random().toString(36).substring(2, 15);
     buildInfo.environment.os = (Math.random() > 0.5) ? 'Linux' : 'Windows';
