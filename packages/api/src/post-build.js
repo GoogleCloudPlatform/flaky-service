@@ -33,12 +33,11 @@ class PostBuildHandler {
 
   static parseEnvironment (metadata) {
     var envData = {
-      os: metadata.os.os,
-      ref: metadata.github.ref,
+      os: metadata.os.os || 'Not specified',
+      ref: metadata.github.ref || 'Not specified',
       matrix: (metadata.matrix) ? JSON.stringify(metadata.matrix, Object.keys(metadata.matrix).sort()) : 'None',
       tag: 'None'
     };
-
     // validate data
     for (const prop in envData) {
       if (!envData[prop]) {
@@ -60,7 +59,7 @@ class PostBuildHandler {
       buildId: firebaseEncode(metadata.github.run_id),
       sha: metadata.github.sha,
       name: metadata.github.event.repository.name,
-      description: metadata.github.event.repository.description
+      description: metadata.github.event.repository.description || 'None'
     };
 
     // validate data
