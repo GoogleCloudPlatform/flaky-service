@@ -77,7 +77,6 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   };
   let repoNumFails = 0;
   if (mostRecent) {
-    repoUpdate.numtestcases = testCases.length;
     testCases.forEach(tc => {
       repoNumFails += (tc.successful) ? 0 : 1;
     });
@@ -174,6 +173,7 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   if (mostRecent) {
     repoUpdateObj.numfails = repoNumFails;
     repoUpdateObj.searchindex = repoNumFails * 10000 + flakyRepo;
+    repoUpdateObj.numtestcases = testCases.length;
     // note: in extremely rare circumstances this results in incorrect ordering -
     // when a build is added non chronologically that makes multiple tests flaky, and two repos have the same number of
     // failing test cases in most recent build, then their secondary ordering based on flakiness would be wrong, but it is not worth the extra
