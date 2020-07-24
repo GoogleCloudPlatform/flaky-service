@@ -14,8 +14,7 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {TestDetailsComponent} from './test-details.component';
-import {MatDialogModule, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {MatDividerModule} from '@angular/material/divider';
+import {mockTests} from '../mockTests.spec';
 
 describe('TestDetailsComponent', () => {
   let component: TestDetailsComponent;
@@ -23,15 +22,14 @@ describe('TestDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [{provide: MAT_DIALOG_DATA, useValue: {}}],
       declarations: [TestDetailsComponent],
-      imports: [MatDialogModule, MatDividerModule],
     }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TestDetailsComponent);
     component = fixture.componentInstance;
+    component.test = mockTests.tests[0];
     fixture.detectChanges();
   });
 

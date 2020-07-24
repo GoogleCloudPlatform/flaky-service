@@ -20,10 +20,11 @@ import {
   tick,
 } from '@angular/core/testing';
 import {RepositoryComponent} from './repository.component';
+import {MatDialogModule} from '@angular/material/dialog';
 import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Search, Filter} from '../services/search/interfaces';
 import {of} from 'rxjs';
-import {MatDialogModule} from '@angular/material/dialog';
+import {MatExpansionModule} from '@angular/material/expansion';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {Location} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
@@ -106,7 +107,12 @@ describe('RepositoryComponent', () => {
         FiltersComponent,
         HeatMapComponent,
       ],
-      imports: [AppRoutingModule, MatDialogModule, NoopAnimationsModule],
+      imports: [
+        AppRoutingModule,
+        MatExpansionModule,
+        MatDialogModule,
+        NoopAnimationsModule,
+      ],
     }).compileComponents();
   }));
 
