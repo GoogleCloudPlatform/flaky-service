@@ -24,16 +24,10 @@ limitations under the License.
     width: 100%;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    border: 1px solid #d9d9d9;
+    justify-content: space-between;    
     margin-top: 5px;
     padding: 5px;
-    background-color: #fefefe;
-    cursor: pointer;
     overflow: hidden;
-}
-.test:hover {
-    background-color: #f8f8f8;
 }
 
 .flaky {
@@ -67,6 +61,7 @@ limitations under the License.
 @media (min-height: 555px) {
     .test-name {
         max-width: 93vw;
+        overflow: hidden;
     }
 }
 
@@ -101,6 +96,27 @@ limitations under the License.
     color: #878787;
     font-size: x-small;
     width: 130px;
+}
+
+.expansion-panel {
+    padding-left: 1px;
+    padding-right: 1px;
+    border: 1px solid #d9d9d9;
+    cursor: pointer;
+}
+.expansion-panel:hover {
+    background-color: #f8f8f8;
+}
+.expansion-panel.mat-expanded:hover{
+    background-color: #f8f8f8;
+}
+
+.outer-panel{
+    padding-top: 2px;
+}
+
+.test-details{
+    padding-top: 4px;
 }
 
 mat-paginator {

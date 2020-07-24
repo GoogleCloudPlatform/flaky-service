@@ -18,12 +18,13 @@ limitations under the License.
     
     <mat-accordion multi>
         <mat-expansion-panel *ngFor="let test of renderedElements" 
-                             hideToggle>
-            <mat-expansion-panel-header>
+                             hideToggle
+                             class="outer-panel">
+            <mat-expansion-panel-header class="expansion-panel"
+                                        [class.flaky]="test.passed && test.flaky"
+                                        [class.failing]="!test.passed">
                 <mat-panel-title>
-                    <div class="test"
-                        [class.flaky]="test.passed && test.flaky"
-                        [class.failing]="!test.passed">
+                    <div class="test">
 
                         <!-- TEST DETAILS -->
                         <div class="details">
