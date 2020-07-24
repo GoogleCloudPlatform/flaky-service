@@ -38,6 +38,8 @@ class PostBuildHandler {
       matrix: (metadata.matrix) ? JSON.stringify(metadata.matrix, Object.keys(metadata.matrix).sort()) : 'None',
       tag: 'None'
     };
+    envData.ref = envData.ref.replace('refs/', '');
+    envData.ref = envData.ref.replace('heads/', '');
     // validate data
     for (const prop in envData) {
       if (!envData[prop]) {

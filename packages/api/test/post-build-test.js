@@ -192,6 +192,7 @@ describe('Posting Builds', () => {
     var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').doc(buildId).get();
     assert.strictEqual(buildInfo.data().tests.length, 2);
     assert.strictEqual(buildInfo.data().percentpassing, 1);
+    assert.strictEqual(buildInfo.data().environment.ref, 'master');
 
     for (var i = 0; i < 2; i++) {
       var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).get();
