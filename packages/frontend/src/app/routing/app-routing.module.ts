@@ -20,8 +20,6 @@ import {MainComponent} from '../main/main.component';
 import {RepositoryComponent} from '../repository/repository.component';
 import {BuildComponent} from '../build/build.component';
 import {NotFoundComponent} from '../not-found/not-found.component';
-import {apiLinks} from '../services/com/api';
-import {LoginGuard} from './route-guards/LoginGuard';
 import {RouteProvider} from './route-provider/RouteProvider';
 
 const routes: Routes = [
@@ -46,18 +44,11 @@ const routes: Routes = [
       breadCrumbPaths: [RouteProvider.routes.main.name],
     },
   },
-  {
-    path: 'login',
-    canActivate: [LoginGuard],
-    data: {url: apiLinks.get.loginLink},
-    component: HomeComponent,
-  },
   {path: '**', component: NotFoundComponent},
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [LoginGuard],
 })
 export class AppRoutingModule {}

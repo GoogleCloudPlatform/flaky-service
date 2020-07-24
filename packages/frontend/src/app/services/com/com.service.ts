@@ -22,7 +22,6 @@ import {
   ApiRepository,
   Filter,
   Tests,
-  SessionStatus,
 } from '../search/interfaces';
 
 @Injectable({
@@ -53,10 +52,6 @@ export class COMService {
       apiLinks.get.builds(repoName, orgName),
       {params: this.getParams(filters)}
     );
-  }
-
-  public fetchSessionStatus(): Observable<SessionStatus> {
-    return this.http.get<SessionStatus>(apiLinks.get.sessionStatus);
   }
 
   public fetchTests(repoName: string, orgName: string): Observable<Tests> {
