@@ -16,7 +16,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {TestDetailsComponent} from './test-details.component';
 import {mockTests} from '../mockTests.spec';
 
-
 describe('TestDetailsComponent', () => {
   let component: TestDetailsComponent;
   let fixture: ComponentFixture<TestDetailsComponent>;
