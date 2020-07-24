@@ -71,14 +71,15 @@ limitations under the License.
         </mat-expansion-panel>
     </mat-accordion>
 
-        <!-- PAGINATOR-->
-        <mat-paginator
-            #paginator
-            [length]="_elements.length"
-            [pageSize]="pageSize"
-            [pageSizeOptions]="[10, 25, 50, 100]"
-            [pageIndex]="pageIndex"
-            (page)="updatePage($event)"
-            *ngIf="showPaginator">
-        </mat-paginator>
+    <!-- PAGINATOR-->
+    <mat-paginator
+        #paginator
+        [length]="_elements.length"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        [pageIndex]="pageIndex"
+        (page)="updatePage($event)"
+        [hidePageSize]="true"
+        *ngIf="showPaginator">
+    </mat-paginator>
 </div>

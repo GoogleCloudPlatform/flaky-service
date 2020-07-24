@@ -15,7 +15,7 @@
 import {TestBed} from '@angular/core/testing';
 import {SearchService} from './search.service';
 import {COMService} from '../com/com.service';
-import {Repository} from './interfaces';
+import {Repository, Search} from './interfaces';
 import {of, throwError} from 'rxjs';
 
 describe('SearchService', () => {
@@ -67,6 +67,58 @@ describe('SearchService', () => {
         expect(repos.length).toEqual(0); // empty array
         done();
       });
+    });
+  });
+
+  describe('search', () => {
+    it('should return the fetched repositories', done => {
+      const search: Search = {query: '', filters: []};
+
+      service.search(search, 'org').subscribe(repos => {
+        expect(repos.length).toEqual(repositories.length);
+
+        repos.forEach((repo, index) => {
+          expect(repo.name).toEqual(repositories[index].name);
+        });
+        done();
+      });
+    });
+
+    it("should add the 'order by priority' filter to the search if itsn't already present", done => {
+      const search: Search = {query: '', filters: []};
+      const reposFetcher = spyOn(
+        mockCOMService,
+        'fetchRepositories'
+      ).and.callThrough();
+
+      service.search(search, 'org').subscribe();
+
+      const expectedSearch: Search = {
+        query: '',
+        filters: [{name: 'orderby', value: 'priority'}],
+      };
+      const providedSearch = (reposFetcher.calls.mostRecent()
+        .args as Search[])[0];
+      expect(providedSearch).toEqual(jasmine.objectContaining(expectedSearch));
+      done();
+    });
+
+    it("should not add the 'order by priority' filter to the search if it is already present", done => {
+      const search: Search = {
+        query: '',
+        filters: [{name: 'orderby', value: 'name'}],
+      };
+      const reposFetcher = spyOn(
+        mockCOMService,
+        'fetchRepositories'
+      ).and.callThrough();
+
+      service.search(search, 'org').subscribe();
+
+      const providedSearch = (reposFetcher.calls.mostRecent()
+        .args as Search[])[0];
+      expect(providedSearch).toEqual(jasmine.objectContaining(search));
+      done();
     });
   });
 });
