@@ -20,6 +20,7 @@ import {
   tick,
 } from '@angular/core/testing';
 import {RepositoryComponent} from './repository.component';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Search, Filter} from '../services/search/interfaces';
 import {of} from 'rxjs';
@@ -106,7 +107,11 @@ describe('RepositoryComponent', () => {
         FiltersComponent,
         HeatMapComponent,
       ],
-      imports: [AppRoutingModule, MatExpansionModule, NoopAnimationsModule],
+      imports: [
+        AppRoutingModule,
+        MatExpansionModule,
+        MatDialogModule,
+        NoopAnimationsModule],
     }).compileComponents();
   }));
 
