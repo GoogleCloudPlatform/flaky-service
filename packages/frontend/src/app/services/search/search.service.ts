@@ -31,6 +31,10 @@ export class SearchService {
   }
 
   search(search: Search, orgName: string): Observable<Repository[]> {
+    const searchIsOrdered =
+      search.filters.find(filter => filter.name === 'orderby') !== undefined;
+    if (!searchIsOrdered)
+      search.filters.push({name: 'orderby', value: 'priority'});
     return this.com.fetchRepositories(search, orgName);
   }
 
