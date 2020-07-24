@@ -13,16 +13,8 @@
 // limitations under the License.
 
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {SessionHandler} from './session/SessionHandler';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
-  constructor(public session: SessionHandler) {}
-
-  get loggedIn(): Observable<boolean> {
-    return this.session.loggedIn;
-  }
-}
+export class UserService {}
