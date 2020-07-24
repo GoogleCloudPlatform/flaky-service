@@ -52,7 +52,8 @@ const buildInfo = [
       new TestCaseRun('ok', 3, 'a/3'),
       new TestCaseRun('not ok', 4, 'a/4')
     ],
-    description: 'nodejs repository'
+    description: 'nodejs repository',
+    buildmessage: 'Workflow - 1'
   },
   {
     repoId: encodeURIComponent('nodejs/node'),
@@ -72,7 +73,8 @@ const buildInfo = [
       new TestCaseRun('ok', 1, 'a/1'),
       new TestCaseRun('ok', 2, 'a/2') // this test is now passing
     ],
-    description: 'nodejs repository'
+    description: 'nodejs repository',
+    buildmessage: 'Workflow - 2'
   },
   {
     repoId: encodeURIComponent('nodejs/node'),
@@ -92,7 +94,8 @@ const buildInfo = [
       new TestCaseRun('not ok', 1, 'a/5'),
       new TestCaseRun('not ok', 2, 'a/2') // this test is now passing
     ],
-    description: 'nodejs repository'
+    description: 'nodejs repository',
+    buildmessage: 'Workflow - 1'
   }
 ];
 
@@ -117,6 +120,7 @@ describe('Add-Build', () => {
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 2);
       assert.deepStrictEqual(builds.data().environment, buildInfo[0].environment);
+      assert.deepStrictEqual(builds.data().buildmessage, buildInfo[0].buildmessage);
     });
 
     it('Can add a different build with overlapping test cases and update repo info', async () => {
@@ -133,6 +137,7 @@ describe('Add-Build', () => {
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 0);
       assert.deepStrictEqual(builds.data().environment, buildInfo[1].environment);
+      assert.strictEqual(builds.data().buildmessage, buildInfo[1].buildmessage);
     });
 
     it('Can add a third build with some new test cases, add same thing multiple times', async () => {
@@ -422,7 +427,8 @@ describe('Add-Build', () => {
           new TestCaseRun('not ok', 1, 'a/5'),
           new TestCaseRun('not ok', 2, 'a/2') // this test is now passing
         ],
-        description: 'nodejs repository'
+        description: 'nodejs repository',
+        buildmessage: 'Workflow - 42'
       };
       await addBuild(buildInfoExport.testCases, buildInfoExport, client, global.headCollection);
 

@@ -59,7 +59,8 @@ class PostBuildHandler {
       buildId: firebaseEncode(metadata.github.run_id),
       sha: metadata.github.sha,
       name: metadata.github.event.repository.name,
-      description: metadata.github.event.repository.description || 'None'
+      description: metadata.github.event.repository.description || 'None',
+      buildmessage: (metadata.github.workflow ? metadata.github.workflow : 'Workflow') + (metadata.github.run_number ? ' - ' + metadata.github.run_number : '')
     };
 
     // validate data
