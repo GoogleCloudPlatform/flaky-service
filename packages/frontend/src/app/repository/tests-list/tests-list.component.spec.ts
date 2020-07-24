@@ -123,7 +123,7 @@ describe('TestsListComponent', () => {
     expect(component.pageIndex).toEqual(expectedPageIndex);
   });
 
-  fit('should expand the tests details when user clicks on a test', fakeAsync(() => {
+  it('should expand the tests details when user clicks on a test', fakeAsync(() => {
     COMServiceMock.fetchTests = () => of(mockTests);
     component.ngOnInit();
 
