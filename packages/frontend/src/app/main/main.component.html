@@ -26,7 +26,7 @@ limitations under the License.
     <app-repo-list [repositories]="repositories" *ngIf="!loading && repositories.length"></app-repo-list>
     <mat-spinner *ngIf="loading" [strokeWidth]="5" id="spinner"></mat-spinner>
     <p id="no-repo-found" *ngIf="!repositories.length && !loading">
-        No repository found in {{orgName}}
+        No repository found
     </p>
 </div>
 

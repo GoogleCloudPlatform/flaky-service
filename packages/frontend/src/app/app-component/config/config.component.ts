@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, Output} from '@angular/core';
+import {Component} from '@angular/core';
 import {UserService} from 'src/app/services/user/user.service';
 
 @Component({
@@ -34,12 +34,6 @@ export class ConfigComponent {
   showAdminView = false;
 
   constructor(public userService: UserService) {}
-
-  @Output() onConfigsOpening() {
-    this.userService.loggedIn.subscribe(
-      loggedIn => (this.showAdminView = loggedIn)
-    );
-  }
 
   onTokenClick() {
     this.showToken = !this.showToken;

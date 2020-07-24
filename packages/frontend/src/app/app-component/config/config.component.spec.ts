@@ -66,32 +66,4 @@ describe('ConfigComponent', () => {
     expectedTokenDisplayOption = !expectedTokenDisplayOption;
     expect(component.showToken).toEqual(expectedTokenDisplayOption);
   });
-
-  describe('onConfigsOpening', () => {
-    it('should show the admin view when user is logged in', async () => {
-      mockUserService.loggedIn = of(true);
-
-      component.onConfigsOpening();
-      await fixture.detectChanges();
-
-      const adminDiv = fixture.debugElement.query(By.css('#admin-view'));
-      const nonAdminDiv = fixture.debugElement.query(By.css('#non-admin-view'));
-
-      expect(adminDiv).not.toBeNull();
-      expect(nonAdminDiv).toBeNull();
-    });
-
-    it('should show the non admin view when user is not logged in', async () => {
-      mockUserService.loggedIn = of(false);
-
-      component.onConfigsOpening();
-      await fixture.detectChanges();
-
-      const adminDiv = fixture.debugElement.query(By.css('#admin-view'));
-      const nonAdminDiv = fixture.debugElement.query(By.css('#non-admin-view'));
-
-      expect(adminDiv).toBeNull();
-      expect(nonAdminDiv).not.toBeNull();
-    });
-  });
 });
