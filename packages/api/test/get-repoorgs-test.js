@@ -67,7 +67,7 @@ describe('Getting Repos and Orgs', () => {
     const respOrg = await fetch('http://localhost:3000/api/org/randomquery');
     const respTextOrg = await respOrg.text();
 
-    assert.strictEqual(JSON.parse(respTextOrg).length, 0);
+    assert.strictEqual(JSON.parse(respTextOrg).repos.length, 0);
   });
 
   it('should return all results no matter the next characters', async () => {
@@ -85,13 +85,15 @@ describe('Getting Repos and Orgs', () => {
   it('find all repos for one org', async () => {
     const resp = await fetch('http://localhost:3000/api/org/bigorg');
     const respText = await resp.text();
-    assert.strictEqual(JSON.parse(respText).length, 4);
+    assert.strictEqual(JSON.parse(respText).repos.length, 4);
+    assert.strictEqual(JSON.parse(respText).hasnext, false);
+    assert.strictEqual(JSON.parse(respText).hasprev, false);
   });
 
   it('can sort within org based on date', async () => {
     const resp = await fetch('http://localhost:3000/api/org/bigorg?orderby=activity');
     const respText = await resp.text();
-    const parsed = JSON.parse(respText);
+    const parsed = JSON.parse(respText).repos;
     assert.strictEqual(parsed.length, 4);
     assert.strictEqual(parsed[0].lower.name, 'za');
     assert.strictEqual(parsed[3].lower.name, 'z');
@@ -100,7 +102,7 @@ describe('Getting Repos and Orgs', () => {
   it('can sort within org based on priority', async () => {
     const resp = await fetch('http://localhost:3000/api/org/bigorg?orderby=priority');
     const respText = await resp.text();
-    const parsed = JSON.parse(respText);
+    const parsed = JSON.parse(respText).repos;
     assert.strictEqual(parsed.length, 4);
     assert.strictEqual(parsed[0].lower.name, 'za');
     assert.strictEqual(parsed[3].lower.name, 'z');
@@ -109,7 +111,7 @@ describe('Getting Repos and Orgs', () => {
   it('can sort within org by name', async () => {
     const resp = await fetch('http://localhost:3000/api/org/bigorg?orderby=name');
     const respText = await resp.text();
-    const parsed = JSON.parse(respText);
+    const parsed = JSON.parse(respText).repos;
     assert.strictEqual(parsed.length, 4);
     assert.strictEqual(parsed[0].lower.name, 'z');
     assert.strictEqual(parsed[3].lower.name, 'zz');
@@ -118,7 +120,7 @@ describe('Getting Repos and Orgs', () => {
   it('still orders by name if startswith parameter', async () => {
     const resp = await fetch('http://localhost:3000/api/org/bigorg?startswith=z&orderby=priority');
     const respText = await resp.text();
-    const parsed = JSON.parse(respText);
+    const parsed = JSON.parse(respText).repos;
     assert.strictEqual(parsed.length, 4);
     assert.strictEqual(parsed[0].lower.name, 'z');
     assert.strictEqual(parsed[3].lower.name, 'zz');
@@ -127,7 +129,18 @@ describe('Getting Repos and Orgs', () => {
   it('can use offset parameters on org sesarch', async () => {
     const resp = await fetch('http://localhost:3000/api/org/bigorg?offset=2');
     const respText = await resp.text();
-    assert.strictEqual(JSON.parse(respText).length, 2);
+    const parsedResp = JSON.parse(respText);
+    assert.strictEqual(parsedResp.repos.length, 2);
+    assert.strictEqual(parsedResp.hasnext, false);
+    assert.strictEqual(parsedResp.hasprev, true);
+  });
+
+  it('can correctly use hasnext when there is more', async () => {
+    const resp = await fetch('http://localhost:3000/api/org/bigorg?offset=1&limit=1');
+    const respText = await resp.text();
+    const parsedResp = JSON.parse(respText);
+    assert.strictEqual(parsedResp.repos.length, 1);
+    assert.strictEqual(parsedResp.hasnext, true);
   });
 
   it('limit search (only on repos)', async () => {

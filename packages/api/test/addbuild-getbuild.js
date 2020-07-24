@@ -341,12 +341,13 @@ describe('Add-Build', () => {
       assert.strictEqual(ansObj[2].lifetimefailcount, 1);
     });
 
-    it('Can use offset parameter for tests', async () => {
-      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/tests?offset=3');
+    it('Can use offset and limit parameter for tests', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/tests?offset=3&limit=1');
       const respText = await resp.text();
-      const ansObj = JSON.parse(respText).tests;
-
-      assert.strictEqual(ansObj.length, 2);
+      const ansObj = JSON.parse(respText);
+      assert.strictEqual(ansObj.tests.length, 1);
+      assert.strictEqual(ansObj.hasprev, true);
+      assert.strictEqual(ansObj.hasnext, true);
     });
   });
 

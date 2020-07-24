@@ -114,10 +114,20 @@ class GetOrgHandler {
           }
         }
 
-        query = query.offset(offset).limit(limit);
+        query = query.offset(offset).limit(limit + 1);
 
         const snapshot = await query.get();
-        res.send(snapshot.docs.map(doc => doc.data()));
+        const responseJSON = {
+          hasnext: false,
+          hasprev: offset > 0,
+          repos: snapshot.docs.map(doc => doc.data())
+        };
+        if (snapshot.size > limit) {
+          responseJSON.hasnext = true;
+          responseJSON.repos.pop();
+        }
+
+        res.send(responseJSON);
       } catch (err) {
         handleError(res, err);
       }
