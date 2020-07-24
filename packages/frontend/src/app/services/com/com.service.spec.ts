@@ -16,7 +16,7 @@ import {TestBed} from '@angular/core/testing';
 import {COMService} from './com.service';
 import {HttpClientModule} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Search, Repository} from '../search/interfaces';
+import {Search, ApiRepositories} from '../search/interfaces';
 import {of} from 'rxjs';
 import {apiLinks} from './api';
 
@@ -41,10 +41,14 @@ describe('COMService', () => {
       filter => (queryParams = queryParams.set(filter.name, filter.value))
     );
 
-    const serverResponse: Repository[] = [
-      {name: 'repo1', organization: ''},
-      {name: 'repo2', organization: ''},
-    ];
+    const serverResponse: ApiRepositories = {
+      hasnext: false,
+      hasprev: false,
+      repos: [
+        {name: 'repo1', organization: ''},
+        {name: 'repo2', organization: ''},
+      ],
+    };
     return {
       search: search,
       queryParams: {params: queryParams},

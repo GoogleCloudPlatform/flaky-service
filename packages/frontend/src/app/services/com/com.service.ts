@@ -22,6 +22,7 @@ import {
   ApiRepository,
   Filter,
   Tests,
+  ApiRepositories,
 } from '../search/interfaces';
 
 @Injectable({
@@ -33,12 +34,12 @@ export class COMService {
   public fetchRepositories(
     search: Search,
     orgName: string
-  ): Observable<Repository[]> {
+  ): Observable<ApiRepositories> {
     let params: HttpParams = new HttpParams().set('startswith', search.query);
     search.filters.forEach(
       filter => (params = params.set(filter.name, filter.value))
     );
-    return this.http.get<Repository[]>(apiLinks.get.repositories(orgName), {
+    return this.http.get<ApiRepositories>(apiLinks.get.repositories(orgName), {
       params: params,
     });
   }
