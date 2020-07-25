@@ -34,11 +34,11 @@ const { deleteRepo } = require('../lib/deleter');
 const PostBuildHandler = require('../src/post-build.js');
 const client = require('../src/firestore.js');
 
-nock.disableNetConnect();
-nock.enableNetConnect(/^(?!.*github\.com).*$/); // only disable requests on github.com
-
 const assert = require('assert');
 const fetch = require('node-fetch');
+
+nock.disableNetConnect();
+nock.enableNetConnect(/^(?!.*github\.com).*$/); // only disable requests on github.com
 
 describe('Posting Builds', () => {
   before(async () => {

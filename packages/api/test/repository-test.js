@@ -12,16 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const { describe, it, before } = require('mocha');
-const Repository = require('../src/repository');
+const { describe, it } = require('mocha');
+const repo = require('../src/repository');
 const assert = require('assert');
 
 describe('Repository', () => {
-  let repo;
-  before(async () => {
-    repo = new Repository();
-  });
-
   describe('createDoc', async () => {
     it('creates a new document', async () => {
       await repo.createDoc('dummy/my-first-repository', {
@@ -43,6 +38,11 @@ describe('Repository', () => {
       const data = await repo.getDoc('dummy/fake-doc');
       assert.deepStrictEqual(data.info, 'hello this is for testing');
       await repo.deleteDoc('dummy/fake-doc');
+    });
+
+    it('returns null when a document does not exist', async () => {
+      const data = await repo.getDoc('doesnt-exist/super-fake');
+      assert.deepStrictEqual(data, null);
     });
   });
 
@@ -71,19 +71,7 @@ describe('Repository', () => {
     });
   });
 
-  describe('sessionPermissions', async () => {
-    it('returns not permitted if the session id does not exist', async () => {
-      const permission = await repo.sessionPermissions('test-session-nonexistent');
-      assert.deepStrictEqual(permission, { permitted: false, expiration: null, login: null });
-    });
-
-    it('returns not permitted if there is no expiration date', async () => {
-      await repo.createDoc('express-sessions/test-session', {});
-      const permission = await repo.sessionPermissions('test-session');
-      assert.deepStrictEqual(permission, { permitted: false, expiration: null, login: null });
-      await repo.deleteDoc('express-sessions/test-session');
-    });
-
-    it('returns not permitted if the expiration date is in the past');
+  describe('performActionIfAllowed', async () => {
+    it('performs requested test delete when user has write permission to repo');
   });
 });

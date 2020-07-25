@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const moment = require('moment');
 const client = require('./firestore.js');
 
 class Repository {
@@ -50,28 +49,19 @@ class Repository {
     return (querySnapshot.size === 1);
   }
 
-  async sessionPermissions (sessionID) {
-    const docRef = client.doc('express-sessions/' + sessionID);
-    const solution = { permitted: false, expiration: null, login: null };
-    const doc = await docRef.get();
-    let data;
-    try {
-      data = await JSON.parse(doc.data().data);
-    } catch (err) {
-      return solution;
-    }
-    if (doc.exists) {
-      const expiration = data.expires;
-      if (expiration == null) {
-        return solution;
-      }
-      if (moment().isBefore(moment(expiration))) {
-        solution.permitted = true;
-        solution.expiration = moment(expiration).format();
-        solution.login = data.user;
-      }
-    }
-    return solution;
+  async storeTicket (ticketToPerform) {
+
+  }
+
+  async getTicket () {
+
+  }
+
+  async performTicketIfAllowed (userData) {
+    console.log('USER DATA: ' + userData);
+
+    // Todo add actual functionality
+    return true;
   }
 
   async deleteDoc (path) {
@@ -80,4 +70,5 @@ class Repository {
   }
 }
 
-module.exports = Repository;
+const repoHandler = new Repository();
+module.exports = repoHandler;
