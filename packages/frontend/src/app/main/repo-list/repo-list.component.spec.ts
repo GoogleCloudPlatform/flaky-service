@@ -24,6 +24,7 @@ import {Repository} from 'src/app/services/search/interfaces';
 import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {HttpClientModule} from '@angular/common/http';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 describe('RepoListComponent', () => {
   let component: RepoListComponent;
@@ -48,6 +49,7 @@ describe('RepoListComponent', () => {
         MatPaginatorModule,
         HttpClientModule,
         MatDialogModule,
+        MatSnackBarModule,
       ],
     }).compileComponents();
   }));

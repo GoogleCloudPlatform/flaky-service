@@ -12,28 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export class RouteProvider {
-  static routes = {
-    main: {
-      name: 'org',
-      path: 'org/:org',
-      link: (orgName: string) => 'org/' + orgName,
-    },
-    repo: {
-      name: 'repo',
-      path: 'org/:org/:repo',
-      link: (orgName: string, repoName: string) =>
-        'org/' + orgName + '/' + repoName,
-    },
-    _404: {
-      name: '404',
-      link: () => '/404',
-    },
-  };
-}
-
-export interface RouteData {
-  name: string;
-  path: string;
-  link: Function;
-}
+export class NotFoundError extends Error {}

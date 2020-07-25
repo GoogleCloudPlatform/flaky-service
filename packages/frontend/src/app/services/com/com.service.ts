@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpParams, HttpErrorResponse} from '@angular/common/http';
 import {apiLinks} from './api';
-import {Observable} from 'rxjs';
+import {Observable, empty, throwError} from 'rxjs';
 import {
   Search,
   Repository,
@@ -24,12 +24,15 @@ import {
   Tests,
   ApiRepositories,
 } from '../search/interfaces';
+import {catchError} from 'rxjs/operators';
+import {NotFoundError} from './Errors/NotFoundError';
+import {SnackBarService} from '../snackbar/snack-bar.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class COMService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private snackBar: SnackBarService) {}
 
   public fetchRepositories(
     search: Search,
@@ -39,9 +42,11 @@ export class COMService {
     search.filters.forEach(
       filter => (params = params.set(filter.name, filter.value))
     );
-    return this.http.get<ApiRepositories>(apiLinks.get.repositories(orgName), {
-      params: params,
-    });
+    return this.http
+      .get<ApiRepositories>(apiLinks.get.repositories(orgName), {
+        params: params,
+      })
+      .pipe(catchError(err => this.handleError(err)));
   }
 
   public fetchBuilds(
@@ -49,14 +54,17 @@ export class COMService {
     orgName: string,
     filters: Filter[]
   ): Observable<ApiRepository> {
-    return this.http.get<ApiRepository>(
-      apiLinks.get.builds(repoName, orgName),
-      {params: this.getParams(filters)}
-    );
+    return this.http
+      .get<ApiRepository>(apiLinks.get.builds(repoName, orgName), {
+        params: this.getParams(filters),
+      })
+      .pipe(catchError(err => this.handleError(err)));
   }
 
   public fetchTests(repoName: string, orgName: string): Observable<Tests> {
-    return this.http.get<Tests>(apiLinks.get.tests(repoName, orgName));
+    return this.http
+      .get<Tests>(apiLinks.get.tests(repoName, orgName))
+      .pipe(catchError(err => this.handleError(err)));
   }
 
   public fetchRepository(
@@ -64,15 +72,23 @@ export class COMService {
     orgName: string,
     filters: Filter[]
   ): Observable<Repository> {
-    return this.http.get<Repository>(
-      apiLinks.get.repository(repoName, orgName),
-      {params: this.getParams(filters)}
-    );
+    return this.http
+      .get<Repository>(apiLinks.get.repository(repoName, orgName), {
+        params: this.getParams(filters),
+      })
+      .pipe(catchError(err => this.handleError(err)));
   }
 
   private getParams(filters: Filter[]) {
     let params: HttpParams = new HttpParams();
     filters.forEach(filter => (params = params.set(filter.name, filter.value)));
     return params;
+  }
+
+  handleError(err: HttpErrorResponse) {
+    if (err.status === 0) this.snackBar.showConnectionError();
+    else if (err.status === 404) return throwError(new NotFoundError());
+
+    return empty();
   }
 }

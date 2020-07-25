@@ -23,7 +23,7 @@ import {RepositoryComponent} from './repository.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Search, Filter} from '../services/search/interfaces';
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {Location} from '@angular/common';
@@ -32,6 +32,7 @@ import {By} from '@angular/platform-browser';
 import {expectedParams} from '../services/interpretation/interpretation.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import {COMService} from '../services/com/com.service';
+import {NotFoundError} from '../services/com/Errors/NotFoundError';
 
 // Mock the inner components
 @Component({
@@ -166,7 +167,12 @@ describe('RepositoryComponent', () => {
     expect(location.path()).toEqual(expectedRoute);
   }));
 
-  it('should redirect to the 404 page if no repository was found', () => {
-    // TODO
-  });
+  it('should redirect to the 404 page if no repository was found', fakeAsync(() => {
+    mockComService.fetchRepository = () => throwError(new NotFoundError());
+
+    component.ngOnInit();
+    tick();
+
+    expect(location.path()).toEqual(RouteProvider.routes._404.link());
+  }));
 });
