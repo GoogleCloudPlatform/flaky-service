@@ -32,6 +32,12 @@ export interface Repository extends DefaultRepository {
   lastupdate?: Timestamp;
 }
 
+export interface ApiRepositories {
+  hasnext: boolean;
+  hasprev: boolean;
+  repos: Repository[];
+}
+
 export interface Filter {
   name: string;
   value?: string;

@@ -87,12 +87,20 @@ class GetTestHandler {
         const limit = parseInt(req.query.limit || 30);
         const offset = parseInt(req.query.offset || 0);
 
-        const failingTests = await this.client.collection(global.headCollection).doc(repoid).collection('tests')
-          .orderBy('searchindex', 'desc').orderBy('lastupdate', 'desc').offset(offset).limit(limit).get();
+        const snapshot = await this.client.collection(global.headCollection).doc(repoid).collection('tests')
+          .orderBy('searchindex', 'desc').orderBy('lastupdate', 'desc').offset(offset).limit(limit + 1).get();
 
-        const resp = [];
-        failingTests.forEach(doc => resp.push(doc.data()));
-        res.send({ tests: resp });
+        const responseJSON = {
+          hasnext: false,
+          hasprev: offset > 0,
+          tests: snapshot.docs.map(doc => doc.data())
+        };
+        if (snapshot.size > limit) {
+          responseJSON.hasnext = true;
+          responseJSON.tests.pop();
+        }
+
+        res.send(responseJSON);
       } catch (err) {
         handleError(res, err);
       }

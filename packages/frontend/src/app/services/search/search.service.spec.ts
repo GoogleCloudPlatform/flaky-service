@@ -15,17 +15,21 @@
 import {TestBed} from '@angular/core/testing';
 import {SearchService} from './search.service';
 import {COMService} from '../com/com.service';
-import {Repository, Search} from './interfaces';
+import {ApiRepositories, Search} from './interfaces';
 import {of, throwError} from 'rxjs';
 
 describe('SearchService', () => {
   let service: SearchService;
 
   // Mock sub-services
-  const repositories: Repository[] = [
-    {name: 'repo1', organization: ''},
-    {name: 'repo2', organization: ''},
-  ];
+  const repositories: ApiRepositories = {
+    hasnext: false,
+    hasprev: false,
+    repos: [
+      {name: 'repo1', organization: ''},
+      {name: 'repo2', organization: ''},
+    ],
+  };
   const mockCOMService = {
     fetchRepositories: () => of(repositories),
   };
@@ -47,10 +51,10 @@ describe('SearchService', () => {
       const targetRepo = 'repo',
         targetOrg = 'org';
       service.quickSearch(targetRepo, targetOrg).subscribe(repos => {
-        expect(repos.length).toEqual(repositories.length);
+        expect(repos.length).toEqual(repositories.repos.length);
 
         repos.forEach((repo, index) => {
-          expect(repo.name).toEqual(repositories[index].name);
+          expect(repo.name).toEqual(repositories.repos[index].name);
         });
         done();
       });
@@ -75,10 +79,10 @@ describe('SearchService', () => {
       const search: Search = {query: '', filters: []};
 
       service.search(search, 'org').subscribe(repos => {
-        expect(repos.length).toEqual(repositories.length);
+        expect(repos.length).toEqual(repositories.repos.length);
 
         repos.forEach((repo, index) => {
-          expect(repo.name).toEqual(repositories[index].name);
+          expect(repo.name).toEqual(repositories.repos[index].name);
         });
         done();
       });

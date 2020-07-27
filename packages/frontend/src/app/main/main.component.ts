@@ -23,6 +23,7 @@ import {
 } from '../services/interpretation/interpretation.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import {Repository, Filter} from '../services/search/interfaces';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-main',
@@ -52,8 +53,12 @@ export class MainComponent implements OnInit {
       const search = this.getSearch(params);
       this.searchService
         .search(search, this.orgName)
+        .pipe(
+          finalize(() => {
+            this.loading = false;
+          })
+        )
         .subscribe(repositories => {
-          this.loading = false;
           this.repositories = repositories;
         });
     });

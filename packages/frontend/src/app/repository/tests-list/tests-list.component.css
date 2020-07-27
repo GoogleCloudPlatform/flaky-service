@@ -65,6 +65,10 @@ limitations under the License.
     }
 }
 
+.details-table{
+    table-layout: fixed;
+}
+
 .last-run {
     font-size: smaller;
     color: dimgrey;

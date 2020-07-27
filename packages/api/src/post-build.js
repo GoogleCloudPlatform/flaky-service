@@ -38,6 +38,8 @@ class PostBuildHandler {
       matrix: (metadata.matrix) ? JSON.stringify(metadata.matrix, Object.keys(metadata.matrix).sort()) : 'None',
       tag: 'None'
     };
+    envData.ref = envData.ref.replace('refs/', '');
+    envData.ref = envData.ref.replace('heads/', '');
     // validate data
     for (const prop in envData) {
       if (!envData[prop]) {
@@ -59,7 +61,8 @@ class PostBuildHandler {
       buildId: firebaseEncode(metadata.github.run_id),
       sha: metadata.github.sha,
       name: metadata.github.event.repository.name,
-      description: metadata.github.event.repository.description || 'None'
+      description: metadata.github.event.repository.description || 'None',
+      buildmessage: (metadata.github.workflow ? metadata.github.workflow : 'Workflow') + (metadata.github.run_number ? ' - ' + metadata.github.run_number : '')
     };
 
     // validate data

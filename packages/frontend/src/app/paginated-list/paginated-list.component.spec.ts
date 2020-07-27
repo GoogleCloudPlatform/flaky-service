@@ -20,6 +20,7 @@ import {environment} from 'src/environments/environment';
 import {HttpClientModule} from '@angular/common/http';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {AppRoutingModule} from '../routing/app-routing.module';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 // Extend to use an instance
 class ImpPaginatedListComponent extends PaginatedListComponent<Repository> {}
@@ -31,7 +32,12 @@ describe('PaginatedListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ImpPaginatedListComponent],
-      imports: [AppRoutingModule, MatExpansionModule, HttpClientModule],
+      imports: [
+        AppRoutingModule,
+        HttpClientModule,
+        MatSnackBarModule,
+        MatExpansionModule,
+      ],
     }).compileComponents();
   }));
 
