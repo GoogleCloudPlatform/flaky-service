@@ -14,15 +14,22 @@
 
 import {TestBed} from '@angular/core/testing';
 import {COMService} from './com.service';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule, HttpErrorResponse} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Search, Repository} from '../search/interfaces';
-import {of} from 'rxjs';
+import {Search, ApiRepositories} from '../search/interfaces';
+import {of, empty, throwError} from 'rxjs';
 import {apiLinks} from './api';
+import {SnackBarService} from '../snackbar/snack-bar.service';
+import {catchError, finalize} from 'rxjs/operators';
+import {NotFoundError} from './Errors/NotFoundError';
 
 describe('COMService', () => {
   let service: COMService;
   let httpClientSpy: {get: jasmine.Spy};
+
+  const mockSnackBarService = {
+    showConnectionError: () => {},
+  };
 
   const getSearchData = () => {
     const search: Search = {
@@ -41,10 +48,14 @@ describe('COMService', () => {
       filter => (queryParams = queryParams.set(filter.name, filter.value))
     );
 
-    const serverResponse: Repository[] = [
-      {name: 'repo1', organization: ''},
-      {name: 'repo2', organization: ''},
-    ];
+    const serverResponse: ApiRepositories = {
+      hasnext: false,
+      hasprev: false,
+      repos: [
+        {name: 'repo1', organization: ''},
+        {name: 'repo2', organization: ''},
+      ],
+    };
     return {
       search: search,
       queryParams: {params: queryParams},
@@ -55,7 +66,10 @@ describe('COMService', () => {
   beforeEach(() => {
     httpClientSpy = {get: jasmine.createSpy()};
     TestBed.configureTestingModule({
-      providers: [{provide: HttpClient, useValue: httpClientSpy}],
+      providers: [
+        {provide: HttpClient, useValue: httpClientSpy},
+        {provide: SnackBarService, useValue: mockSnackBarService},
+      ],
       imports: [HttpClientModule],
     });
     service = TestBed.inject(COMService);
@@ -88,6 +102,17 @@ describe('COMService', () => {
         jasmine.objectContaining(searchData.queryParams)
       );
     });
+
+    it('should call the error handler if an error occurs', () => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service.fetchRepositories({query: '', filters: []}, 'org').subscribe();
+      expect(errorHandler).toHaveBeenCalledWith(err);
+    });
   });
 
   describe('fetchBuilds', () => {
@@ -105,6 +130,17 @@ describe('COMService', () => {
       expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
         apiLinks.get.builds(repoName, orgName)
       );
+    });
+
+    it('should call the error handler if an error occurs', () => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service.fetchBuilds('repo', 'org', []).subscribe();
+      expect(errorHandler).toHaveBeenCalledWith(err);
     });
   });
 
@@ -162,6 +198,42 @@ describe('COMService', () => {
       expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
         apiLinks.get.tests(repoName, orgName)
       );
+    });
+
+    it('should call the error handler if an error occurs', () => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service.fetchTests('repo', 'org').subscribe();
+      expect(errorHandler).toHaveBeenCalledWith(err);
+    });
+  });
+
+  describe('handleError', () => {
+    it('should show the connection error message if an unknown error occurs', () => {
+      spyOn(mockSnackBarService, 'showConnectionError').and.callThrough();
+
+      service.handleError({status: 0} as HttpErrorResponse);
+
+      expect(mockSnackBarService.showConnectionError).toHaveBeenCalled();
+    });
+
+    it('should return a NotFound error if a 404 error occurs', done => {
+      spyOn(mockSnackBarService, 'showConnectionError').and.callThrough();
+
+      service
+        .handleError({status: 404} as HttpErrorResponse)
+        .pipe(finalize(() => done()))
+        .pipe(
+          catchError(err => {
+            expect(err).toBeInstanceOf(NotFoundError);
+            return empty();
+          })
+        )
+        .subscribe(() => fail());
     });
   });
 });

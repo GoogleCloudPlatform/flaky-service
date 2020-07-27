@@ -15,8 +15,14 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {COMService} from '../com/com.service';
-import {Repository, Search, ApiRepository, Filter} from './interfaces';
-import {catchError} from 'rxjs/operators';
+import {
+  Repository,
+  Search,
+  ApiRepository,
+  Filter,
+  ApiRepositories,
+} from './interfaces';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +33,7 @@ export class SearchService {
   quickSearch(query: string, orgName: string): Observable<Repository[]> {
     return this.com
       .fetchRepositories({query: query, filters: []}, orgName)
+      .pipe(map((repositories: ApiRepositories) => repositories.repos))
       .pipe(catchError(() => of([])));
   }
 
@@ -35,7 +42,9 @@ export class SearchService {
       search.filters.find(filter => filter.name === 'orderby') !== undefined;
     if (!searchIsOrdered)
       search.filters.push({name: 'orderby', value: 'priority'});
-    return this.com.fetchRepositories(search, orgName);
+    return this.com
+      .fetchRepositories(search, orgName)
+      .pipe(map((repositories: ApiRepositories) => repositories.repos));
   }
 
   searchBuilds(

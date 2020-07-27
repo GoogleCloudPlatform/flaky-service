@@ -25,6 +25,9 @@ import {Filter} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import {COMService} from '../services/com/com.service';
+import {catchError} from 'rxjs/operators';
+import {NotFoundError} from '../services/com/Errors/NotFoundError';
+import {empty} from 'rxjs';
 
 @Component({
   selector: 'app-repository',
@@ -58,6 +61,12 @@ export class RepositoryComponent implements OnInit {
 
       this.com
         .fetchRepository(this.repoName, this.orgName, foundParams.filters)
+        .pipe(
+          catchError(err => {
+            if (err instanceof NotFoundError) this.redirectTo404();
+            return empty();
+          })
+        )
         .subscribe(repository => {
           this.filterComponent?.setFilters(
             repository.environments,
@@ -78,6 +87,12 @@ export class RepositoryComponent implements OnInit {
     this.ngZone.run(() => {
       const route = RouteProvider.routes.repo.link(this.orgName, this.repoName);
       this.router.navigate([route, this.interpreter.getRouteParam(filters)]);
+    });
+  }
+
+  redirectTo404() {
+    this.ngZone.run(() => {
+      this.router.navigate([RouteProvider.routes._404.link()]);
     });
   }
 }

@@ -17,7 +17,6 @@ import {PageEvent} from '@angular/material/paginator';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {UtilsService} from '../services/utils.service';
-import {MatDialog} from '@angular/material/dialog';
 import {Location} from '@angular/common';
 import {COMService} from '../services/com/com.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
@@ -37,7 +36,6 @@ export class PaginatedListComponent<Elements> implements OnInit {
     public router: Router,
     public comService: COMService,
     public utils: UtilsService,
-    public dialog: MatDialog,
     public location: Location
   ) {}
 

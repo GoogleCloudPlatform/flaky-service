@@ -12,53 +12,89 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-process.env.SESSION_SECRET = 'fake secret';
 process.env.FRONTEND_URL = 'https://flaky-dashboard.web.app/home';
-const { describe, it } = require('mocha');
+const { describe, it, afterEach } = require('mocha');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
+const sinon = require('sinon');
+const querystring = require('querystring');
+const auth = require('../src/auth.js');
+const repo = require('../src/repository.js');
 
 describe('flaky express server', () => {
+  const stubs = [];
   const frontendUrl = 'https://flaky-dashboard.web.app/home';
 
-  it('should have the mocked environment variables', () => {
-    assert.strictEqual(process.env.SESSION_SECRET, 'fake secret');
-    assert.strictEqual(process.env.FRONTEND_URL, frontendUrl);
-  });
-  describe('/repos', async () => {
-    it('returns a json object with the list of repositories, when you call GET on /repos', async () => {
-      const resp = await fetch('http://0.0.0.0:3000/api/repos', {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      const sol = ['firstRepo', 'fourthRepo', 'secondRepo', 'thirdRepo'];
-      const respJSON = await resp.json();
-      assert.deepStrictEqual(respJSON.repoNames, sol);
+  afterEach(() => {
+    /** Cleanup **/
+    stubs.forEach(stubbed => {
+      stubbed.restore();
     });
   });
 
-  describe('/auth', async () => {
-    it('redirects to a Github url', async () => {
-      const resp = await fetch('http://0.0.0.0:3000/api/auth', {
-        headers: { redirect: 'manual' }
+  it('should have the mocked environment variables', () => {
+    assert.strictEqual(process.env.FRONTEND_URL, frontendUrl);
+  });
+
+  describe('delete /repo', async () => {
+    it('generates a GitHub redirect', async () => {
+      stubs.push(sinon.stub(repo, 'storeTicket').returns(true));
+      const resp = await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/my-test?redirect=' + process.env.FRONTEND_URL, {
+        redirect: 'manual',
+        method: 'DELETE'
       });
-      assert.strictEqual(resp.url.includes('github.com/login'), true);
+      assert(resp.headers.get('location').includes('github.com/login/oauth'));
+    });
+
+    it('stores correct information in the ticket', async () => {
+      let ticket;
+      stubs.push(sinon.stub(repo, 'storeTicket').callsFake((ticketToPerform) => {
+        ticket = ticketToPerform;
+      }));
+
+      await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/my-test?redirect=' + process.env.FRONTEND_URL, {
+        redirect: 'manual',
+        method: 'DELETE'
+      });
+
+      assert.strictEqual(ticket.action, 'delete-test');
+      assert.strictEqual(ticket.orgName, 'my-org');
+      assert.strictEqual(ticket.repoId, 'my-repo');
+      assert.strictEqual(ticket.testName, 'my-test');
+      assert.strictEqual(ticket.redirect, process.env.FRONTEND_URL);
     });
   });
 
   describe('/callback', async () => {
+    it('completes the authentication dance', async () => {
+      /** Stubbing **/
+      const queryObject = querystring.stringify({ access_token: 'fake-access-token' });
+
+      stubs.push(sinon.stub(auth, 'retrieveAccessToken').returns(queryObject));
+
+      stubs.push(sinon.stub(auth, 'retrieveUserData').returns({ 'user-info': 'mock-data' }));
+
+      stubs.push(sinon.stub(repo, 'performTicketIfAllowed').returns(true));
+
+      const fakeState = 'testing-state';
+      stubs.push(sinon.stub(repo, 'getTicket').returns({
+        state: fakeState,
+        redirect: process.env.FRONTEND_URL
+      }));
+
+      /** Testing **/
+      const resp = await fetch('http://0.0.0.0:3000/api/callback?state=' + fakeState + '&code=ANYTHING', {
+        headers: { redirect: 'manual' }
+      });
+      assert.strictEqual(resp.status, 200);
+    });
+
     it('redirects to the flaky-dev home page when the state is wrong', async () => {
       const resp = await fetch('http://0.0.0.0:3000/api/callback?state=NONSENSE', {
         headers: { redirect: 'manual' }
       });
       assert.strictEqual(resp.url, frontendUrl);
-    });
-  });
-
-  describe('/api/session', async () => {
-    it('returns 200 state when request session info', async () => {
-      const resp = await fetch('http://0.0.0.0:3000/api/session');
-      assert.strictEqual(resp.status, 200);
     });
   });
 

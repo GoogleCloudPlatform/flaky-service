@@ -1,4 +1,3 @@
-
 // Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +13,8 @@
 // limitations under the License.
 
 const express = require('express');
-const session = require('express-session');
-const Repository = require('./src/repository');
-const fetch = require('node-fetch');
-const querystring = require('querystring');
+const repo = require('./src/repository.js');
 const app = express();
-const moment = require('moment');
 const bodyParser = require('body-parser');
 const PostBuildHandler = require('./src/post-build.js');
 const GetRepoHandler = require('./src/get-repo.js');
@@ -27,8 +22,8 @@ const GetOrgHandler = require('./src/get-org.js');
 const GetTestHandler = require('./src/get-test.js');
 const GetExportHandler = require('./src/get-export.js');
 const client = require('./src/firestore.js');
+const auth = require('./src/auth.js');
 
-const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const { v4 } = require('uuid');
 
 const cors = require('cors');
@@ -38,99 +33,60 @@ global.headCollection = process.env.HEAD_COLLECTION || 'testing/main/repos';
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(
-  session({
-    store: new FirestoreStore({
-      dataset: client,
-      kind: 'express-sessions'
-    }),
-    secret: process.env.SESSION_SECRET || 'no secret',
-    resave: false,
-    saveUninitialized: true
-  })
-);
 
-app.get('/api/repos', async (req, res) => {
-  const repository = new Repository(null);
-  const result = await repository.getCollection('dummy-repositories');
-
-  const repoNames = [];
-
-  for (let index = 0; index < result.length; index++) {
-    const id = result[index].repositoryid;
-    repoNames.push(id);
-  }
-
-  const jsonObject = { repoNames: repoNames };
-  // TODO allow the requester to give search/filter criterion!
-  res
-    .status(200)
-    .send(jsonObject)
-    .end();
-});
-
-app.get('/api/auth', (req, res) => {
+app.delete('/api/repo/:orgname/:reponame/test/:testid', async (req, res) => {
+  const orgName = req.params.orgname;
+  const repoId = req.params.reponame;
+  const testName = req.params.testid;
+  const redirect = req.query.redirect;
   const state = v4();
-  req.session.authState = state;
-  const url = 'http://github.com/login/oauth/authorize?client_id=' + process.env.CLIENT_ID + '&state=' + req.session.authState + '&allow_signup=false';
+
+  await repo.storeTicket({
+    action: 'delete-test',
+    orgName: orgName,
+    repoId: repoId,
+    testName: testName,
+    state: state,
+    redirect: redirect
+  });
+
+  const url = 'http://github.com/login/oauth/authorize?client_id=' + process.env.CLIENT_ID + '&state=' + state + '&allow_signup=false';
   res.status(302).redirect(url);
 });
 
 app.get('/api/callback', async (req, res) => {
-  const redirect = process.env.FRONTEND_URL;
+  const ticket = repo.getTicket(req.param('state'));
+  const redirect = ticket.redirect || process.env.FRONTEND_URL;
 
-  if (req.param('state') !== req.session.authState) {
+  if (ticket === null) {
+    res.status(404).redirect(redirect);
+    return;
+  }
+
+  const storedTicketState = ticket.state;
+
+  if (req.param('state') !== storedTicketState) {
     res.status(401).redirect(redirect);
     return;
   }
 
-  const resp = await fetch('https://github.com/login/oauth/access_token', {
-    method: 'post',
-    body: JSON.stringify({
-      code: req.param('code'),
-      client_id: process.env.CLIENT_ID,
-      client_secret: process.env.CLIENT_SECRET,
-      state: req.session.authState
-    }),
-    headers: { 'Content-Type': 'application/json' }
-  });
+  const queryObject = await auth.retrieveAccessToken(req.param('code'), storedTicketState);
 
-  const respText = await resp.text();
-  const queryObject = querystring.parse(respText);
-
-  if (resp.status !== 200) {
+  if (queryObject == null) {
     res.status(401).redirect(redirect);
     return;
   }
 
-  const result = await fetch('https://api.github.com/user', {
-    method: 'get',
-    headers: { 'content-type': 'application/json', 'User-Agent': 'flaky.dev', Authorization: 'token ' + queryObject.access_token }
-  });
+  const userData = await auth.retrieveUserData(queryObject.access_token);
 
-  const resultJSON = await result.json();
-
-  if (result.status !== 200) {
-    res.status(401).redirect(redirect);
-    return;
-  }
-
-  req.session.user = resultJSON.login;
-  const repository = new Repository();
-  const permitted = await repository.mayAccess('github', resultJSON.login);
-  if (permitted) {
-    req.session.expires = moment().add(4, 'hours').format();
+  // todo send a message to the frontend to put a banner on the page indicating whether the action has been performed
+  if (repo.performTicketIfAllowed(userData)) {
+    console.log('Successfully performed the action');
+    res.status(200).redirect(redirect);
   } else {
-    req.session.expires = null;
+    console.log('Not permitted to perform the action');
+    res.status(401).redirect(redirect);
   }
-  // await repository.storeSessionPermission(req.sessionID, permitted);
-  res.status(200).redirect(redirect);
-});
-
-app.get('/api/session', async (req, res) => {
-  const repository = new Repository();
-  const result = await repository.sessionPermissions(req.sessionID);
-  res.status(200).send(result);
 });
 
 const postBuildHandler = new PostBuildHandler(app, client);

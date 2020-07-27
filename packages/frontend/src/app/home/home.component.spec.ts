@@ -65,20 +65,4 @@ describe('HomeComponent', () => {
     component.openLicenseDialog();
     expect(dialogSpy).toHaveBeenCalled();
   }));
-
-  it('should call openLicenseDialog when the license button is clicked', fakeAsync(() => {
-    spyOn(component, 'openLicenseDialog');
-    const licenseButton = fixture.debugElement.nativeElement.querySelector(
-      '#license-button'
-    );
-    licenseButton.click();
-    tick();
-    expect(component.openLicenseDialog).toHaveBeenCalled();
-  }));
-
-  it('should call the dialog open() function when the license button is clicked', fakeAsync(() => {
-    dialogSpy = spyOn(TestBed.get(MatDialog), 'open').and.callThrough();
-    component.openLicenseDialog();
-    expect(dialogSpy).toHaveBeenCalled();
-  }));
 });

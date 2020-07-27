@@ -18,8 +18,9 @@ import {PageEvent} from '@angular/material/paginator';
 import {TestBed, async, ComponentFixture} from '@angular/core/testing';
 import {environment} from 'src/environments/environment';
 import {HttpClientModule} from '@angular/common/http';
-import {MatDialogModule} from '@angular/material/dialog';
+import {MatExpansionModule} from '@angular/material/expansion';
 import {AppRoutingModule} from '../routing/app-routing.module';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 // Extend to use an instance
 class ImpPaginatedListComponent extends PaginatedListComponent<Repository> {}
@@ -31,7 +32,12 @@ describe('PaginatedListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ImpPaginatedListComponent],
-      imports: [AppRoutingModule, MatDialogModule, HttpClientModule],
+      imports: [
+        AppRoutingModule,
+        HttpClientModule,
+        MatSnackBarModule,
+        MatExpansionModule,
+      ],
     }).compileComponents();
   }));
 
