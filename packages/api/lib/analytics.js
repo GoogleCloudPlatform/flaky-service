@@ -64,6 +64,10 @@ class TestCaseAnalytics {
   getLastUpdate () {
     return this.snapshotData[0].timestamp;
   }
+
+  mostRecentStatus () {
+    return this.snapshotData[0].status;
+  }
 }
 
 /*

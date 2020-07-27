@@ -131,6 +131,7 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     updateObj.percentpassing = testCaseAnalytics.computePassingPercent();
     updateObj.flaky = testCaseAnalytics.computeIsFlaky();
     updateObj.passed = testCaseAnalytics.isCurrentlyPassing();
+    updateObj.failuremessageiffailing = testCaseAnalytics.mostRecentStatus();
     updateObj.searchindex = (updateObj.flaky) ? 1 : 0;
     if (!updateObj.passed) {
       updateObj.searchindex = 2; // higher number appears first in test view
