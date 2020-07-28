@@ -5,7 +5,7 @@
   "description": "the api for the flaky.dev service",
   "main": "server.js",
   "scripts": {
-    "test": "c8 mocha --timeout=50000 test/*.js",
+    "test": "c8 mocha --reporter=tap --timeout=50000 test/*.js | tee test.tap | tap-spec",
     "posttest": "semistandard",
     "fix": "semistandard --fix"
   },
@@ -41,6 +41,7 @@
     "nock": "^13.0.2",
     "node-fetch": "^2.6.0",
     "semistandard": "^14.2.0",
+    "tap-spec": "^5.0.0",
     "sinon": "^9.0.2"
   }
 }
