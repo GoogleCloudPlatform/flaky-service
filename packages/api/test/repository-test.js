@@ -46,7 +46,7 @@ describe('Repository', () => {
     });
   });
 
-  describe('allRepositories', async () => {
+  describe('getCollection', async () => {
     it('retrieves the contents of a collection', async () => {
       const result = await repo.getCollection('repositories/test-repos-doc/collection-of-repos');
       // TODO: what happens when a document in the collection contains a collection?
@@ -56,18 +56,6 @@ describe('Repository', () => {
     it('returns empty array if the collection does not exist', async () => {
       const result = await repo.getCollection('nonexistent');
       assert.deepStrictEqual(result, []);
-    });
-  });
-
-  describe('mayAccess', async () => {
-    it('returns false if a user is not permitted to log in via Github', async () => {
-      const permitted = await repo.mayAccess('github', 'fake');
-      assert.strictEqual(permitted, false);
-    });
-
-    it('returns true if a user is permitted to log into via Github', async () => {
-      const permitted = await repo.mayAccess('github', 'cedpeters');
-      assert.strictEqual(permitted, true);
     });
   });
 
