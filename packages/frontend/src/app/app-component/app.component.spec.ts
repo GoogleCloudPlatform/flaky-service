@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {TestBed, async} from '@angular/core/testing';
+import {TestBed, async, fakeAsync, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {AppComponent} from './app.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -21,6 +21,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {Component} from '@angular/core';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 
 // Mock the inner components
 
@@ -42,6 +43,7 @@ class SearchComponent {}
 describe('AppComponent', () => {
   let fixture;
   let app: AppComponent;
+  let dialogSpy: jasmine.Spy;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -52,6 +54,7 @@ describe('AppComponent', () => {
         MatIconModule,
         MatSidenavModule,
         MatListModule,
+        MatDialogModule,
       ],
       declarations: [
         AppComponent,
@@ -68,4 +71,20 @@ describe('AppComponent', () => {
   it('should create the app', () => {
     expect(app).toBeTruthy();
   });
+
+  it('should call openLicenseDialog when the license button is clicked', fakeAsync(() => {
+    spyOn(app, 'openLicenseDialog');
+    const licenseButton = fixture.debugElement.nativeElement.querySelector(
+      '#license-button'
+    );
+    licenseButton.click();
+    tick();
+    expect(app.openLicenseDialog).toHaveBeenCalled();
+  }));
+
+  it('should call the dialog open() function when the license button is clicked', fakeAsync(() => {
+    dialogSpy = spyOn(TestBed.get(MatDialog), 'open').and.callThrough();
+    app.openLicenseDialog();
+    expect(dialogSpy).toHaveBeenCalled();
+  }));
 });

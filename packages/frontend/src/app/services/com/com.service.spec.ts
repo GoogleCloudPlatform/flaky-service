@@ -86,7 +86,11 @@ describe('COMService', () => {
       httpClientSpy.get.and.returnValue(of(searchData.expectedServerResponse));
 
       service
-        .fetchRepositories(searchData.search, orgName)
+        .fetchRepositories(
+          searchData.search.query,
+          orgName,
+          searchData.search.filters
+        )
         .subscribe(response => {
           // received the right response
           expect(response).toEqual(searchData.expectedServerResponse);
@@ -110,7 +114,7 @@ describe('COMService', () => {
       const err = {} as HttpErrorResponse;
       httpClientSpy.get.and.returnValue(throwError(err));
 
-      service.fetchRepositories({query: '', filters: []}, 'org').subscribe();
+      service.fetchRepositories('', 'org', []).subscribe();
       expect(errorHandler).toHaveBeenCalledWith(err);
     });
   });
@@ -189,7 +193,7 @@ describe('COMService', () => {
     it('should get the test data and call the right link', () => {
       httpClientSpy.get.and.returnValue(of(mockTests));
 
-      service.fetchTests(repoName, orgName).subscribe(result => {
+      service.fetchTests(repoName, orgName, []).subscribe(result => {
         expect(result.tests.length).toBe(3);
         expect(result.tests).toEqual(mockTests.tests);
       });
@@ -207,7 +211,7 @@ describe('COMService', () => {
       const err = {} as HttpErrorResponse;
       httpClientSpy.get.and.returnValue(throwError(err));
 
-      service.fetchTests('repo', 'org').subscribe();
+      service.fetchTests('repo', 'org', []).subscribe();
       expect(errorHandler).toHaveBeenCalledWith(err);
     });
   });

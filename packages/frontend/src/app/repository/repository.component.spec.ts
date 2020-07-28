@@ -123,6 +123,8 @@ describe('RepositoryComponent', () => {
     fixture.autoDetectChanges(true);
     mockComService.fetchRepository = () => of({environments: {}});
     location = TestBed.get(Location);
+    component.testsListComponent = {update: () => {}};
+    component.heatMap = {init: () => {}};
   });
 
   it('should create', () => {
@@ -141,7 +143,7 @@ describe('RepositoryComponent', () => {
     mockComService.fetchRepository = () =>
       of({environments: getEnvironments()});
 
-    component.ngOnInit();
+    component.ngAfterViewInit();
   });
 
   it('should redirect/refresh when the filters selection changes', fakeAsync(() => {
@@ -170,7 +172,7 @@ describe('RepositoryComponent', () => {
   it('should redirect to the 404 page if no repository was found', fakeAsync(() => {
     mockComService.fetchRepository = () => throwError(new NotFoundError());
 
-    component.ngOnInit();
+    component.ngAfterViewInit();
     tick();
 
     expect(location.path()).toEqual(RouteProvider.routes._404.link());

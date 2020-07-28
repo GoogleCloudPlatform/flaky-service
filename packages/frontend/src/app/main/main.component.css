@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-.repo-list-container, #filters-container {
+.repo-list-container, #filters-container, #extras-container {
     display: flex;
     justify-content: center;
 }
@@ -34,30 +34,12 @@ app-repo-list, #filters-subcontainer {
     max-width: 800px;
 }
 
-#license-footer {
-    text-align: right;
-    margin: 5px;
-}
-@media (min-height: 555px) {
-    #license-footer {
-        position: fixed;
-        bottom: 5px;
-        right: 5px;
-    }
-}
-
-#license-button{
-    font-size: 1em;
-    color: #b0b0b0;
-    outline: none;
-    background-color: #ffffff;
-    cursor: pointer;
-}
-
 #spinner, #no-repo-found {
     margin-top: 100px;
 }
 #no-repo-found {
     font-weight: lighter;
     color: grey;
+    width: 100%;
+    text-align: center;
 }

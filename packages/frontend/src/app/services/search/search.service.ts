@@ -15,13 +15,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {COMService} from '../com/com.service';
-import {
-  Repository,
-  Search,
-  ApiRepository,
-  Filter,
-  ApiRepositories,
-} from './interfaces';
+import {Repository, ApiRepository, Filter, ApiRepositories} from './interfaces';
 import {catchError, map} from 'rxjs/operators';
 
 @Injectable({
@@ -30,21 +24,22 @@ import {catchError, map} from 'rxjs/operators';
 export class SearchService {
   constructor(private com: COMService) {}
 
-  quickSearch(query: string, orgName: string): Observable<Repository[]> {
+  quickSearch(repoName: string, orgName: string): Observable<Repository[]> {
     return this.com
-      .fetchRepositories({query: query, filters: []}, orgName)
+      .fetchRepositories(repoName, orgName, [])
       .pipe(map((repositories: ApiRepositories) => repositories.repos))
       .pipe(catchError(() => of([])));
   }
 
-  search(search: Search, orgName: string): Observable<Repository[]> {
+  search(
+    repoName: string,
+    orgName: string,
+    filters: Filter[]
+  ): Observable<ApiRepositories> {
     const searchIsOrdered =
-      search.filters.find(filter => filter.name === 'orderby') !== undefined;
-    if (!searchIsOrdered)
-      search.filters.push({name: 'orderby', value: 'priority'});
-    return this.com
-      .fetchRepositories(search, orgName)
-      .pipe(map((repositories: ApiRepositories) => repositories.repos));
+      filters.find(filter => filter.name === 'orderby') !== undefined;
+    if (!searchIsOrdered) filters.push({name: 'orderby', value: 'priority'});
+    return this.com.fetchRepositories(repoName, orgName, filters);
   }
 
   searchBuilds(

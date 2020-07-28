@@ -15,6 +15,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
 import {filter} from 'rxjs/operators';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {LicenseComponent} from '../license/license.component';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +27,7 @@ export class AppComponent implements OnInit {
   title = 'flaky.dev';
   showConfigWheel = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.router.events
@@ -33,5 +35,12 @@ export class AppComponent implements OnInit {
       .subscribe(
         (event: NavigationEnd) => (this.showConfigWheel = event.url !== '/')
       );
+  }
+
+  openLicenseDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.id = 'license-dialog';
+
+    this.dialog.open(LicenseComponent, dialogConfig);
   }
 }

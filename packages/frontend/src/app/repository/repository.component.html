@@ -23,14 +23,9 @@ limitations under the License.
 </div>
 
 <div class="heat-map-container">
-    <app-heat-map [orgName]='orgName' [repoName]='repoName'></app-heat-map>
+    <app-heat-map></app-heat-map>
 </div>
 
 <div class="tests-list-container">
-    <app-tests-list [repoName]="repoName" [orgName]="orgName"></app-tests-list>
+    <app-tests-list></app-tests-list>
 </div>
-
-<!-- LICENSE BUTTON-->
-<footer id="license-footer">
-    <a color="primary" id="license-button" (click)="openLicenseDialog()">© 2020 Google, LLC.</a>
-</footer>

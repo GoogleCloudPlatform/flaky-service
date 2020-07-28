@@ -12,32 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {PaginatedListComponent} from './paginated-list.component';
-import {Repository} from '../services/search/interfaces';
+import {PaginatedListComponent, PageData} from './paginated-list.component';
+import {Filter} from '../services/search/interfaces';
 import {PageEvent} from '@angular/material/paginator';
-import {TestBed, async, ComponentFixture} from '@angular/core/testing';
+import {
+  TestBed,
+  async,
+  ComponentFixture,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import {environment} from 'src/environments/environment';
-import {HttpClientModule} from '@angular/common/http';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {Observable, of, empty, throwError} from 'rxjs';
+import {COMService} from '../services/com/com.service';
 
 // Extend to use an instance
-class ImpPaginatedListComponent extends PaginatedListComponent<Repository> {}
+class ImpPaginatedListComponent extends PaginatedListComponent<PageData> {
+  fetchPageData(): Observable<PageData> {
+    return empty();
+  }
+  getEmptyElement(): PageData {
+    return {} as PageData;
+  }
+}
 
 describe('PaginatedListComponent', () => {
   let component: ImpPaginatedListComponent;
   let fixture: ComponentFixture<ImpPaginatedListComponent>;
 
+  const COMServiceMock = {};
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ImpPaginatedListComponent],
-      imports: [
-        AppRoutingModule,
-        HttpClientModule,
-        MatSnackBarModule,
-        MatExpansionModule,
-      ],
+      providers: [{provide: COMService, useValue: COMServiceMock}],
+      imports: [AppRoutingModule, MatSnackBarModule, MatExpansionModule],
     }).compileComponents();
   }));
 
@@ -45,90 +57,242 @@ describe('PaginatedListComponent', () => {
     fixture = TestBed.createComponent(ImpPaginatedListComponent);
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
+    component.paginator = {pageIndex: 0};
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should update the pages on initialization', () => {
-    spyOn(component, 'updatePage');
+  describe('onPageSelectionChange', () => {
+    it('should disable the paginator when a new page is selected', fakeAsync(() => {
+      component.viewConfig.pageIndex = 0;
+      // this spy prevents the finalization of the observable (allowing to 'pause' the data fetching pipeline)
+      spyOn(component, 'fetchPageData').and.returnValue(({
+        pipe: () => ({pipe: () => empty()}),
+      } as unknown) as Observable<PageData>);
 
-    component.ngOnInit();
-
-    expect(component.updatePage).toHaveBeenCalledTimes(1);
-    expect(component.updatePage).toHaveBeenCalledWith();
-  });
-
-  describe('updatePage', () => {
-    it('should update the rendered elements with the right indexes', () => {
-      const expectedPageIndex = 1;
-      const expectedPageSize = component.pageSize;
-
-      const page: PageEvent = {
-        pageIndex: expectedPageIndex,
-        pageSize: component.pageSize,
+      const page = {
+        pageIndex: 1,
+        previousPageIndex: 0,
       } as PageEvent;
 
-      component.updatePage(page);
+      component.onPageSelectionChange(page);
 
-      expect(component.pageIndex).toEqual(expectedPageIndex);
-      // the page size has been saved
-      expect(component.pageSize).toEqual(expectedPageSize);
+      expect(component.paginatorConfig.disable).toBeTrue();
+      tick();
+    }));
+
+    it('should enable the paginator when a new page is received', fakeAsync(() => {
+      const fakeRepos = {
+        hasprev: false,
+        hasnext: false,
+        repos: [],
+        elementsFieldName: 'repos',
+      };
+      spyOn(component, 'fetchPageData').and.returnValue(of(fakeRepos));
+      const page = {
+        pageIndex: 1,
+        previousPageIndex: 0,
+      } as PageEvent;
+
+      component.onPageSelectionChange(page);
+      tick();
+
+      expect(component.paginatorConfig.disable).toBeFalse();
+    }));
+
+    it('should set the next page index when the next page is selected', fakeAsync(() => {
+      spyOn(component, 'fetchPageData').and.returnValue(empty());
+      const page = {
+        pageIndex: 1,
+        previousPageIndex: 0,
+      } as PageEvent;
+
+      component.onPageSelectionChange(page);
+      tick();
+
+      expect(component.viewConfig.pageIndex).toEqual(10);
+    }));
+
+    it('should set the previous page index when the previous page is selected', fakeAsync(() => {
+      spyOn(component, 'fetchPageData').and.returnValue(empty());
+      const page = {
+        pageIndex: 0,
+        previousPageIndex: 1,
+      } as PageEvent;
+
+      component.onPageSelectionChange(page);
+      tick();
+
+      expect(component.viewConfig.pageIndex).toEqual(0);
+    }));
+
+    it('should fetch the next page when the next page is selected', fakeAsync(() => {
+      const fetcher = spyOn(component, 'fetchPageData').and.returnValue(
+        empty()
+      );
+      const page = {
+        pageIndex: 1,
+        previousPageIndex: 0,
+      } as PageEvent;
+
+      component.onPageSelectionChange(page);
+      tick();
+
+      const expectedFilters: Filter[] = [
+        {name: 'limit', value: '10'},
+        {name: 'offset', value: '10'},
+      ];
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      const passedArgs = fetcher.calls.mostRecent().args as object[];
+      expectedFilters.forEach(filter =>
+        expect(passedArgs[0]).toContain(jasmine.objectContaining(filter))
+      );
+    }));
+
+    it('should fetch the previous page when the previous page is selected', fakeAsync(() => {
+      const fetcher = spyOn(component, 'fetchPageData').and.returnValue(
+        empty()
+      );
+      const page = {
+        pageIndex: 0,
+        previousPageIndex: 1,
+      } as PageEvent;
+
+      component.onPageSelectionChange(page);
+      tick();
+
+      const expectedFilters: Filter[] = [
+        {name: 'limit', value: '10'},
+        {name: 'offset', value: '0'},
+      ];
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      const passedArgs = fetcher.calls.mostRecent().args as object[];
+      expectedFilters.forEach(filter =>
+        expect(passedArgs[0]).toContain(jasmine.objectContaining(filter))
+      );
+    }));
+
+    it('should restore the previous index if an error occurs while fetching data', fakeAsync(() => {
+      spyOn(component, 'fetchPageData').and.returnValue(throwError(''));
+      component.viewConfig.pageIndex = 0;
+      const page = {
+        pageIndex: 1,
+        previousPageIndex: 0,
+      } as PageEvent;
+
+      component.onPageSelectionChange(page);
+      tick();
+
+      expect(component.viewConfig.pageIndex).toEqual(0);
+    }));
+  });
+
+  describe('update', () => {
+    it('should set the parameters', () => {
+      const newFilters = [{name: '', value: ''}];
+      component.update(newFilters, 'repo', 'org');
+      expect(component.repoName).toEqual('repo');
+      expect(component.orgName).toEqual('org');
+      expect(component.filters).toEqual(newFilters);
     });
 
-    it('should not update the rendered elements if no page was provided', () => {
-      component.pageIndex = 6;
-      component.pageSize = 3;
+    it('should update the page data with the new filters', fakeAsync(() => {
+      const fetcher = spyOn(component, 'fetchPageData').and.returnValue(
+        empty()
+      );
+      const newFilter = {name: 'newFilter', value: 'fiterValue'};
 
-      const expectedPageIndex = component.pageIndex;
-      const expectedPageSize = component.pageSize;
+      component.update([newFilter], 'repo', 'org');
+      tick();
 
-      component.updatePage();
+      const expectedFilters: Filter[] = [
+        {name: 'limit', value: '10'},
+        {name: 'offset', value: '0'},
+        newFilter,
+      ];
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      const passedArgs = fetcher.calls.mostRecent().args as object[];
+      expectedFilters.forEach(filter =>
+        expect(passedArgs[0]).toContain(jasmine.objectContaining(filter))
+      );
+    }));
 
-      expect(component.pageIndex).toEqual(expectedPageIndex);
-      expect(component.pageSize).toEqual(expectedPageSize);
-    });
+    it('should activate the next page selector if there is a next page', fakeAsync(() => {
+      const fakeRepos = {
+        hasprev: false,
+        hasnext: true,
+        repos: [{}, {}],
+        elementsFieldName: 'repos',
+      };
+      spyOn(component, 'fetchPageData').and.returnValue(of(fakeRepos));
 
-    it('should hide the paginator when there is only 1 page to show', () => {
-      // fill with the exact page size
-      component.showPaginator = true;
-      component.pageSize = 5;
-      component._elements = [];
-      for (let index = 0; index < component.pageSize; index++) {
-        component._elements.push({name: '', organization: ''});
-      }
+      component.update([], '', '');
+      tick();
 
-      component.updatePage();
+      expect(component.paginator.pageIndex).toEqual(0);
+    }));
 
-      expect(component.showPaginator).toBeFalse();
+    it('should activate the previous page selector if there is a previous page', fakeAsync(() => {
+      const fakeRepos = {
+        hasprev: true,
+        hasnext: false,
+        repos: [{}, {}],
+        elementsFieldName: 'repos',
+      };
+      spyOn(component, 'fetchPageData').and.returnValue(of(fakeRepos));
 
-      // fill with a smaller page size
-      component.showPaginator = true;
-      component.pageSize = 5;
-      component._elements = [];
-      for (let index = 0; index < component.pageSize; index++) {
-        component._elements.push({name: '', organization: ''});
-      }
+      component.update([], '', '');
+      tick();
 
-      component.updatePage();
+      expect(component.paginator.pageIndex).toEqual(2);
+    }));
 
-      expect(component.showPaginator).toBeFalse();
-    });
+    it('should activate all page selectors if there is a previous and a next page', fakeAsync(() => {
+      const fakeRepos = {
+        hasprev: true,
+        hasnext: true,
+        repos: [{}, {}],
+        elementsFieldName: 'repos',
+      };
+      spyOn(component, 'fetchPageData').and.returnValue(of(fakeRepos));
 
-    it('should show the paginator when there is more than 1 page to show', () => {
-      // fill with the exact page size
-      component.showPaginator = false;
-      component.pageSize = 5;
-      component._elements = [];
-      for (let index = 0; index < component.pageSize + 1; index++) {
-        component._elements.push({name: '', organization: ''});
-      }
+      component.update([], '', '');
+      tick();
 
-      component.updatePage();
+      expect(component.paginator.pageIndex).toEqual(1);
+    }));
 
-      expect(component.showPaginator).toBeTrue();
-    });
+    it('should hide the paginator if there is only 1 page to show', fakeAsync(() => {
+      const fakeRepos = {
+        hasprev: false,
+        hasnext: false,
+        repos: [{}, {}],
+        elementsFieldName: 'repos',
+      };
+      spyOn(component, 'fetchPageData').and.returnValue(of(fakeRepos));
+
+      component.update([], '', '');
+      tick();
+
+      expect(component.paginatorConfig.show).toEqual(false);
+    }));
+
+    it('should show the paginator if there are many pages to show', fakeAsync(() => {
+      const fakeRepos = {
+        hasprev: true,
+        hasnext: false,
+        repos: [{}, {}],
+        elementsFieldName: 'repos',
+      };
+      spyOn(component, 'fetchPageData').and.returnValue(of(fakeRepos));
+
+      component.update([], '', '');
+      tick();
+
+      expect(component.paginatorConfig.show).toEqual(true);
+    }));
   });
 
   describe('onElementClick', () => {

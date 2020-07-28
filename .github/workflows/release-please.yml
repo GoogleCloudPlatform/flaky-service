@@ -1,0 +1,15 @@
+ on:
+   push:
+     branches:
+       - master
+ name: release-please
+ jobs:
+   release-please:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: GoogleCloudPlatform/release-please-action@v1.6.0
+         with:
+           token: ${{ secrets.GITHUB_TOKEN }}
+           release-type: node
+           package-name: flaky.dev-action
+           path: 'packages/action'

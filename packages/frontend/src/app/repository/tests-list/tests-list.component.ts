@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, ViewChild, Input} from '@angular/core';
+import {Component} from '@angular/core';
 import {
   PaginatedListComponent,
-  MatPaginator,
+  PageData,
 } from 'src/app/paginated-list/paginated-list.component';
-import {Test} from 'src/app/services/search/interfaces';
+import {Test, Filter} from 'src/app/services/search/interfaces';
 import * as moment from 'moment';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-tests-list',
@@ -26,20 +28,21 @@ import * as moment from 'moment';
   styleUrls: ['./tests-list.component.css'],
 })
 export class TestsListComponent extends PaginatedListComponent<Test> {
-  @ViewChild('paginator') paginator: MatPaginator;
+  fetchPageData(filters: Filter[] = []): Observable<PageData> {
+    return this.comService
+      .fetchTests(this.repoName, this.orgName, filters)
+      .pipe(
+        map(tests => {
+          tests['elementsFieldName'] = 'tests';
+          return tests as PageData;
+        })
+      );
+  }
 
-  @Input() repoName: string;
-  @Input() orgName: string;
-
-  ngOnInit() {
-    super.ngOnInit();
-    this.comService
-      .fetchTests(this.repoName, this.orgName)
-      .subscribe(result => {
-        this._elements = result.tests;
-        this.updatePage();
-        this.paginator?.firstPage();
-      });
+  getEmptyElement(): Test {
+    return {
+      lastupdate: {_seconds: 0},
+    };
   }
 
   toLiteralDate(timestamp: number) {

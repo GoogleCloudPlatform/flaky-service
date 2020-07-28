@@ -83,3 +83,7 @@ td {
 mat-paginator {
     background-color: inherit;
 }
+
+.hidden {
+    display: none;
+}

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<div id="filters-container" *ngIf="!loading && repositories.length >= 2 && !repoName">
+<div id="filters-container" *ngIf="!loading && repoList.viewConfig.elements.length && !repoName">
     <div id="filters-subcontainer">
         <!-- FILTERS -->
         <app-filters [filters]="filters" (filtersChanged)="onFiltersChanged($event)"></app-filters>
@@ -23,15 +23,12 @@ limitations under the License.
 
 <!-- REPOSITORIES LIST -->
 <div class="repo-list-container">
-    <app-repo-list [repositories]="repositories" *ngIf="!loading && repositories.length"></app-repo-list>
+    <app-repo-list #repoList (loadingComplete)="onReposLoaded()"></app-repo-list>
+</div>
+
+<div id="extras-container">
     <mat-spinner *ngIf="loading" [strokeWidth]="5" id="spinner"></mat-spinner>
-    <p id="no-repo-found" *ngIf="!repositories.length && !loading">
+    <p id="no-repo-found" *ngIf="!repoList.viewConfig.elements.length && !loading">
         No repository found
     </p>
 </div>
-
-
-<!-- LICENSE BUTTON-->
-<footer id="license-footer">
-    <a color="primary" id="license-button" (click)="openLicenseDialog()">© 2020 Google, LLC.</a>
-</footer>
