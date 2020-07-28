@@ -28,7 +28,8 @@ jobs:
       - run: npm test
         working-directory: ./packages/api
       - name: track flaky tests
-        uses: GoogleCloudPlatform/flaky-service/packages/action@ee9cc51f3b42fc8e9e43bee8a2cf86d8bc82c03e
+        if: ${{ always() }}
+        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
         with:
           github: ${{toJson(github)}}
           matrix: ${{toJson(matrix)}}
@@ -56,7 +57,8 @@ jobs:
       - run: npm run lint
         working-directory: ./packages/frontend
       - name: track flaky tests
-        uses: GoogleCloudPlatform/flaky-service/packages/action@ee9cc51f3b42fc8e9e43bee8a2cf86d8bc82c03e
+        if: ${{ always() }}
+        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
         with:
           github: ${{toJson(github)}}
           matrix: ${{toJson(matrix)}}
