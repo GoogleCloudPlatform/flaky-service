@@ -41,7 +41,11 @@ export class MainComponent implements AfterViewInit {
   orgName = '';
   repoName = '';
   filters = {
-    orderby: ['activity', 'name', 'priority'],
+    orderby: [
+      {value: 'activity', visibleValue: 'last update'},
+      'name',
+      'priority',
+    ],
   };
 
   ngAfterViewInit(): void {

@@ -31,7 +31,10 @@ export class FiltersComponent implements OnInit {
     if (this._filters.length === 0) this.setFilters(mockFilters);
   }
 
-  readonly defaultPossibleValue = 'All';
+  readonly defaultOption = {
+    value: 'All',
+    visibleValue: 'All',
+  };
   _filters: AvailableFilter[] = [];
   @Input() maxOptions = 3;
   @Output() filtersChanged = new EventEmitter<Filter[]>();
@@ -71,11 +74,27 @@ export class FiltersComponent implements OnInit {
     Object.keys(filtersObject).forEach(filterName => {
       filters.push({
         name: filterName,
-        possibleValues: filtersObject[filterName],
+        possibleValues: this.getPossibleValues(filtersObject[filterName]),
         selection: '',
       });
     });
     return filters;
+  }
+
+  private getPossibleValues(providedOptions: string[] | Option[]): Option[] {
+    const options: Option[] = [];
+
+    providedOptions.forEach(option => {
+      if (typeof option === 'string') {
+        options.push({value: option, visibleValue: option});
+      } else {
+        options.push({
+          value: option['value'],
+          visibleValue: option['visibleValue'],
+        });
+      }
+    });
+    return options;
   }
 
   onSelectionChanged() {
@@ -89,6 +108,11 @@ export class FiltersComponent implements OnInit {
 
 export interface AvailableFilter {
   name: string;
-  possibleValues: string[];
+  possibleValues: Option[];
   selection: string;
+}
+
+interface Option {
+  value: string;
+  visibleValue: string;
 }
