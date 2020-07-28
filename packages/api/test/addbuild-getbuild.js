@@ -136,6 +136,7 @@ describe('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
+      console.log('BUIDLS>DATA: ' + builds.data().percentpassing);
       assert.strictEqual(builds.data().percentpassing, 1.0);
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 0);
@@ -145,7 +146,6 @@ describe('Add-Build', () => {
 
     it('Can add a third build with some new test cases, add same thing multiple times', async () => {
       await addBuild(buildInfo[2].testCases, buildInfo[2], client, global.headCollection);
-      await addBuild(buildInfo[2].testCases, buildInfo[2], client, global.headCollection); // done twice to make sure can be called duplicate times
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
@@ -163,7 +163,7 @@ describe('Add-Build', () => {
             tag: ['abc', 'xyz']
           },
           percentpassing: 1.0,
-          builds: ['11111', '22222'],
+          builds: [buildInfo[0].buildId, buildInfo[1].buildId],
           flaky: 0
         },
         {
@@ -175,7 +175,7 @@ describe('Add-Build', () => {
             tag: ['abc', 'xyz']
           },
           percentpassing: 1.0 / 3.0,
-          builds: ['11111', '22222', '33333'],
+          builds: [buildInfo[0].buildId, buildInfo[1].buildId, buildInfo[2].buildId],
           flaky: 0
         },
         {
@@ -187,7 +187,7 @@ describe('Add-Build', () => {
             tag: ['abc']
           },
           percentpassing: 1,
-          builds: ['11111'],
+          builds: [buildInfo[0].buildId],
           flaky: 0
         },
         {
@@ -199,7 +199,7 @@ describe('Add-Build', () => {
             tag: ['abc']
           },
           percentpassing: 0,
-          builds: ['11111'],
+          builds: [buildInfo[0].buildId],
           flaky: 0
         },
         {
@@ -211,7 +211,7 @@ describe('Add-Build', () => {
             tag: ['xyz']
           },
           percentpassing: 0,
-          builds: ['33333'],
+          builds: [buildInfo[2].buildId],
           flaky: 0
         }
       ];
@@ -229,7 +229,7 @@ describe('Add-Build', () => {
         testruns.forEach((doc) => {
           testBuilds.push(doc.id);
         });
-        assert.deepStrictEqual(testBuilds, testExpecation.builds);
+        assert.deepStrictEqual(new Set(testBuilds), new Set(testExpecation.builds));
       }
 
       // lastly make sure the repository has correctly stored the build fields
@@ -362,7 +362,7 @@ describe('Add-Build', () => {
 
   describe('GetBuildHandler', async () => {
     it('Can get a particular build', async () => {
-      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/build/33333');
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/build/' + buildInfo[2].buildId);
 
       const respText = await resp.text();
       const ansObj = JSON.parse(respText);
@@ -453,6 +453,15 @@ describe('Add-Build', () => {
           }
         }
       }
+    });
+  });
+
+  describe('Duplicate Addbuild', async () => {
+    it('Can add two builds with the same id and treat them differently', async () => {
+      await addBuild(buildInfo[2].testCases, buildInfo[2], client, global.headCollection);
+
+      const allBuilds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').get();
+      assert.deepStrictEqual(allBuilds.size, 5);
     });
   });
 

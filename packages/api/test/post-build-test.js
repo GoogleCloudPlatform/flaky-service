@@ -189,17 +189,21 @@ describe('Posting Builds', () => {
     assert.strictEqual(repositoryInfo.data().organization, parsedPayloadRaw.metadata.github.repository_owner);
     assert.strictEqual(repositoryInfo.data().url, parsedPayloadRaw.metadata.github.repositoryUrl);
 
-    var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').doc(buildId).get();
-    assert.strictEqual(buildInfo.data().tests.length, 2);
-    assert.strictEqual(buildInfo.data().percentpassing, 1);
-    assert.strictEqual(buildInfo.data().environment.ref, 'master');
+    var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').where('buildId', '==', buildId).get();
+    let result;
+    buildInfo.forEach(r => { result = r; });
+    assert.strictEqual(result.data().tests.length, 2);
+    assert.strictEqual(result.data().percentpassing, 1);
+    assert.strictEqual(result.data().environment.ref, 'master');
 
     for (var i = 0; i < 2; i++) {
       var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).get();
       assert.strictEqual(testInfo.data().percentpassing, 1);
 
-      var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).collection('runs').doc(buildId).get();
-      assert.strictEqual(runInfo.data().timestamp.toDate().getTime(), new Date(parsedPayloadRaw.metadata.github.event.head_commit.timestamp).getTime());
+      var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).collection('runs').where('buildId', '==', buildId).get();
+      let resultRun;
+      runInfo.forEach(r => { resultRun = r; });
+      assert.strictEqual(resultRun.data().timestamp.toDate().getTime(), new Date(parsedPayloadRaw.metadata.github.event.head_commit.timestamp).getTime());
     }
   });
 
@@ -210,6 +214,7 @@ describe('Posting Builds', () => {
 
     await deleteRepo(client, repoIds[0]);
     await deleteRepo(client, repoIds[1]);
+    await deleteRepo(client, repoIds[2]);
 
     nock.restore();
     nock.cleanAll();

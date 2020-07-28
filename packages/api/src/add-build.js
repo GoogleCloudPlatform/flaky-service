@@ -20,6 +20,7 @@
 */
 const { Firestore } = require('@google-cloud/firestore');
 const { buildPassingPercent, TestCaseAnalytics } = require('../lib/analytics.js');
+const { v4: uuidv4 } = require('uuid');
 
 function listifySnapshot (snapshot) {
   const results = [];
@@ -44,10 +45,8 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
   var dbRepo = client.collection(collectionName).doc(buildInfo.repoId);
 
   // if this build has already been posted, skip
-  const thisBuildExists = await dbRepo.collection('builds').doc(buildInfo.buildId).get();
-  if (thisBuildExists.exists) {
-    return;
-  }
+  const buildIdReadable = buildInfo.buildId;
+  buildInfo.buildId = uuidv4(); // buildId will always be UUID
 
   // if this build is not the most recent build, than update test cases based on ALL repos, update build info based on RPREVIOUS builds, and ignore repo
   let mostRecent = true;
@@ -107,7 +106,8 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
         environment: buildInfo.environment,
         status: testCase.successful ? 'OK' : testCase.failureMessage,
         timestamp: buildInfo.timestamp,
-        buildId: decodeURIComponent(buildInfo.buildId), // as value decoded
+        buildId: decodeURIComponent(buildIdReadable), // as value decoded
+        buildIdInternal: buildInfo.buildId,
         sha: decodeURIComponent(buildInfo.sha)
       }
     );
@@ -163,7 +163,8 @@ async function addBuild (testCases, buildInfo, client, collectionName = 'reposit
     timestamp: buildInfo.timestamp,
     tests: alltests,
     sha: decodeURIComponent(buildInfo.sha),
-    buildId: decodeURIComponent(buildInfo.buildId),
+    buildId: decodeURIComponent(buildIdReadable),
+    buildIdInternal: buildInfo.buildId,
     buildmessage: buildInfo.buildmessage,
     flaky: flakyBuild
   });
