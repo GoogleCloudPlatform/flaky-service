@@ -54,6 +54,7 @@ describe('HeatMapComponent', () => {
     fixture.autoDetectChanges(true);
     component.config.weeksToDisplay = 2;
     component.config.daysToDisplay = 7;
+    component.init('', '');
   });
 
   it('should create', () => {
@@ -68,7 +69,7 @@ describe('HeatMapComponent', () => {
     component.config.weeksToDisplay = cols;
     component.config.daysToDisplay = rows;
 
-    component.ngOnInit();
+    component.init('', '');
 
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
@@ -81,7 +82,7 @@ describe('HeatMapComponent', () => {
 
   it('should set the right colors in the cells', () => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
-    component.ngOnInit();
+    component.init('', '');
 
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
@@ -97,7 +98,7 @@ describe('HeatMapComponent', () => {
 
   it('should show the builds when a valid cell is selected', done => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
-    component.ngOnInit();
+    component.init('', '');
 
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
@@ -125,7 +126,7 @@ describe('HeatMapComponent', () => {
 
   it('should not show the builds when an invalid cell is selected', done => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
-    component.ngOnInit();
+    component.init('', '');
 
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
@@ -177,7 +178,7 @@ describe('HeatMapComponent', () => {
 
   it('should show the right text in the tooltip when the mouse hovers a success cell', done => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
-    component.ngOnInit();
+    component.init('', '');
 
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
@@ -203,7 +204,7 @@ describe('HeatMapComponent', () => {
 
   it('should show the right text in the tooltip when the mouse hovers a flaky cell', done => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
-    component.ngOnInit();
+    component.init('', '');
 
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
@@ -229,7 +230,7 @@ describe('HeatMapComponent', () => {
 
   it('should show the right text in the tooltip when the mouse hovers a failling cell', done => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
-    component.ngOnInit();
+    component.init('', '');
 
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
@@ -255,7 +256,7 @@ describe('HeatMapComponent', () => {
 
   it('should show the right text in the tooltip when the mouse hovers a blank cell', done => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds._3PreviousDays});
-    component.ngOnInit();
+    component.init('', '');
 
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)

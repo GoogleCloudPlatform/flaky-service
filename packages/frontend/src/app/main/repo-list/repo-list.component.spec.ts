@@ -12,37 +12,51 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {
-  MatPaginatorModule,
-  MatPaginator,
-  PageEvent,
-} from '@angular/material/paginator';
+  async,
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RepoListComponent} from './repo-list.component';
-import {Repository} from 'src/app/services/search/interfaces';
+import {ApiRepositories} from 'src/app/services/search/interfaces';
 import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {HttpClientModule} from '@angular/common/http';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {of} from 'rxjs';
+import {COMService} from 'src/app/services/com/com.service';
 
 describe('RepoListComponent', () => {
   let component: RepoListComponent;
   let fixture: ComponentFixture<RepoListComponent>;
 
-  const mockRepositories: Repository[] = [
-    {
-      name: '',
-      organization: '',
-      flaky: 0,
-      numfails: 0,
-      numtestcases: 10,
-    },
-  ];
+  const mockRepositories: ApiRepositories = {
+    hasnext: false,
+    hasprev: false,
+    repos: [
+      {
+        name: '',
+        organization: '',
+        flaky: 0,
+        numfails: 0,
+        numtestcases: 10,
+        lastupdate: {_seconds: 0},
+      },
+    ],
+  };
+
+  const COMServiceMock = {
+    fetchRepositories: () => of(mockRepositories),
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [RepoListComponent],
+      providers: [{provide: COMService, useValue: COMServiceMock}],
       imports: [
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -58,40 +72,25 @@ describe('RepoListComponent', () => {
     fixture = TestBed.createComponent(RepoListComponent);
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
-    component.paginator = {
-      firstPage: () => {
-        component.updatePage({
-          pageIndex: 0,
-          pageSize: component.pageSize,
-        } as PageEvent);
-      },
-    } as MatPaginator;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should update the rendered pages on input change', () => {
-    component.pageIndex = 1;
-    const expectedPageSize: number = component.pageSize;
+  it('should update the rendered pages on input change', fakeAsync(() => {
+    component.viewConfig.pageIndex = 1;
+    const expectedPageSize: number = component.viewConfig.pageSize;
+    COMServiceMock.fetchRepositories = () => of(mockRepositories);
 
-    component.repositories = mockRepositories;
+    component.update([], '', '');
+    tick();
+    fixture.detectChanges();
 
-    expect(component._elements).toEqual(mockRepositories);
+    expect(component.viewConfig.elements).toEqual(mockRepositories.repos);
     // reset the index
-    expect(component.pageIndex).toEqual(0);
+    expect(component.viewConfig.pageIndex).toEqual(0);
     // didn't change the page size
-    expect(component.pageSize).toEqual(expectedPageSize);
-  });
-
-  it('should not return to the first page when the paginator is not ready', () => {
-    const expectedPageIndex = 1;
-    component.paginator = undefined;
-    component.pageIndex = expectedPageIndex;
-
-    component.repositories = mockRepositories;
-
-    expect(component.pageIndex).toEqual(expectedPageIndex);
-  });
+    expect(component.viewConfig.pageSize).toEqual(expectedPageSize);
+  }));
 });

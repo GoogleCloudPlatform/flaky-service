@@ -27,6 +27,15 @@ jobs:
         working-directory: ./packages/api
       - run: npm test
         working-directory: ./packages/api
+      - name: track flaky tests
+        if: ${{ always() }}
+        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
+        with:
+          github: ${{toJson(github)}}
+          matrix: ${{toJson(matrix)}}
+          os: ${{toJson(runner)}}
+          logtype: TAP
+          filepath: ${{github.workspace}}/packages/api/test.tap
   frontend-test:
     runs-on: ubuntu-latest
     strategy:
@@ -47,3 +56,12 @@ jobs:
         working-directory: ./packages/frontend
       - run: npm run lint
         working-directory: ./packages/frontend
+      - name: track flaky tests
+        if: ${{ always() }}
+        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
+        with:
+          github: ${{toJson(github)}}
+          matrix: ${{toJson(matrix)}}
+          os: ${{toJson(runner)}}
+          logtype: TAP
+          filepath: ${{github.workspace}}/packages/frontend/test.tap

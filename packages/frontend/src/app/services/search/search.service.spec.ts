@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {TestBed} from '@angular/core/testing';
+import {TestBed, fakeAsync, tick} from '@angular/core/testing';
 import {SearchService} from './search.service';
 import {COMService} from '../com/com.service';
-import {ApiRepositories, Search} from './interfaces';
-import {of, throwError} from 'rxjs';
+import {ApiRepositories} from './interfaces';
+import {of, throwError, empty} from 'rxjs';
 
 describe('SearchService', () => {
   let service: SearchService;
@@ -76,53 +76,55 @@ describe('SearchService', () => {
 
   describe('search', () => {
     it('should return the fetched repositories', done => {
-      const search: Search = {query: '', filters: []};
+      service.search('repo', 'org', []).subscribe(reponse => {
+        expect(reponse.repos.length).toEqual(repositories.repos.length);
 
-      service.search(search, 'org').subscribe(repos => {
-        expect(repos.length).toEqual(repositories.repos.length);
-
-        repos.forEach((repo, index) => {
+        reponse.repos.forEach((repo, index) => {
           expect(repo.name).toEqual(repositories.repos[index].name);
         });
         done();
       });
     });
 
-    it("should add the 'order by priority' filter to the search if itsn't already present", done => {
-      const search: Search = {query: '', filters: []};
+    it("should add the 'order by priority' filter to the search if it isn't already present", fakeAsync(() => {
       const reposFetcher = spyOn(
         mockCOMService,
         'fetchRepositories'
-      ).and.callThrough();
+      ).and.returnValue(empty());
 
-      service.search(search, 'org').subscribe();
+      service.search('repo', 'org', []).subscribe();
+      tick();
 
-      const expectedSearch: Search = {
-        query: '',
-        filters: [{name: 'orderby', value: 'priority'}],
-      };
-      const providedSearch = (reposFetcher.calls.mostRecent()
-        .args as Search[])[0];
-      expect(providedSearch).toEqual(jasmine.objectContaining(expectedSearch));
-      done();
-    });
+      expect(reposFetcher).toHaveBeenCalledTimes(1);
+      const reposFetcherArgs = reposFetcher.calls.mostRecent().args as (
+        | object
+        | string
+      )[];
+      expect(reposFetcherArgs[0]).toEqual('repo');
+      expect(reposFetcherArgs[1]).toEqual('org');
+      expect(reposFetcherArgs[2]).toEqual([
+        {name: 'orderby', value: 'priority'},
+      ]);
+    }));
 
-    it("should not add the 'order by priority' filter to the search if it is already present", done => {
-      const search: Search = {
-        query: '',
-        filters: [{name: 'orderby', value: 'name'}],
-      };
+    it("should not add the 'order by priority' filter to the search if it is already present", fakeAsync(() => {
       const reposFetcher = spyOn(
         mockCOMService,
         'fetchRepositories'
-      ).and.callThrough();
+      ).and.returnValue(empty());
 
-      service.search(search, 'org').subscribe();
+      const filters = [{name: 'orderby', value: 'name'}];
+      service.search('repo', 'org', filters).subscribe();
+      tick();
 
-      const providedSearch = (reposFetcher.calls.mostRecent()
-        .args as Search[])[0];
-      expect(providedSearch).toEqual(jasmine.objectContaining(search));
-      done();
-    });
+      expect(reposFetcher).toHaveBeenCalledTimes(1);
+      const reposFetcherArgs = reposFetcher.calls.mostRecent().args as (
+        | object
+        | string
+      )[];
+      expect(reposFetcherArgs[0]).toEqual('repo');
+      expect(reposFetcherArgs[1]).toEqual('org');
+      expect(reposFetcherArgs[2]).toEqual(filters);
+    }));
   });
 });

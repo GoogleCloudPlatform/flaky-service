@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<div id="tests-container">
+<div id="tests-container" *ngIf="viewConfig.elements.length">
     
     <mat-accordion multi>
-        <mat-expansion-panel *ngFor="let test of renderedElements" 
+        <mat-expansion-panel *ngFor="let test of viewConfig.elements" 
                              hideToggle
                              class="outer-panel">
             <mat-expansion-panel-header class="expansion-panel"
@@ -71,16 +71,15 @@ limitations under the License.
 
         </mat-expansion-panel>
     </mat-accordion>
-
-    <!-- PAGINATOR-->
-    <mat-paginator
-        #paginator
-        [length]="_elements.length"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="[10, 25, 50, 100]"
-        [pageIndex]="pageIndex"
-        (page)="updatePage($event)"
-        [hidePageSize]="true"
-        *ngIf="showPaginator">
-    </mat-paginator>
 </div>
+
+<!-- PAGINATOR-->
+<mat-paginator
+    #paginator
+    [length]="paginatorConfig.elements.length"
+    [pageSize]="paginatorConfig.pageSize"
+    (page)="onPageSelectionChange($event)"
+    [hidePageSize]="true"
+    [disabled]="paginatorConfig.disable"
+    [class.hidden]="!paginatorConfig.show">
+</mat-paginator>

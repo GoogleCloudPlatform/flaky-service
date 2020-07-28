@@ -99,6 +99,9 @@ const buildInfo = [
   }
 ];
 
+buildInfo[2].testCases[0].failureMessage = 'Error message';
+buildInfo[2].testCases[1].failureMessage = 'Error message';
+
 describe('Add-Build', () => {
   before(async () => {
     global.headCollection = 'testing/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
@@ -344,6 +347,7 @@ describe('Add-Build', () => {
       // make sure their are the newly added fields
       assert.strictEqual(ansObj[2].lifetimepasscount, 0);
       assert.strictEqual(ansObj[2].lifetimefailcount, 1);
+      assert.strictEqual(ansObj[0].failuremessageiffailing, 'Error message');
     });
 
     it('Can use offset and limit parameter for tests', async () => {

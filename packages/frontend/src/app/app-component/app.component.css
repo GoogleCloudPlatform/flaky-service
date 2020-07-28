@@ -67,8 +67,28 @@ app-search {
     width: 100%;
     z-index: 2;
     flex: 1 0 auto;
+    top: 0px;
+    margin-top: 64px;
+}
+@media (max-width: 600px) {
+    /* Update the margin in respect to the angular material toolbar's heigh updated*/
+    #fixed-header {
+        margin-top: 56px;
+    }
 }
 
 #router-container {
     margin-top: 90px;
+}
+
+#license-footer {
+    text-align: right;
+    margin-top: 20px;
+}
+#license-button{
+    font-size: 1em;
+    color: #b0b0b0;
+    outline: none;
+    background-color: #ffffff;
+    cursor: pointer;
 }
