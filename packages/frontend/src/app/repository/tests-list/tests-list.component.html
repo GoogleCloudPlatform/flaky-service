@@ -20,11 +20,11 @@ limitations under the License.
         <mat-expansion-panel *ngFor="let test of viewConfig.elements" 
                              hideToggle
                              class="outer-panel">
-            <mat-expansion-panel-header class="expansion-panel"
+            <mat-expansion-panel-header class="panel-header"
                                         [class.flaky]="test.passed && test.flaky"
-                                        [class.failing]="!test.passed">
-                <mat-panel-title>
-                    <div class="test">
+                                        [class.failing]="!test.passed"
+                                        [class.passing]="test.passed && !test.flaky">
+                <mat-panel-title class="test-info">
 
                         <!-- TEST DETAILS -->
                         <div class="details">
@@ -58,7 +58,6 @@ limitations under the License.
                                 </tr>
                             </table>
                         </div>
-                    </div>
                 </mat-panel-title>
             </mat-expansion-panel-header>
 
