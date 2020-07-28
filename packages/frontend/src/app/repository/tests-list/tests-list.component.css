@@ -19,7 +19,7 @@ limitations under the License.
     padding: 5px;
 }
 
-.test-info {
+.test {
     display: flex;
     width: 100%;
     flex-wrap: wrap;
