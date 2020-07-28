@@ -12,29 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  async,
-  ComponentFixture,
-  TestBed,
-  tick,
-  fakeAsync,
-} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {HomeComponent} from './home.component';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {Router} from '@angular/router';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let router: Router;
-  let dialogSpy: jasmine.Spy;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [HomeComponent],
-      imports: [AppRoutingModule, MatDialogModule, NoopAnimationsModule],
+      imports: [AppRoutingModule, NoopAnimationsModule],
     }).compileComponents();
   }));
 
@@ -49,20 +41,4 @@ describe('HomeComponent', () => {
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should call openLicenseDialog when the license button is clicked', fakeAsync(() => {
-    spyOn(component, 'openLicenseDialog');
-    const licenseButton = fixture.debugElement.nativeElement.querySelector(
-      '#license-button'
-    );
-    licenseButton.click();
-    tick();
-    expect(component.openLicenseDialog).toHaveBeenCalled();
-  }));
-
-  it('should call the dialog open() function when the license button is clicked', fakeAsync(() => {
-    dialogSpy = spyOn(TestBed.get(MatDialog), 'open').and.callThrough();
-    component.openLicenseDialog();
-    expect(dialogSpy).toHaveBeenCalled();
-  }));
 });

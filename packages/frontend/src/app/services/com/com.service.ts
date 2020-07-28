@@ -17,7 +17,6 @@ import {HttpClient, HttpParams, HttpErrorResponse} from '@angular/common/http';
 import {apiLinks} from './api';
 import {Observable, empty, throwError} from 'rxjs';
 import {
-  Search,
   Repository,
   ApiRepository,
   Filter,
@@ -35,13 +34,12 @@ export class COMService {
   constructor(private http: HttpClient, private snackBar: SnackBarService) {}
 
   public fetchRepositories(
-    search: Search,
-    orgName: string
+    repoName: string,
+    orgName: string,
+    filters: Filter[]
   ): Observable<ApiRepositories> {
-    let params: HttpParams = new HttpParams().set('startswith', search.query);
-    search.filters.forEach(
-      filter => (params = params.set(filter.name, filter.value))
-    );
+    let params: HttpParams = new HttpParams().set('startswith', repoName);
+    filters.forEach(filter => (params = params.set(filter.name, filter.value)));
     return this.http
       .get<ApiRepositories>(apiLinks.get.repositories(orgName), {
         params: params,
@@ -61,9 +59,15 @@ export class COMService {
       .pipe(catchError(err => this.handleError(err)));
   }
 
-  public fetchTests(repoName: string, orgName: string): Observable<Tests> {
+  public fetchTests(
+    repoName: string,
+    orgName: string,
+    filters: Filter[]
+  ): Observable<Tests> {
     return this.http
-      .get<Tests>(apiLinks.get.tests(repoName, orgName))
+      .get<Tests>(apiLinks.get.tests(repoName, orgName), {
+        params: this.getParams(filters),
+      })
       .pipe(catchError(err => this.handleError(err)));
   }
 

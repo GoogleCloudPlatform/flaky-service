@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit, NgZone} from '@angular/core';
-import {Router} from '@angular/router';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {LicenseComponent} from '../license/license.component';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -23,18 +20,5 @@ import {LicenseComponent} from '../license/license.component';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  constructor(
-    private ngZone: NgZone,
-    private router: Router,
-    public dialog: MatDialog
-  ) {}
-
   ngOnInit(): void {}
-
-  openLicenseDialog(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.id = 'license-dialog';
-
-    this.dialog.open(LicenseComponent, dialogConfig);
-  }
 }

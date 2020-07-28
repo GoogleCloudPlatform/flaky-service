@@ -13,9 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<div id="repos-container">
+<div id="repos-container" *ngIf="viewConfig.elements.length">
     <div
-        *ngFor="let repo of renderedElements"
+        *ngFor="let repo of viewConfig.elements"
         class="repo"
         [class.flaky-repo]="!repo.numfails && repo.flaky"
         [class.failing-repo]="repo.numfails"
@@ -58,18 +58,16 @@ limitations under the License.
                 </tr>
             </table>
         </div>
-    
     </div>
-
-    <!-- PAGINATOR-->
-    <mat-paginator
-        #paginator
-        [length]="_elements.length"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="[10, 25, 50, 100]"
-        [pageIndex]="pageIndex"
-        (page)="updatePage($event)"
-        [hidePageSize]="true"
-        *ngIf="showPaginator">
-    </mat-paginator>
 </div>
+
+<!-- PAGINATOR-->
+<mat-paginator
+    #paginator
+    [length]="paginatorConfig.elements.length"
+    [pageSize]="paginatorConfig.pageSize"
+    (page)="onPageSelectionChange($event)"
+    [hidePageSize]="true"
+    [disabled]="paginatorConfig.disable"
+    [class.hidden]="!paginatorConfig.show">
+</mat-paginator>

@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit, ViewChild, NgZone} from '@angular/core';
+import {Component, ViewChild, NgZone, AfterViewInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {LicenseComponent} from '../license/license.component';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {
   InterpretationService,
   expectedParams,
@@ -28,29 +26,36 @@ import {COMService} from '../services/com/com.service';
 import {catchError} from 'rxjs/operators';
 import {NotFoundError} from '../services/com/Errors/NotFoundError';
 import {empty} from 'rxjs';
+import {TestsListComponent} from './tests-list/tests-list.component';
+import {HeatMapComponent} from '../heat-map/heat-map.component';
 
 @Component({
   selector: 'app-repository',
   templateUrl: './repository.component.html',
   styleUrls: ['./repository.component.css'],
 })
-export class RepositoryComponent implements OnInit {
+export class RepositoryComponent implements AfterViewInit {
   constructor(
     public com: COMService,
     private route: ActivatedRoute,
     private router: Router,
     private ngZone: NgZone,
     private interpreter: InterpretationService,
-    public utils: UtilsService,
-    public dialog: MatDialog
+    public utils: UtilsService
   ) {}
 
   @ViewChild(FiltersComponent) filterComponent;
+  @ViewChild(TestsListComponent) testsListComponent;
+  @ViewChild(HeatMapComponent) heatMap;
 
-  repoName = ' ';
-  orgName = ' ';
+  repoName = '';
+  orgName = '';
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
+    setTimeout(() => this.setPageParams());
+  }
+
+  setPageParams(): void {
     this.route.params.subscribe(params => {
       const foundParams = this.interpreter.parseRouteParam(
         params,
@@ -58,6 +63,12 @@ export class RepositoryComponent implements OnInit {
       );
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');
+      this.heatMap.init(this.repoName, this.orgName, foundParams.filters);
+      this.testsListComponent.update(
+        foundParams.filters,
+        this.repoName,
+        this.orgName
+      );
 
       this.com
         .fetchRepository(this.repoName, this.orgName, foundParams.filters)
@@ -74,13 +85,6 @@ export class RepositoryComponent implements OnInit {
           );
         });
     });
-  }
-
-  openLicenseDialog(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.id = 'license-dialog';
-
-    this.dialog.open(LicenseComponent, dialogConfig);
   }
 
   onFiltersChanged(filters: Filter[]) {

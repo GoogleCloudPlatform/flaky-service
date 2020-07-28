@@ -22,11 +22,7 @@ import {
 import {TestsListComponent} from './tests-list.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {
-  MatPaginatorModule,
-  MatPaginator,
-  PageEvent,
-} from '@angular/material/paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {AppRoutingModule} from 'src/app/routing/app-routing.module';
 import {Component, Input} from '@angular/core';
 import {By} from '@angular/platform-browser';
@@ -67,66 +63,52 @@ describe('TestsListComponent', () => {
     fixture = TestBed.createComponent(TestsListComponent);
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
-    component.paginator = {
-      firstPage: () => {
-        component.updatePage({
-          pageIndex: 0,
-          pageSize: component.pageSize,
-        } as PageEvent);
-      },
-    } as MatPaginator;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should update the page with test data', done => {
+  it('should update the page with test data', fakeAsync(() => {
     COMServiceMock.fetchTests = () => of(mockTests);
-    component.ngOnInit();
+    component.update([], '', '');
+    tick();
+    fixture.detectChanges();
 
     const getTests = fixture.debugElement.queryAll(By.css('.test'));
 
-    setTimeout(() => {
-      expect(getTests.length).toEqual(3);
-      expect(
-        getTests[0].query(By.css('.test-name')).nativeElement.textContent
-      ).toEqual(mockTests.tests[0].name);
-      expect(
-        getTests[1].query(By.css('.test-name')).nativeElement.textContent
-      ).toEqual(mockTests.tests[1].name);
-      expect(
-        getTests[2].query(By.css('.test-name')).nativeElement.textContent
-      ).toEqual(mockTests.tests[2].name);
-      done();
-    });
-  });
+    expect(getTests.length).toEqual(3);
+    expect(
+      getTests[0].query(By.css('.test-name')).nativeElement.textContent
+    ).toEqual(mockTests.tests[0].name);
+    expect(
+      getTests[1].query(By.css('.test-name')).nativeElement.textContent
+    ).toEqual(mockTests.tests[1].name);
+    expect(
+      getTests[2].query(By.css('.test-name')).nativeElement.textContent
+    ).toEqual(mockTests.tests[2].name);
+  }));
 
-  it('should update the rendered pages on input change', () => {
-    component.pageIndex = 1;
-    const expectedPageSize: number = component.pageSize;
+  it('should update the rendered pages on input change', fakeAsync(() => {
+    component.viewConfig.pageIndex = 1;
+    const expectedPageSize: number = component.viewConfig.pageSize;
     COMServiceMock.fetchTests = () => of(mockTests);
-    component.ngOnInit();
 
-    expect(component._elements).toEqual(mockTests.tests);
+    component.update([], '', '');
+    tick();
+    fixture.detectChanges();
+
+    expect(component.viewConfig.elements).toEqual(mockTests.tests);
     // reset the index
-    expect(component.pageIndex).toEqual(0);
+    expect(component.viewConfig.pageIndex).toEqual(0);
     // didn't change the page size
-    expect(component.pageSize).toEqual(expectedPageSize);
-  });
-
-  it('should not return to the first page when the paginator is not ready', () => {
-    const expectedPageIndex = 1;
-    component.paginator = undefined;
-    component.pageIndex = expectedPageIndex;
-
-    expect(component.pageIndex).toEqual(expectedPageIndex);
-  });
+    expect(component.viewConfig.pageSize).toEqual(expectedPageSize);
+  }));
 
   it('should expand the tests details when user clicks on a test', fakeAsync(() => {
     COMServiceMock.fetchTests = () => of(mockTests);
-    component.ngOnInit();
-
+    component.update([], '', '');
+    tick();
     fixture.detectChanges();
 
     const panel = fixture.nativeElement.querySelector(

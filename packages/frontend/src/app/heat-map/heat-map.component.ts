@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit, ViewChild, Input} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {
   Congifuration,
   HeatMapService,
@@ -23,13 +23,14 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {UtilsService} from '../services/utils.service';
 import {COMService} from '../services/com/com.service';
 import {EventEmitter} from '@angular/core';
+import {Filter} from '../services/search/interfaces';
 
 @Component({
   selector: 'app-heat-map',
   templateUrl: './heat-map.component.html',
   styleUrls: ['./heat-map.component.css'],
 })
-export class HeatMapComponent implements OnInit {
+export class HeatMapComponent {
   readonly dataHolderSelector = '#data-holder';
   readonly config: Congifuration = {
     width: 700,
@@ -43,8 +44,8 @@ export class HeatMapComponent implements OnInit {
   selectedBuilds = [];
   selectedBatchDate = '';
 
-  @Input() orgName = '';
-  @Input() repoName = '';
+  orgName = '';
+  repoName = '';
   @ViewChild(MatSidenav) sidenave: MatSidenav;
 
   constructor(
@@ -54,12 +55,16 @@ export class HeatMapComponent implements OnInit {
     private com: COMService
   ) {}
 
-  ngOnInit(): void {
-    this.com.fetchBuilds(this.repoName, this.orgName, []).subscribe(result => {
-      this.drawMap(result.builds.reverse()).subscribe(batch =>
-        this.onBatchClick(batch)
-      );
-    });
+  init(repoName: string, orgName: string, filters: Filter[] = []): void {
+    this.repoName = repoName;
+    this.orgName = orgName;
+    this.com
+      .fetchBuilds(this.repoName, this.orgName, filters)
+      .subscribe(result => {
+        this.drawMap(result.builds.reverse()).subscribe(batch =>
+          this.onBatchClick(batch)
+        );
+      });
   }
 
   private drawMap(builds: Build[]): EventEmitter<BuildBatch> {

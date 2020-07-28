@@ -21,8 +21,7 @@ import {
 } from '@angular/core/testing';
 import {MainComponent} from './main.component';
 import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {Search, Filter, Repository} from '../services/search/interfaces';
-import {SearchService} from '../services/search/search.service';
+import {Filter} from '../services/search/interfaces';
 import {AppRoutingModule} from '../routing/app-routing.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
@@ -33,11 +32,16 @@ import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import {Location} from '@angular/common';
 
 // Mock the inner components
+const repoListViewConfig = {pageSize: 10, pageIndex: 0, elements: []};
 @Component({
   selector: 'app-repo-list',
 })
 class RepoListComponent {
-  @Input() repositories = [];
+  @Input() repoName = '';
+  @Input() orgName = '';
+  @Output() loading = true;
+  @Output() loadingComplete: EventEmitter<void> = new EventEmitter();
+  viewConfig = repoListViewConfig;
 }
 
 @Component({
@@ -54,16 +58,12 @@ describe('MainComponent', () => {
   let fixture: ComponentFixture<MainComponent>;
   let location: Location;
 
-  // Mock services
-  const mockSearchService = {repositories: [], search: () => of([])};
+  // Mock route params
   const mockRoute = {params: of()};
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [
-        {provide: SearchService, useValue: mockSearchService},
-        {provide: ActivatedRoute, useValue: mockRoute},
-      ],
+      providers: [{provide: ActivatedRoute, useValue: mockRoute}],
       declarations: [MainComponent, RepoListComponent, FiltersComponent],
       imports: [AppRoutingModule, MatDialogModule, MatProgressSpinnerModule],
     }).compileComponents();
@@ -73,87 +73,66 @@ describe('MainComponent', () => {
     fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
     fixture.autoDetectChanges(true);
-    mockSearchService.search = () => of([]);
     mockRoute.params = of({});
     location = TestBed.get(Location);
+    component.reposListComponent = {update: () => {}};
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
-    it('should initiate a search when initializing', () => {
-      spyOn(mockSearchService, 'search').and.callThrough();
-
-      component.ngOnInit();
-
-      expect(mockSearchService.search).toHaveBeenCalled();
-    });
-
-    it('should initiate a search with the provided filters when initializing', () => {
+  describe('ngAfterViewInit', () => {
+    it('should set the provided filters in the repository list when initializing', done => {
+      const expectedFilters = [{name: 'orderby', value: 'priority'}];
+      component.reposListComponent = {
+        update(filters) {
+          expect(filters).toEqual(expectedFilters);
+          done();
+        },
+        viewConfig: {pageSize: 1, pageIndex: 0, elements: []},
+      };
       mockRoute.params = of({orderby: 'priority'});
-      const searchSpy = spyOn(mockSearchService, 'search').and.callThrough();
 
-      component.ngOnInit();
-
-      expect(mockSearchService.search).toHaveBeenCalled();
-      const search = (searchSpy.calls.mostRecent().args as Array<
-        object
-      >)[0] as Search;
-      expect(search.filters).toContain(
-        jasmine.objectContaining({name: 'orderby', value: 'priority'})
-      );
+      component.ngAfterViewInit();
     });
-
-    it('should hide the spinner when repositories are received', fakeAsync(() => {
-      spyOn(mockSearchService, 'search').and.returnValue(of([{}]));
-
-      component.ngOnInit();
-      fixture.detectChanges();
-      tick();
-
-      const spinner = fixture.debugElement.query(By.css('#spinner'));
-      expect(spinner).toBeNull();
-    }));
-
-    it('should show the no-repo text when no repositories were found', fakeAsync(() => {
-      spyOn(mockSearchService, 'search').and.returnValue(of([]));
-
-      component.ngOnInit();
-      fixture.detectChanges();
-      tick();
-
-      const noRepoText = fixture.debugElement.query(By.css('#no-repo-found'));
-      expect(noRepoText).not.toBeNull();
-    }));
-
-    it('should hide the no-repo text when repositories were found', fakeAsync(() => {
-      spyOn(mockSearchService, 'search').and.returnValue(of([{}]));
-
-      component.ngOnInit();
-      fixture.detectChanges();
-      tick();
-
-      const noRepoText = fixture.debugElement.query(By.css('#no-repo-found'));
-      expect(noRepoText).toBeNull();
-    }));
   });
 
-  it('should hide the filters when no repository was found', fakeAsync(() => {
-    component.repositories = [];
-    component.loading = false;
-    component.repoName = '';
+  it('should hide the spinner when repositories are received', fakeAsync(() => {
+    component.onReposLoaded();
+
+    component.ngAfterViewInit();
     fixture.detectChanges();
     tick();
 
-    const filterComponent = fixture.debugElement.query(By.css('app-filters'));
-
-    expect(filterComponent).toBeNull();
+    const spinner = fixture.debugElement.query(By.css('#spinner'));
+    expect(spinner).toBeNull();
   }));
 
-  it('should hide the filters when only 1 repository was found', fakeAsync(() => {
-    component.repositories = [{} as Repository];
+  it('should show the no-repo text when no repositories were found', fakeAsync(() => {
+    component.loading = false;
+    repoListViewConfig.elements = [];
+
+    fixture.detectChanges();
+    tick();
+
+    const noRepoText = fixture.debugElement.query(By.css('#no-repo-found'));
+    expect(noRepoText).not.toBeNull();
+  }));
+
+  it('should hide the no-repo text when repositories were found', fakeAsync(() => {
+    component.loading = false;
+    repoListViewConfig.elements = [{}];
+
+    fixture.detectChanges();
+    tick();
+
+    const noRepoText = fixture.debugElement.query(By.css('#no-repo-found'));
+    expect(noRepoText).toBeNull();
+  }));
+
+  it('should hide the filters when no repository was found', fakeAsync(() => {
+    repoListViewConfig.elements = [];
     component.loading = false;
     component.repoName = '';
     fixture.detectChanges();
@@ -165,7 +144,7 @@ describe('MainComponent', () => {
   }));
 
   it('should hide the filters while the page is loading', fakeAsync(() => {
-    component.repositories = [{} as Repository, {} as Repository];
+    repoListViewConfig.elements = [{}, {}];
     component.loading = true;
     component.repoName = '';
     fixture.detectChanges();
@@ -177,7 +156,7 @@ describe('MainComponent', () => {
   }));
 
   it('should hide the filters when a repository is being searched', fakeAsync(() => {
-    component.repositories = [{} as Repository, {} as Repository];
+    repoListViewConfig.elements = [{}, {}];
     component.loading = false;
     component.repoName = 'repo';
     fixture.detectChanges();
@@ -189,7 +168,7 @@ describe('MainComponent', () => {
   }));
 
   it('should show the filters when all conditions are met', fakeAsync(() => {
-    component.repositories = [{} as Repository, {} as Repository];
+    repoListViewConfig.elements = [{}, {}];
     component.loading = false;
     component.repoName = '';
     fixture.detectChanges();
@@ -201,7 +180,7 @@ describe('MainComponent', () => {
   }));
 
   it('should redirect/refresh when the filters selection changes', fakeAsync(() => {
-    component.repositories = [{} as Repository, {} as Repository];
+    repoListViewConfig.elements = [{}, {}];
     component.loading = false;
     fixture.detectChanges();
     tick();

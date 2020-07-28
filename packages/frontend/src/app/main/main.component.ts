@@ -12,35 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, OnInit, NgZone} from '@angular/core';
-import {LicenseComponent} from '../license/license.component';
-import {SearchService} from '../services/search/search.service';
+import {Component, NgZone, ViewChild, AfterViewInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {
   expectedParams,
   InterpretationService,
 } from '../services/interpretation/interpretation.service';
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
-import {Repository, Filter} from '../services/search/interfaces';
-import {finalize} from 'rxjs/operators';
+import {Filter} from '../services/search/interfaces';
+import {RepoListComponent} from './repo-list/repo-list.component';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'],
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements AfterViewInit {
   constructor(
-    public searchService: SearchService,
     private route: ActivatedRoute,
     private interpreter: InterpretationService,
-    public dialog: MatDialog,
     private router: Router,
     private ngZone: NgZone
   ) {}
 
-  repositories: Repository[] = [];
+  @ViewChild(RepoListComponent) reposListComponent;
+
   loading = true;
   orgName = '';
   repoName = '';
@@ -48,37 +44,28 @@ export class MainComponent implements OnInit {
     orderby: ['activity', 'name', 'priority'],
   };
 
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const search = this.getSearch(params);
-      this.searchService
-        .search(search, this.orgName)
-        .pipe(
-          finalize(() => {
-            this.loading = false;
-          })
-        )
-        .subscribe(repositories => {
-          this.repositories = repositories;
-        });
-    });
+  ngAfterViewInit(): void {
+    setTimeout(() =>
+      this.route.params.subscribe(params => this.setPageParams(params))
+    );
   }
 
-  private getSearch(params: Params) {
+  private setPageParams(params: Params): void {
     const foundParams = this.interpreter.parseRouteParam(
       params,
       expectedParams.get(RouteProvider.routes.main.name)
     );
-
     this.orgName = foundParams.queries.get('org');
     this.repoName = foundParams.queries.get('repo');
+    this.reposListComponent.update(
+      foundParams.filters,
+      this.repoName,
+      this.orgName
+    );
+  }
 
-    const search = {
-      query: this.repoName,
-      filters: foundParams.filters,
-    };
-
-    return search;
+  onReposLoaded() {
+    this.loading = false;
   }
 
   onFiltersChanged(filters: Filter[]) {
@@ -86,12 +73,5 @@ export class MainComponent implements OnInit {
       const route = RouteProvider.routes.main.link(this.orgName);
       this.router.navigate([route, this.interpreter.getRouteParam(filters)]);
     });
-  }
-
-  openLicenseDialog(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.id = 'license-dialog';
-
-    this.dialog.open(LicenseComponent, dialogConfig);
   }
 }

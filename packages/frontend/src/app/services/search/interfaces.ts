@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {PageData} from 'src/app/paginated-list/paginated-list.component';
+
 export interface DefaultRepository {
   name: string;
   organization: string;
@@ -19,6 +21,7 @@ export interface DefaultRepository {
 
 interface Timestamp {
   _seconds: number;
+  _nanoseconds?: number;
 }
 
 export interface Repository extends DefaultRepository {
@@ -32,9 +35,7 @@ export interface Repository extends DefaultRepository {
   lastupdate?: Timestamp;
 }
 
-export interface ApiRepositories {
-  hasnext: boolean;
-  hasprev: boolean;
+export interface ApiRepositories extends PageData {
   repos: Repository[];
 }
 
@@ -48,20 +49,20 @@ export interface Search {
   query: string;
 }
 
-export interface Tests {
+export interface Tests extends PageData {
   tests: Test[];
 }
 
 export interface Test {
-  name: string;
-  flaky: boolean;
-  passed: boolean;
-  searchindex: number;
-  lifetimefailcount: number;
-  lifetimepasscount: number;
-  percentpassing: number;
+  name?: string;
+  flaky?: boolean;
+  passed?: boolean;
+  searchindex?: number;
+  lifetimefailcount?: number;
+  lifetimepasscount?: number;
+  percentpassing?: number;
   environments?: BuildEnvironment;
-  lastupdate: {_seconds: number; _nanoseconds: number};
+  lastupdate: Timestamp;
 }
 
 export interface BuildEnvironment {

@@ -12,11 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, Input, ViewChild} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {Repository} from 'src/app/services/search/interfaces';
-import {PaginatedListComponent} from 'src/app/paginated-list/paginated-list.component';
+import {Component} from '@angular/core';
+import {Repository, Filter} from 'src/app/services/search/interfaces';
+import {
+  PaginatedListComponent,
+  PageData,
+} from 'src/app/paginated-list/paginated-list.component';
 import * as moment from 'moment';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-repo-list',
@@ -24,11 +28,21 @@ import * as moment from 'moment';
   styleUrls: ['./repo-list.component.css'],
 })
 export class RepoListComponent extends PaginatedListComponent<Repository> {
-  @ViewChild('paginator') paginator: MatPaginator;
-  @Input() set repositories(value: Repository[]) {
-    this._elements = value;
-    this.updatePage();
-    this.paginator?.firstPage();
+  fetchPageData(filters: Filter[] = []): Observable<PageData> {
+    return this.searchService.search(this.repoName, this.orgName, filters).pipe(
+      map(repositories => {
+        repositories['elementsFieldName'] = 'repos';
+        return repositories as PageData;
+      })
+    );
+  }
+
+  getEmptyElement(): Repository {
+    return {
+      name: '',
+      organization: '',
+      lastupdate: {_seconds: 0},
+    };
   }
 
   getLastUpdate(repo: Repository) {
