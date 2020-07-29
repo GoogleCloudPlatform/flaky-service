@@ -50,7 +50,9 @@ limitations under the License.
                             <table>
                                 <tr>
                                     <!-- PASSING PERCENTAGE -->
-                                    <td class="indicator percent-passing-indicator">
+                                    <td class="indicator percent-passing-indicator"
+                                        [class.show-yellow]="!test.passed && test.flaky"
+                                        [class.show-green]="test.passed">
                                         <span>passes&nbsp;</span>
                                         <span [innerHTML]="toPercentage(test.percentpassing)"></span>
                                         <span>% of the time</span>
