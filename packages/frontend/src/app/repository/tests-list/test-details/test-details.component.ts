@@ -27,7 +27,7 @@ export class TestDetailsComponent {
     return (percentpassing * 100).toFixed(2);
   }
 
-  deleteTest() {
+  startDeleteTest() {
     console.info("Tried to delete test");
     console.info(this.test);
   }

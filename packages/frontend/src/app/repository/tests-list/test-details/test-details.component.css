@@ -42,3 +42,6 @@ limitations under the License.
 .failing {
     color: red;
 }
+.deleteTestButton {
+    margin-left:3%;
+}

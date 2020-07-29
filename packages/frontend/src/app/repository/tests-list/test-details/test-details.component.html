@@ -55,10 +55,9 @@ limitations under the License.
     <!-- FLAKINESS -->
     <span *ngIf="test.flaky" class="flaky">FLAKY</span>
     <span *ngIf="!test.flaky" class="success">NOT FLAKY</span>
+    <span>.&nbsp;</span>
 
-    <button (click)="deleteTest()">Delete</button>
-
-    <span>.</span>
+    <button mat-raised-button (click)='startDeleteTest()' class='deleteTestButton'>Delete</button>
 </div>
 
 
