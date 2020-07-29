@@ -37,7 +37,7 @@ export class BatchesProvider {
         else {
           const batch = batches[batchIndex];
 
-          if (batch.moment.isSame(batchMoment, 'day')) {
+          if (batch.moment.local().isSame(batchMoment, 'day')) {
             batch['x'] = xDomainIndex;
             batch['y'] = batch.moment.day().toString();
             batch['health'] = this.getBatchHealth(batch);

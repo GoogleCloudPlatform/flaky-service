@@ -82,6 +82,7 @@ export interface Build {
   tests?: Test[];
   failcount?: number;
   passcount?: number;
+  buildmessage?: string;
 }
 
 export interface ApiRepository {

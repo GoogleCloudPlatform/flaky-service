@@ -116,10 +116,10 @@ describe('HeatMapComponent', () => {
       expect(builds.length).toEqual(2);
       expect(
         builds[0].query(By.css('.build-link')).nativeElement.textContent
-      ).toEqual(mockBuilds._3PreviousDays[0].buildId);
+      ).toEqual('#' + mockBuilds._3PreviousDays[0].buildmessage);
       expect(
         builds[1].query(By.css('.build-link')).nativeElement.textContent
-      ).toEqual(mockBuilds._3PreviousDays[1].buildId);
+      ).toEqual('#' + mockBuilds._3PreviousDays[1].buildmessage);
       done();
     });
   });

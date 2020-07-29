@@ -100,4 +100,14 @@ export class HeatMapComponent {
   buildIsPassing(build: Build) {
     return !build.failcount && !build.flaky;
   }
+
+  getBuildRunText(build: Build) {
+    const digitsOnly = /\D/g;
+    return (
+      '#' +
+      (build.buildmessage
+        ? build.buildmessage.replace(digitsOnly, '')
+        : build.buildId)
+    );
+  }
 }
