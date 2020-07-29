@@ -26,4 +26,9 @@ export class TestDetailsComponent {
   toPercentage(percentpassing: number) {
     return (percentpassing * 100).toFixed(2);
   }
+
+  deleteTest() {
+    console.info("Tried to delete test");
+    console.info(this.test);
+  }
 }

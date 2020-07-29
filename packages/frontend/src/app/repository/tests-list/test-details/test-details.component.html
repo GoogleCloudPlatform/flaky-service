@@ -56,6 +56,8 @@ limitations under the License.
     <span *ngIf="test.flaky" class="flaky">FLAKY</span>
     <span *ngIf="!test.flaky" class="success">NOT FLAKY</span>
 
+    <button (click)="deleteTest()">Delete</button>
+
     <span>.</span>
 </div>
 
