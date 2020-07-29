@@ -28,6 +28,8 @@ constructor(
     public comService: COMService
   ) {}
   @Input() test: Test;
+  @Input() repoName: string;
+  @Input() orgName: string;
 
   toPercentage(percentpassing: number) {
     return (percentpassing * 100).toFixed(2);
@@ -35,7 +37,8 @@ constructor(
 
   startDeleteTest() {
     console.info('Tried to delete test');
-    const url = this.comService.getDeleteUrl();
+    console.info(this.test);
+    const url = this.comService.fetchDeleteTestUrl(this.orgName, this.repoName, this.test.name);
     console.info('returned: ' + url);
     this.router.navigateByUrl(url);
   }

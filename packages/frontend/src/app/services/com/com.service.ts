@@ -83,6 +83,17 @@ export class COMService {
       .pipe(catchError(err => this.handleError(err)));
   }
 
+  public fetchDeleteTestUrl(
+    repoName: string,
+    orgName: string,
+    testName: string,
+    redirect: string
+  ): Observable<DeleteUrl> {
+    return this.http
+      .get<DeleteUrl>(apiLinks.get.deleteTest(orgName, repoName, testName, redirect), {})
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
   private getParams(filters: Filter[]) {
     let params: HttpParams = new HttpParams();
     filters.forEach(filter => (params = params.set(filter.name, filter.value)));
@@ -94,10 +105,5 @@ export class COMService {
     else if (err.status === 404) return throwError(new NotFoundError());
 
     return empty();
-  }
-
-  getDeleteUrl() {
-    console.info('COMS get delete url');
-    return '/';
   }
 }

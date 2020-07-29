@@ -20,6 +20,7 @@ interface ApiLinks {
     builds: (repoName: string, orgName: string) => string;
     tests: (repoName: string, orgName: string) => string;
     repository: (repoName: string, orgName: string) => string;
+    deleteTest: (orgName: string, repoName: string, testName: string, redirect: string) => string;
   };
   post: {
     authLink: string;
@@ -36,6 +37,8 @@ export const apiLinks: ApiLinks = {
       apiBaseLink + 'repo/' + orgName + '/' + repoName + '/tests',
     repository: (repoName: string, orgName: string) =>
       apiBaseLink + 'repo/' + orgName + '/' + repoName,
+    deleteTest: (orgName: string, repoName: string, testName: string, redirect: string) =>
+      apiBaseLink + 'repo/' + orgName + '/' + repoName + '/test/' + testName + '?redirect=' + redirect,  
   },
   post: {
     authLink: apiBaseLink + 'auth',
