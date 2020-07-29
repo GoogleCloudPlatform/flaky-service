@@ -95,4 +95,8 @@ export class COMService {
 
     return empty();
   }
+
+  getDeleteUrl() {
+    console.info("COMS get delete url");
+  }
 }

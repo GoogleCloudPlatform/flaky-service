@@ -28,7 +28,7 @@ export class TestDetailsComponent {
   }
 
   startDeleteTest() {
-    console.info("Tried to delete test");
+    console.info('Tried to delete test');
     console.info(this.test);
   }
 }
