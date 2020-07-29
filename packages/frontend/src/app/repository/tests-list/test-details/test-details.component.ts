@@ -35,7 +35,8 @@ constructor(
 
   startDeleteTest() {
     console.info('Tried to delete test');
-    console.info(this.test);
     const url = this.comService.getDeleteUrl();
+    console.info('returned: ' + url);
+    this.router.navigateByUrl(url);
   }
 }
