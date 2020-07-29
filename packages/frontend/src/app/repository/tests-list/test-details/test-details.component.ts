@@ -14,6 +14,8 @@
 
 import {Component, Input} from '@angular/core';
 import {Test} from 'src/app/services/search/interfaces';
+import {COMService} from '../../../services/com/com.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-test-details',
@@ -21,6 +23,10 @@ import {Test} from 'src/app/services/search/interfaces';
   styleUrls: ['./test-details.component.css'],
 })
 export class TestDetailsComponent {
+constructor(
+    public router: Router,
+    public comService: COMService
+  ) {}
   @Input() test: Test;
 
   toPercentage(percentpassing: number) {
@@ -30,5 +36,6 @@ export class TestDetailsComponent {
   startDeleteTest() {
     console.info('Tried to delete test');
     console.info(this.test);
+    const url = this.comService.getDeleteUrl();
   }
 }

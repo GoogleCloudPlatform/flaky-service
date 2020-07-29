@@ -97,6 +97,7 @@ export class COMService {
   }
 
   getDeleteUrl() {
-    console.info("COMS get delete url");
+    console.info('COMS get delete url');
+    return null;
   }
 }
