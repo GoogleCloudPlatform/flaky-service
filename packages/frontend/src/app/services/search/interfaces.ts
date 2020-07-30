@@ -54,6 +54,7 @@ export interface Tests extends PageData {
 }
 
 export interface Test {
+  failuremessageiffailing?: string;
   name?: string;
   flaky?: boolean;
   passed?: boolean;
