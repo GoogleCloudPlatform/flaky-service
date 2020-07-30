@@ -61,3 +61,6 @@ app-tests-list, #filters-subcontainer {
     width: 100%;
     text-align: center;
 }
+.hidden {
+    display: none;
+}

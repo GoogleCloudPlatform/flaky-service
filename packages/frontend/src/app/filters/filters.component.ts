@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Filter} from '../services/search/interfaces';
 import {UtilsService} from '../services/utils.service';
 
@@ -21,17 +21,7 @@ import {UtilsService} from '../services/utils.service';
   templateUrl: './filters.component.html',
   styleUrls: ['./filters.component.css'],
 })
-export class FiltersComponent implements OnInit {
-  // TODO: remove when data is received from the api
-  ngOnInit(): void {
-    const mockFilters = {
-      matrix: ['Node 12'],
-      os: ['Linux', 'Windows'],
-      ref: ['master'],
-    };
-    if (this._filters.length === 0) this.setFilters(mockFilters);
-  }
-
+export class FiltersComponent {
   readonly defaultOption = {
     value: 'All',
     visibleValue: 'All',

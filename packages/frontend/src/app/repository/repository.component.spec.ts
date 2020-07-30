@@ -236,8 +236,10 @@ describe('RepositoryComponent', () => {
     fixture.detectChanges();
     tick();
 
-    const noRepoText = fixture.debugElement.query(By.css('#filters-container'));
-    expect(noRepoText).toBeNull();
+    const filterClasses = fixture.debugElement.query(
+      By.css('#filters-container')
+    ).attributes['class'];
+    expect(filterClasses).toContain('hidden');
   }));
 
   it('should show the filters when the heat map is ready', fakeAsync(() => {
@@ -246,7 +248,9 @@ describe('RepositoryComponent', () => {
     fixture.detectChanges();
     tick();
 
-    const noRepoText = fixture.debugElement.query(By.css('#filters-container'));
-    expect(noRepoText).not.toBeNull();
+    const filterClasses = fixture.debugElement.query(
+      By.css('#filters-container')
+    ).attributes['class'];
+    expect(filterClasses).not.toContain('hidden');
   }));
 });

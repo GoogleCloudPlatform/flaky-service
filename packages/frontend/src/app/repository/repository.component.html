@@ -15,7 +15,7 @@ limitations under the License.
 -->
 
 <!-- REPOSITORY METADATA -->
-<div id="filters-container" *ngIf="heatMapLoaded">
+<div id="filters-container" [class.hidden]="!heatMapLoaded">
     <div id="filters-subcontainer">
         <!-- FILTERS -->
         <app-filters (filtersChanged)="onFiltersChanged($event)"></app-filters>
