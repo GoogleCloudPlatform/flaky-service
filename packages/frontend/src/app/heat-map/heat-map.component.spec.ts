@@ -61,6 +61,18 @@ describe('HeatMapComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it("should emit 'loadingComplete' when the builds are received", done => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds.none});
+
+    component.loadingComplete.subscribe(() => {
+      // loadingComplete was emitted
+      expect().nothing();
+      done();
+    });
+
+    component.init('', '');
+  });
+
   it('should render every cell', () => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds.none});
     const cols = 10,

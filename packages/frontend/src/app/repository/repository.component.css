@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.tests-list-container, #filters-container {
+.tests-list-container, #filters-container, #extras-container {
     display: flex;
     justify-content: center;
 }
@@ -50,4 +50,14 @@ app-tests-list, #filters-subcontainer {
 #description {
     margin-left: 5px;
     color: #8e8e8e;
+}
+
+#spinner, #no-repo-found {
+    margin-top: 100px;
+}
+#no-repo-found {
+    font-weight: lighter;
+    color: grey;
+    width: 100%;
+    text-align: center;
 }

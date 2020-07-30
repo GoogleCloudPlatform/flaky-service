@@ -15,7 +15,7 @@ limitations under the License.
 -->
 
 <!-- REPOSITORY METADATA -->
-<div id="filters-container">
+<div id="filters-container" *ngIf="heatMapLoaded">
     <div id="filters-subcontainer">
         <!-- FILTERS -->
         <app-filters (filtersChanged)="onFiltersChanged($event)"></app-filters>
@@ -23,9 +23,16 @@ limitations under the License.
 </div>
 
 <div class="heat-map-container">
-    <app-heat-map></app-heat-map>
+    <app-heat-map #heatMap (loadingComplete)="onHeatMapLoaded()"></app-heat-map>
 </div>
 
 <div class="tests-list-container">
-    <app-tests-list></app-tests-list>
+    <app-tests-list #testsList (loadingComplete)="onTestsLoaded()"></app-tests-list>
+</div>
+
+<div id="extras-container">
+    <mat-spinner *ngIf="!testsLoaded && !heatMapLoaded" [strokeWidth]="5" id="spinner"></mat-spinner>
+    <p id="no-tests-found" *ngIf="!testsList.viewConfig.elements.length && testsLoaded">
+        No tests found
+    </p>
 </div>
