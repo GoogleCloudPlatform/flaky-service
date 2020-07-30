@@ -36,15 +36,10 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(
-        (event: NavigationEnd) =>
-          (this.showConfigWheel = event.url == '/'+RouteProvider.routes.repo.path)
-      );
     this.globals.pageDataChange.subscribe(pagedata => {
       const onRepoPage =
         pagedata.currentPage === RouteProvider.routes.repo.name;
+        this.showConfigWheel = onRepoPage;
       console.log(onRepoPage);
     });
   }
