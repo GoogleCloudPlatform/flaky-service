@@ -33,4 +33,19 @@ export class UtilsService {
       ? url
       : this.sanitizer.bypassSecurityTrustUrl(url);
   }
+
+  /**
+   * Returns a boolean indicating if a string is a valid stringified JSON object
+   * A valid JSON object string here is expected to be surrounded by {}
+   * @param obj string on which to perform the validation
+   */
+  isPureJson(obj: string) {
+    try {
+      JSON.parse(obj);
+    } catch {
+      return false;
+    }
+    const surroundedByBrackets = /^\{.*?\}$/gm;
+    return surroundedByBrackets.test(obj);
+  }
 }

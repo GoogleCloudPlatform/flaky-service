@@ -93,8 +93,14 @@ describe('FiltersComponent', () => {
     it('should set the provided filters', () => {
       const newFilters = {
         ref: ['master', {value: 'dev', visibleValue: 'develop'}],
+        matrix: ['{"Node": 12}'],
       };
       const expectedFilters = [
+        {
+          name: 'matrix',
+          possibleValues: [{value: '{"Node": 12}', visibleValue: 'Node 12'}],
+          selection: '',
+        },
         {
           name: 'ref',
           possibleValues: [

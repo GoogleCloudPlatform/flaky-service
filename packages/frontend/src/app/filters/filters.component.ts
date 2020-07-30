@@ -14,6 +14,7 @@
 
 import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {Filter} from '../services/search/interfaces';
+import {UtilsService} from '../services/utils.service';
 
 @Component({
   selector: 'app-filters',
@@ -42,6 +43,8 @@ export class FiltersComponent implements OnInit {
   @Input() set filters(filtersObj: object) {
     this.setFilters(filtersObj);
   }
+
+  constructor(private utils: UtilsService) {}
 
   setFilters(filtersObj: object, savedSelection?: Filter[]) {
     this._filters = this.getFilters(filtersObj);
@@ -86,7 +89,8 @@ export class FiltersComponent implements OnInit {
 
     providedOptions.forEach(option => {
       if (typeof option === 'string') {
-        options.push({value: option, visibleValue: option});
+        if (this.utils.isPureJson(option)) this.tryParseOption(option, options);
+        else options.push({value: option, visibleValue: option});
       } else {
         options.push({
           value: option['value'],
@@ -97,11 +101,27 @@ export class FiltersComponent implements OnInit {
     return options;
   }
 
+  private tryParseOption(option: string, options: Option[]): void {
+    const optionObj = JSON.parse(option);
+    const optionKeys = Object.keys(optionObj);
+
+    if (optionKeys.length) {
+      const key = optionKeys[0];
+      const value = optionObj[key];
+
+      options.push({
+        value: option,
+        visibleValue: key + ' ' + value,
+      });
+    }
+  }
+
   onSelectionChanged() {
     const filters: Filter[] = [];
-    this._filters.forEach(filter =>
-      filters.push({name: filter.name, value: filter.selection})
-    );
+    this._filters.forEach(filter => {
+      if (filter.selection)
+        filters.push({name: filter.name, value: filter.selection});
+    });
     this.filtersChanged.emit(filters);
   }
 }
