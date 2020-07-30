@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<div id="input-container" *ngIf="showSearchBar">
+<div id="input-container" *ngIf="showSearchBar" fxLayoutAlign="center" >
     <mat-icon aria-hidden="false" aria-label="search" id="search-icon">search</mat-icon>
 
     <input
@@ -29,14 +29,11 @@ limitations under the License.
     <mat-autocomplete #auto="matAutocomplete"
       (optionSelected)='onSearchOptionSelected($event.option.value.name?$event.option.value.name:$event.option.value.organization)'>
         <mat-option *ngFor="let option of filteredOptions" [value]="option">
-          <!--ORGANISATION NAME-->
-            <span class="org-name" *ngIf="option.organization">{{option.organization}}</span>
-            <span *ngIf="option.organization">/</span>
+          <span class="org-name" *ngIf="option.organization">{{option.organization}}</span>
+          <span *ngIf="option.organization">/</span>
 
-          <!--REPOSITORY NAME-->
           <span class="repo-name">{{option.name}}</span>
           
-          <!--REPOSITORY DESCRIPTION-->
           <span class="repo-description" *ngIf="option.description">{{option.description}}</span>
         </mat-option>
       </mat-autocomplete>

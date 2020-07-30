@@ -31,7 +31,8 @@ constructor(
   @Input() repoName: string;
   @Input() orgName: string;
 
-  toPercentage(percentpassing: number) {
+  //Converts tests' passing percentage from decimal to percentage
+  toPercentage(percentpassing: number): string {
     return (percentpassing * 100).toFixed(2);
   }
 

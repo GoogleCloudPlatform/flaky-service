@@ -15,17 +15,23 @@ limitations under the License.
 -->
 
 <!-- REPOSITORY METADATA -->
-<div id="filters-container">
-    <div id="filters-subcontainer">
-        <!-- FILTERS -->
+<div id="filters-container" fxLayoutAlign="center" [class.hidden]="!heatMapLoaded">
+    <div id="filters-subcontainer" fxLayout="row" fxLayoutAlign="end">
         <app-filters (filtersChanged)="onFiltersChanged($event)"></app-filters>
     </div>
 </div>
 
 <div class="heat-map-container">
-    <app-heat-map></app-heat-map>
+    <app-heat-map #heatMap (loadingComplete)="onHeatMapLoaded()"></app-heat-map>
 </div>
 
-<div class="tests-list-container">
-    <app-tests-list></app-tests-list>
+<div class="tests-list-container" fxLayoutAlign="center">
+    <app-tests-list #testsList (loadingComplete)="onTestsLoaded()"></app-tests-list>
+</div>
+
+<div id="extras-container" fxLayoutAlign="center">
+    <mat-spinner *ngIf="!testsLoaded && !heatMapLoaded" [strokeWidth]="5" id="spinner"></mat-spinner>
+    <p id="no-tests-found" *ngIf="!testsList.viewConfig.elements.length && testsLoaded">
+        No tests found
+    </p>
 </div>

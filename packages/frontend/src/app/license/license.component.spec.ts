@@ -14,6 +14,7 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {LicenseComponent} from './license.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('LicenseComponent', () => {
   let component: LicenseComponent;
@@ -22,6 +23,7 @@ describe('LicenseComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [LicenseComponent],
+      imports: [MatDialogModule],
     }).compileComponents();
   }));
 

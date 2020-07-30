@@ -39,6 +39,7 @@ export class SearchComponent implements OnInit {
 
   orgName = '';
   showSearchBar = true;
+  optionActivated = false;
 
   constructor(
     private searchService: SearchService,
@@ -69,6 +70,9 @@ export class SearchComponent implements OnInit {
       .subscribe(() => this.updateOrg());
   }
 
+  /**
+   * Updates the organisation name and shows/hide the search bar if an org name was found
+   */
   private updateOrg() {
     const route = this.route.root.firstChild.snapshot;
     const foundParams = this.interpreter.parseRouteParam(
@@ -79,26 +83,42 @@ export class SearchComponent implements OnInit {
     this.showSearchBar = this.orgName !== '';
   }
 
+  /**
+   * Returns a boolean indicating if a user input can be autocompleted
+   * An input can be autocompleted if it exists and doesn't contain space
+   * @param input The user input to be considered
+   */
   private canBeAutoCompleted(input: string): boolean {
     return input && !input.toString().includes(' ');
   }
 
-  private updateOptions(value: string): string {
-    if (!value || (value && value.toString().includes(' ')))
+  /**
+   * Hides the autocomplete options if the input is empty
+   * @param input The user input to be considered
+   */
+  private updateOptions(input: string): string {
+    if (!input || (input && input.toString().includes(' ')))
       this.filteredOptions = [];
-    return value;
+    return input;
   }
 
-  onEnterKeyUp(option: string): void {
-    this.launchSearch(this.interpreter.parseSearchInput(option));
+  onEnterKeyUp(option: string) {
+    if (!this.optionActivated)
+      this.launchSearch(this.interpreter.parseSearchInput(option));
+    this.optionActivated = false;
   }
 
-  onSearchOptionSelected(option: string): void {
+  onSearchOptionSelected(option: string) {
+    this.optionActivated = true;
     this.inputControl.setValue(option);
     this.openRepo(option);
   }
 
-  private launchSearch(option: Search): void {
+  /**
+   * Redirects to the organization page with search options
+   * @param option The search to perform after the redirection
+   */
+  launchSearch(option: Search) {
     this.ngZone.run(() => {
       option.filters.push({name: 'repo', value: option.query});
       const link = RouteProvider.routes.main.link(this.orgName);
@@ -109,6 +129,10 @@ export class SearchComponent implements OnInit {
     });
   }
 
+  /**
+   * Redirects to the repository page
+   * @param repoName The repository to open
+   */
   private openRepo(repoName: string) {
     this.ngZone.run(() => {
       const link = RouteProvider.routes.repo.link(this.orgName, repoName);

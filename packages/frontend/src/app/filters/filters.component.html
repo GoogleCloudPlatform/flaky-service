@@ -15,7 +15,6 @@ limitations under the License.
 -->
 
 <form>
-    <!-- MATRIX -->
     <mat-form-field appearance="outline" *ngFor="let filter of _filters">
         <mat-label>{{filter.name}}</mat-label>
         <mat-select [(value)]="filter.selection" name="filter.name" [disableRipple]="true" (selectionChange)="onSelectionChanged()">

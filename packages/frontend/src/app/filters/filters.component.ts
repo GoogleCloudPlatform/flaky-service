@@ -12,25 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Filter} from '../services/search/interfaces';
+import {UtilsService} from '../services/utils.service';
 
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.component.html',
   styleUrls: ['./filters.component.css'],
 })
-export class FiltersComponent implements OnInit {
-  // TODO: remove when data is received from the api
-  ngOnInit(): void {
-    const mockFilters = {
-      matrix: ['Node 12'],
-      os: ['Linux', 'Windows'],
-      ref: ['master'],
-    };
-    if (this._filters.length === 0) this.setFilters(mockFilters);
-  }
-
+export class FiltersComponent {
   readonly defaultOption = {
     value: 'All',
     visibleValue: 'All',
@@ -42,6 +33,8 @@ export class FiltersComponent implements OnInit {
   @Input() set filters(filtersObj: object) {
     this.setFilters(filtersObj);
   }
+
+  constructor(private utils: UtilsService) {}
 
   setFilters(filtersObj: object, savedSelection?: Filter[]) {
     this._filters = this.getFilters(filtersObj);
@@ -86,7 +79,8 @@ export class FiltersComponent implements OnInit {
 
     providedOptions.forEach(option => {
       if (typeof option === 'string') {
-        options.push({value: option, visibleValue: option});
+        if (this.utils.isPureJson(option)) this.tryParseOption(option, options);
+        else options.push({value: option, visibleValue: option});
       } else {
         options.push({
           value: option['value'],
@@ -97,11 +91,27 @@ export class FiltersComponent implements OnInit {
     return options;
   }
 
+  private tryParseOption(option: string, options: Option[]): void {
+    const optionObj = JSON.parse(option);
+    const optionKeys = Object.keys(optionObj);
+
+    if (optionKeys.length) {
+      const key = optionKeys[0];
+      const value = optionObj[key];
+
+      options.push({
+        value: option,
+        visibleValue: key + ' ' + value,
+      });
+    }
+  }
+
   onSelectionChanged() {
     const filters: Filter[] = [];
-    this._filters.forEach(filter =>
-      filters.push({name: filter.name, value: filter.selection})
-    );
+    this._filters.forEach(filter => {
+      if (filter.selection)
+        filters.push({name: filter.name, value: filter.selection});
+    });
     this.filtersChanged.emit(filters);
   }
 }

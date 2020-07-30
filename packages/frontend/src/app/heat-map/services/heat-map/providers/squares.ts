@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Scales, BuildBatch} from '../../interfaces';
+import {Scales, BuildBatch, moment} from '../../interfaces';
 import {EventEmitter} from '@angular/core';
 
 export class SquaresProvider {
@@ -37,6 +37,10 @@ export class SquaresProvider {
       .attr('height', scales.y.bandwidth())
       .style('fill', batch => colorsScale(batch['health']))
       .style('opacity', 0.9)
+      .style('visibility', batch => {
+        const today = moment().endOf('day');
+        return batch.moment.isAfter(today) ? 'hidden' : 'visible';
+      })
       .on('mouseover', tooltipHandlers.mouseOver)
       .on('mousemove', tooltipHandlers.mouseMove)
       .on('mouseleave', tooltipHandlers.mouseLeave)

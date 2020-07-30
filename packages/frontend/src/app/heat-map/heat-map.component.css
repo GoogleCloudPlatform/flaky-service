@@ -31,23 +31,31 @@ limitations under the License.
 
 #builds-viewport {
     height: 105px;
-    width: 120px;
+    width: 150px;
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 #build-view-date {
+    text-align: center;
     height: 20px;
     margin: 0px;
     margin-bottom: 3px;
+    margin-left: 2px;
     font-size: 0.8em;
     color: grey;
 }
-
+.build {
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 150px;
+}
 .build-link {
     outline: none;
     color: #0075FF;
+    font-size: 0.9em;
 }
 .build-link:hover {
     text-decoration: underline;

@@ -14,19 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<div id="filters-container" *ngIf="!loading && repoList.viewConfig.elements.length && !repoName">
-    <div id="filters-subcontainer">
-        <!-- FILTERS -->
+<div id="filters-container" fxLayoutAlign="center" *ngIf="!loading && repoList.viewConfig.elements.length && !repoName">
+    <div id="filters-subcontainer" fxLayout="row" fxLayoutAlign="end">
         <app-filters [filters]="filters" (filtersChanged)="onFiltersChanged($event)"></app-filters>
     </div>
 </div>
 
-<!-- REPOSITORIES LIST -->
-<div class="repo-list-container">
+<div class="repo-list-container" fxLayoutAlign="center">
     <app-repo-list #repoList (loadingComplete)="onReposLoaded()"></app-repo-list>
 </div>
 
-<div id="extras-container">
+<div id="extras-container" fxLayoutAlign="center">
     <mat-spinner *ngIf="loading" [strokeWidth]="5" id="spinner"></mat-spinner>
     <p id="no-repo-found" *ngIf="!repoList.viewConfig.elements.length && !loading">
         No repository found

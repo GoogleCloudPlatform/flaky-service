@@ -35,10 +35,11 @@ export const mockBuilds = {
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().utc().subtract(1, 'week').day('Sunday').unix(),
+        _seconds: moment().subtract(1, 'week').day('Sunday').unix(),
       },
       row: 6,
       expectedColor: hex2rgb(BuildHealthColors.passing),
+      buildmessage: '1',
     },
     {
       buildId: '1.1',
@@ -46,10 +47,11 @@ export const mockBuilds = {
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().utc().subtract(1, 'week').day('Sunday').unix(),
+        _seconds: moment().subtract(1, 'week').day('Sunday').unix(),
       },
       row: 6,
       expectedColor: hex2rgb(BuildHealthColors.passing),
+      buildmessage: '2',
     },
 
     // Monday builds
@@ -59,10 +61,11 @@ export const mockBuilds = {
       failcount: 1,
       passcount: 1,
       timestamp: {
-        _seconds: moment().utc().subtract(1, 'week').day('Monday').unix(),
+        _seconds: moment().subtract(1, 'week').day('Monday').unix(),
       },
       row: 5,
       expectedColor: hex2rgb(BuildHealthColors.failing),
+      buildmessage: '3',
     },
 
     // Saturday builds
@@ -72,10 +75,11 @@ export const mockBuilds = {
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().utc().subtract(1, 'week').day('Saturday').unix(),
+        _seconds: moment().subtract(1, 'week').day('Saturday').unix(),
       },
       row: 0,
       expectedColor: hex2rgb(BuildHealthColors.flaky),
+      buildmessage: '4',
     },
   ],
 };

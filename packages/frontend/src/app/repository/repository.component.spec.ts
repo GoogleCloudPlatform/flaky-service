@@ -33,14 +33,19 @@ import {expectedParams} from '../services/interpretation/interpretation.service'
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import {COMService} from '../services/com/com.service';
 import {NotFoundError} from '../services/com/Errors/NotFoundError';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 // Mock the inner components
+const testsListViewConfig = {pageSize: 10, pageIndex: 0, elements: []};
 @Component({
   selector: 'app-tests-list',
 })
 class TestsListComponent {
   @Input() repoName = '';
   @Input() orgName = '';
+  @Output() loading = true;
+  @Output() loadingComplete: EventEmitter<void> = new EventEmitter();
+  viewConfig = testsListViewConfig;
 }
 
 @Component({
@@ -113,6 +118,7 @@ describe('RepositoryComponent', () => {
         MatExpansionModule,
         MatDialogModule,
         NoopAnimationsModule,
+        MatProgressSpinnerModule,
       ],
     }).compileComponents();
   }));
@@ -147,6 +153,8 @@ describe('RepositoryComponent', () => {
   });
 
   it('should redirect/refresh when the filters selection changes', fakeAsync(() => {
+    component.onHeatMapLoaded();
+    fixture.detectChanges();
     const filterComponent: FiltersComponent = fixture.debugElement.query(
       By.css('app-filters')
     ).componentInstance;
@@ -176,5 +184,73 @@ describe('RepositoryComponent', () => {
     tick();
 
     expect(location.path()).toEqual(RouteProvider.routes._404.link());
+  }));
+
+  it('should hide the spinner when tests list is ready', fakeAsync(() => {
+    component.onTestsLoaded();
+
+    component.ngAfterViewInit();
+    fixture.detectChanges();
+    tick();
+
+    const spinner = fixture.debugElement.query(By.css('#spinner'));
+    expect(spinner).toBeNull();
+  }));
+
+  it('should hide the spinner when the heat map is ready', fakeAsync(() => {
+    component.onHeatMapLoaded();
+
+    component.ngAfterViewInit();
+    fixture.detectChanges();
+    tick();
+
+    const spinner = fixture.debugElement.query(By.css('#spinner'));
+    expect(spinner).toBeNull();
+  }));
+
+  it('should show the no-test text when no tests were found', fakeAsync(() => {
+    testsListViewConfig.elements = [];
+    component.onTestsLoaded();
+
+    fixture.detectChanges();
+    tick();
+
+    const noRepoText = fixture.debugElement.query(By.css('#no-tests-found'));
+    expect(noRepoText).not.toBeNull();
+  }));
+
+  it('should hide the no-test text when tests were found', fakeAsync(() => {
+    testsListViewConfig.elements = [{}];
+    component.onTestsLoaded();
+
+    fixture.detectChanges();
+    tick();
+
+    const noRepoText = fixture.debugElement.query(By.css('#no-repo-found'));
+    expect(noRepoText).toBeNull();
+  }));
+
+  it('should hide the filters while the heat map is not ready', fakeAsync(() => {
+    component.heatMapLoaded = false;
+
+    fixture.detectChanges();
+    tick();
+
+    const filterClasses = fixture.debugElement.query(
+      By.css('#filters-container')
+    ).attributes['class'];
+    expect(filterClasses).toContain('hidden');
+  }));
+
+  it('should show the filters when the heat map is ready', fakeAsync(() => {
+    component.heatMapLoaded = true;
+
+    fixture.detectChanges();
+    tick();
+
+    const filterClasses = fixture.debugElement.query(
+      By.css('#filters-container')
+    ).attributes['class'];
+    expect(filterClasses).not.toContain('hidden');
   }));
 });

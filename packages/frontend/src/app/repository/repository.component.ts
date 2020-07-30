@@ -50,6 +50,8 @@ export class RepositoryComponent implements AfterViewInit {
 
   repoName = '';
   orgName = '';
+  testsLoaded = false;
+  heatMapLoaded = false;
 
   ngAfterViewInit(): void {
     setTimeout(() => this.setPageParams());
@@ -64,11 +66,7 @@ export class RepositoryComponent implements AfterViewInit {
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');
       this.heatMap.init(this.repoName, this.orgName, foundParams.filters);
-      this.testsListComponent.update(
-        foundParams.filters,
-        this.repoName,
-        this.orgName
-      );
+      this.testsListComponent.update([], this.repoName, this.orgName);
 
       this.com
         .fetchRepository(this.repoName, this.orgName, foundParams.filters)
@@ -98,5 +96,13 @@ export class RepositoryComponent implements AfterViewInit {
     this.ngZone.run(() => {
       this.router.navigate([RouteProvider.routes._404.link()]);
     });
+  }
+
+  onTestsLoaded() {
+    this.testsLoaded = true;
+  }
+
+  onHeatMapLoaded() {
+    this.heatMapLoaded = true;
   }
 }
