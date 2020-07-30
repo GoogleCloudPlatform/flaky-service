@@ -56,6 +56,7 @@ import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
 import {NotFoundComponent} from './not-found/not-found.component';
 import {HeatMapComponent} from './heat-map/heat-map.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
     MatTooltipModule,
     FormsModule,
     ScrollingModule,
+    FlexLayoutModule,
   ],
   entryComponents: [LicenseComponent],
   providers: [],
