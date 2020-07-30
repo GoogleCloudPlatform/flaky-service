@@ -21,6 +21,7 @@ import {
 import {RouteProvider} from '../routing/route-provider/RouteProvider';
 import {Filter} from '../services/search/interfaces';
 import {RepoListComponent} from './repo-list/repo-list.component';
+import {GlobalsService} from '../services/globals/globals.service';
 
 @Component({
   selector: 'app-main',
@@ -32,7 +33,8 @@ export class MainComponent implements AfterViewInit {
     private route: ActivatedRoute,
     private interpreter: InterpretationService,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private globals: GlobalsService
   ) {}
 
   @ViewChild(RepoListComponent) reposListComponent;
@@ -61,6 +63,11 @@ export class MainComponent implements AfterViewInit {
     );
     this.orgName = foundParams.queries.get('org');
     this.repoName = foundParams.queries.get('repo');
+    this.globals.update(
+      RouteProvider.routes.main.name,
+      this.orgName,
+      this.repoName
+    );
     this.reposListComponent.update(
       foundParams.filters,
       this.repoName,

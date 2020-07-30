@@ -17,6 +17,8 @@ import {Router, NavigationEnd} from '@angular/router';
 import {filter} from 'rxjs/operators';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {LicenseComponent} from '../license/license.component';
+import {GlobalsService} from '../services/globals/globals.service';
+import {RouteProvider} from '../routing/route-provider/RouteProvider';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +29,11 @@ export class AppComponent implements OnInit {
   title = 'flaky.dev';
   showConfigWheel = false;
 
-  constructor(private router: Router, public dialog: MatDialog) {}
+  constructor(
+    private router: Router,
+    public dialog: MatDialog,
+    private globals: GlobalsService
+  ) {}
 
   ngOnInit(): void {
     this.router.events
@@ -35,6 +41,11 @@ export class AppComponent implements OnInit {
       .subscribe(
         (event: NavigationEnd) => (this.showConfigWheel = event.url !== '/')
       );
+    this.globals.pageDataChange.subscribe(pagedata => {
+      const onRepoPage =
+        pagedata.currentPage === RouteProvider.routes.repo.name;
+      console.log(onRepoPage);
+    });
   }
 
   openLicenseDialog(): void {

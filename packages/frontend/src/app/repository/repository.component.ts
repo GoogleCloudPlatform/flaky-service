@@ -28,6 +28,7 @@ import {NotFoundError} from '../services/com/Errors/NotFoundError';
 import {empty} from 'rxjs';
 import {TestsListComponent} from './tests-list/tests-list.component';
 import {HeatMapComponent} from '../heat-map/heat-map.component';
+import {GlobalsService} from '../services/globals/globals.service';
 
 @Component({
   selector: 'app-repository',
@@ -41,7 +42,8 @@ export class RepositoryComponent implements AfterViewInit {
     private router: Router,
     private ngZone: NgZone,
     private interpreter: InterpretationService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private globals: GlobalsService
   ) {}
 
   @ViewChild(FiltersComponent) filterComponent;
@@ -65,6 +67,11 @@ export class RepositoryComponent implements AfterViewInit {
       );
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');
+      this.globals.update(
+        RouteProvider.routes.repo.name,
+        this.orgName,
+        this.repoName
+      );
       this.heatMap.init(this.repoName, this.orgName, foundParams.filters);
       this.testsListComponent.update([], this.repoName, this.orgName);
 
