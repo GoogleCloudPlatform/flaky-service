@@ -38,8 +38,8 @@ constructor(
   startDeleteTest() {
     console.info('Tried to delete test');
     console.info(this.test);
-    const url = this.comService.fetchDeleteTestUrl(this.orgName, this.repoName, this.test.name);
-    console.info('returned: ' + url);
-    this.router.navigateByUrl(url);
+    const url = this.comService.fetchDeleteTestUrl(this.orgName, this.repoName, this.test.name, 'https://flaky-dashboard.web.app/');
+    console.log('returned: ' + url);
+    this.router.navigateByUrl('/');
   }
 }

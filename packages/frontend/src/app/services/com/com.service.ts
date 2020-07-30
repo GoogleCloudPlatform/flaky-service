@@ -22,6 +22,7 @@ import {
   Filter,
   Tests,
   ApiRepositories,
+  DeleteUrl,
 } from '../search/interfaces';
 import {catchError} from 'rxjs/operators';
 import {NotFoundError} from './Errors/NotFoundError';
@@ -89,6 +90,7 @@ export class COMService {
     testName: string,
     redirect: string
   ): Observable<DeleteUrl> {
+    console.info('fetchDeleteTestUrl');
     return this.http
       .get<DeleteUrl>(apiLinks.get.deleteTest(orgName, repoName, testName, redirect), {})
       .pipe(catchError(err => this.handleError(err)));
