@@ -35,7 +35,7 @@ export const mockBuilds = {
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().utc().subtract(1, 'week').day('Sunday').unix(),
+        _seconds: moment().subtract(1, 'week').day('Sunday').unix(),
       },
       row: 6,
       expectedColor: hex2rgb(BuildHealthColors.passing),
@@ -47,7 +47,7 @@ export const mockBuilds = {
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().utc().subtract(1, 'week').day('Sunday').unix(),
+        _seconds: moment().subtract(1, 'week').day('Sunday').unix(),
       },
       row: 6,
       expectedColor: hex2rgb(BuildHealthColors.passing),
@@ -61,7 +61,7 @@ export const mockBuilds = {
       failcount: 1,
       passcount: 1,
       timestamp: {
-        _seconds: moment().utc().subtract(1, 'week').day('Monday').unix(),
+        _seconds: moment().subtract(1, 'week').day('Monday').unix(),
       },
       row: 5,
       expectedColor: hex2rgb(BuildHealthColors.failing),
@@ -75,7 +75,7 @@ export const mockBuilds = {
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().utc().subtract(1, 'week').day('Saturday').unix(),
+        _seconds: moment().subtract(1, 'week').day('Saturday').unix(),
       },
       row: 0,
       expectedColor: hex2rgb(BuildHealthColors.flaky),

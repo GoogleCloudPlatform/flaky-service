@@ -194,7 +194,6 @@ describe('HeatMapComponent', () => {
       const tooltip = fixture.debugElement.query(By.css('.tooltip'));
       const buildTime = moment
         .unix(build.timestamp._seconds)
-        .utc()
         .format('MMM D, YYYY');
       const expectedText = '2 passing on ' + buildTime;
       expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);
@@ -220,7 +219,6 @@ describe('HeatMapComponent', () => {
       const tooltip = fixture.debugElement.query(By.css('.tooltip'));
       const buildTime = moment
         .unix(build.timestamp._seconds)
-        .utc()
         .format('MMM D, YYYY');
       const expectedText = '1 flaky on ' + buildTime;
       expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);
@@ -246,7 +244,6 @@ describe('HeatMapComponent', () => {
       const tooltip = fixture.debugElement.query(By.css('.tooltip'));
       const buildTime = moment
         .unix(build.timestamp._seconds)
-        .utc()
         .format('MMM D, YYYY');
       const expectedText = '1 failing on ' + buildTime;
       expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);
