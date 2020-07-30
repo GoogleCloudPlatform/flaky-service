@@ -30,16 +30,34 @@ limitations under the License.
     overflow: hidden;
 }
 
-.flaky {
-    background-color: #fff4e0;
+.outer-panel {
+    padding-top: 2px;
 }
-.failing {
+.outer-panel > .panel-header.flaky:hover{
+    background-color: #fff4e0;
+    opacity: 0.6;
+}
+.outer-panel > .panel-header.failing:hover {
     background-color: #ffdede;
+    opacity: 0.6;
+}
+.outer-panel > .panel-header.passing:hover {
+    opacity: 0.6;
 }
 
-/* Keep the initial details in line*/
-.details > div {
-    display: inline-block;
+.panel-header {
+    padding-left: 1px;
+    padding-right: 1px;
+    border: 1px solid #d9d9d9;
+    cursor: pointer;
+}
+.flaky,
+.panel-header.mat-expanded.flaky {
+    background-color: #fff4e0;
+}
+.failing,
+.panel-header.mat-expanded.failing {
+    background-color: #ffdede;
 }
 
 .test-name {
@@ -65,7 +83,7 @@ limitations under the License.
     }
 }
 
-.details-table{
+.details-table {
     table-layout: fixed;
     width: 550px;
 }
@@ -74,10 +92,6 @@ limitations under the License.
     font-size: smaller;
     color: dimgrey;
     justify-content: left;
-}
-
-.details > table {
-    line-height: 13px;
 }
 
 .description {
@@ -96,28 +110,11 @@ limitations under the License.
 .indicator {
     padding-right: 6px;
 }
-
-.last-update {
-    color: #878787;
-    font-size: x-small;
-    width: 130px;
+.show-green {
+    color:#009a06;
 }
-
-.expansion-panel {
-    padding-left: 1px;
-    padding-right: 1px;
-    border: 1px solid #d9d9d9;
-    cursor: pointer;
-}
-.expansion-panel:hover {
-    background-color: #f8f8f8;
-}
-.expansion-panel.mat-expanded:hover{
-    background-color: #f8f8f8;
-}
-
-.outer-panel{
-    padding-top: 2px;
+.show-red {
+    color: red;
 }
 
 .test-details{

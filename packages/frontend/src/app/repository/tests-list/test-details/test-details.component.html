@@ -33,19 +33,15 @@ limitations under the License.
 
     <span>passes&nbsp;</span>
 
-    <span *ngIf="test.flaky">only&nbsp;</span>
-
     <!-- PASSING PERCENTAGE -->
     <span
-        [class.flaky]="test.flaky"
-        [class.success]="test.passed"
-        [class.failing]="!test.passed"
+        [class.show-green]="test.percentpassing >= 0.9 && test.passed && !test.flaky"
+        [class.show-red]="test.percentpassing < 0.9 && test.passed && !test.flaky"
         [innerHTML]="toPercentage(test.percentpassing)">
     </span>
     <span
-        [class.flaky]="test.flaky"
-        [class.success]="test.passed"
-        [class.failing]="!test.passed">
+        [class.show-green]="test.percentpassing >= 0.9 && test.passed && !test.flaky"
+        [class.show-red]="test.percentpassing < 0.9 && test.passed && !test.flaky">
         % of the time
     </span>
 
@@ -53,7 +49,7 @@ limitations under the License.
 
     <!-- FLAKINESS -->
     <span *ngIf="test.flaky" class="flaky">FLAKY</span>
-    <span *ngIf="!test.flaky" class="success">NOT FLAKY</span>
+    <span *ngIf="!test.flaky">NOT FLAKY</span>
 
     <span>.</span>
 </div>

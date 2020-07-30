@@ -33,12 +33,12 @@ limitations under the License.
     font-weight: bold;
 }
 
-.success{
+.show-green{
     color: green;
 }
 .flaky{
     color: orange;
 }
-.failing {
+.show-red {
     color: red;
 }

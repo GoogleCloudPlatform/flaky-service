@@ -23,6 +23,7 @@ import {Test} from 'src/app/services/search/interfaces';
 export class TestDetailsComponent {
   @Input() test: Test;
 
+  //Converts tests' passing percentage from decimal to percentage
   toPercentage(percentpassing: number): string {
     return (percentpassing * 100).toFixed(2);
   }
