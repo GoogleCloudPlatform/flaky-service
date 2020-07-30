@@ -30,7 +30,7 @@ export class ScalesProvider {
     scales: Scales,
     margins: Margins
   ) {
-    let labeledMonth = '';
+    let labeledMonth = undefined;
     svg
       .append('g')
       .attr('transform', 'translate(0,-' + margins.top + ')')
@@ -43,8 +43,13 @@ export class ScalesProvider {
               .subtract(weeksToDisplay - 1, 'weeks')
               .add(index, 'weeks')
               .format('MMM');
+            // skip a month if it has been marked
             if (labeledMonth === month) return null;
-            else {
+            // skip the first month
+            else if (labeledMonth === undefined) {
+              labeledMonth = '';
+              return null;
+            } else {
               labeledMonth = month;
             }
             return month;

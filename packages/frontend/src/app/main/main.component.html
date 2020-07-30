@@ -16,12 +16,10 @@ limitations under the License.
 
 <div id="filters-container" *ngIf="!loading && repoList.viewConfig.elements.length && !repoName">
     <div id="filters-subcontainer">
-        <!-- FILTERS -->
         <app-filters [filters]="filters" (filtersChanged)="onFiltersChanged($event)"></app-filters>
     </div>
 </div>
 
-<!-- REPOSITORIES LIST -->
 <div class="repo-list-container">
     <app-repo-list #repoList (loadingComplete)="onReposLoaded()"></app-repo-list>
 </div>

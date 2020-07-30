@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, Output} from '@angular/core';
 import {
   Congifuration,
   HeatMapService,
@@ -46,6 +46,7 @@ export class HeatMapComponent {
 
   orgName = '';
   repoName = '';
+  @Output() loadingComplete: EventEmitter<void> = new EventEmitter();
   @ViewChild(MatSidenav) sidenave: MatSidenav;
 
   constructor(
@@ -61,9 +62,10 @@ export class HeatMapComponent {
     this.com
       .fetchBuilds(this.repoName, this.orgName, filters)
       .subscribe(result => {
-        this.drawMap(result.builds.reverse()).subscribe(batch =>
-          this.onBatchClick(batch)
-        );
+        this.drawMap(result.builds.reverse()).subscribe(batch => {
+          this.onBatchClick(batch);
+        });
+        this.loadingComplete.emit();
       });
   }
 
@@ -83,7 +85,7 @@ export class HeatMapComponent {
     }
   }
 
-  getBuildLink(buildId) {
+  getBuildLink(buildId): string {
     return 'https://github.com/'.concat(
       this.orgName,
       '/',
@@ -99,5 +101,15 @@ export class HeatMapComponent {
 
   buildIsPassing(build: Build) {
     return !build.failcount && !build.flaky;
+  }
+
+  getBuildRunText(build: Build): string {
+    const digitsOnly = /\D/g;
+    return (
+      '#' +
+      (build.buildmessage
+        ? build.buildmessage.replace(digitsOnly, '')
+        : build.buildId)
+    );
   }
 }

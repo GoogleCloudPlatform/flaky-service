@@ -34,7 +34,10 @@ describe('FiltersComponent', () => {
     for (let index = 0; index < filtersCount; index++) {
       mockFilters.push({
         name: 'filter' + index,
-        possibleValues: ['val1', 'val2'],
+        possibleValues: [
+          {value: 'val1', visibleValue: 'val1'},
+          {value: 'val2', visibleValue: 'val2'},
+        ],
         selection: '',
       });
     }
@@ -66,9 +69,12 @@ describe('FiltersComponent', () => {
     const select: MatSelectHarness = await loader.getHarness(MatSelectHarness);
     const selection = mockFilters[0].possibleValues[1];
 
-    await select.clickOptions({text: new RegExp(selection)});
+    await select.clickOptions({text: new RegExp(selection.visibleValue)});
 
-    const expectedFilter = {name: component._filters[0].name, value: selection};
+    const expectedFilter = {
+      name: component._filters[0].name,
+      value: selection.value,
+    };
     expect(component.filtersChanged.emit).toHaveBeenCalledTimes(1);
     expect(emitter.calls.mostRecent().args[0]).toContain(
       jasmine.objectContaining(expectedFilter)
@@ -85,9 +91,24 @@ describe('FiltersComponent', () => {
     };
 
     it('should set the provided filters', () => {
-      const newFilters = {ref: ['master', 'dev']};
+      const newFilters = {
+        ref: ['master', {value: 'dev', visibleValue: 'develop'}],
+        matrix: ['{"Node": 12}'],
+      };
       const expectedFilters = [
-        {name: 'ref', possibleValues: newFilters['ref'], selection: ''},
+        {
+          name: 'matrix',
+          possibleValues: [{value: '{"Node": 12}', visibleValue: 'Node 12'}],
+          selection: '',
+        },
+        {
+          name: 'ref',
+          possibleValues: [
+            {value: 'master', visibleValue: 'master'},
+            {value: 'dev', visibleValue: 'develop'},
+          ],
+          selection: '',
+        },
       ];
 
       component.setFilters(newFilters);
@@ -163,9 +184,30 @@ describe('FiltersComponent', () => {
         {name: 'fakeFilter', value: 'val1'}, // non existing filter
       ];
       const expectedFilters = [
-        {name: 'filter1', possibleValues: ['val1', 'val2'], selection: 'val1'},
-        {name: 'filter2', possibleValues: ['val1', 'val2'], selection: ''},
-        {name: 'filter3', possibleValues: ['val1', 'val2'], selection: 'val2'},
+        {
+          name: 'filter1',
+          possibleValues: [
+            {value: 'val1', visibleValue: 'val1'},
+            {value: 'val2', visibleValue: 'val2'},
+          ],
+          selection: 'val1',
+        },
+        {
+          name: 'filter2',
+          possibleValues: [
+            {value: 'val1', visibleValue: 'val1'},
+            {value: 'val2', visibleValue: 'val2'},
+          ],
+          selection: '',
+        },
+        {
+          name: 'filter3',
+          possibleValues: [
+            {value: 'val1', visibleValue: 'val1'},
+            {value: 'val2', visibleValue: 'val2'},
+          ],
+          selection: 'val2',
+        },
       ];
 
       component.setFilters(newFilters, savedSelection);

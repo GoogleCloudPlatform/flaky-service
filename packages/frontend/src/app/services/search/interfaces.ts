@@ -54,6 +54,7 @@ export interface Tests extends PageData {
 }
 
 export interface Test {
+  failuremessageiffailing?: string;
   name?: string;
   flaky?: boolean;
   passed?: boolean;
@@ -82,6 +83,7 @@ export interface Build {
   tests?: Test[];
   failcount?: number;
   passcount?: number;
+  buildmessage?: string;
 }
 
 export interface ApiRepository {

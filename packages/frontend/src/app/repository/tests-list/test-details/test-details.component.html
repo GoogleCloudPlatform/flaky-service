@@ -21,8 +21,7 @@ limitations under the License.
         <header id="error-header">Error message</header>
 
         <!-- MESSAGE -->
-        <textarea readonly id="error-msg-textarea" rows="5" >Error with ...&#013;&#010;Unable to ...
-        </textarea>
+        <textarea readonly id="error-msg-textarea" rows="5" >{{test.failuremessageiffailing}}</textarea>
     </section>
 </div>
 
@@ -34,7 +33,7 @@ limitations under the License.
 
     <span>passes&nbsp;</span>
 
-    <span *ngIf="test.flaky" class="flaky">only&nbsp;</span>
+    <span *ngIf="test.flaky">only&nbsp;</span>
 
     <!-- PASSING PERCENTAGE -->
     <span

@@ -18,14 +18,12 @@ import {HomeComponent} from '../home/home.component';
 import {LicenseComponent} from '../license/license.component';
 import {MainComponent} from '../main/main.component';
 import {RepositoryComponent} from '../repository/repository.component';
-import {BuildComponent} from '../build/build.component';
 import {NotFoundComponent} from '../not-found/not-found.component';
 import {RouteProvider} from './route-provider/RouteProvider';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'license', component: LicenseComponent},
-  {path: 'org/:org/:repo/:build', component: BuildComponent},
   {
     path: RouteProvider.routes.repo.path,
     component: RepositoryComponent,

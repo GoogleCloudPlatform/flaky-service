@@ -45,11 +45,11 @@ export class TestsListComponent extends PaginatedListComponent<Test> {
     };
   }
 
-  toLiteralDate(timestamp: number) {
+  toLiteralDate(timestamp: number): string {
     return moment.unix(timestamp).fromNow();
   }
 
-  toPercentage(percentpassing: number) {
+  toPercentage(percentpassing: number): string {
     return (percentpassing * 100).toFixed(2);
   }
 }

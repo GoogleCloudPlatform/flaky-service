@@ -16,8 +16,8 @@ limitations under the License.
 
 <div id="main-container">
   <mat-toolbar id="header">
-    <span></span>
-    <span id="title">{{ title }}</span>
+    <span><!--This span represents the first flex element of the toolbar--></span>
+    <span id="title">{{title}}</span>
     <span *ngIf="!showConfigWheel"></span>
     <mat-icon matRipple aria-hidden="false" aria-label="menu" (click)="snav.toggle()" id="setting-button" *ngIf="showConfigWheel">settings</mat-icon>
   </mat-toolbar>

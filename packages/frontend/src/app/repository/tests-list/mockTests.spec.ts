@@ -15,6 +15,7 @@
 export const mockTests = {
   tests: [
     {
+      failuremessageiffailing: 'Missing characger 1',
       name: 'should update the rendered pages on input change',
       flaky: true,
       passed: false,
@@ -26,6 +27,7 @@ export const mockTests = {
       environment: {os: 'windows', ref: 'dev'},
     },
     {
+      failuremessageiffailing: 'Missing characger 2',
       name:
         'should not return to the first page when the paginator is not ready',
       flaky: false,
@@ -38,6 +40,7 @@ export const mockTests = {
       environment: {os: 'windows', ref: 'dev'},
     },
     {
+      failuremessageiffailing: 'Missing characger 3',
       name: 'should set the new filters when a repository is found',
       flaky: true,
       passed: true,

@@ -14,6 +14,11 @@
 
 export class RouteProvider {
   static routes = {
+    home: {
+      name: 'home',
+      path: '/',
+      link: () => '/',
+    },
     main: {
       name: 'org',
       path: 'org/:org',
