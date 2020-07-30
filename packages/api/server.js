@@ -38,54 +38,56 @@ app.delete('/api/repo/:orgname/:reponame/test/:testid', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
   const testName = req.params.testid;
-  const redirect = req.query.redirect;
+  const redirect = req.query.redirect || process.env.FRONTEND_URL;
   const state = v4();
 
   await repo.storeTicket({
     action: 'delete-test',
     orgName: orgName,
     repoId: repoId,
-    testName: testName,
+    fullName: orgName + '/' + repoId,
     state: state,
+    testName: testName,
     redirect: redirect
   });
 
-  const url = 'http://github.com/login/oauth/authorize?client_id=' + process.env.CLIENT_ID + '&state=' + state + '&allow_signup=false';
+  const url = `http://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&state=${state}&allow_signup=false&scope=repo`;
   res.status(302).redirect(url);
 });
 
 app.get('/api/callback', async (req, res) => {
-  const ticket = repo.getTicket(req.param('state'));
-  const redirect = ticket.redirect || process.env.FRONTEND_URL;
+  const ticket = await repo.getTicket(req.param('state'));
 
   if (ticket === null) {
-    res.status(404).redirect(redirect);
-    return;
+    return res.status(404).redirect(process.env.FRONTEND_URL);
   }
+
+  const redirect = ticket.redirect || process.env.FRONTEND_URL;
 
   const storedTicketState = ticket.state;
 
   if (req.param('state') !== storedTicketState) {
-    res.status(401).redirect(redirect);
+    res.status(404).redirect(redirect);
     return;
   }
 
   const queryObject = await auth.retrieveAccessToken(req.param('code'), storedTicketState);
 
-  if (queryObject == null) {
-    res.status(401).redirect(redirect);
-    return;
+  if (queryObject === null) {
+    return res.status(404).redirect(redirect);
   }
+  const userPermission = await auth.retrieveUserPermission(queryObject.access_token, ticket.fullName);
+  console.log('PERMISSION: ' + userPermission);
 
-  const userData = await auth.retrieveUserData(queryObject.access_token);
+  const performed = await repo.performTicketIfAllowed(ticket, userPermission);
 
   // todo send a message to the frontend to put a banner on the page indicating whether the action has been performed
-  if (repo.performTicketIfAllowed(userData)) {
+  if (performed) {
     console.log('Successfully performed the action');
     res.status(200).redirect(redirect);
   } else {
     console.log('Not permitted to perform the action');
-    res.status(401).redirect(redirect);
+    res.status(404).redirect(redirect);
   }
 });
 

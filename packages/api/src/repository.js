@@ -42,26 +42,29 @@ class Repository {
     return result;
   }
 
-  async mayAccess (platform, login) {
-    const collection = client.collection('permitted-users/' + platform + '/users').where('login', '==', login);
-
-    const querySnapshot = await collection.get();
-    return (querySnapshot.size === 1);
-  }
-
   async storeTicket (ticketToPerform) {
-
+    return this.createDoc(`tickets/${ticketToPerform.state}`, {
+      ticket: ticketToPerform
+    });
   }
 
-  async getTicket () {
-
+  async getTicket (state) {
+    const data = await this.getDoc(`tickets/${state}`);
+    if (data === null) return null;
+    return data.ticket;
   }
 
-  async performTicketIfAllowed (userData) {
-    console.log('USER DATA: ' + userData);
+  async performTicketIfAllowed (ticket, permission) {
+    if (ticket.action === 'delete-repo') {
+      return permission === 'admin';
+    }
 
-    // Todo add actual functionality
-    return true;
+    if (ticket.action === 'delete-test') {
+      return permission === 'admin' || permission === 'write';
+    }
+
+    return false;
+    // TODO actually perform the action
   }
 
   async deleteDoc (path) {
