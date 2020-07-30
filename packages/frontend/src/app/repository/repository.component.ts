@@ -28,6 +28,8 @@ import {NotFoundError} from '../services/com/Errors/NotFoundError';
 import {empty} from 'rxjs';
 import {TestsListComponent} from './tests-list/tests-list.component';
 import {HeatMapComponent} from '../heat-map/heat-map.component';
+import {environment} from '../../environments/environment';
+
 
 @Component({
   selector: 'app-repository',
@@ -50,6 +52,7 @@ export class RepositoryComponent implements AfterViewInit {
 
   repoName = '';
   orgName = '';
+  envUrl = '';
 
   ngAfterViewInit(): void {
     setTimeout(() => this.setPageParams());
@@ -63,6 +66,7 @@ export class RepositoryComponent implements AfterViewInit {
       );
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');
+      this.envUrl= environment.baseUrl;
       this.heatMap.init(this.repoName, this.orgName, foundParams.filters);
       this.testsListComponent.update(
         foundParams.filters,

@@ -17,6 +17,7 @@ import {Router, NavigationEnd} from '@angular/router';
 import {filter} from 'rxjs/operators';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {LicenseComponent} from '../license/license.component';
+import {RouteProvider} from 'src/app/routing/route-provider/RouteProvider';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +34,8 @@ export class AppComponent implements OnInit {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(
-        (event: NavigationEnd) => (this.showConfigWheel = event.url !== '/')
+        (event: NavigationEnd) =>
+          (this.showConfigWheel = event.url == '/'+RouteProvider.routes.repo.path)
       );
   }
 
