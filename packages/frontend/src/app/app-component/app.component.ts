@@ -38,9 +38,6 @@ export class AppComponent implements OnInit {
   }
 
   openLicenseDialog(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.id = 'license-dialog';
-
-    this.dialog.open(LicenseComponent, dialogConfig);
+    this.dialog.open(LicenseComponent, new MatDialogConfig());
   }
 }

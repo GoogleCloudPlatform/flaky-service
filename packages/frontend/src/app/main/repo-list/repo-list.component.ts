@@ -45,7 +45,7 @@ export class RepoListComponent extends PaginatedListComponent<Repository> {
     };
   }
 
-  getLastUpdate(repo: Repository) {
+  getLastUpdate(repo: Repository): string {
     return moment.unix(repo.lastupdate._seconds).format('MMM D, YYYY');
   }
 }

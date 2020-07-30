@@ -23,7 +23,7 @@ import {Test} from 'src/app/services/search/interfaces';
 export class TestDetailsComponent {
   @Input() test: Test;
 
-  toPercentage(percentpassing: number) {
+  toPercentage(percentpassing: number): string {
     return (percentpassing * 100).toFixed(2);
   }
 }

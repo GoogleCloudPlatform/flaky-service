@@ -88,6 +88,9 @@ export class BreadcrumbsComponent implements OnInit {
     return crumbs;
   }
 
+  /**
+   * Extracts the parameters in the url query
+   */
   private getParamsValues(routeName: string, path: string) {
     // [':param1',...]
     const paramsNamesWithColons = path.match(this.getParamsRegExp());
@@ -111,6 +114,9 @@ export class BreadcrumbsComponent implements OnInit {
     return {paramsValues, lastParam};
   }
 
+  /**
+   * @returns a Regexp matching ':val' in `param:val`
+   */
   private getParamsRegExp(): RegExp {
     return /:(([a-z]|[0-9])*)/gm;
   }
@@ -124,7 +130,7 @@ export class BreadcrumbsComponent implements OnInit {
     return foundParams;
   }
 
-  private updateGitLink(showLink: boolean): void {
+  private updateGitLink(showLink: boolean) {
     this.gitLink.show = showLink;
 
     if (showLink && this.crumbs.length >= 2) {

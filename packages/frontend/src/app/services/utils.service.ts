@@ -28,6 +28,9 @@ export class UtilsService {
     return this.sanitizeUrl(url);
   }
 
+  /**
+   * Bypasses the built-in Angular url sanitizer in DEV mode only
+   */
   private sanitizeUrl(url: string): SafeUrl {
     return environment.production
       ? url
@@ -39,7 +42,7 @@ export class UtilsService {
    * A valid JSON object string here is expected to be surrounded by {}
    * @param obj string on which to perform the validation
    */
-  isPureJson(obj: string) {
+  isPureJson(obj: string): boolean {
     try {
       JSON.parse(obj);
     } catch {

@@ -85,7 +85,7 @@ export class HeatMapComponent {
     }
   }
 
-  getBuildLink(buildId) {
+  getBuildLink(buildId): string {
     return 'https://github.com/'.concat(
       this.orgName,
       '/',
@@ -103,7 +103,7 @@ export class HeatMapComponent {
     return !build.failcount && !build.flaky;
   }
 
-  getBuildRunText(build: Build) {
+  getBuildRunText(build: Build): string {
     const digitsOnly = /\D/g;
     return (
       '#' +
