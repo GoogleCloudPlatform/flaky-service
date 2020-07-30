@@ -39,6 +39,7 @@ export class SearchComponent implements OnInit {
 
   orgName = '';
   showSearchBar = true;
+  optionActivated = false;
 
   constructor(
     private searchService: SearchService,
@@ -90,15 +91,18 @@ export class SearchComponent implements OnInit {
   }
 
   onEnterKeyUp(option: string): void {
-    this.launchSearch(this.interpreter.parseSearchInput(option));
+    if (!this.optionActivated)
+      this.launchSearch(this.interpreter.parseSearchInput(option));
+    this.optionActivated = false;
   }
 
   onSearchOptionSelected(option: string): void {
+    this.optionActivated = true;
     this.inputControl.setValue(option);
     this.openRepo(option);
   }
 
-  private launchSearch(option: Search): void {
+  launchSearch(option: Search): void {
     this.ngZone.run(() => {
       option.filters.push({name: 'repo', value: option.query});
       const link = RouteProvider.routes.main.link(this.orgName);

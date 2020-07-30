@@ -165,7 +165,7 @@ describe('SearchComponent', () => {
       });
   });
 
-  it('should search the selected option when a repository is selected', done => {
+  it('should redirect to the selected reporistory when an option is selected', done => {
     const repoName = mockRepositories[2].name;
     const orgName = mockRepositories[2].organization;
     component.orgName = orgName;
@@ -179,7 +179,7 @@ describe('SearchComponent', () => {
             await input.selectOption({text: new RegExp(repoName)});
             await fixture.whenStable();
 
-            // redirected to the search page
+            // redirected to the repository page
             const expectedLocation =
               '/' + RouteProvider.routes.repo.link(orgName, repoName);
             expect(location.path()).toEqual(expectedLocation);
@@ -188,6 +188,16 @@ describe('SearchComponent', () => {
         });
         input.enterText(repoName);
       });
+  });
+
+  it('should not launch a search when a repository is selected', () => {
+    const searchLauncher = spyOn(component, 'launchSearch');
+
+    component.onSearchOptionSelected('repoName');
+    component.onEnterKeyUp('repoName');
+
+    expect(searchLauncher).not.toHaveBeenCalled();
+    expect(component.optionActivated).toBeFalse();
   });
 
   it('should search the repo with the entered text when the user hits `enter`', async () => {
