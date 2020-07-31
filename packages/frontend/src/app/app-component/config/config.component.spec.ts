@@ -19,9 +19,8 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
 import {UserService} from 'src/app/services/user/user.service';
 import {of} from 'rxjs';
-import {RouterTestingModule} from "@angular/router/testing";
+import {RouterTestingModule} from '@angular/router/testing';
 import {environment} from 'src/environments/environment';
-import {inject} from '@angular/core';
 import {Location} from '@angular/common';
 
 describe('ConfigComponent', () => {
@@ -85,9 +84,10 @@ describe('ConfigComponent', () => {
       '.download-button'
     );
     downloadButton.click();
-    
     fixture.whenStable().then(() => {
-      expect(location.path()).toEqual(this.envUrl+'/api/repo/testOrg/testRepo/csv');
+      expect(location.path()).toEqual(
+        this.envUrl + '/api/repo/testOrg/testRepo/csv'
+      );
     });
   });
 });
