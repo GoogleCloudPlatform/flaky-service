@@ -27,21 +27,18 @@ export class AppComponent implements OnInit {
   title = 'flaky.dev';
   showConfigWheel = false;
   repository = '';
-  organization = ''; 
+  organization = '';
 
-  constructor(
-    public dialog: MatDialog,
-    private globals: GlobalsService
-  ) {}
+  constructor(public dialog: MatDialog, private globals: GlobalsService) {}
 
   ngOnInit(): void {
     //get the current page's organization name and repository name
     this.globals.pageDataChange.subscribe(pagedata => {
       const onRepoPage =
         pagedata.currentPage === RouteProvider.routes.repo.name;
-        this.showConfigWheel = onRepoPage;
-        this.repository = pagedata.repoName;
-        this.organization = pagedata.orgName;
+      this.showConfigWheel = onRepoPage;
+      this.repository = pagedata.repoName;
+      this.organization = pagedata.orgName;
       console.log(onRepoPage);
     });
   }
