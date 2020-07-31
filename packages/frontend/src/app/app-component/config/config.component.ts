@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {UserService} from 'src/app/services/user/user.service';
+import {environment} from 'src/environments/environment';
 
 @Component({
   selector: 'app-config',
@@ -21,6 +22,11 @@ import {UserService} from 'src/app/services/user/user.service';
   styleUrls: ['./config.component.css'],
 })
 export class ConfigComponent {
+  @Input() repoName: string;
+  @Input() orgName: string;
+
+  envUrl = environment.baseUrl;
+
   linkedGithubAccounts = [
     {name: 'account 1'},
     {name: 'account 2'},

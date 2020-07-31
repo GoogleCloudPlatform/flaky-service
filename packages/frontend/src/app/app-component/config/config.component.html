@@ -23,7 +23,8 @@ limitations under the License.
     
         <a id="token-show" (click)="onTokenClick()">
             <span>&nbsp;</span>
-            <span *ngIf="!showToken">show</span>
+            <span *ngIf="!showToken">
+            </span>
             <span *ngIf="showToken">hide</span>
         </a>
     </p>
@@ -31,4 +32,8 @@ limitations under the License.
 
 <!-- NON-ADMIN VIEW -->
 <div id="non-admin-view" *ngIf="!showAdminView">
+     <!--DOWNLOAD BUTTON-->
+     <div id="download">
+        <a class = "download-button" href="{{this.envUrl}}/api/repo/{{this.orgName}}/{{this.repoName}}/csv" target="_blank">Download</a>
+    </div>
 </div>

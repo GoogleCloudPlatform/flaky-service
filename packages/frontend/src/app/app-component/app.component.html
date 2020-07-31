@@ -25,7 +25,7 @@ limitations under the License.
   <mat-sidenav-container>
 
     <mat-sidenav #snav mode="over" fixedTopGap="56" position="end">
-      <app-config></app-config>
+      <app-config [repoName]="repository" [orgName]="organization"></app-config>
     </mat-sidenav>
 
     <mat-sidenav-content>

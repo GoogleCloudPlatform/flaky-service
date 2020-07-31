@@ -13,8 +13,6 @@
 // limitations under the License.
 
 import {Component, OnInit} from '@angular/core';
-import {Router, NavigationEnd} from '@angular/router';
-import {filter} from 'rxjs/operators';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {LicenseComponent} from '../license/license.component';
 import {GlobalsService} from '../services/globals/globals.service';
@@ -28,18 +26,22 @@ import {RouteProvider} from '../routing/route-provider/RouteProvider';
 export class AppComponent implements OnInit {
   title = 'flaky.dev';
   showConfigWheel = false;
+  repository = '';
+  organization = ''; 
 
   constructor(
-    private router: Router,
     public dialog: MatDialog,
     private globals: GlobalsService
   ) {}
 
   ngOnInit(): void {
+    //get the current page's organization name and repository name
     this.globals.pageDataChange.subscribe(pagedata => {
       const onRepoPage =
         pagedata.currentPage === RouteProvider.routes.repo.name;
         this.showConfigWheel = onRepoPage;
+        this.repository = pagedata.repoName;
+        this.organization = pagedata.orgName;
       console.log(onRepoPage);
     });
   }
