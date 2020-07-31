@@ -220,4 +220,45 @@ describe('SearchComponent', () => {
     expectedLocation += ';repo=' + repoName;
     expect(location.path()).toEqual(expectedLocation);
   });
+
+  it('should clear the input after the user hits `enter`', async () => {
+    component.orgName = 'org';
+    const input = await loader.getHarness(MatInputHarness);
+
+    // write the repo name
+    await input.setValue('repo');
+    const inputElement = fixture.debugElement.query(By.css('input'));
+
+    // hit enter
+    inputElement.triggerEventHandler('keyup.enter', {});
+    await fixture.whenStable();
+
+    // cleared the input
+    const inputValue = await input.getValue();
+    expect(inputValue).toEqual('');
+  });
+
+  it('should clear the input after the user selects an option', done => {
+    const repoName = mockRepositories[2].name;
+    const orgName = mockRepositories[2].organization;
+    component.orgName = orgName;
+
+    loader
+      .getHarness(MatAutocompleteHarness)
+      .then((input: MatAutocompleteHarness) => {
+        component.inputControl.valueChanges.pipe(first()).subscribe(() => {
+          setTimeout(async () => {
+            // select the repository
+            await input.selectOption({text: new RegExp(repoName)});
+            await fixture.whenStable();
+
+            // cleared the input
+            const inputValue = await input.getValue();
+            expect(inputValue).toEqual('');
+            done();
+          }, component.debounceTime + 200);
+        });
+        input.enterText(repoName);
+      });
+  });
 });

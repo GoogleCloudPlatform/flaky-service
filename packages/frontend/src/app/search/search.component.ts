@@ -103,15 +103,20 @@ export class SearchComponent implements OnInit {
   }
 
   onEnterKeyUp(option: string) {
+    this.clear();
     if (!this.optionActivated)
       this.launchSearch(this.interpreter.parseSearchInput(option));
     this.optionActivated = false;
   }
 
   onSearchOptionSelected(option: string) {
+    this.clear();
     this.optionActivated = true;
-    this.inputControl.setValue(option);
     this.openRepo(option);
+  }
+
+  private clear() {
+    this.inputControl.setValue('');
   }
 
   /**
