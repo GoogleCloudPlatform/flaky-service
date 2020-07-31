@@ -25,7 +25,7 @@ async function deleteRepo (client, repoId) {
 
   const allTests = await client.collection(global.headCollection).doc(firebaseEncode(repoId)).collection('tests').get();
   allTests.forEach(test => {
-    deleteOperations.push(deleteTest(client, repoId, test.data().name));
+    deleteOperations.push(deleteTest(repoId, test.data().name, client));
   });
 
   deleteOperations.push(client.collection(global.headCollection).doc(firebaseEncode(repoId)).delete());
@@ -35,7 +35,7 @@ async function deleteRepo (client, repoId) {
 
 // this does not delete the tests names stored in a list under a specific build. These names should not be used without first looking
 // in the test collection to verify that the test does indeed exist
-async function deleteTest (client, repoId, testname) {
+async function deleteTest (repoId, testname, client) {
   const deleteOperations = [];
   const allRuns = await client.collection(global.headCollection).doc(firebaseEncode(repoId)).collection('tests').doc(firebaseEncode(testname)).collection('runs').get();
   allRuns.forEach(run => {

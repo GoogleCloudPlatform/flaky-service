@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const { describe, it, beforeEach } = require('mocha');
+const { describe, it, beforeEach, afterEach } = require('mocha');
 const repo = require('../src/repository');
 const assert = require('assert');
 const { v4 } = require('uuid');
+const sinon = require('sinon');
+const deleter = require('../lib/deleter.js');
 
 describe('Repository', () => {
   let uniqueString;
@@ -100,22 +102,54 @@ describe('Repository', () => {
     });
   });
 
-  describe('performTicketIfAllowed', async () => {
+  describe('allowedToPerformTicket', async () => {
     it('returns true when user has write permission to repo and attempts to delete a test', async () => {
-      const result = await repo.performTicketIfAllowed({ action: 'delete-test' }, 'write');
+      const result = await repo.allowedToPerformTicket('delete-test', 'write');
       assert.deepStrictEqual(result, true);
     });
     it('returns true when user has admin permission to repo and attempts to delete a test', async () => {
-      const result = await repo.performTicketIfAllowed({ action: 'delete-test' }, 'admin');
+      const result = await repo.allowedToPerformTicket('delete-test', 'admin');
       assert.deepStrictEqual(result, true);
     });
     it('returns false when user has write permission to repo and attempts to delete a repo', async () => {
-      const result = await repo.performTicketIfAllowed({ action: 'delete-repo' }, 'write');
+      const result = await repo.allowedToPerformTicket('delete-repo', 'write');
       assert.deepStrictEqual(result, false);
     });
     it('returns true when user has admin permission to repo and attempts to delete a repo', async () => {
-      const result = await repo.performTicketIfAllowed({ action: 'delete-repo' }, 'admin');
+      const result = await repo.allowedToPerformTicket('delete-repo', 'admin');
       assert.deepStrictEqual(result, true);
+    });
+  });
+
+  describe('performTicketIfAllowed', async () => {
+    let stubbedPermissions;
+    let stubbedTestDeletion;
+
+    beforeEach(() => {
+      stubbedPermissions = sinon.stub(repo, 'allowedToPerformTicket').callsFake((action, permission) => {
+        // permission would normally be write, admin, etc. For this mock just setting to 'permitted' or other for the purpose of testing.
+        if (permission === 'permitted') return true;
+        return false;
+      });
+      stubbedTestDeletion = sinon.stub(deleter, 'deleteTest');
+    });
+
+    afterEach(() => {
+      stubbedPermissions.restore();
+      stubbedTestDeletion.restore();
+    });
+
+    it('deletes test if permitted', async () => {
+      await repo.performTicketIfAllowed({ action: 'delete-test', fullName: 'org/repo', testName: 'test' }, 'permitted');
+
+      assert(stubbedTestDeletion.calledWith('org/repo', 'test'));
+    });
+
+    it('does not delete test if not permitted', async () => {
+      await repo.performTicketIfAllowed({ action: 'delete-test', fullName: 'org/repo', testName: 'test' }, 'notPermitted');
+
+      // stubbedTestDeletion is called once by other test, but should never be called more than once.
+      assert(stubbedTestDeletion.callCount === 0);
     });
   });
 });

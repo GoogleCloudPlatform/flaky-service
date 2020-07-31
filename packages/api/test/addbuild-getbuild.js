@@ -467,7 +467,7 @@ describe('Add-Build', () => {
 
   describe('deleter', async () => {
     it('Can delete a particular test', async () => {
-      await deleteTest(client, decodeURIComponent(buildInfo[0].repoId), 'a/1');
+      await deleteTest(decodeURIComponent(buildInfo[0].repoId), 'a/1', client);
 
       // make sure that test is no longer there
       const testDoc = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('tests').doc(firebaseEncode('a/1')).get();
