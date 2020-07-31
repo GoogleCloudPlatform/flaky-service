@@ -18,6 +18,6 @@ limitations under the License.
 <div id="settings-open-view">
      <!--DOWNLOAD BUTTON-->
      <div id="download">
-        <a mat-raised-button id="download-button" href="{{this.envUrl}}/api/repo/{{this.orgName}}/{{this.repoName}}/csv" target="_blank">Export CSV</a>
+        <a mat-raised-button id="download-button" (click)="onDownloadClick()" target="_blank">Export CSV</a>
     </div>
 </div>

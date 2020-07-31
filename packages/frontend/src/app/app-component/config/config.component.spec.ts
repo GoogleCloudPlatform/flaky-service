@@ -20,27 +20,23 @@ import {
   fakeAsync
 } from '@angular/core/testing';
 import {ConfigComponent} from './config.component';
-import {By} from '@angular/platform-browser';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
-import {UserService} from 'src/app/services/user/user.service';
-import {of} from 'rxjs';
 import {environment} from 'src/environments/environment';
 
 describe('ConfigComponent', () => {
   let component: ConfigComponent;
   let fixture: ComponentFixture<ConfigComponent>;
-  let location: Location;
 
-  const mockUserService = {
-    loggedIn: of(true),
+  const mockWindowProvider = {
+    open: () => {}
   };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ConfigComponent],
       imports: [MatDividerModule, MatIconModule],
-      providers: [{provide: UserService, useValue: mockUserService}],
+      providers: [{provide: Window, useValue: mockWindowProvider}],
     }).compileComponents();
   }));
 
@@ -54,21 +50,34 @@ describe('ConfigComponent', () => {
   });
 
   //test the export csv file button
-  fit('should open a new tab with the correct url when export button is clicked', fakeAsync (() => {
-    component.orgName = 'testOrg';
-    component.repoName = 'testRepo';
-    component.envUrl = environment.baseUrl;
+  it('should open a new tab with the correct url when export button is clicked', fakeAsync (() => {
+    component.exportUrl = environment.baseUrl+'/api/repo/testOrg/testRepo/csv';
+    component.windowProvider = {open: () => {}};
     fixture.detectChanges();
-    //set targetUrl
-    const targetUrl = component.envUrl + '/api/repo/testOrg/testRepo/csv';
     //spy on the new window
-    spyOn(window, 'open');
+    spyOn(component.windowProvider, 'open');
     //click the export csv button
     const downloadButton = fixture.debugElement.nativeElement.querySelector(
       '#download-button'
     );
     downloadButton.click();
     tick();
-    expect(window.open).toHaveBeenCalledWith(targetUrl);
+    expect(component.windowProvider.open).toHaveBeenCalled();
+  }));
+
+  //test the export csv file button
+  fit('should open a new tab with the correct url when export button is clicked', fakeAsync (() => {
+    component.exportUrl = environment.baseUrl+'/api/repo/testOrg/testRepo/csv';
+    component.windowProvider.open = {open: () => {}};
+    fixture.detectChanges();
+    //spy on the new window
+    spyOn(mockWindowProvider, 'open');
+    //click the export csv button
+    const downloadButton = fixture.debugElement.nativeElement.querySelector(
+      '#download-button'
+    );
+    downloadButton.click();
+    tick();
+    expect(mockWindowProvider.open).toHaveBeenCalled();
   }));
 });
