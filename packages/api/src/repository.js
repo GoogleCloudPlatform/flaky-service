@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const client = require('./firestore.js');
+const deleter = require('../lib/deleter.js');
 
 class Repository {
   async createDoc (identifier, params) {
@@ -54,17 +55,32 @@ class Repository {
     return data.ticket;
   }
 
-  async performTicketIfAllowed (ticket, permission) {
-    if (ticket.action === 'delete-repo') {
+  async allowedToPerformTicket (action, permission) {
+    if (action === 'delete-repo') {
       return permission === 'admin';
     }
 
-    if (ticket.action === 'delete-test') {
+    if (action === 'delete-test') {
       return permission === 'admin' || permission === 'write';
     }
 
     return false;
-    // TODO actually perform the action
+  }
+
+  async performTicketIfAllowed (ticket, permission) {
+    const permitted = this.allowedToPerformTicket(ticket.action, permission);
+
+    if (permitted) {
+      if (ticket.action === 'delete-test') {
+        deleter.deleteTest(ticket.fullName, ticket.testName, client);
+      } else if (ticket.action === 'delete-repo') {
+        deleter.deleteRepo(client, ticket.fullName);
+      } else {
+        throw Error('invalid action');
+      }
+    }
+
+    return permitted;
   }
 
   async deleteDoc (path) {

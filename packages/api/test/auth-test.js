@@ -37,7 +37,6 @@ describe('Auth', async () => {
         client_secret: process.env.CLIENT_SECRET,
         state: 'ticketState'
       });
-
       assert(stubbed.calledWith('https://github.com/login/oauth/access_token', sinon.match.has('body', shouldPost)));
     });
   });
