@@ -11,25 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#dialog-toolbar {
-    display: flex;
-    color: #0075FF;
-    justify-content: center;
-    border-bottom: 1px solid #0075FF;
-    font-size: 1.5em;
-    background-color: white;
-    height: 25px;
-    margin-bottom: 10px;
-}
-
 #license-title {
-	display: flex;
 	text-align: center;
-	justify-content: center;
-}
-
-#license-text1 {
-	display: flex;
 }
 
 #section1-indent {

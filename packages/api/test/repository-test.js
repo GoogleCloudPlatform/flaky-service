@@ -12,32 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const { describe, it } = require('mocha');
+const { describe, it, beforeEach } = require('mocha');
 const repo = require('../src/repository');
 const assert = require('assert');
+const { v4 } = require('uuid');
 
 describe('Repository', () => {
+  let uniqueString;
+  beforeEach(() => {
+    uniqueString = v4();
+  });
   describe('createDoc', async () => {
     it('creates a new document', async () => {
-      await repo.createDoc('dummy/my-first-repository', {
+      await repo.createDoc(`dummy/${uniqueString}`, {
         description: 'this is my first test repository'
       });
-      // TODO: use a unique name for this document, using the uuid library,
-      // so that two folks can run tests at the same time without colliding.
-      const doc = await repo.getDoc('dummy/my-first-repository');
+      const doc = await repo.getDoc(`dummy/${uniqueString}`);
       assert.strictEqual(doc.description, 'this is my first test repository');
-      await repo.deleteDoc('dummy/my-first-repository');
+      await repo.deleteDoc(`dummy/${uniqueString}`);
     });
   });
 
   describe('getDoc', async () => {
     it('gets a document that exists', async () => {
-      await repo.createDoc('dummy/fake-doc', {
+      await repo.createDoc(`dummy/${uniqueString}`, {
         info: 'hello this is for testing'
       });
-      const data = await repo.getDoc('dummy/fake-doc');
+      const data = await repo.getDoc(`dummy/${uniqueString}`);
       assert.deepStrictEqual(data.info, 'hello this is for testing');
-      await repo.deleteDoc('dummy/fake-doc');
+      await repo.deleteDoc(`dummy/${uniqueString}`);
     });
 
     it('returns null when a document does not exist', async () => {
@@ -59,7 +62,60 @@ describe('Repository', () => {
     });
   });
 
-  describe('performActionIfAllowed', async () => {
-    it('performs requested test delete when user has write permission to repo');
+  describe('ticket handlers', async () => {
+    let state;
+    const ticket = {
+      data: 'fake data'
+    };
+    beforeEach(() => {
+      state = v4();
+      ticket.state = state;
+    });
+    describe('storeTicket', async () => {
+      it('stores a ticket which has a state', async () => {
+        // Store ticket
+        await repo.storeTicket(ticket);
+
+        // Retrieve ticket, check it
+        const result = await repo.getDoc(`tickets/${state}`);
+        assert.deepStrictEqual(result.ticket, ticket);
+
+        // Delete ticket
+        await repo.deleteDoc(`tickets/${state}`);
+      });
+    });
+
+    describe('getTicket', async () => {
+      it('retrieves a ticket by its state', async () => {
+        await repo.createDoc(`tickets/${state}`, {
+          ticket: ticket
+        });
+
+        const result = await repo.getTicket(state);
+
+        assert.deepStrictEqual(result, ticket);
+
+        await repo.deleteDoc(`tickets/${state}`);
+      });
+    });
+  });
+
+  describe('performTicketIfAllowed', async () => {
+    it('returns true when user has write permission to repo and attempts to delete a test', async () => {
+      const result = await repo.performTicketIfAllowed({ action: 'delete-test' }, 'write');
+      assert.deepStrictEqual(result, true);
+    });
+    it('returns true when user has admin permission to repo and attempts to delete a test', async () => {
+      const result = await repo.performTicketIfAllowed({ action: 'delete-test' }, 'admin');
+      assert.deepStrictEqual(result, true);
+    });
+    it('returns false when user has write permission to repo and attempts to delete a repo', async () => {
+      const result = await repo.performTicketIfAllowed({ action: 'delete-repo' }, 'write');
+      assert.deepStrictEqual(result, false);
+    });
+    it('returns true when user has admin permission to repo and attempts to delete a repo', async () => {
+      const result = await repo.performTicketIfAllowed({ action: 'delete-repo' }, 'admin');
+      assert.deepStrictEqual(result, true);
+    });
   });
 });

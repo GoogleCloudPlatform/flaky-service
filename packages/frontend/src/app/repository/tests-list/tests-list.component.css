@@ -60,11 +60,6 @@ limitations under the License.
     background-color: #ffdede;
 }
 
-/* Keep the initial details in line*/
-.details > table {
-    display: inline-block;
-}
-
 .test-name {
     margin-right: 10px;
     /*Hide long names*/
@@ -88,7 +83,7 @@ limitations under the License.
     }
 }
 
-.details-table{
+.details-table {
     table-layout: fixed;
     width: 550px;
 }
@@ -115,11 +110,11 @@ limitations under the License.
 .indicator {
     padding-right: 6px;
 }
-.show-yellow {
-    color: orange;
-}
 .show-green {
     color:#009a06;
+}
+.show-red {
+    color: red;
 }
 
 .test-details{

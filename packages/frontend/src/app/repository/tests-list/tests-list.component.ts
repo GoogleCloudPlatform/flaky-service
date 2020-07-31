@@ -28,6 +28,8 @@ import {map} from 'rxjs/operators';
   styleUrls: ['./tests-list.component.css'],
 })
 export class TestsListComponent extends PaginatedListComponent<Test> {
+  /* fetches and returns tests using com service for http
+  request to be displayed in the list*/
   fetchPageData(filters: Filter[] = []): Observable<PageData> {
     return this.comService
       .fetchTests(this.repoName, this.orgName, filters)
@@ -45,10 +47,12 @@ export class TestsListComponent extends PaginatedListComponent<Test> {
     };
   }
 
+  //Provides the time of a tests last run
   toLiteralDate(timestamp: number): string {
     return moment.unix(timestamp).fromNow();
   }
 
+  //Converts tests' passing percentage from decimal to percentage
   toPercentage(percentpassing: number): string {
     return (percentpassing * 100).toFixed(2);
   }

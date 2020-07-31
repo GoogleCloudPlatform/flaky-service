@@ -14,10 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.tests-list-container, #filters-container, #extras-container {
-    display: flex;
-    justify-content: center;
-}
 app-tests-list, #filters-subcontainer {
     width: 100%;
     max-width: 800px;
@@ -30,13 +26,6 @@ app-tests-list, #filters-subcontainer {
 
 #filters-container {
     margin-top: 20px;
-}
-
-#filters-subcontainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
 }
 
 .names {

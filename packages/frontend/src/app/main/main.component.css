@@ -13,20 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-.repo-list-container, #filters-container, #extras-container {
-    display: flex;
-    justify-content: center;
-}
 
 #filters-container {
     margin-top: 20px;
-}
-
-#filters-subcontainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
 }
 
 app-repo-list, #filters-subcontainer {

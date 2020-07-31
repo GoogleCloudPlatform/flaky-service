@@ -16,6 +16,8 @@ limitations under the License.
 <div id="repos-container" *ngIf="viewConfig.elements.length">
     <div
         *ngFor="let repo of viewConfig.elements"
+        fxLayout="row wrap"
+        fxLayoutAlign="space-between"
         class="repo"
         [class.flaky-repo]="!repo.numfails && repo.flaky"
         [class.failing-repo]="repo.numfails"

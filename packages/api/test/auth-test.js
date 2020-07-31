@@ -12,21 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const { describe, it } = require('mocha');
+const { describe, it, before, after } = require('mocha');
 
 const assert = require('assert');
 const sinon = require('sinon');
 const auth = require('../src/auth.js');
 
 describe('Auth', async () => {
+  let stubbed;
+  before(() => {
+    stubbed = sinon.stub(auth, 'doFetch').returns({});
+  });
+
+  after(() => {
+    stubbed.restore();
+  });
   describe('retrieveAccessToken', async () => {
     it('sends the correct data to Github', async () => {
-      let returned;
-      const stubbed = sinon.stub(auth, 'doFetch').callsFake((link, object) => {
-        returned = object.body;
-        return {};
-      });
-
       await auth.retrieveAccessToken('code', 'ticketState');
 
       const shouldPost = JSON.stringify({
@@ -36,25 +38,27 @@ describe('Auth', async () => {
         state: 'ticketState'
       });
 
-      assert.deepStrictEqual(returned, shouldPost);
-
-      stubbed.restore();
+      assert(stubbed.calledWith('https://github.com/login/oauth/access_token', sinon.match.has('body', shouldPost)));
     });
   });
 
-  describe('retrieveUserData', async () => {
-    it('retrieves the user data using the correct auth token', async () => {
-      let headers;
-      const stubbed = sinon.stub(auth, 'doFetch').callsFake((link, object) => {
-        headers = object.headers;
-        return {};
-      });
+  describe('retrieveUserLogin', async () => {
+    it('retrieves the user login using the correct auth token', async () => {
+      await auth.retrieveUserLogin('accessToken');
+      assert(stubbed.calledWith('https://api.github.com/user', sinon.match.has('headers', sinon.match.has('Authorization', 'token accessToken'))));
+    });
+  });
 
-      await auth.retrieveUserData('accessToken');
+  describe('retrieveUserPermission', async () => {
+    it('retrieves the user permission using the correct auth token', async () => {
+      const stubbedSecond = sinon.stub(auth, 'retrieveUserLogin').returns('login');
 
-      assert(headers.Authorization = 'token accessToken');
+      await auth.retrieveUserPermission('accessToken', 'org/repo');
 
-      stubbed.restore();
+      assert(stubbed.calledWith('https://api.github.com/repos/org/repo/collaborators/login/permission', sinon.match.has('headers', sinon.match.has('Authorization', 'token accessToken'))));
+      assert(stubbedSecond.calledWith('accessToken'));
+
+      stubbedSecond.restore();
     });
   });
 });
