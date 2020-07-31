@@ -19,10 +19,15 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
 import {UserService} from 'src/app/services/user/user.service';
 import {of} from 'rxjs';
+import {RouterTestingModule} from "@angular/router/testing";
+import {environment} from 'src/environments/environment';
+import {inject} from '@angular/core';
+import {Location} from '@angular/common';
 
 describe('ConfigComponent', () => {
   let component: ConfigComponent;
   let fixture: ComponentFixture<ConfigComponent>;
+  let location: Location;
 
   const mockUserService = {
     loggedIn: of(true),
@@ -31,7 +36,7 @@ describe('ConfigComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ConfigComponent],
-      imports: [MatDividerModule, MatIconModule],
+      imports: [MatDividerModule, MatIconModule, RouterTestingModule],
       providers: [{provide: UserService, useValue: mockUserService}],
     }).compileComponents();
   }));
@@ -65,5 +70,24 @@ describe('ConfigComponent', () => {
     // token is hidden
     expectedTokenDisplayOption = !expectedTokenDisplayOption;
     expect(component.showToken).toEqual(expectedTokenDisplayOption);
+  });
+
+  //test the export csv file button
+  it('should call the appropriate download link', async () => {
+    component.showAdminView = false;
+    component.orgName = 'testOrg';
+    component.repoName = 'testRepo';
+    component.envUrl = environment.baseUrl;
+    await fixture.detectChanges();
+
+    //click the export csv button
+    const downloadButton = fixture.debugElement.nativeElement.querySelector(
+      '.download-button'
+    );
+    downloadButton.click();
+    
+    fixture.whenStable().then(() => {
+      expect(location.path()).toEqual(this.envUrl+'/api/repo/testOrg/testRepo/csv');
+    });
   });
 });
