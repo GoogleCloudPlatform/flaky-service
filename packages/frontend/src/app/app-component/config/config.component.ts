@@ -27,21 +27,5 @@ export class ConfigComponent {
 
   envUrl = environment.baseUrl;
 
-  linkedGithubAccounts = [
-    {name: 'account 1'},
-    {name: 'account 2'},
-    {name: 'account 3'},
-    {name: 'account 4'},
-    {name: 'account 5'},
-  ];
-
-  token = 'MF93N60H857HBGN65GHBN035GHB0PJN605';
-  showToken = false;
-  showAdminView = false;
-
   constructor(public userService: UserService) {}
-
-  onTokenClick() {
-    this.showToken = !this.showToken;
-  }
 }

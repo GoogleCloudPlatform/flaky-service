@@ -39,7 +39,6 @@ export class AppComponent implements OnInit {
       this.showConfigWheel = onRepoPage;
       this.repository = pagedata.repoName;
       this.organization = pagedata.orgName;
-      console.log(onRepoPage);
     });
   }
 

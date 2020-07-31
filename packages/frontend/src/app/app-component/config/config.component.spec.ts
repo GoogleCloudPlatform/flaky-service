@@ -12,16 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  tick,
+  fakeAsync
+} from '@angular/core/testing';
 import {ConfigComponent} from './config.component';
 import {By} from '@angular/platform-browser';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
 import {UserService} from 'src/app/services/user/user.service';
 import {of} from 'rxjs';
-import {RouterTestingModule} from '@angular/router/testing';
 import {environment} from 'src/environments/environment';
-import {Location} from '@angular/common';
 
 describe('ConfigComponent', () => {
   let component: ConfigComponent;
@@ -35,7 +39,7 @@ describe('ConfigComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ConfigComponent],
-      imports: [MatDividerModule, MatIconModule, RouterTestingModule],
+      imports: [MatDividerModule, MatIconModule],
       providers: [{provide: UserService, useValue: mockUserService}],
     }).compileComponents();
   }));
@@ -49,45 +53,22 @@ describe('ConfigComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should reverse the current token display option', async () => {
-    let expectedTokenDisplayOption = !component.showToken;
-    component.showAdminView = true;
-    await fixture.detectChanges();
-
-    // click show
-    const showButton: HTMLLinkElement = fixture.debugElement.query(
-      By.css('#token-show')
-    ).nativeElement;
-    showButton.click();
-
-    // token is visible
-    expect(component.showToken).toEqual(expectedTokenDisplayOption);
-
-    // click hide
-    showButton.click();
-
-    // token is hidden
-    expectedTokenDisplayOption = !expectedTokenDisplayOption;
-    expect(component.showToken).toEqual(expectedTokenDisplayOption);
-  });
-
   //test the export csv file button
-  it('should call the appropriate download link', async () => {
-    component.showAdminView = false;
+  fit('should open a new tab with the correct url when export button is clicked', fakeAsync (() => {
     component.orgName = 'testOrg';
     component.repoName = 'testRepo';
     component.envUrl = environment.baseUrl;
-    await fixture.detectChanges();
-
+    fixture.detectChanges();
+    //set targetUrl
+    const targetUrl = component.envUrl + '/api/repo/testOrg/testRepo/csv';
+    //spy on the new window
+    spyOn(window, 'open');
     //click the export csv button
     const downloadButton = fixture.debugElement.nativeElement.querySelector(
-      '.download-button'
+      '#download-button'
     );
     downloadButton.click();
-    fixture.whenStable().then(() => {
-      expect(location.path()).toEqual(
-        this.envUrl + '/api/repo/testOrg/testRepo/csv'
-      );
-    });
-  });
+    tick();
+    expect(window.open).toHaveBeenCalledWith(targetUrl);
+  }));
 });

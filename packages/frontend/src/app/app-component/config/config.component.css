@@ -14,39 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#token-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
-    background-color: #8fc2ff;
-    border: 1px solid white;
-    border-radius: 10px;
-    padding: 3px;
-    padding-left: 5px;
-    padding-right: 5px;
-    flex-wrap: wrap;
-    word-break: break-word;
-}
-
-#token-show:hover {
-    cursor: pointer;
-    color: #0075FF;
-}
-
-@media (max-width: 555px) {
-    #token-text {
-        font-size: 0.8em;
-    }
-}
-
-#login-link {
-    color: #0075FF;
-    text-decoration: none;
-    outline: none;
-}
-
-#non-admin-view {
+#settings-open-view {
     width: 25vh;
     text-align: center;
 }
@@ -59,7 +27,7 @@ limitations under the License.
     display: inline-block;
 }
 
-.download-button {
+#download-button {
     text-align: center;
     vertical-align: middle;
     width: 100%;
