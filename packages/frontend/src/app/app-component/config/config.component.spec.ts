@@ -17,7 +17,7 @@ import {
   ComponentFixture,
   TestBed,
   tick,
-  fakeAsync
+  fakeAsync,
 } from '@angular/core/testing';
 import {ConfigComponent} from './config.component';
 import {MatDividerModule} from '@angular/material/divider';
@@ -29,7 +29,7 @@ describe('ConfigComponent', () => {
   let fixture: ComponentFixture<ConfigComponent>;
 
   const mockWindowProvider = {
-    open: () => {}
+    open: () => {},
   };
 
   beforeEach(async(() => {
@@ -50,9 +50,10 @@ describe('ConfigComponent', () => {
   });
 
   //test the export csv file button
-  it('should open a new tab with the correct url when export button is clicked', fakeAsync (() => {
-    component.exportUrl = environment.baseUrl+'/api/repo/testOrg/testRepo/csv';
-    component.windowProvider = {open: () => {}};
+  it('should open a new tab with the correct url when export button is clicked', fakeAsync(() => {
+    component.exportUrl =
+      environment.baseUrl + '/api/repo/testOrg/testRepo/csv';
+    component.windowProvider = (mockWindowProvider as unknown) as typeof window;
     fixture.detectChanges();
     //spy on the new window
     spyOn(component.windowProvider, 'open');
@@ -63,21 +64,5 @@ describe('ConfigComponent', () => {
     downloadButton.click();
     tick();
     expect(component.windowProvider.open).toHaveBeenCalled();
-  }));
-
-  //test the export csv file button
-  fit('should open a new tab with the correct url when export button is clicked', fakeAsync (() => {
-    component.exportUrl = environment.baseUrl+'/api/repo/testOrg/testRepo/csv';
-    component.windowProvider.open = {open: () => {}};
-    fixture.detectChanges();
-    //spy on the new window
-    spyOn(mockWindowProvider, 'open');
-    //click the export csv button
-    const downloadButton = fixture.debugElement.nativeElement.querySelector(
-      '#download-button'
-    );
-    downloadButton.click();
-    tick();
-    expect(mockWindowProvider.open).toHaveBeenCalled();
   }));
 });

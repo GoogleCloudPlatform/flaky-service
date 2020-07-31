@@ -24,14 +24,20 @@ import {environment} from 'src/environments/environment';
 export class ConfigComponent {
   @Input() repoName: string;
   @Input() orgName: string;
-  
+
   exportUrl = '';
   windowProvider = window;
 
   constructor(public userService: UserService) {}
 
-  onDownloadClick() { 
-    this.exportUrl = environment.baseUrl + '/api/repo/' + this.orgName + '/'+this.repoName + '/csv';
+  onDownloadClick() {
+    this.exportUrl =
+      environment.baseUrl +
+      '/api/repo/' +
+      this.orgName +
+      '/' +
+      this.repoName +
+      '/csv';
     this.windowProvider.open(this.exportUrl);
   }
 }
