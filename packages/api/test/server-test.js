@@ -23,7 +23,7 @@ const auth = require('../src/auth.js');
 const repo = require('../src/repository.js');
 
 describe('flaky express server', () => {
-  const stubs = [];
+  let stubs = [];
   const frontendUrl = 'https://flaky-dashboard.web.app/home';
 
   afterEach(() => {
@@ -31,6 +31,7 @@ describe('flaky express server', () => {
     stubs.forEach(stubbed => {
       stubbed.restore();
     });
+    stubs = [];
   });
 
   it('should have the mocked environment variables', () => {
@@ -73,7 +74,7 @@ describe('flaky express server', () => {
 
       stubs.push(sinon.stub(auth, 'retrieveAccessToken').returns(queryObject));
 
-      stubs.push(sinon.stub(auth, 'retrieveUserData').returns({ 'user-info': 'mock-data' }));
+      stubs.push(sinon.stub(auth, 'retrieveUserPermission').returns('write'));
 
       stubs.push(sinon.stub(repo, 'performTicketIfAllowed').returns(true));
 
@@ -87,6 +88,7 @@ describe('flaky express server', () => {
       const resp = await fetch('http://0.0.0.0:3000/api/callback?state=' + fakeState + '&code=ANYTHING', {
         headers: { redirect: 'manual' }
       });
+      assert.strictEqual(resp.url, process.env.FRONTEND_URL);
       assert.strictEqual(resp.status, 200);
     });
 

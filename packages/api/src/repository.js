@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const client = require('./firestore.js');
+const deleter = require('../lib/deleter.js');
 
 class Repository {
   async createDoc (identifier, params) {
@@ -42,26 +43,44 @@ class Repository {
     return result;
   }
 
-  async mayAccess (platform, login) {
-    const collection = client.collection('permitted-users/' + platform + '/users').where('login', '==', login);
-
-    const querySnapshot = await collection.get();
-    return (querySnapshot.size === 1);
-  }
-
   async storeTicket (ticketToPerform) {
-
+    return this.createDoc(`tickets/${ticketToPerform.state}`, {
+      ticket: ticketToPerform
+    });
   }
 
-  async getTicket () {
-
+  async getTicket (state) {
+    const data = await this.getDoc(`tickets/${state}`);
+    if (data === null) return null;
+    return data.ticket;
   }
 
-  async performTicketIfAllowed (userData) {
-    console.log('USER DATA: ' + userData);
+  async allowedToPerformTicket (action, permission) {
+    if (action === 'delete-repo') {
+      return permission === 'admin';
+    }
 
-    // Todo add actual functionality
-    return true;
+    if (action === 'delete-test') {
+      return permission === 'admin' || permission === 'write';
+    }
+
+    return false;
+  }
+
+  async performTicketIfAllowed (ticket, permission) {
+    const permitted = this.allowedToPerformTicket(ticket.action, permission);
+
+    if (permitted) {
+      if (ticket.action === 'delete-test') {
+        deleter.deleteTest(ticket.fullName, ticket.testName, client);
+      } else if (ticket.action === 'delete-repo') {
+        deleter.deleteRepo(client, ticket.fullName);
+      } else {
+        throw Error('invalid action');
+      }
+    }
+
+    return permitted;
   }
 
   async deleteDoc (path) {

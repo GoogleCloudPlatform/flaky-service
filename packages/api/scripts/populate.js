@@ -60,48 +60,58 @@ const buildInfoTemplate = {
     ref: 'branch/master'
   },
   name: repo,
-  description: 'A repository that is a repository... more description'
+  description: 'A repository that is a repository... more description',
+  buildmessage: 'dfdfdf'
 };
 
-fs.readdir(directory, function (err, files) {
-  if (err) {
-    return console.log('Unable to scan directory: ' + err);
-  }
+const NUM_DOCUMENTS = 5;
+async function main () {
+  fs.readdir(directory, async function (err, files) {
+    if (err) {
+      return console.log('Unable to scan directory: ' + err);
+    }
 
-  var client = new Firestore();
+    var client = new Firestore();
+    let counter = 0;
 
-  files.forEach(function (file) {
-    const testCases = tapParser.getTestCases(directory + '/' + file, file);
-    var testCasesUse = [];
-    const allTrue = Math.random() > 0.3;
-    for (const tc of testCases) {
-      if (tc.name.startsWith('a')) {
-        if (Math.random() < 0.3 && !allTrue) {
-          tc.successful = false;
-          tc.failureMessage = 'Error message stack trace\nline number';
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (counter < NUM_DOCUMENTS) {
+        counter += 1;
+        const testCases = tapParser.getTestCases(directory + '/' + file, file);
+        var testCasesUse = [];
+        const allTrue = Math.random() > 0.8;
+        for (const tc of testCases) {
+          if (tc.name.startsWith('a')) {
+            if (Math.random() < 0.6 && !allTrue) {
+              tc.successful = false;
+              tc.failureMessage = 'Error message stack trace\nline number';
+            }
+            testCasesUse.push(tc);
+          }
         }
-        testCasesUse.push(tc);
+
+        var buildInfo = JSON.parse(JSON.stringify(buildInfoTemplate));
+        buildInfo.timestamp = new Date();
+        buildInfo.timestamp.setDate(buildInfo.timestamp.getDate() + Math.floor(Math.random() * 100));
+        buildInfo.sha = Math.random().toString(36).substring(2, 15);
+        buildInfo.buildId = Math.random().toString(36).substring(2, 15);
+        buildInfo.environment.os = (Math.random() > 0.5) ? 'Linux' : 'Windows';
+        buildInfo.environment.ref = (Math.random() > 0.66) ? 'ref/master' : ((Math.random() > 0.5) ? 'ref/a' : 'ref/b');
+        buildInfo.environment.matrix = (Math.random() > 0.5) ? JSON.stringify({ Node: 11 }) : JSON.stringify({ Node: 10 });
+
+        // put half of tests in default repo/org
+        if (Math.random() > 0.5) {
+          buildInfo.organization = allOrgs[Math.floor(Math.random() * allOrgs.length)];
+          buildInfo.name = allRepos[Math.floor(Math.random() * allRepos.length)];
+          buildInfo.repoId = firebaseEncode(buildInfo.organization + '/' + buildInfo.name);
+          buildInfo.repoURL = 'http://github.com/' + buildInfo.organization + '/' + buildInfo.name;
+        }
+        buildInfo.description = 'Description for the repository of ' + decodeURIComponent(buildInfo.repoId);
+
+        addBuild(testCasesUse, buildInfo, client, repositoryCollection);
       }
     }
-
-    var buildInfo = JSON.parse(JSON.stringify(buildInfoTemplate));
-    buildInfo.timestamp = new Date();
-    buildInfo.timestamp.setDate(buildInfo.timestamp.getDate() - Math.floor(Math.random() * 100));
-    buildInfo.sha = Math.random().toString(36).substring(2, 15);
-    buildInfo.buildId = Math.random().toString(36).substring(2, 15);
-    buildInfo.environment.os = (Math.random() > 0.5) ? 'Linux' : 'Windows';
-    buildInfo.environment.ref = (Math.random() > 0.66) ? 'ref/master' : ((Math.random() > 0.5) ? 'ref/a' : 'ref/b');
-    buildInfo.environment.matrix = (Math.random() > 0.5) ? JSON.stringify({ Node: 11 }) : JSON.stringify({ Node: 10 });
-
-    // put half of tests in default repo/org
-    if (Math.random() > 0.5) {
-      buildInfo.organization = allOrgs[Math.floor(Math.random() * allOrgs.length)];
-      buildInfo.name = allRepos[Math.floor(Math.random() * allRepos.length)];
-      buildInfo.repoId = firebaseEncode(buildInfo.organization + '/' + buildInfo.name);
-      buildInfo.repoURL = 'http://github.com/' + buildInfo.organization + '/' + buildInfo.name;
-    }
-    buildInfo.description = 'Description for the repository of ' + decodeURIComponent(buildInfo.repoId);
-
-    addBuild(testCasesUse, buildInfo, client, repositoryCollection);
   });
-});
+}
+main();

@@ -36,17 +36,34 @@ class Auth {
     return querystring.parse(respText);
   }
 
-  async retrieveUserData (accessToken) {
-    const result = await this.doFetch('https://api.github.com/user', {
+  async retrieveUserLogin (accessToken) {
+    const userData = await this.doFetch('https://api.github.com/user', {
       method: 'get',
-      headers: { 'content-type': 'application/json', 'User-Agent': 'flaky.dev', Authorization: 'token ' + accessToken }
+      headers: { 'content-type': 'application/json', 'User-Agent': 'flaky.dev', Authorization: `token ${accessToken}` }
     });
 
-    if (result.status !== 200) {
-      return null;
-    }
-    const resJSON = await result.json();
-    return resJSON;
+    if (userData.status !== 200) return null;
+
+    const data = await userData.json();
+    return data.login;
+  }
+
+  async retrieveUserPermission (accessToken, fullName) {
+    const login = await this.retrieveUserLogin(accessToken);
+
+    const result = await this.doFetch(`https://api.github.com/repos/${fullName}/collaborators/${login}/permission`, {
+      method: 'get',
+      headers: {
+        'content-type': 'application/json',
+        Accept: 'application/vnd.github.v3+json',
+        Authorization: 'token ' + accessToken
+      }
+    });
+
+    if (result.status !== 200) return null;
+
+    const permissions = await result.json();
+    return permissions.permission;
   }
 
   async doFetch (link, object) {
