@@ -19,169 +19,185 @@
 * returns analytics object and adds such data to database
 */
 const { Firestore } = require('@google-cloud/firestore');
-const { buildPassingPercent, TestCaseAnalytics } = require('../lib/analytics.js');
+const { TestCaseAnalytics } = require('../lib/analytics.js');
 const { v4: uuidv4 } = require('uuid');
-
-function listifySnapshot (snapshot) {
-  const results = [];
-  snapshot.forEach(doc => {
-    results.push(doc.data());
-  });
-  return results;
-}
-
-// Main Functionality
-
+const awaitInBatches = require('../lib/promise-util.js');
+// Main Functionalitkk
 /*
 * Adds a list of TestCaseRun objects to the database, described by the meta information in buildInfo
-*       Does not assume repository has been initialized
-*       Particular build MAY NOT be added multiple times with different information, but may be added multiple times with same info
-* @param buildInfo must have attributes of organization, timestamp, url, environment, buildId
+*       Does not assume repository has been initializ
+*       Particular build MAY NOT be added multiple times with different information, but may be added multiple times with same in
+* @param buildInfo must have attributes of organization, timestamp, url, environment, buildId, buildmessage, sha, na
 * @param client is the firebase client
 * @param collectionName is the collection to use in firestore
 *
 */
-async function addBuild (testCases, buildInfo, client, collectionName = 'repositories-fake') {
-  var dbRepo = client.collection(collectionName).doc(buildInfo.repoId);
+async function addBuild (testCases, buildInfo, client, collectionName) {
+  const dbRepo = client.collection(collectionName).doc(buildInfo.repoId);
 
-  // if this build has already been posted, skip
-  const buildIdReadable = buildInfo.buildId;
+  // Create new Buildid this build has already been posted, skip
+  buildInfo.buildIdReadable = buildInfo.buildId;
   buildInfo.buildId = uuidv4(); // buildId will always be UUID
 
-  // if this build is not the most recent build, than update test cases based on ALL repos, update build info based on RPREVIOUS builds, and ignore repo
-  let mostRecent = true;
-  let prevMostRecent = await dbRepo.collection('builds').orderBy('timestamp', 'desc').limit(1).get();
-  prevMostRecent = listifySnapshot(prevMostRecent);
-  if (prevMostRecent.length > 0 && prevMostRecent[0].timestamp.toDate() > buildInfo.timestamp) {
-    // if there exists a build with a later date, that not the most recent
-    mostRecent = false;
-  }
+  const phaseOne = await Promise.all([updateAllTests(testCases, buildInfo, dbRepo), isMostRecentBuild(buildInfo, dbRepo)]);
+  // unpack results
+  const computedData = phaseOne[0];
+  const mostRecent = phaseOne[1];
 
-  // if repo does not exist, add information including environment variables and possibilities
-  const repoUpdate = { };
-  for (const prop in buildInfo.environment) {
-    repoUpdate['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
-  }
-  repoUpdate.organization = buildInfo.organization;
-  repoUpdate.url = buildInfo.url;
-  repoUpdate.repoId = decodeURIComponent(buildInfo.repoId);
-  repoUpdate.name = buildInfo.name;
-  repoUpdate.description = buildInfo.description;
-  repoUpdate.lastupdate = buildInfo.timestamp;
+  await Promise.all([addBuildDoc(testCases, buildInfo, computedData, dbRepo), updateRepoDoc(buildInfo, computedData, mostRecent, dbRepo)]);
+}
 
-  repoUpdate.lower = {
-    repoId: decodeURIComponent(buildInfo.repoId).toLowerCase(),
-    name: buildInfo.name.toLowerCase(),
-    organization: buildInfo.organization.toLowerCase()
-  };
-  let repoNumFails = 0;
-  if (mostRecent) {
-    testCases.forEach(tc => {
-      repoNumFails += (tc.successful) ? 0 : 1;
-    });
-  }
-
-  await dbRepo.update(repoUpdate, { merge: true });
-
-  var failures = {};
-  var successes = [];
-  var alltests = [];
-
-  let flakyBuild = 0; // if a flaky test has failed this time
-  let flakyRepo = 0; // if any test is marked as flaky (could have been successes for last 5 runs)
-
+async function updateAllTests (testCases, buildInfo, dbRepo) {
   // For the test cases
-  for (let k = 0; k < testCases.length; k++) {
-    const testCase = testCases[k];
-    // track successes and failures in the build
-    if (testCase.successful) {
-      successes.push(testCase.encodedName);
+  const metrics = {
+    flaky: 0,
+    failcount: 0,
+    passcount: 0,
+    percentpassing: 0,
+    buildflaky: 0,
+    total: 0
+  };
+
+  const testsToProcess = testCases.map((testCase) => {
+    return () => {
+      return Promise.all([addTestRun(testCase, buildInfo, dbRepo), updateTest(testCase, buildInfo, dbRepo)]);
+    };
+  });
+
+  const allTestMetrics = await awaitInBatches(testsToProcess, 50);
+
+  allTestMetrics.forEach(testStatus => {
+    const { passed, flaky } = testStatus[1];
+    if (flaky) { metrics.flaky += 1; }
+    if (passed) { metrics.passcount += 1; }
+    if (!passed) { metrics.failcount += 1; }
+    if (!passed && flaky) { metrics.buildflaky += 1; }
+    metrics.total += 1;
+  });
+
+  metrics.percentpassing = (metrics.total === 0) ? 0 : metrics.passcount / metrics.total;
+  return metrics;
+}
+
+async function addTestRun (testCase, buildInfo, dbRepo) {
+  return dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').doc(buildInfo.buildId).set(
+    {
+      environment: buildInfo.environment,
+      status: testCase.successful ? 'OK' : testCase.failureMessage,
+      timestamp: buildInfo.timestamp,
+      buildId: buildInfo.buildIdReadable, // as value decoded
+      buildIdInternal: buildInfo.buildId,
+      sha: decodeURIComponent(buildInfo.sha)
+    }
+  );
+}
+
+async function updateTest (testCase, buildInfo, dbRepo) {
+  // first read the test
+  const prevTest = await dbRepo.collection('tests').doc(testCase.encodedName).get();
+  const cachedSuccess = (prevTest.exists && prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
+  const cachedFails = (prevTest.exists && prevTest.data() && prevTest.data().cachedFails) ? prevTest.data().cachedFails : [];
+
+  const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo);
+
+  const updateObj = {
+    percentpassing: testCaseAnalytics.computePassingPercent(),
+    flaky: testCaseAnalytics.computeIsFlaky(),
+    passed: testCaseAnalytics.isCurrentlyPassing(),
+    failuremessageiffailing: testCaseAnalytics.mostRecentStatus(prevTest.exists ? prevTest.data().failuremessageiffailing : 'None'),
+    searchindex: testCaseAnalytics.isCurrentlyPassing() ? (testCaseAnalytics.computeIsFlaky() ? 1 : 0) : 2,
+    lastupdate: testCaseAnalytics.getLastUpdate(),
+    name: testCase.name,
+    lifetimepasscount: (testCase.successful) ? Firestore.FieldValue.increment(1) : Firestore.FieldValue.increment(0),
+    lifetimefailcount: (testCase.successful) ? Firestore.FieldValue.increment(0) : Firestore.FieldValue.increment(1)
+  };
+  for (const prop in buildInfo.environment) {
+    updateObj['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
+  }
+  const firestoreTimestamp = new Firestore.Timestamp(Math.floor(buildInfo.timestamp.getTime() / 1000), 0);
+
+  if (testCase.successful) {
+    updateObj.cachedSuccess = Firestore.FieldValue.arrayUnion(firestoreTimestamp);
+  } else {
+    updateObj.cachedFails = Firestore.FieldValue.arrayUnion(firestoreTimestamp);
+  }
+  await dbRepo.collection('tests').doc(testCase.encodedName).update(updateObj, { merge: true });
+
+  while (testCaseAnalytics.deleteQueue.length > 0) {
+    const deleteMe = testCaseAnalytics.deleteQueue.pop();
+    const deleteObj = {};
+    const deleteDate = new Firestore.Timestamp(Math.floor(deleteMe.date.getTime() / 1000), 0);
+    if (deleteMe.passed) {
+      deleteObj.cachedSuccess = Firestore.FieldValue.arrayRemove(deleteDate);
     } else {
-      failures[testCase.encodedName] = testCase.failureMessage;
+      deleteObj.cachedFails = Firestore.FieldValue.arrayRemove(deleteDate);
     }
-
-    // 1: Add the test run
-    await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').doc(buildInfo.buildId).set(
-      {
-        environment: buildInfo.environment,
-        status: testCase.successful ? 'OK' : testCase.failureMessage,
-        timestamp: buildInfo.timestamp,
-        buildId: decodeURIComponent(buildIdReadable), // as value decoded
-        buildIdInternal: buildInfo.buildId,
-        sha: decodeURIComponent(buildInfo.sha)
-      }
-    );
-
-    // 2: Query an appropriate amount of test runs, for now 30 most recent
-    const snapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp', 'desc').limit(30).get();
-    let buildSnapshot = snapshot;
-    if (!mostRecent) {
-      const dateUse = buildInfo.timestamp;
-      // dateUse.setHours(dateUse.getHours() - 2);
-      buildSnapshot = await dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').orderBy('timestamp', 'desc').startAt(dateUse).limit(30).get();
-    }
-    const testCaseAnalytics = new TestCaseAnalytics(testCase, snapshot); // test case metrics should look at everything
-    const buildtestCaseAnalytics = new TestCaseAnalytics(testCase, buildSnapshot); // builds should only look previously
-
-    // 3: Compute the passing percent and write that back as well as updated environment variables
-    const updateObj = { };
-    for (const prop in buildInfo.environment) {
-      updateObj['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
-    }
-    updateObj.percentpassing = testCaseAnalytics.computePassingPercent();
-    updateObj.flaky = testCaseAnalytics.computeIsFlaky();
-    updateObj.passed = testCaseAnalytics.isCurrentlyPassing();
-    updateObj.failuremessageiffailing = testCaseAnalytics.mostRecentStatus();
-    updateObj.searchindex = (updateObj.flaky) ? 1 : 0;
-    if (!updateObj.passed) {
-      updateObj.searchindex = 2; // higher number appears first in test view
-    }
-    updateObj.lastupdate = testCaseAnalytics.getLastUpdate();
-    updateObj.name = testCase.name;
-    updateObj.lifetimepasscount = (testCase.successful) ? Firestore.FieldValue.increment(1) : Firestore.FieldValue.increment(0);
-    updateObj.lifetimefailcount = (testCase.successful) ? Firestore.FieldValue.increment(0) : Firestore.FieldValue.increment(1);
-    await dbRepo.collection('tests').doc(testCase.encodedName).update(updateObj, { merge: true });
-
-    // update information for flakybuild and flakyrepo;
-    flakyBuild = (buildtestCaseAnalytics.computeIsFlaky() && !testCase.successful) ? 1 + flakyBuild : flakyBuild;
-    flakyRepo = (updateObj.flaky) ? 1 + flakyRepo : flakyRepo;
-    alltests.push({
-      name: testCase.name,
-      passed: testCase.successful,
-      flaky: updateObj.flaky,
-      percentpassing: updateObj.percentpassing,
-      status: testCase.successful ? 'OK' : testCase.failureMessage
-    });
+    await dbRepo.collection('tests').doc(testCase.encodedName).update(deleteObj, { merge: true });
   }
 
+  return {
+    flaky: testCaseAnalytics.computeIsFlaky(),
+    passed: testCase.successful
+  };
+}
+
+async function isMostRecentBuild (buildInfo, dbRepo) {
+  const curRepo = await dbRepo.get();
+  if (!curRepo.exists) {
+    return true;
+  }
+  return buildInfo.timestamp.getTime() >= curRepo.data().lastupdate.toDate().getTime();
+}
+
+async function addBuildDoc (testCases, buildInfo, computedData, dbRepo) {
   // For the Builds
+  const alltests = testCases.map(x => x.encodedName); // not currently used in MVP but would be useful for finding all tests in a build
+
   await dbRepo.collection('builds').doc(buildInfo.buildId).set({
-    percentpassing: buildPassingPercent(successes, failures),
-    passcount: successes.length,
-    failcount: Object.keys(failures).length,
+    percentpassing: computedData.percentpassing,
+    passcount: computedData.passcount,
+    failcount: computedData.failcount,
     environment: buildInfo.environment,
     timestamp: buildInfo.timestamp,
     tests: alltests,
-    sha: decodeURIComponent(buildInfo.sha),
-    buildId: decodeURIComponent(buildIdReadable),
+    sha: buildInfo.sha,
+    buildId: buildInfo.buildIdReadable,
     buildIdInternal: buildInfo.buildId,
     buildmessage: buildInfo.buildmessage,
-    flaky: flakyBuild
+    flaky: computedData.buildflaky
   });
+}
 
-  // lastly update whether the repo is flaky
-  // must update repo information in two steps to first make sure it is there before making queries on it which affect this field
-  const repoUpdateObj = { flaky: flakyRepo }; // update flaky status no matter what
-  if (mostRecent) {
-    repoUpdateObj.numfails = repoNumFails;
-    repoUpdateObj.searchindex = repoNumFails * 10000 + flakyRepo;
-    repoUpdateObj.numtestcases = testCases.length;
-    // note: in extremely rare circumstances this results in incorrect ordering -
-    // when a build is added non chronologically that makes multiple tests flaky, and two repos have the same number of
-    // failing test cases in most recent build, then their secondary ordering based on flakiness would be wrong, but it is not worth the extra
-    // db read operation to fix this. This would only be visible when ordering by priority on org page.
+async function updateRepoDoc (buildInfo, computedData, mostRecent, dbRepo) {
+  const repoUpdate = {
+    organization: buildInfo.organization,
+    url: buildInfo.url,
+    repoId: decodeURIComponent(buildInfo.repoId),
+    name: buildInfo.name,
+    description: buildInfo.description,
+    lower: {
+      repoId: decodeURIComponent(buildInfo.repoId).toLowerCase(),
+      name: buildInfo.name.toLowerCase(),
+      organization: buildInfo.organization.toLowerCase()
+    },
+    flaky: computedData.flaky
+  };
+  for (const prop in buildInfo.environment) {
+    repoUpdate['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
   }
-  await dbRepo.update(repoUpdateObj, { merge: true });
+
+  if (mostRecent) {
+    repoUpdate.numfails = computedData.failcount;
+    repoUpdate.searchindex = computedData.failcount * 10000 + computedData.flaky;
+    repoUpdate.numtestcases = computedData.total;
+    repoUpdate.lastupdate = buildInfo.timestamp;
+  }
+
+  await dbRepo.update(repoUpdate, { merge: true });
+  // note: in extremely rare circumstances this results in incorrect ordering -
+  // when a build is added non chronologically that makes multiple tests flaky, and two repos have the same number of
+  // failing test cases in most recent build, then their secondary ordering based on flakiness would be wrong, but it is not worth the extra
+  // db read operation to fix this. This would only be visible when ordering by priority on org page.
 }
 
 module.exports = addBuild;
