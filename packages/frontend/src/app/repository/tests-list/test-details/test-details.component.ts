@@ -41,7 +41,7 @@ constructor(
     this.deleteUrl = this.comService.fetchDeleteTestUrl(this.orgName, this.repoName, this.test.name, 'https://flaky-dashboard.web.app/');
     this.deleteUrl.subscribe(res => {
     	console.info('deleteUrl: ' + res)
-    	window.location.href = res;
+    	window.location.href = '';
     });
   }
 }
