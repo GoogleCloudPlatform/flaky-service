@@ -92,8 +92,10 @@ export class COMService {
   ): Observable<DeleteUrl> {
     console.info('fetchDeleteTestUrl');
     return this.http
-      .get<DeleteUrl>(apiLinks.get.deleteTest(orgName, repoName, testName, redirect), {})
-      .pipe(catchError(err => this.handleError(err)));
+    .get(apiLinks.get.deleteTest(orgName, repoName, testName, redirect), {
+      responseType: 'text'
+    })
+    .pipe(catchError(err => this.handleError(err)));
   }
 
   private getParams(filters: Filter[]) {
