@@ -1,32 +1,119 @@
-1..2
+1..75
 Example app listening at http://localhost:3000
-ok 1 Repository performTicketIfAllowed deletes test if permitted
-ok 2 Repository performTicketIfAllowed does not delete test if not permitted
-# tests 2
-# pass 2
-# fail 0
+ok 1 Add-Build add-build Can add a build and repository to a blank collection
+BUIDLS>DATA: 1
+ok 2 Add-Build add-build Can add a different build with overlapping test cases and update repo info
+ok 3 Add-Build add-build Can add a third build with some new test cases, add same thing multiple times
+ok 4 Add-Build GetRepoHandler Can get limit and sort by date
+ok 5 Add-Build GetRepoHandler Can use offset when getting builds
+ok 6 Add-Build GetRepoHandler Can use random combinations of queries
+ok 7 Add-Build GetTestHandler Can get limit and sort by date
+ok 8 Add-Build GetTestHandler Can use random combinations of queries
+ok 9 Add-Build GetTestHandler Can Handle Malformed requests
+ok 10 Add-Build GetTestHandler Can Handle length 0 request
+ok 11 Add-Build GetTestHandler Can return all tests in the right order
+ok 12 Add-Build GetTestHandler Can use offset and limit parameter for tests
+ok 13 Add-Build GetBuildHandler Can get a particular build
+ok 14 Add-Build GetBuildHandler Can get a nonexistant build
+ok 15 Add-Build GetBuildHandler Can get a nonexistant repo
+ok 16 Add-Build GetExportHandler Can get a csv export
+ok 17 Add-Build GetExportHandler Can handle exports with tricky matrix parameter
+ok 18 Add-Build Duplicate Addbuild Can add two builds with the same id and treat them differently
+ok 19 Add-Build deleter Can delete a particular test
+ok 20 Add-Build deleter Can delete an entire repository
+ok 21 Flaky-Analytics Getting Flaky vals Should track stats for a repository
+ok 22 Flaky-Analytics Getting Flaky vals Should track stats for builds
+ok 23 Flaky-Analytics Getting Flaky vals Should track stats for tests
+ok 24 Flaky-Analytics Getting Flaky vals Can add builds non chronologically
+ok 25 Auth retrieveAccessToken sends the correct data to Github
+ok 26 Auth retrieveUserLogin retrieves the user login using the correct auth token
+ok 27 Auth retrieveUserPermission retrieves the user permission using the correct auth token
+ok 28 Getting Repos and Orgs should respond with an empty list with random queries
+ok 29 Getting Repos and Orgs should return all results no matter the next characters
+ok 30 Getting Repos and Orgs should not work with a name too long
+ok 31 Getting Repos and Orgs find all repos for one org
+ok 32 Getting Repos and Orgs can sort within org based on date
+ok 33 Getting Repos and Orgs can sort within org based on priority
+ok 34 Getting Repos and Orgs can sort within org by name
+ok 35 Getting Repos and Orgs still orders by name if startswith parameter
+ok 36 Getting Repos and Orgs can use offset parameters on org sesarch
+ok 37 Getting Repos and Orgs can correctly use hasnext when there is more
+ok 38 Getting Repos and Orgs limit search (only on repos)
+ok 39 Getting Repos and Orgs should return all with no startswith
+ok 40 Getting Repos and Orgs should work with case insensitive
+ok 41 Library Functions FirebaseEncode works
+ok 42 Getting Repos and Orgs paginate forward and backwards with a search string
+ok 43 Getting Repos and Orgs paginate forward and backwards without a search string
+ok 44 Getting Repos and Orgs handle a single result
+ok 45 Getting Repos and Orgs returns empty list if out of bounds
+ok 46 Getting Repos and Orgs errors if incorrect request
+ok 47 Posting Builds should be able to parse a TAP file with errors and extract error messages
+ok 48 Posting Builds should parse a mangled TAP file without breaking 
+ok 49 Posting Builds should handle a test with a not flat structure and repeated tests
+ok 50 Posting Builds should handle a test with other stuff at the top
+ok 51 Posting Builds should send back an error code when being sent invalid metadata
+ok 52 Posting Builds should send back an error code if token is incorrect
+ok 53 Posting Builds it can post without a description
+ok 54 Posting Builds should not post data for private repos
+ok 55 Posting Builds it responds to a valid POST on the /build path with valid token
+ok 56 Repository createDoc creates a new document
+ok 57 Repository getDoc gets a document that exists
+ok 58 Repository getDoc returns null when a document does not exist
+ok 59 Repository getCollection retrieves the contents of a collection
+ok 60 Repository getCollection returns empty array if the collection does not exist
+ok 61 Repository ticket handlers storeTicket stores a ticket which has a state
+ok 62 Repository ticket handlers getTicket retrieves a ticket by its state
+ok 63 Repository allowedToPerformTicket returns true when user has write permission to repo and attempts to delete a test
+ok 64 Repository allowedToPerformTicket returns true when user has admin permission to repo and attempts to delete a test
+ok 65 Repository allowedToPerformTicket returns false when user has write permission to repo and attempts to delete a repo
+ok 66 Repository allowedToPerformTicket returns true when user has admin permission to repo and attempts to delete a repo
+ok 67 Repository performTicketIfAllowed deletes test if permitted
+ok 68 Repository performTicketIfAllowed does not delete test if not permitted
+ok 69 flaky express server should have the mocked environment variables
+ok 70 flaky express server it returns a single repository, when you call GET on /repository/:id # SKIP -
+ok 71 flaky express server it creates a repository, when you call POST on /repository # SKIP -
+not ok 72 flaky express server delete /repo generates a GitHub redirect
+  Cannot read property 'includes' of null
+  TypeError: Cannot read property 'includes' of null
+      at Context.<anonymous> (test/server-test.js:48:42)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+not ok 73 flaky express server delete /repo stores correct information in the ticket
+  Cannot read property 'action' of undefined
+  TypeError: Cannot read property 'action' of undefined
+      at Context.<anonymous> (test/server-test.js:62:33)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+PERMISSION: write
+Successfully performed the action
+ok 74 flaky express server /callback completes the authentication dance
+ok 75 flaky express server /callback redirects to the flaky-dev home page when the state is wrong
+# tests 73
+# pass 71
+# fail 2
 ---------------------|---------|----------|---------|---------|-------------------------------------
 File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                   
 ---------------------|---------|----------|---------|---------|-------------------------------------
-All files            |    40.6 |    90.63 |   20.75 |    40.6 |                                     
- api                 |   53.21 |    66.67 |     100 |   53.21 |                                     
-  server.js          |   53.21 |    66.67 |     100 |   53.21 | 38-55,59-91                         
- api/lib             |   56.76 |      100 |   11.76 |   56.76 |                                     
-  analytics.js       |   48.84 |      100 |       0 |   48.84 | ...32,38-58,61-62,65-66,69-70,78-81 
-  deleter.js         |   45.83 |      100 |       0 |   45.83 | 18-34,38-46                         
-  errors.js          |   57.89 |      100 |       0 |   57.89 | 18-21,25-28,33-36,39-50             
+All files            |    92.4 |    80.34 |   95.08 |    92.4 |                                     
+ api                 |   76.15 |    58.33 |     100 |   76.15 |                                     
+  server.js          |   76.15 |    58.33 |     100 |   76.15 | 38-55,70-72,77-78,89-91             
+ api/lib             |    95.1 |    86.89 |   89.47 |    95.1 |                                     
+  analytics.js       |   98.21 |    93.33 |     100 |   98.21 | 34-35                               
+  deleter.js         |     100 |      100 |     100 |     100 |                                     
+  errors.js          |   85.96 |       75 |      75 |   85.96 | 25-28,43,47-49                      
   firebase-encode.js |     100 |      100 |     100 |     100 |                                     
+  promise-util.js    |     100 |       75 |     100 |     100 | 23                                  
   testrun.js         |   93.55 |      100 |      50 |   93.55 | 27-28                               
-  validate-github.js |   37.25 |      100 |       0 |   37.25 | 18-49                               
- api/src             |   33.37 |       90 |   25.71 |   33.37 |                                     
-  add-build.js       |   20.32 |      100 |       0 |   20.32 | 25-31,44-185                        
-  auth.js            |   38.16 |      100 |       0 |   38.16 | 20-37,40-49,52-67,70-72             
+  validate-github.js |    90.2 |    66.67 |     100 |    90.2 | 37-38,42-43,48                      
+ api/src             |   93.24 |    79.91 |   97.56 |   93.24 |                                     
+  add-build.js       |   95.07 |    87.76 |     100 |   95.07 | 127-136                             
+  auth.js            |   84.21 |    57.14 |      75 |   84.21 | 34-36,46-48,64-66,70-72             
   firestore.js       |     100 |      100 |     100 |     100 |                                     
-  get-export.js      |   33.09 |      100 |   28.57 |   33.09 | ...9,32-36,39-49,52-53,63-71,75-134 
-  get-org.js         |   30.43 |      100 |      50 |   30.43 | 27-30,33-40,46-84,89-133            
-  get-repo.js        |   39.62 |      100 |     100 |   39.62 | 31-43,48-85,89-101                  
-  post-build.js      |   26.77 |      100 |      25 |   26.77 | ...,120-140,143-156,159-168,173-193 
-  repository.js      |      50 |       60 |    12.5 |      50 | ...44,47-50,53-56,59-68,77-81,88-90 
- api/util            |   70.37 |      100 |       0 |   70.37 |                                     
-  validation.js      |   70.37 |      100 |       0 |   70.37 | 16-23                               
+  get-export.js      |   92.81 |    84.62 |     100 |   92.81 | 85-86,107-112,133-134               
+  get-org.js         |    97.1 |    93.94 |     100 |    97.1 | 91-92,132-133                       
+  get-repo.js        |   84.91 |    65.22 |     100 |   84.91 | ...,61-62,66-67,71-72,84-85,100-101 
+  post-build.js      |   95.96 |    77.78 |     100 |   95.96 | 46-47,75-76,96-97,137-138           
+  repository.js      |   93.55 |    65.38 |     100 |   93.55 | 66-67,77-80                         
+ api/util            |   92.59 |    66.67 |     100 |   92.59 |                                     
+  validation.js      |   92.59 |    66.67 |     100 |   92.59 | 20-21                               
 ---------------------|---------|----------|---------|---------|-------------------------------------

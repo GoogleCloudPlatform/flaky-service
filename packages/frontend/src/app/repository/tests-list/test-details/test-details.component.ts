@@ -38,7 +38,7 @@ constructor(
   startDeleteTest() {
     console.info('Tried to delete test');
     console.info(this.test);
-    this.deleteUrl = this.comService.fetchDeleteTestUrl(this.orgName, this.repoName, this.test.name, 'https://flaky-dashboard.web.app/');
+    this.deleteUrl$ = this.comService.fetchDeleteTestUrl(this.orgName, this.repoName, this.test.name, 'https://flaky-dashboard.web.app/');
     this.deleteUrl.subscribe(res => {
     	console.info('deleteUrl: ' + res)
     	window.location.href = '';
