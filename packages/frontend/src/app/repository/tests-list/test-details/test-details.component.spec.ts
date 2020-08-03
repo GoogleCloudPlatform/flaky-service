@@ -16,6 +16,14 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {TestDetailsComponent} from './test-details.component';
 import {mockTests} from '../mockTests.spec';
 import {By} from '@angular/platform-browser';
+import {of} from 'rxjs';
+import {COMService} from 'src/app/services/com/com.service';
+
+const mockUrl = '';
+
+const COMServiceMock = {
+  fetchDeleteTestUrl: () => of(mockUrl),
+};
 
 describe('TestDetailsComponent', () => {
   let component: TestDetailsComponent;
@@ -24,6 +32,7 @@ describe('TestDetailsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestDetailsComponent],
+      providers: [{provide: COMService, useValue: COMServiceMock}],
     }).compileComponents();
   }));
 
