@@ -89,8 +89,7 @@ export class COMService {
     orgName: string,
     testName: string,
     redirect: string
-  ): Observable<DeleteUrl> {
-    console.info('fetchDeleteTestUrl');
+  ): Observable<string> {
     return this.http
     .get(apiLinks.get.deleteTest(orgName, repoName, testName, redirect), {
       responseType: 'text'
