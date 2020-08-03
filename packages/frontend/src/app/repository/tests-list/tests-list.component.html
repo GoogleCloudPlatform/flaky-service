@@ -23,42 +23,32 @@ limitations under the License.
             <mat-expansion-panel-header class="panel-header"
                                         [class.flaky]="test.passed && test.flaky"
                                         [class.failing]="!test.passed"
-                                        [class.passing]="test.passed && !test.flaky">
-                <mat-panel-title class="test">
+                                        [class.passing]="test.passed && !test.flaky"
+                                        [collapsedHeight]="'50px'"
+                                        [expandedHeight]="'55px'">
+                <mat-panel-title class="test" fxLayout="row wrap" fxLayoutAlign="space-between">
 
                         <!-- TEST DETAILS -->
-                        <div class="details">
-                            <table class="details-table">
-                                <tr>
-                                    <!-- NAME -->
-                                    <td class="test-name">
-                                        <a *ngIf="test.name" routerLink="." class="test-name">{{test.name}}</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <!-- TIMESTAMP -->
-                                    <td class="last-run">
-                                        <span class="last-run-label">last run:&nbsp;</span>
-                                        <span class="last-run-date" [innerHTML]="toLiteralDate(test.lastupdate._seconds)"></span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        
-                        <!-- INDICATORS -->
-                        <div class="indicators">
-                            <table>
-                                <tr>
-                                    <!-- PASSING PERCENTAGE -->
-                                    <td class="indicator percent-passing-indicator"
-                                        [class.show-green]="test.percentpassing >= 0.9 && test.passed && !test.flaky"
-                                        [class.show-red]="test.percentpassing < 0.9 && test.passed && !test.flaky">
-                                        <span>passes&nbsp;</span>
-                                        <span [innerHTML]="toPercentage(test.percentpassing)"></span>
-                                        <span>% of the time</span>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="details" fxLayout="column" fxLayoutAlign="center">
+                            <!-- NAME -->
+                            <a *ngIf="test.name" routerLink="." class="test-name">{{test.name}}</a>
+
+                            <div fxLayout="row" fxLayoutAlign="space-between" class="indicators-container">
+                                <!-- TIMESTAMP -->
+                                <p class="last-run">
+                                    <span class="last-run-label">last run:&nbsp;</span>
+                                    <span class="last-run-date">{{toLiteralDate(test.lastupdate._seconds)}}</span>
+                                </p>
+
+                                <!-- PASSING PERCENTAGE -->
+                                <p  class="percent-passing-indicator"
+                                    [class.show-green]="test.percentpassing >= 0.9 && test.passed && !test.flaky"
+                                    [class.show-red]="test.percentpassing < 0.9 && test.passed && !test.flaky">
+                                    <span>passes&nbsp;</span>
+                                    <span [innerHTML]="toPercentage(test.percentpassing)"></span>
+                                    <span>% of the time</span>
+                                </p>
+                            </div>
                         </div>
                 </mat-panel-title>
             </mat-expansion-panel-header>
