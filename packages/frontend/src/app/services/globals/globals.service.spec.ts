@@ -12,17 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component} from '@angular/core';
-import {GlobalsService} from '../services/globals/globals.service';
-import {RouteProvider} from '../routing/route-provider/RouteProvider';
+import {TestBed} from '@angular/core/testing';
 
-@Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
-})
-export class HomeComponent {
-  constructor(private globals: GlobalsService) {
-    this.globals.update(RouteProvider.routes.home.name);
-  }
-}
+import {GlobalsService} from './globals.service';
+
+describe('GlobalsService', () => {
+  let service: GlobalsService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(GlobalsService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});

@@ -12,27 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  tick,
+  fakeAsync,
+} from '@angular/core/testing';
 import {ConfigComponent} from './config.component';
-import {By} from '@angular/platform-browser';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
-import {UserService} from 'src/app/services/user/user.service';
-import {of} from 'rxjs';
 
 describe('ConfigComponent', () => {
   let component: ConfigComponent;
   let fixture: ComponentFixture<ConfigComponent>;
 
-  const mockUserService = {
-    loggedIn: of(true),
+  const mockWindowProvider = {
+    open: () => {},
   };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ConfigComponent],
       imports: [MatDividerModule, MatIconModule],
-      providers: [{provide: UserService, useValue: mockUserService}],
+      providers: [{provide: Window, useValue: mockWindowProvider}],
     }).compileComponents();
   }));
 
@@ -45,25 +48,20 @@ describe('ConfigComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should reverse the current token display option', async () => {
-    let expectedTokenDisplayOption = !component.showToken;
-    component.showAdminView = true;
-    await fixture.detectChanges();
-
-    // click show
-    const showButton: HTMLLinkElement = fixture.debugElement.query(
-      By.css('#token-show')
-    ).nativeElement;
-    showButton.click();
-
-    // token is visible
-    expect(component.showToken).toEqual(expectedTokenDisplayOption);
-
-    // click hide
-    showButton.click();
-
-    // token is hidden
-    expectedTokenDisplayOption = !expectedTokenDisplayOption;
-    expect(component.showToken).toEqual(expectedTokenDisplayOption);
-  });
+  //test the export csv file button
+  it('should open a new tab with the correct url when export button is clicked', fakeAsync(() => {
+    component.orgName = 'testOrg';
+    component.repoName = 'testRepo';
+    component.windowProvider = (mockWindowProvider as unknown) as typeof window;
+    fixture.detectChanges();
+    //spy on the new window
+    spyOn(component.windowProvider, 'open');
+    //click the export csv button
+    const downloadButton = fixture.debugElement.nativeElement.querySelector(
+      '#download-button'
+    );
+    downloadButton.click();
+    tick();
+    expect(component.windowProvider.open).toHaveBeenCalled();
+  }));
 });

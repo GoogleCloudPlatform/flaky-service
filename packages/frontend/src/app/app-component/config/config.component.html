@@ -14,21 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<!-- ADMIN VIEW -->
-<div id="admin-view" *ngIf="showAdminView">
-    <!-- API TOKEN -->
-    <p id="token-container">
-        <span id="token-text-label" *ngIf="!showToken">API token</span>
-        <span id="token-text" *ngIf="showToken">{{token}}</span>
-    
-        <a id="token-show" (click)="onTokenClick()">
-            <span>&nbsp;</span>
-            <span *ngIf="!showToken">show</span>
-            <span *ngIf="showToken">hide</span>
-        </a>
-    </p>
-</div>
-
-<!-- NON-ADMIN VIEW -->
-<div id="non-admin-view" *ngIf="!showAdminView">
+<!-- SETTINGS OPEN VIEW -->
+<div id="settings-open-view">
+     <!--DOWNLOAD BUTTON-->
+     <div id="download">
+        <a mat-raised-button id="download-button" (click)="onDownloadClick()" target="_blank">Export CSV</a>
+    </div>
 </div>
