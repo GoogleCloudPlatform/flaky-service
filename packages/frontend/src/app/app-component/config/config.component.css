@@ -14,34 +14,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#token-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+#settings-open-view {
+    width: 25vh;
+    text-align: center;
+}
+
+#download {
     margin-top: 10px;
-    background-color: #8fc2ff;
-    border: 1px solid white;
-    border-radius: 10px;
-    padding: 3px;
-    padding-left: 5px;
-    padding-right: 5px;
-    flex-wrap: wrap;
-    word-break: break-word;
+    align-content: center;
+    height: 30px;
+    width: 150px;
+    display: inline-block;
 }
 
-#token-show:hover {
-    cursor: pointer;
-    color: #0075FF;
-}
-
-@media (max-width: 555px) {
-    #token-text {
-        font-size: 0.8em;
-    }
-}
-
-#login-link {
-    color: #0075FF;
-    text-decoration: none;
+#download-button {
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
     outline: none;
+    border-radius: 5px;
+    color: white;
+    background-color: #0075FF;
+    font-size: medium;
+    text-decoration: none;
+    box-shadow: 2px 2px lightgray;
 }

@@ -12,17 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component} from '@angular/core';
-import {GlobalsService} from '../services/globals/globals.service';
-import {RouteProvider} from '../routing/route-provider/RouteProvider';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 
-@Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+@Injectable({
+  providedIn: 'root',
 })
-export class HomeComponent {
-  constructor(private globals: GlobalsService) {
-    this.globals.update(RouteProvider.routes.home.name);
+export class GlobalsService {
+  pageDataChange: BehaviorSubject<PageState> = new BehaviorSubject<PageState>({
+    currentPage: '',
+    repoName: '',
+    orgName: '',
+  });
+
+  update(pageName: string, orgName?: string, repoName?: string) {
+    this.pageDataChange.next({
+      currentPage: pageName,
+      repoName: repoName,
+      orgName: orgName,
+    });
   }
+}
+
+interface PageState {
+  currentPage: string;
+  repoName: string;
+  orgName: string;
 }
