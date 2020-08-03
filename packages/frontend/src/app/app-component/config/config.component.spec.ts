@@ -22,7 +22,6 @@ import {
 import {ConfigComponent} from './config.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
-import {environment} from 'src/environments/environment';
 
 describe('ConfigComponent', () => {
   let component: ConfigComponent;
@@ -51,8 +50,8 @@ describe('ConfigComponent', () => {
 
   //test the export csv file button
   it('should open a new tab with the correct url when export button is clicked', fakeAsync(() => {
-    component.exportUrl =
-      environment.baseUrl + '/api/repo/testOrg/testRepo/csv';
+    component.orgName = 'testOrg';
+    component.repoName = 'testRepo';
     component.windowProvider = (mockWindowProvider as unknown) as typeof window;
     fixture.detectChanges();
     //spy on the new window

@@ -28,7 +28,6 @@ import {NotFoundError} from '../services/com/Errors/NotFoundError';
 import {empty} from 'rxjs';
 import {TestsListComponent} from './tests-list/tests-list.component';
 import {HeatMapComponent} from '../heat-map/heat-map.component';
-import {environment} from '../../environments/environment';
 import {GlobalsService} from '../services/globals/globals.service';
 
 @Component({
@@ -53,7 +52,6 @@ export class RepositoryComponent implements AfterViewInit {
 
   repoName = '';
   orgName = '';
-  envUrl = environment.baseUrl;
   testsLoaded = false;
   heatMapLoaded = false;
 
