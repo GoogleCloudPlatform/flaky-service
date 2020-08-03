@@ -72,31 +72,21 @@ ok 68 Repository performTicketIfAllowed does not delete test if not permitted
 ok 69 flaky express server should have the mocked environment variables
 ok 70 flaky express server it returns a single repository, when you call GET on /repository/:id # SKIP -
 ok 71 flaky express server it creates a repository, when you call POST on /repository # SKIP -
-not ok 72 flaky express server delete /repo generates a GitHub redirect
-  Cannot read property 'includes' of null
-  TypeError: Cannot read property 'includes' of null
-      at Context.<anonymous> (test/server-test.js:48:42)
-      at runMicrotasks (<anonymous>)
-      at processTicksAndRejections (internal/process/task_queues.js:97:5)
-not ok 73 flaky express server delete /repo stores correct information in the ticket
-  Cannot read property 'action' of undefined
-  TypeError: Cannot read property 'action' of undefined
-      at Context.<anonymous> (test/server-test.js:62:33)
-      at runMicrotasks (<anonymous>)
-      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+ok 72 flaky express server delete /repo generates a GitHub redirect
+ok 73 flaky express server delete /repo stores correct information in the ticket
 PERMISSION: write
 Successfully performed the action
 ok 74 flaky express server /callback completes the authentication dance
 ok 75 flaky express server /callback redirects to the flaky-dev home page when the state is wrong
 # tests 73
-# pass 71
-# fail 2
+# pass 73
+# fail 0
 ---------------------|---------|----------|---------|---------|-------------------------------------
 File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                   
 ---------------------|---------|----------|---------|---------|-------------------------------------
-All files            |    92.4 |    80.34 |   95.08 |    92.4 |                                     
- api                 |   76.15 |    58.33 |     100 |   76.15 |                                     
-  server.js          |   76.15 |    58.33 |     100 |   76.15 | 38-55,70-72,77-78,89-91             
+All files            |   93.63 |    80.13 |   95.08 |   93.63 |                                     
+ api                 |   92.66 |    57.14 |     100 |   92.66 |                                     
+  server.js          |   92.66 |    57.14 |     100 |   92.66 | 70-72,77-78,89-91                   
  api/lib             |    95.1 |    86.89 |   89.47 |    95.1 |                                     
   analytics.js       |   98.21 |    93.33 |     100 |   98.21 | 34-35                               
   deleter.js         |     100 |      100 |     100 |     100 |                                     

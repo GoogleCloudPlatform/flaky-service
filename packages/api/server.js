@@ -52,7 +52,7 @@ app.get('/api/repo/:orgname/:reponame/test/:testid', async (req, res) => {
   });
 
   const url = `http://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&state=${state}&allow_signup=false&scope=repo`;
-  res.status(302).redirect(url);
+  res.status(200).send(url).end();
 });
 
 app.get('/api/callback', async (req, res) => {
