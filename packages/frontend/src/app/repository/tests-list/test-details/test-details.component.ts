@@ -15,6 +15,7 @@
 import {Component, Input} from '@angular/core';
 import {Test} from 'src/app/services/search/interfaces';
 import {COMService} from '../../../services/com/com.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-test-details',
@@ -39,7 +40,7 @@ constructor(
     console.info('Tried to delete test');
     console.info(this.test);
     this.deleteUrl$ = this.comService.fetchDeleteTestUrl(this.orgName, this.repoName, this.test.name, 'https://flaky-dashboard.web.app/');
-    this.deleteUrl.subscribe(res => {
+    this.deleteUrl$.subscribe(res => {
     	console.info('deleteUrl: ' + res)
     	window.location.href = '';
     });
