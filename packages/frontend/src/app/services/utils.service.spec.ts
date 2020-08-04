@@ -50,5 +50,34 @@ describe('UtilsService', () => {
         service.sanitizer.bypassSecurityTrustUrl(url)
       );
     });
+
+    describe('isJson', () => {
+      it('should return true for a valid JSON object', () => {
+        const validObjects = [
+          '{}',
+          '{"a": 1}',
+          '{"a": {"b": 1}}',
+          '{"a": "a"}',
+        ];
+        validObjects.forEach(obj => expect(service.isPureJson(obj)).toBeTrue());
+      });
+      it('should return false for an valid JSON object', () => {
+        const invalidObjects = [
+          '123',
+          'a',
+          '{',
+          '}',
+          '{{}',
+          '{}}',
+          '[]',
+          '',
+          null,
+          undefined,
+        ];
+        invalidObjects.forEach(obj =>
+          expect(service.isPureJson(obj)).toBeFalse()
+        );
+      });
+    });
   });
 });

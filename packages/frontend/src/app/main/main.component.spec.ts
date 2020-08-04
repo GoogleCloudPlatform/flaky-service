@@ -51,6 +51,7 @@ class FiltersComponent {
   setFilters = () => {};
   @Input() set filters(filters) {}
   @Output() filtersChanged = new EventEmitter<Filter[]>();
+  @Input() showDefaultOption = true;
 }
 
 describe('MainComponent', () => {

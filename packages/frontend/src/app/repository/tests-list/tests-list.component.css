@@ -20,49 +20,58 @@ limitations under the License.
 }
 
 .test {
-    display: flex;
-    width: 100%;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;    
-    margin-top: 5px;
-    padding: 5px;
     overflow: hidden;
 }
 
-.flaky {
+.outer-panel {
+    padding-top: 2px;
+}
+.outer-panel > .panel-header.flaky:hover{
+    background-color: #fff4e0;
+    opacity: 0.6;
+}
+.outer-panel > .panel-header.failing:hover {
+    background-color: #ffdede;
+    opacity: 0.6;
+}
+.outer-panel > .panel-header.passing:hover {
+    opacity: 0.6;
+}
+
+.mat-expansion-panel-header-title {
+    margin: 0px;
+}
+.panel-header {
+    padding-left: 10px;
+    padding-right: 8px;
+    border: 1px solid #d9d9d9;
+    cursor: pointer;
+    min-width: 288px;
+}
+.flaky,
+.panel-header.mat-expanded.flaky {
     background-color: #fff4e0;
 }
-.failing {
+.failing,
+.panel-header.mat-expanded.failing {
     background-color: #ffdede;
 }
 
-/* Keep the initial details in line*/
-.details > div {
-    display: inline-block;
+.details {
+    width: 100%;
 }
-
-.test-name {
-    margin-right: 10px;
+.test-name{
+    color: #0075FF;
+    font-size: smaller;
+    text-decoration: none;
+    max-width: 550px;
     /*Hide long names*/
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    max-width: 400px;
-    justify-content: left;
 }
-.test-name > a {
-    color: #0075FF;
+.test-name:hover {
     text-decoration: none;
-}
-.test-name > a:hover {
-    text-decoration: underline;
-}
-@media (min-height: 555px) {
-    .test-name {
-        max-width: 93vw;
-        overflow: hidden;
-    }
 }
 
 .last-run {
@@ -71,52 +80,26 @@ limitations under the License.
     justify-content: left;
 }
 
-.details > table {
-    line-height: 13px;
-}
-
-.description {
-    font-size: smaller;
-    color: dimgrey;
-    margin-right: 6px;
-}
-
-.indicators > table > tr > td {
-    text-align: center;
+.indicators-container {
+    height: 20px;
 }
 
 .percent-passing-indicator {
+    position: relative;
     color: dimgrey;
+    font-size: smaller;
 }
-.indicator {
-    padding-right: 6px;
+@media (min-width: 740px) {
+    .percent-passing-indicator {
+        position: relative;
+        bottom: 8px;
+    }
 }
-
-.last-update {
-    color: #878787;
-    font-size: x-small;
-    width: 130px;
+.show-green {
+    color:#009a06;
 }
-
-.expansion-panel {
-    padding-left: 1px;
-    padding-right: 1px;
-    border: 1px solid #d9d9d9;
-    cursor: pointer;
-}
-.expansion-panel:hover {
-    background-color: #f8f8f8;
-}
-.expansion-panel.mat-expanded:hover{
-    background-color: #f8f8f8;
-}
-
-.outer-panel{
-    padding-top: 2px;
-}
-
-.test-details{
-    padding-top: 4px;
+.show-red {
+    color: red;
 }
 
 mat-paginator {

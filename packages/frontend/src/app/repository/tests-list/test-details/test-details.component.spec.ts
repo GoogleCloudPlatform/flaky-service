@@ -15,6 +15,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {TestDetailsComponent} from './test-details.component';
 import {mockTests} from '../mockTests.spec';
+import {By} from '@angular/platform-browser';
 
 describe('TestDetailsComponent', () => {
   let component: TestDetailsComponent;
@@ -35,5 +36,19 @@ describe('TestDetailsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should display the error message if a test is failing', () => {
+    expect(
+      fixture.debugElement.query(By.css('#error-msg-textarea'))
+    ).toBeTruthy();
+  });
+
+  it('should not display the error message if a test is passing', () => {
+    component.test = mockTests.tests[2];
+    fixture.detectChanges();
+    expect(
+      fixture.debugElement.query(By.css('#error-msg-textarea'))
+    ).toBeFalsy();
   });
 });

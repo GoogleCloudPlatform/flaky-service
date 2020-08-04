@@ -61,6 +61,18 @@ describe('HeatMapComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it("should emit 'loadingComplete' when the builds are received", done => {
+    mockCOMService.fetchBuilds = () => of({builds: mockBuilds.none});
+
+    component.loadingComplete.subscribe(() => {
+      // loadingComplete was emitted
+      expect().nothing();
+      done();
+    });
+
+    component.init('', '');
+  });
+
   it('should render every cell', () => {
     mockCOMService.fetchBuilds = () => of({builds: mockBuilds.none});
     const cols = 10,
@@ -116,10 +128,10 @@ describe('HeatMapComponent', () => {
       expect(builds.length).toEqual(2);
       expect(
         builds[0].query(By.css('.build-link')).nativeElement.textContent
-      ).toEqual(mockBuilds._3PreviousDays[0].buildId);
+      ).toEqual('#' + mockBuilds._3PreviousDays[0].buildmessage);
       expect(
         builds[1].query(By.css('.build-link')).nativeElement.textContent
-      ).toEqual(mockBuilds._3PreviousDays[1].buildId);
+      ).toEqual('#' + mockBuilds._3PreviousDays[1].buildmessage);
       done();
     });
   });
@@ -194,7 +206,6 @@ describe('HeatMapComponent', () => {
       const tooltip = fixture.debugElement.query(By.css('.tooltip'));
       const buildTime = moment
         .unix(build.timestamp._seconds)
-        .utc()
         .format('MMM D, YYYY');
       const expectedText = '2 passing on ' + buildTime;
       expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);
@@ -220,7 +231,6 @@ describe('HeatMapComponent', () => {
       const tooltip = fixture.debugElement.query(By.css('.tooltip'));
       const buildTime = moment
         .unix(build.timestamp._seconds)
-        .utc()
         .format('MMM D, YYYY');
       const expectedText = '1 flaky on ' + buildTime;
       expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);
@@ -246,7 +256,6 @@ describe('HeatMapComponent', () => {
       const tooltip = fixture.debugElement.query(By.css('.tooltip'));
       const buildTime = moment
         .unix(build.timestamp._seconds)
-        .utc()
         .format('MMM D, YYYY');
       const expectedText = '1 failing on ' + buildTime;
       expect(tooltip.nativeElement.textContent.trim()).toEqual(expectedText);

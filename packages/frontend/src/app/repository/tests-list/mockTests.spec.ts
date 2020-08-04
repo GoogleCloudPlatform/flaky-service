@@ -15,10 +15,11 @@
 export const mockTests = {
   tests: [
     {
+      failuremessageiffailing: 'Missing characger 1',
       name: 'should update the rendered pages on input change',
       flaky: true,
       passed: false,
-      percentpassing: 98,
+      percentpassing: 0.98,
       searchindex: 0,
       lifetimefailcount: 2,
       lifetimepasscount: 18,
@@ -26,11 +27,12 @@ export const mockTests = {
       environment: {os: 'windows', ref: 'dev'},
     },
     {
+      failuremessageiffailing: 'Missing characger 2',
       name:
         'should not return to the first page when the paginator is not ready',
       flaky: false,
       passed: false,
-      percentpassing: 92,
+      percentpassing: 0.92,
       searchindex: 0,
       lifetimefailcount: 1,
       lifetimepasscount: 9,
@@ -38,10 +40,11 @@ export const mockTests = {
       environment: {os: 'windows', ref: 'dev'},
     },
     {
+      failuremessageiffailing: 'Missing characger 3',
       name: 'should set the new filters when a repository is found',
       flaky: true,
       passed: true,
-      percentpassing: 53,
+      percentpassing: 0.53,
       searchindex: 0,
       lifetimefailcount: 10,
       lifetimepasscount: 12,

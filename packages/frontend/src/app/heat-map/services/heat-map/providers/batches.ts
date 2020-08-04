@@ -23,9 +23,7 @@ export class BatchesProvider {
     const newBatches = [];
     let batchIndex = 0;
 
-    const batchMoment = moment()
-      .utc()
-      .subtract(weeksToDisplay - 1, 'weeks');
+    const batchMoment = moment().subtract(weeksToDisplay - 1, 'weeks');
     batchMoment.day(0);
 
     for (let xDomainIndex = 0; xDomainIndex < weeksToDisplay; xDomainIndex++) {
@@ -37,7 +35,7 @@ export class BatchesProvider {
         else {
           const batch = batches[batchIndex];
 
-          if (batch.moment.isSame(batchMoment, 'day')) {
+          if (batch.moment.local().isSame(batchMoment, 'day')) {
             batch['x'] = xDomainIndex;
             batch['y'] = batch.moment.day().toString();
             batch['health'] = this.getBatchHealth(batch);

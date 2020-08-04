@@ -84,8 +84,10 @@ describe('Flaky-Analytics', () => {
     it('Should track stats for builds', async () => {
       const buildFlakyExpecations = [0, 0, 1, 1];
       for (let i = 0; i < buildFlakyExpecations.length; i++) {
-        const buildData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('builds').doc(i.toString()).get();
-        assert.strictEqual(buildData.data().flaky, buildFlakyExpecations[i]);
+        const buildData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('builds').where('buildId', '==', i.toString()).get();
+        let result;
+        buildData.forEach(r => { result = r; });
+        assert.strictEqual(result.data().flaky, buildFlakyExpecations[i]);
       }
     });
 
@@ -97,30 +99,7 @@ describe('Flaky-Analytics', () => {
       }
     });
 
-    it('Can re-add builds', async () => {
-      const updateObj = JSON.parse(JSON.stringify(buildInfo));
-      updateObj.timestamp = new Date('01/01/2020');
-      updateObj.buildId = '0';
-      const testCaseObjs = [];
-      for (let k = 0; k < testCases[0].length; k++) {
-        testCaseObjs.push(new TestCaseRun(testCases[0][k] ? 'ok' : 'not ok', k, k.toString()));
-      }
-
-      // readding the first build should mantain its status as nonflaky
-      // since only looking at test cases with timestamps prior
-      await addBuild(testCaseObjs, updateObj, client, global.headCollection);
-
-      // buildata not changed
-      const buildData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('builds').doc('0').get();
-      assert.strictEqual(buildData.data().flaky, 0);
-
-      // test case flakyness not changed
-      const testFlakyExpecations = [false, true, true, false];
-      for (let i = 0; i < testFlakyExpecations.length; i++) {
-        const testData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('tests').doc(i.toString()).get();
-        assert.strictEqual(testData.data().flaky, testFlakyExpecations[i]);
-      }
-    });
+    // cannot readd builds
 
     it('Can add builds non chronologically', async () => {
       const updateObj = JSON.parse(JSON.stringify(buildInfo));
@@ -135,8 +114,10 @@ describe('Flaky-Analytics', () => {
       await addBuild(testCaseObjs, updateObj, client, global.headCollection);
 
       // check builddata
-      const buildData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('builds').doc('1.5').get();
-      assert.strictEqual(buildData.data().flaky, 1); // only 1 is flaky at this point
+      const buildData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('builds').where('buildId', '==', '1.5').get();
+      let result;
+      buildData.forEach(r => { result = r; });
+      assert.strictEqual(result.data().flaky, 2); // only 1 is flaky looking backwards, however two fit the criteria of currently being flaky and failing on that build.
 
       // ensure test cases flakyness is updated
       const testFlakyExpecations = [false, true, true, true]; // note test case 4 has now become flaky

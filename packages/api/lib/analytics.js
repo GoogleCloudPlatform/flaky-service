@@ -12,23 +12,56 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const NUM_STORE = 15;
+
 class TestCaseAnalytics {
   // params: encoded name of a test and this.client.collection(global.headCollection).doc(repoid)
-  constructor (testCase, snapshot) {
+  constructor (testCase, cachedSuccess, cachedFails, buildInfo) {
+    this.cachedSuccess = cachedSuccess.map(x => x.toDate());
+    this.cachedFails = cachedFails.map(x => x.toDate());
     this.testCase = testCase;
-    this.snapshot = snapshot;
-    this.snapshotData = [];
-    this.snapshot.forEach((doc) => this.snapshotData.push(doc.data()));
+    this.buildInfo = buildInfo;
+    if (testCase.successful) {
+      this.addDateToList(this.cachedSuccess);
+    } else {
+      this.addDateToList(this.cachedFails);
+    }
+
+    this.createMergedList();
+
+    this.deleteQueue = [];
+    while (this.mergedList.length > NUM_STORE) {
+      this.deleteQueue.push(this.mergedList.pop());
+    }
+  }
+
+  createMergedList () {
+    this.mergedList = [];
+    this.cachedFails.forEach(f => {
+      this.mergedList.push({
+        date: f,
+        passed: false
+      });
+    });
+    this.cachedSuccess.forEach(s => {
+      this.mergedList.push({
+        date: s,
+        passed: true
+      });
+    });
+
+    this.mergedList.sort(function (a, b) {
+      return b.date.getTime() - a.date.getTime(); // reversed
+    });
+  }
+
+  addDateToList (listToAddTo) {
+    listToAddTo.push(this.buildInfo.timestamp);
+    listToAddTo.sort().reverse(); // could insert in O(n) time but not worth
   }
 
   computePassingPercent () {
-    let successCnt = 0;
-    let total = 0;
-    this.snapshotData.forEach((doc) => {
-      successCnt += doc.status === 'OK' ? 1 : 0;
-      total += 1;
-    });
-    return (total > 0) ? successCnt / parseFloat(total) : -1;
+    return (this.mergedList.length === 0) ? 0 : this.cachedSuccess.length / this.mergedList.length;
   }
 
   // returns true if both...
@@ -36,8 +69,8 @@ class TestCaseAnalytics {
   // condition 2: there have been any two failures separated by between 1 and 10 successes
   computeIsFlaky () {
     const failureIndices = [];
-    for (let k = 0; k < this.snapshotData.length; k++) {
-      if (this.snapshotData[k].status !== 'OK') {
+    for (let k = 0; k < this.mergedList.length; k++) {
+      if (!this.mergedList[k].passed) {
         failureIndices.push(k);
       }
     }
@@ -58,29 +91,22 @@ class TestCaseAnalytics {
   }
 
   isCurrentlyPassing () {
-    return this.snapshotData[0].status === 'OK';
+    return this.mergedList[0].passed; // should always have element
   }
 
   getLastUpdate () {
-    return this.snapshotData[0].timestamp;
+    return this.mergedList[0].date;
   }
 
-  mostRecentStatus () {
-    return this.snapshotData[0].status;
+  mostRecentStatus (existingStatus) {
+    if ((this.mergedList.length <= 1 || this.buildInfo.timestamp > this.mergedList[1].date) && !this.testCase.successful) {
+      return this.testCase.failureMessage;
+    } else {
+      return existingStatus;
+    }
   }
-}
-
-/*
-  @param successes list of each success
-  @param failures Object with attributes for each failure
-  @returns a floating point number representing the percent passing , or -1 if no builds
-  */
-function buildPassingPercent (successes, failures) {
-  var total = successes.length + Object.keys(failures).length;
-  return (total > 0) ? successes.length / parseFloat(total) : -1;
 }
 
 module.exports = {
-  buildPassingPercent: buildPassingPercent,
   TestCaseAnalytics: TestCaseAnalytics
 };

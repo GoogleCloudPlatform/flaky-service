@@ -165,7 +165,7 @@ describe('SearchComponent', () => {
       });
   });
 
-  it('should search the selected option when a repository is selected', done => {
+  it('should redirect to the selected reporistory when an option is selected', done => {
     const repoName = mockRepositories[2].name;
     const orgName = mockRepositories[2].organization;
     component.orgName = orgName;
@@ -179,7 +179,7 @@ describe('SearchComponent', () => {
             await input.selectOption({text: new RegExp(repoName)});
             await fixture.whenStable();
 
-            // redirected to the search page
+            // redirected to the repository page
             const expectedLocation =
               '/' + RouteProvider.routes.repo.link(orgName, repoName);
             expect(location.path()).toEqual(expectedLocation);
@@ -188,6 +188,16 @@ describe('SearchComponent', () => {
         });
         input.enterText(repoName);
       });
+  });
+
+  it('should not launch a search when a repository is selected', () => {
+    const searchLauncher = spyOn(component, 'launchSearch');
+
+    component.onSearchOptionSelected('repoName');
+    component.onEnterKeyUp('repoName');
+
+    expect(searchLauncher).not.toHaveBeenCalled();
+    expect(component.optionActivated).toBeFalse();
   });
 
   it('should search the repo with the entered text when the user hits `enter`', async () => {
@@ -209,5 +219,46 @@ describe('SearchComponent', () => {
     let expectedLocation = '/' + RouteProvider.routes.main.link(orgName);
     expectedLocation += ';repo=' + repoName;
     expect(location.path()).toEqual(expectedLocation);
+  });
+
+  it('should clear the input after the user hits `enter`', async () => {
+    component.orgName = 'org';
+    const input = await loader.getHarness(MatInputHarness);
+
+    // write the repo name
+    await input.setValue('repo');
+    const inputElement = fixture.debugElement.query(By.css('input'));
+
+    // hit enter
+    inputElement.triggerEventHandler('keyup.enter', {});
+    await fixture.whenStable();
+
+    // cleared the input
+    const inputValue = await input.getValue();
+    expect(inputValue).toEqual('');
+  });
+
+  it('should clear the input after the user selects an option', done => {
+    const repoName = mockRepositories[2].name;
+    const orgName = mockRepositories[2].organization;
+    component.orgName = orgName;
+
+    loader
+      .getHarness(MatAutocompleteHarness)
+      .then((input: MatAutocompleteHarness) => {
+        component.inputControl.valueChanges.pipe(first()).subscribe(() => {
+          setTimeout(async () => {
+            // select the repository
+            await input.selectOption({text: new RegExp(repoName)});
+            await fixture.whenStable();
+
+            // cleared the input
+            const inputValue = await input.getValue();
+            expect(inputValue).toEqual('');
+            done();
+          }, component.debounceTime + 200);
+        });
+        input.enterText(repoName);
+      });
   });
 });

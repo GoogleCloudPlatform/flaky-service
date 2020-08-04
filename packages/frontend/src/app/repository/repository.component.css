@@ -14,29 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.tests-list-container, #filters-container {
-    display: flex;
-    justify-content: center;
-}
-app-tests-list, #filters-subcontainer {
+app-tests-list {
     width: 100%;
     max-width: 800px;
 }
 .heat-map-container {
     width: 100%;
-    margin-top: 20px;
     margin-bottom: 20px;
 }
 
 #filters-container {
     margin-top: 20px;
 }
-
 #filters-subcontainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
+    width: 100%;
+    max-width: 700px;
 }
 
 .names {
@@ -50,4 +42,17 @@ app-tests-list, #filters-subcontainer {
 #description {
     margin-left: 5px;
     color: #8e8e8e;
+}
+
+#spinner, #no-repo-found {
+    margin-top: 100px;
+}
+#no-repo-found {
+    font-weight: lighter;
+    color: grey;
+    width: 100%;
+    text-align: center;
+}
+.hidden {
+    display: none;
 }

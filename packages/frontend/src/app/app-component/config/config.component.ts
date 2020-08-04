@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {UserService} from 'src/app/services/user/user.service';
+import {environment} from 'src/environments/environment';
 
 @Component({
   selector: 'app-config',
@@ -21,21 +22,21 @@ import {UserService} from 'src/app/services/user/user.service';
   styleUrls: ['./config.component.css'],
 })
 export class ConfigComponent {
-  linkedGithubAccounts = [
-    {name: 'account 1'},
-    {name: 'account 2'},
-    {name: 'account 3'},
-    {name: 'account 4'},
-    {name: 'account 5'},
-  ];
+  @Input() repoName: string;
+  @Input() orgName: string;
 
-  token = 'MF93N60H857HBGN65GHBN035GHB0PJN605';
-  showToken = false;
-  showAdminView = false;
+  windowProvider = window;
 
   constructor(public userService: UserService) {}
 
-  onTokenClick() {
-    this.showToken = !this.showToken;
+  onDownloadClick() {
+    const exportUrl =
+      environment.baseUrl +
+      '/api/repo/' +
+      this.orgName +
+      '/' +
+      this.repoName +
+      '/csv';
+    this.windowProvider.open(exportUrl);
   }
 }
