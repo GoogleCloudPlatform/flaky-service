@@ -81,6 +81,42 @@ describe('FiltersComponent', () => {
     );
   });
 
+  it('should show the default option when the default option is required', async () => {
+    component.showDefaultOption = true;
+    setMockFilters(1);
+
+    const select: MatSelectHarness = await loader.getHarness(MatSelectHarness);
+    await select.open();
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const options = await select.getOptions();
+
+    // shows all filters + the default filter
+    expect(options.length).toEqual(
+      component._filters[0].possibleValues.length + 1
+    );
+    // the default filter is the first filter
+    expect(await options[0].getText()).toEqual('');
+  });
+
+  it('should not show the default option when the default option is not required', async () => {
+    component.showDefaultOption = false;
+    setMockFilters(1);
+
+    const select: MatSelectHarness = await loader.getHarness(MatSelectHarness);
+    await select.open();
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const options = await select.getOptions();
+
+    // shows all filters without the default filter
+    expect(options.length).toEqual(component._filters[0].possibleValues.length);
+  });
+
   describe('setFilters', () => {
     const getFilters = (filtersCount: number) => {
       const filters = {};
