@@ -94,7 +94,7 @@ const buildInfo = [
       new TestCaseRun('not ok', 1, 'a/5'),
       new TestCaseRun('not ok', 2, 'a/2') // this test is now passing
     ],
-    description: 'nodejs repository',
+    description: 'None',
     buildmessage: 'Workflow - 1'
   }
 ];
@@ -259,7 +259,7 @@ describe('Add-Build', () => {
       assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
-      const solMeta = { name: 'node', repoId: 'nodejs/node', description: 'nodejs repository', organization: 'nodejs', searchindex: 2 * 10000, numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
+      const solMeta = { name: 'node', repoId: 'nodejs/node', description: '', organization: 'nodejs', searchindex: 2 * 10000, numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
       const solActual = JSON.parse(respTextMeta);
       delete solActual.lastupdate;
       assert.deepStrictEqual(solActual, solMeta);
