@@ -52,6 +52,7 @@ export class COMService {
     orgName: string,
     filters: Filter[]
   ): Observable<ApiRepository> {
+    filters.push({name: 'limit', value: '999999'});
     return this.http
       .get<ApiRepository>(apiLinks.get.builds(repoName, orgName), {
         params: this.getParams(filters),

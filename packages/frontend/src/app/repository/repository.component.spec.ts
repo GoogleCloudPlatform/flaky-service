@@ -61,6 +61,7 @@ class SearchComponent {
 class FiltersComponent {
   setFilters = () => {};
   @Input() set filters(filters) {}
+  @Input() showDefaultOption = true;
   @Output() filtersChanged = new EventEmitter<Filter[]>();
 }
 @Component({

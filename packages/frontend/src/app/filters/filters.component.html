@@ -18,8 +18,9 @@ limitations under the License.
     <mat-form-field appearance="outline" *ngFor="let filter of _filters">
         <mat-label>{{filter.name}}</mat-label>
         <mat-select [(value)]="filter.selection" name="filter.name" [disableRipple]="true" (selectionChange)="onSelectionChanged()">
+        <mat-option *ngIf="showDefaultOption" [value]=""></mat-option>
         <mat-option *ngFor="let option of filter.possibleValues" [value]="option.value">
-            {{option?option.visibleValue:defaultOption.visibleValue}}
+            {{option.visibleValue}}
         </mat-option>
         </mat-select>
     </mat-form-field>

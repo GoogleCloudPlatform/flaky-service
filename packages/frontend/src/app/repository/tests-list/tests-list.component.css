@@ -20,13 +20,6 @@ limitations under the License.
 }
 
 .test {
-    display: flex;
-    width: 100%;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;    
-    margin-top: 5px;
-    padding: 5px;
     overflow: hidden;
 }
 
@@ -45,11 +38,15 @@ limitations under the License.
     opacity: 0.6;
 }
 
+.mat-expansion-panel-header-title {
+    margin: 0px;
+}
 .panel-header {
-    padding-left: 1px;
-    padding-right: 1px;
+    padding-left: 10px;
+    padding-right: 8px;
     border: 1px solid #d9d9d9;
     cursor: pointer;
+    min-width: 288px;
 }
 .flaky,
 .panel-header.mat-expanded.flaky {
@@ -60,32 +57,21 @@ limitations under the License.
     background-color: #ffdede;
 }
 
-.test-name {
-    margin-right: 10px;
+.details {
+    width: 100%;
+}
+.test-name{
+    color: #0075FF;
+    font-size: smaller;
+    text-decoration: none;
+    max-width: 550px;
     /*Hide long names*/
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    max-width: 400px;
-    justify-content: left;
 }
-.test-name > a {
-    color: #0075FF;
+.test-name:hover {
     text-decoration: none;
-}
-.test-name > a:hover {
-    text-decoration: underline;
-}
-@media (min-height: 555px) {
-    .test-name {
-        max-width: 93vw;
-        overflow: hidden;
-    }
-}
-
-.details-table {
-    table-layout: fixed;
-    width: 550px;
 }
 
 .last-run {
@@ -94,31 +80,26 @@ limitations under the License.
     justify-content: left;
 }
 
-.description {
-    font-size: smaller;
-    color: dimgrey;
-    margin-right: 6px;
-}
-
-.indicators > table > tr > td {
-    text-align: center;
+.indicators-container {
+    height: 20px;
 }
 
 .percent-passing-indicator {
+    position: relative;
     color: dimgrey;
+    font-size: smaller;
 }
-.indicator {
-    padding-right: 6px;
+@media (min-width: 740px) {
+    .percent-passing-indicator {
+        position: relative;
+        bottom: 8px;
+    }
 }
 .show-green {
     color:#009a06;
 }
 .show-red {
     color: red;
-}
-
-.test-details{
-    padding-top: 4px;
 }
 
 mat-paginator {

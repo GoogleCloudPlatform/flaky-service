@@ -16,7 +16,7 @@ limitations under the License.
 
 <div id="filters-container" fxLayoutAlign="center" *ngIf="!loading && repoList.viewConfig.elements.length && !repoName">
     <div id="filters-subcontainer" fxLayout="row" fxLayoutAlign="end">
-        <app-filters [filters]="filters" (filtersChanged)="onFiltersChanged($event)"></app-filters>
+        <app-filters [showDefaultOption]="false" [filters]="filters" (filtersChanged)="onFiltersChanged($event)"></app-filters>
     </div>
 </div>
 
