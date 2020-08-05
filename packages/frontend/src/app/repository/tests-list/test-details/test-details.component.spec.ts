@@ -28,10 +28,10 @@ import {COMService} from 'src/app/services/com/com.service';
 const mockUrl = 'https://flaky-dashboard.web.app/';
 
 const mockWindowProvider = {
-    open: () => {},
-  };
+  open: () => {},
+};
 
-const comMock =  (repoName: string, orgName: string, testName: string, redirect: string) => of(mockUrl); 
+const comMock = () => of(mockUrl);
 
 describe('TestDetailsComponent', () => {
   let component: TestDetailsComponent;
@@ -74,7 +74,7 @@ describe('TestDetailsComponent', () => {
     component.orgName = 'testOrg';
     component.repoName = 'testRepo';
     component.windowProvider = (mockWindowProvider as unknown) as typeof window;
-    component.comService.fetchDeleteTestUrl = comMock
+    component.comService.fetchDeleteTestUrl = comMock;
     fixture.detectChanges();
     //spy on the new window
     spyOn(component.windowProvider, 'open');
@@ -84,6 +84,9 @@ describe('TestDetailsComponent', () => {
     );
     deleteButton.click();
     tick();
-    expect(component.windowProvider.open).toHaveBeenCalledWith('https://flaky-dashboard.web.app/', '_self');
+    expect(component.windowProvider.open).toHaveBeenCalledWith(
+      'https://flaky-dashboard.web.app/',
+      '_self'
+    );
   }));
 });

@@ -223,12 +223,14 @@ describe('COMService', () => {
     const redirect = 'redirect';
 
     it('should get a link from the server', () => {
-      const serverUrl = 'url-from-server'
+      const serverUrl = 'url-from-server';
       httpClientSpy.get.and.returnValue(of(serverUrl));
 
-      service.fetchDeleteTestUrl(repoName, orgName, testName, redirect).subscribe(result => {
-        expect(result).toBe(serverUrl);
-      });
+      service
+        .fetchDeleteTestUrl(repoName, orgName, testName, redirect)
+        .subscribe(result => {
+          expect(result).toBe(serverUrl);
+        });
 
       //called the right link
       expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
