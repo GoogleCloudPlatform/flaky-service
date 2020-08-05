@@ -19,11 +19,13 @@ const process = require('process');
 process.env.CHROME_BIN = require('puppeteer').executablePath();
 
 module.exports = function (config) {
-  config.set({
+  const configObj = {
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
       require('karma-jasmine'),
+      require('karma-edgium-launcher'),
+      require('karma-firefox-launcher'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage-istanbul-reporter'),
@@ -55,6 +57,22 @@ module.exports = function (config) {
         base: 'ChromeHeadless',
         flags: ['--no-sandbox'],
       },
+      FirefoxHeadless: {
+        base: 'Firefox',
+        flags: [ '-headless' ],
+      },
     },
-  });
+  };
+
+  // select the appropriate browser for the current environment
+  const os = process.env.BROWSER || "chrome";
+  if (os === 'linux') {
+    configObj.browsers = configObj.browsers.concat(['FirefoxHeadless']);
+  } else if (os === 'windows') {
+    configObj.browsers = configObj.browsers.concat(['Edge']);
+  } else if (os === 'mac') {
+    configObj.browsers = configObj.browsers.concat(['Safari']);
+  }
+  
+  config.set(configObj);
 };
