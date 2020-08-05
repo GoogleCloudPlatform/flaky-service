@@ -39,7 +39,7 @@ class GetTestHandler {
         let limit = 30;
 
         let starterQuery = this.client.collection(global.headCollection).doc(repoid)
-          .collection('queued').doc(name).collection('runs');
+          .collection('tests').doc(name).collection('runs');
 
         // add all possible where queries
         for (const prop in req.query) {
