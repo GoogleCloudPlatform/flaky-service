@@ -60,7 +60,7 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
 
   const testsToProcess = testCases.map((testCase) => {
     return () => {
-      return Promise.all([addTestRun(testCase, buildInfo, dbRepo), updateTest(testCase, buildInfo, dbRepo)]);
+      return Promise.all([addTestRun(testCase, buildInfo, dbRepo), updateQueue(testCase, buildInfo, dbRepo)]);
     };
   });
 
@@ -92,13 +92,50 @@ async function addTestRun (testCase, buildInfo, dbRepo) {
   );
 }
 
-async function updateTest (testCase, buildInfo, dbRepo) {
+async function updateQueue (testCase, buildInfo, dbRepo) {
+  //see if the test exists in the queue
+  const prevTest = await dbRepo.collection('queued').doc(testCase.encodedName).get();
+  const cachedSuccess = (prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
+  const cachedFails = (prevTest.data() && prevTest.data().cachedFails) ? prevTest.data().cachedFails : [];
+
+  const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo);
+  //check the status of the current test run
+  if(testCase.successful) {
+    if(prevTest.exists()) {
+      //the current run is successful and this run's test previously existed in the queue
+      //see if the test is considered flaky
+      if(testCaseAnalytics.computeIsFlaky()){
+        //update the flaky test
+        return Promise(updateTest(prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+      }
+      //remove the test from queued collection because it is successful and not flaky
+      await dbRepo.collection('tests').doc(testCase.encodedName).delete();
+    }
+    //the current run is successful and the test did not exist in the queue
+    //so no need to update anything in the queue
+  }
+  else{
+    //the current run fails
+    //whether this run's test is in the queue or not, call updateTest
+    //to add the test to the queue, or update it appropriately
+    return Promise(updateTest(prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+  }
+  //return empty metrics
+  return {
+    flaky: testCaseAnalytics.computeIsFlaky(),
+    passed: testCase.successful
+  };
+}
+
+async function updateTest (prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo) {
   // first read the test
+  /*
   const prevTest = await dbRepo.collection('tests').doc(testCase.encodedName).get();
   const cachedSuccess = (prevTest.exists && prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
   const cachedFails = (prevTest.exists && prevTest.data() && prevTest.data().cachedFails) ? prevTest.data().cachedFails : [];
 
   const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo);
+  */
 
   const updateObj = {
     percentpassing: testCaseAnalytics.computePassingPercent(),
