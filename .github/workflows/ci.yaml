@@ -36,7 +36,7 @@ jobs:
           os: ${{toJson(runner)}}
           logtype: TAP
           filepath: ${{github.workspace}}/packages/api/test.tap
-  frontend-test:
+  frontend-test-linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -46,6 +46,10 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
+      - name: set environment variables
+        uses: allenevans/set-env@v1.0.0
+        with:
+          BROWSER: 'linux'
       - run: node --version
         working-directory: ./packages/frontend
       - run: npm install
@@ -57,6 +61,39 @@ jobs:
       - run: npm run lint
         working-directory: ./packages/frontend
       - name: track flaky tests
+        continue-on-error: true
+        if: ${{ always() }}
+        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
+        with:
+          github: ${{toJson(github)}}
+          matrix: ${{toJson(matrix)}}
+          os: ${{toJson(runner)}}
+          logtype: TAP
+          filepath: ${{github.workspace}}/packages/frontend/test.tap
+  frontend-test-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node: [12]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: set environment variables
+        uses: allenevans/set-env@v1.0.0
+        with:
+          BROWSER: 'windows'
+      - run: node --version
+        working-directory: ./packages/frontend
+      - run: npm install
+        working-directory: ./packages/frontend
+      - run: npm run test
+        working-directory: ./packages/frontend
+      - run: npm run e2e
+        working-directory: ./packages/frontend
+      - name: track flaky tests
+        continue-on-error: true
         if: ${{ always() }}
         uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
         with:

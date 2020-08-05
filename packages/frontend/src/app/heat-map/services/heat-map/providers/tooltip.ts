@@ -41,8 +41,13 @@ export class TooltipProvider {
 
     const setToolTipHtml = this.setToolTipHtml;
     const mouseMove = function (batch) {
-      const xPos = d3.mouse(this)[0] - 30,
-        yPos = d3.mouse(this)[1] - 10;
+      let xPos = 0,
+        yPos = 0;
+      try {
+        (xPos = d3.mouse(this)[0] - 30), (yPos = d3.mouse(this)[1] - 10);
+      } catch {
+        /*The mouse event was raised programmatically*/
+      }
       setToolTipHtml(tooltip, xPos, yPos, batch);
     };
 
