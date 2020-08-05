@@ -168,7 +168,7 @@ async function updateTest (prevTest, testCaseAnalytics, testCase, buildInfo, dbR
     } else {
       deleteObj.cachedFails = Firestore.FieldValue.arrayRemove(deleteDate);
     }
-    await dbRepo.collection('tests').doc(testCase.encodedName).update(deleteObj, { merge: true });
+    await dbRepo.collection('queued').doc(testCase.encodedName).update(deleteObj, { merge: true });
   }
 
   return {
