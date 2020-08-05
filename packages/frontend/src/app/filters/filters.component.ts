@@ -22,11 +22,8 @@ import {UtilsService} from '../services/utils.service';
   styleUrls: ['./filters.component.css'],
 })
 export class FiltersComponent {
-  readonly defaultOption = {
-    value: 'All',
-    visibleValue: 'All',
-  };
   _filters: AvailableFilter[] = [];
+  @Input() showDefaultOption = true;
   @Input() maxOptions = 3;
   @Output() filtersChanged = new EventEmitter<Filter[]>();
 

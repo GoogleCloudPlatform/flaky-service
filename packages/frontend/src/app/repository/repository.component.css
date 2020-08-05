@@ -14,18 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-app-tests-list, #filters-subcontainer {
+app-tests-list {
     width: 100%;
     max-width: 800px;
 }
 .heat-map-container {
     width: 100%;
-    margin-top: 20px;
     margin-bottom: 20px;
 }
 
 #filters-container {
     margin-top: 20px;
+}
+#filters-subcontainer {
+    width: 100%;
+    max-width: 700px;
 }
 
 .names {

@@ -61,7 +61,11 @@ class TestCaseAnalytics {
   }
 
   computePassingPercent () {
-    return (this.mergedList.length === 0) ? 0 : this.cachedSuccess.length / this.mergedList.length;
+    let numSuc = 0;
+    for (let i = 0; i < this.mergedList.length; i++) {
+      numSuc += this.mergedList[i].passed ? 1 : 0;
+    }
+    return (this.mergedList.length === 0) ? 0 : numSuc / this.mergedList.length;
   }
 
   // returns true if both...
