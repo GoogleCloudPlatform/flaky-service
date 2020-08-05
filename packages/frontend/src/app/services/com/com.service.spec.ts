@@ -216,6 +216,38 @@ describe('COMService', () => {
     });
   });
 
+  describe('fetchDeleteTestUrl', () => {
+    const repoName = 'repoName';
+    const orgName = 'orgName';
+    const testName = 'testName';
+    const redirect = 'redirect';
+
+    it('should get a link from the server', () => {
+      const serverUrl = 'url-from-server'
+      httpClientSpy.get.and.returnValue(of(serverUrl));
+
+      service.fetchDeleteTestUrl(repoName, orgName, testName, redirect).subscribe(result => {
+        expect(result).toBe(serverUrl);
+      });
+
+      //called the right link
+      expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
+        apiLinks.get.deleteTest(orgName, repoName, testName, redirect)
+      );
+    });
+
+    it('should call the error handler if an error occurs', () => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service.fetchTests('repo', 'org', []).subscribe();
+      expect(errorHandler).toHaveBeenCalledWith(err);
+    });
+  });
+
   describe('handleError', () => {
     it('should show the connection error message if an unknown error occurs', () => {
       spyOn(mockSnackBarService, 'showConnectionError').and.callThrough();
