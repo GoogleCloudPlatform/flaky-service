@@ -15,7 +15,7 @@
 import {Component, Input} from '@angular/core';
 import {Test} from 'src/app/services/search/interfaces';
 import {COMService} from '../../../services/com/com.service';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-test-details',
@@ -23,13 +23,11 @@ import { Observable } from 'rxjs';
   styleUrls: ['./test-details.component.css'],
 })
 export class TestDetailsComponent {
-constructor(
-    public comService: COMService
-  ) {}
+  constructor(public comService: COMService) {}
   @Input() test: Test;
   @Input() repoName: string;
   @Input() orgName: string;
-  public deleteUrl$: Observable<string>
+  public deleteUrl$: Observable<string>;
 
   //Converts tests' passing percentage from decimal to percentage
   toPercentage(percentpassing: number): string {
@@ -37,7 +35,12 @@ constructor(
   }
 
   startDeleteTest() {
-    this.deleteUrl$ = this.comService.fetchDeleteTestUrl(this.orgName, this.repoName, this.test.name, 'https://flaky-dashboard.web.app/');
+    this.deleteUrl$ = this.comService.fetchDeleteTestUrl(
+      this.orgName,
+      this.repoName,
+      this.test.name,
+      'https://flaky-dashboard.web.app/'
+    );
     this.deleteUrl$.subscribe(res => {
       console.info(res);
       window.location.href = res;

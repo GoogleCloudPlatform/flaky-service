@@ -96,7 +96,3 @@ export interface SessionStatus {
   expiration?: Date;
   login?: string;
 }
-
-export interface DeleteUrl {
-  
-}
