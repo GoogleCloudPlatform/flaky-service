@@ -39,7 +39,7 @@ class GetTestHandler {
         let limit = 30;
 
         let starterQuery = this.client.collection(global.headCollection).doc(repoid)
-          .collection('tests').doc(name).collection('runs');
+          .collection('queued').doc(name).collection('runs');
 
         // add all possible where queries
         for (const prop in req.query) {
@@ -87,7 +87,7 @@ class GetTestHandler {
         const limit = parseInt(req.query.limit || 30);
         const offset = parseInt(req.query.offset || 0);
 
-        const snapshot = await this.client.collection(global.headCollection).doc(repoid).collection('tests')
+        const snapshot = await this.client.collection(global.headCollection).doc(repoid).collection('queued')
           .orderBy('searchindex', 'desc').orderBy('lastupdate', 'desc').offset(offset).limit(limit + 1).get();
 
         const responseJSON = {

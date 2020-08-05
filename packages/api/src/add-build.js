@@ -105,11 +105,10 @@ async function updateQueue (testCase, buildInfo, dbRepo) {
       //the current run is successful and this run's test previously existed in the queue
       //see if the test is considered flaky
       if(testCaseAnalytics.computeIsFlaky()){
-        //update the flaky test
         return Promise(updateTest(prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
       }
       //remove the test from queued collection because it is successful and not flaky
-      await dbRepo.collection('tests').doc(testCase.encodedName).delete();
+      await dbRepo.collection('queued').doc(testCase.encodedName).delete();
     }
     //the current run is successful and the test did not exist in the queue
     //so no need to update anything in the queue
@@ -158,7 +157,7 @@ async function updateTest (prevTest, testCaseAnalytics, testCase, buildInfo, dbR
   } else {
     updateObj.cachedFails = Firestore.FieldValue.arrayUnion(firestoreTimestamp);
   }
-  await dbRepo.collection('tests').doc(testCase.encodedName).update(updateObj, { merge: true });
+  await dbRepo.collection('queued').doc(testCase.encodedName).update(updateObj, { merge: true });
 
   while (testCaseAnalytics.deleteQueue.length > 0) {
     const deleteMe = testCaseAnalytics.deleteQueue.pop();
@@ -169,7 +168,7 @@ async function updateTest (prevTest, testCaseAnalytics, testCase, buildInfo, dbR
     } else {
       deleteObj.cachedFails = Firestore.FieldValue.arrayRemove(deleteDate);
     }
-    await dbRepo.collection('tests').doc(testCase.encodedName).update(deleteObj, { merge: true });
+    await dbRepo.collection('queued').doc(testCase.encodedName).update(deleteObj, { merge: true });
   }
 
   return {
