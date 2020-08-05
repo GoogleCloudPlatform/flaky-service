@@ -122,6 +122,13 @@ class GetOrgHandler {
           hasprev: offset > 0,
           repos: snapshot.docs.map(doc => doc.data())
         };
+        for (let i = 0; i < responseJSON.repos.length; i++) {
+          const rj = responseJSON.repos[i];
+          if (rj.description === 'None') {
+            rj.description = '';
+          }
+        }
+
         if (snapshot.size > limit) {
           responseJSON.hasnext = true;
           responseJSON.repos.pop();
