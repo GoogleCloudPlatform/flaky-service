@@ -12,18 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  tick,
+  fakeAsync,
+} from '@angular/core/testing';
 import {TestDetailsComponent} from './test-details.component';
 import {mockTests} from '../mockTests.spec';
 import {By} from '@angular/platform-browser';
 import {of} from 'rxjs';
 import {COMService} from 'src/app/services/com/com.service';
 
-const mockUrl = '';
+const mockUrl = 'https://flaky-dashboard.web.app/';
 
-const COMServiceMock = {
-  fetchDeleteTestUrl: () => of(mockUrl),
-};
+const mockWindowProvider = {
+    open: () => {},
+  };
+
+const comMock =  (repoName: string, orgName: string, testName: string, redirect: string) => of(mockUrl); 
 
 describe('TestDetailsComponent', () => {
   let component: TestDetailsComponent;
@@ -32,7 +40,7 @@ describe('TestDetailsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestDetailsComponent],
-      providers: [{provide: COMService, useValue: COMServiceMock}],
+      providers: [{provide: COMService, useValue: comMock}],
     }).compileComponents();
   }));
 
@@ -60,4 +68,22 @@ describe('TestDetailsComponent', () => {
       fixture.debugElement.query(By.css('#error-msg-textarea'))
     ).toBeFalsy();
   });
+
+  //test the delete test button
+  it('should redirect to the deleteTest url when delete test button is clicked', fakeAsync(() => {
+    component.orgName = 'testOrg';
+    component.repoName = 'testRepo';
+    component.windowProvider = (mockWindowProvider as unknown) as typeof window;
+    component.comService.fetchDeleteTestUrl = comMock
+    fixture.detectChanges();
+    //spy on the new window
+    spyOn(component.windowProvider, 'open');
+    //click the test deletion button
+    const deleteButton = fixture.debugElement.nativeElement.querySelector(
+      '#delete-test-button'
+    );
+    deleteButton.click();
+    tick();
+    expect(component.windowProvider.open).toHaveBeenCalledWith('https://flaky-dashboard.web.app/', '_self');
+  }));
 });

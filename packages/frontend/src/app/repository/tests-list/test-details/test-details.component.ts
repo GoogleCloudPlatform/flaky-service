@@ -27,6 +27,7 @@ export class TestDetailsComponent {
   @Input() test: Test;
   @Input() repoName: string;
   @Input() orgName: string;
+  windowProvider = window;
   public deleteUrl$: Observable<string>;
 
   //Converts tests' passing percentage from decimal to percentage
@@ -43,7 +44,7 @@ export class TestDetailsComponent {
     );
     this.deleteUrl$.subscribe(res => {
       console.info(res);
-      window.location.href = res;
+      this.windowProvider.open(res, '_self');
     });
   }
 }
