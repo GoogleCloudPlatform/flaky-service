@@ -26,7 +26,7 @@ inputs:
   tag:
     description: 'Tag post. Useful for two posts from same action'
     required: false
-    deafult: 'None'
+    default: 'None'
 
 runs:
   using: 'node12'
