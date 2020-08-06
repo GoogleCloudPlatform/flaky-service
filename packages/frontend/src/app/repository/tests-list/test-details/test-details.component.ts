@@ -15,7 +15,6 @@
 import {Component, Input} from '@angular/core';
 import {Test} from 'src/app/services/search/interfaces';
 import {COMService} from '../../../services/com/com.service';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-test-details',
@@ -28,7 +27,6 @@ export class TestDetailsComponent {
   @Input() repoName: string;
   @Input() orgName: string;
   windowProvider = window;
-  public deleteUrl$: Observable<string>;
 
   //Converts tests' passing percentage from decimal to percentage
   toPercentage(percentpassing: number): string {
@@ -36,13 +34,12 @@ export class TestDetailsComponent {
   }
 
   startDeleteTest() {
-    this.deleteUrl$ = this.comService.fetchDeleteTestUrl(
+    this.comService.fetchDeleteTestUrl(
       this.orgName,
       this.repoName,
       this.test.name,
       environment.baseUrl
-    );
-    this.deleteUrl$.subscribe(res => {
+    ).subscribe(res => {
       console.info(res);
       this.windowProvider.open(res, '_self');
     });
