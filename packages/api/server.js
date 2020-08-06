@@ -65,7 +65,7 @@ app.get('/api/repository/:orgname/:reponame', async (req, res) => {
     action: 'delete-repo',
     orgName: orgName,
     repoId: repoId,
-    fullName: orgName + '/' + reppoId,
+    fullName: orgName + '/' + repoId,
     state: state,
     redirect: redirect
   });
