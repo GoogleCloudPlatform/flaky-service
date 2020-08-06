@@ -211,6 +211,7 @@ async function main() {
       sha: process.env.GITHUB_SHA,
       name: process.env.GITHUB_REPOSITORY.substr(1+process.env.GITHUB_REPOSITORY.indexOf("/")),
       description: core.getInput('repodescription'),
+      private: core.getInput("private"),
       buildmessage: buildmessageStr
     };
 

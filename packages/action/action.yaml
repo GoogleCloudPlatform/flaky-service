@@ -27,6 +27,9 @@ inputs:
     description: 'Tag post. Useful for two posts from same action'
     required: false
     default: 'None'
+  private:
+    description: 'Flaky.dev only supports repositories which are not private. If private, results will be discarded'
+    required: true
 
 runs:
   using: 'node12'
