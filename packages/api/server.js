@@ -55,6 +55,25 @@ app.get('/api/repo/:orgname/:reponame/test/:testid', async (req, res) => {
   res.status(200).send(url).end();
 });
 
+app.get('/api/repository/:orgname/:reponame', async (req, res) => {
+  const orgName = req.params.orgname;
+  const repoId = req.params.reponame;
+  const redirect = req.query.redirect || process.env.FRONTEND_URL;
+  const state = v4();
+
+  await repo.storeTicket({
+    action: 'delete-repo',
+    orgName: orgName,
+    repoId: repoId,
+    fullName: orgName + '/' + reppoId,
+    state: state,
+    redirect: redirect
+  });
+
+  const url = `http://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&state=${state}&allow_signup=false&scope=repo`;
+  res.status(200).send(url).end();
+});
+
 app.get('/api/callback', async (req, res) => {
   const ticket = await repo.getTicket(req.param('state'));
 
@@ -81,7 +100,6 @@ app.get('/api/callback', async (req, res) => {
 
   const performed = await repo.performTicketIfAllowed(ticket, userPermission);
 
-  // todo send a message to the frontend to put a banner on the page indicating whether the action has been performed
   if (performed) {
     console.log('Successfully performed the action');
     res.status(200).redirect(redirect);
