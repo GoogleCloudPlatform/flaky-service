@@ -40,7 +40,6 @@ export class TestDetailsComponent {
       this.test.name,
       environment.baseUrl
     ).subscribe(res => {
-      console.info(res);
       this.windowProvider.open(res, '_self');
     });
   }
