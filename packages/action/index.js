@@ -22,7 +22,7 @@ const core = require('@actions/core');
 async function main() {
   try {
     // `who-to-greet` input defined in action metadata file
-
+    console.log(process.env);
     const metaData = {
       github: JSON.parse(core.getInput('github')),
       os: JSON.parse(core.getInput('os')),
