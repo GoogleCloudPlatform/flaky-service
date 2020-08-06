@@ -22,7 +22,7 @@ inputs:
   endpoint:
     description: 'Base URL to post data to'
     required: false
-    default: 'https://flaky-dev-staging.web.app',
+    default: 'https://flaky-dev-staging.web.app'
   tag:
     description: 'Tag post. Useful for two posts from same action'
     required: false
