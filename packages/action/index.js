@@ -24,7 +24,7 @@ async function main() {
     // `who-to-greet` input defined in action metadata file
    
     let buildmessageStr = process.env.GITHUB_WORKFLOW + ' ' + process.env.GITHUB_RUN_NUMBER;
-    if(!core.getInput('tag') || core.getInput('tag') == "None"){
+    if(core.getInput('tag') || !core.getInput('tag') == "None"){
       buildmessageStr += ' (' + core.getInput('tag') + ')';
     }
 
@@ -58,7 +58,6 @@ async function main() {
     }
     const data = fs.readFileSync(
         core.getInput('filepath'), 'utf8');
-    ddddd
     const sendMe = {type: fileType, data: data, metadata: metaData};
     const endpoint = core.getInput('endpoint') + '/api/build'
     console.log("Beginning Upload of data...")
