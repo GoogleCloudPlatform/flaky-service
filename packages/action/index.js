@@ -47,14 +47,14 @@ async function main() {
       buildmessage: buildmessageStr
     };
 
-    metaData.matrix = JSON.stringify(metadata.matrix, Object.keys(metadata.matrix).sort()); //consistancy 
+    metaData.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); //consistancy 
     
     metaData.environment.ref = envData.ref.replace('refs/', '');
     metaData.environment.ref = envData.ref.replace('heads/', '');
 
     console.log(metaData);
     core.warning("WARN TEST");
-    
+
     const fileType = core.getInput('logtype');
     
     if (!fs.existsSync(core.getInput('filepath'))){
