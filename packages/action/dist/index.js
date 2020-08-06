@@ -216,8 +216,8 @@ async function main() {
 
     metaData.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); //consistancy 
     
-    metaData.environment.ref = envData.ref.replace('refs/', '');
-    metaData.environment.ref = envData.ref.replace('heads/', '');
+    metaData.environment.ref = metaData.environment.ref.replace('refs/', '');
+    metaData.environment.ref = metaData.environment.ref.replace('heads/', '');
 
     console.log(metaData);
     core.warning("WARN TEST");
