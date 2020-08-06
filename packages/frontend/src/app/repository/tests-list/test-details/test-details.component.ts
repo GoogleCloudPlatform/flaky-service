@@ -40,7 +40,7 @@ export class TestDetailsComponent {
       this.orgName,
       this.repoName,
       this.test.name,
-      'https://flaky-dashboard.web.app/'
+      environment.baseUrl
     );
     this.deleteUrl$.subscribe(res => {
       console.info(res);
