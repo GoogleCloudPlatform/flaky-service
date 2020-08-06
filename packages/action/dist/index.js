@@ -189,27 +189,66 @@ const core = __webpack_require__(931);
 async function main() {
   try {
     // `who-to-greet` input defined in action metadata file
+   
+    let buildmessageStr = process.env.GITHUB_WORKFLOW + ' ' + process.env.GITHUB_RUN_NUMBER;
+    if(!core.getInput('tag') || core.getInput('tag') == "None"){
+      buildmessageStr += ' (' + core.getInput('tag') + ')';
+    }
+
 
     const metaData = {
-      github: JSON.parse(core.getInput('github')),
-      os: JSON.parse(core.getInput('os')),
-      matrix: JSON.parse(core.getInput('matrix')),
+      repoId: encodeURIComponent(process.env.GITHUB_REPOSITORY), //resanitized server side
+      organization: process.env.GITHUB_REPOSITORY.substr(0,process.env.GITHUB_REPOSITORY.indexOf("/")),
+      timestamp: new Date(),
+      url: process.env.GITHUB_SERVER_URL + '/' + process.env.GITHUB_REPOSITORY,
+      environment:{
+        os: core.getInput('os'),
+        tag: core.getInput('tag'),
+        matrix :JSON.parse(core.getInput('matrix')),
+        ref: process.env.GITHUB_REF
+      },
+      buildId: process.env.GITHUB_RUN_ID,
+      sha: process.env.GITHUB_SHA,
+      name: process.env.GITHUB_REPOSITORY.substr(1+process.env.GITHUB_REPOSITORY.indexOf("/")),
+      description: core.getInput('repodescription'),
+      buildmessage: buildmessageStr
     };
+
+    console.log(metaData);
+
     const fileType = core.getInput('logtype');
-    console.log('reading from: ' + core.getInput('filepath'));
+    
+    if (!fs.existsSync(core.getInput('filepath'))){
+      console.log("Could not find a test log file located at " + core.getInput('filepath'));
+      console.log("Make you are saving a test log before running this action, and that it is saved to the filepath arguement");
+      return;
+    }
     const data = fs.readFileSync(
         core.getInput('filepath'), 'utf8');
-
+    ddddd
     const sendMe = {type: fileType, data: data, metadata: metaData};
-    const endpoint = core.getInput('endpoint') || 'https://flaky-dashboard.web.app/api/build'
+    const endpoint = core.getInput('endpoint') + '/api/build'
+    console.log("Beginning Upload of data...")
     const outcome = await fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify(sendMe),
       headers: {'Content-Type': 'application/json'},
     });
     const outcomeText = await outcome.text();
-    console.log('\nSERVER RESPONSE:');
-    console.log(outcomeText);
+    const outcomeAsJSON = JSON.parse(outcomeText);
+    if(outcomeAsJSON.error){
+      console.log("Upload Failed - Status " + outcome.status);
+      console.log(outcomeAsJSON.error);
+      console.log("See documentation on how to use this action at https://github.com/googlecloudplatform/flaky-service");
+    }
+    else if (outcomeAsJSON.message){
+      console.log("Build Uploaded Successfully!");
+      console.log("Visit " + core.getInput('endpoint') + "/org/" + metaData.github.repository + " to see uploaded data")
+    }else{
+      console.log("Encountered unknown error, possibly involving server issues");
+    }
+    
+
   } catch (error) {
     console.log(error);
     core.setFailed(error.message);
@@ -218,7 +257,6 @@ async function main() {
 
 
 main();
-
 
 /***/ }),
 
