@@ -229,7 +229,7 @@ async function main() {
     if (!fs.existsSync(core.getInput('file-path'))){
       core.warning("Could not find a test log file located at " + core.getInput('file-path'));
       core.warning("Make you are saving a test log before running this action, and that it is saved to the file-path arguement");
-      return;
+      throw "Could not find File";
     }
     const data = fs.readFileSync(
         core.getInput('file-path'), 'utf8');
@@ -247,17 +247,20 @@ async function main() {
       core.warning("Upload Failed - Status " + outcome.status);
       core.warning(outcomeAsJSON.error);
       core.warning("See documentation on how to use this action at https://github.com/googlecloudplatform/flaky-service");
+      throw "Upload Failed";
     }
     else if (outcomeAsJSON.message){
       console.log("Build Uploaded Successfully!");
       console.log("Visit " + core.getInput('endpoint') + "/org/" + process.env.GITHUB_REPOSITORY + " to see uploaded data")
     }else{
       core.warning("Encountered unknown error, possibly involving server issues");
+      throw "Unkown Error";
     }
     
 
   } catch (error) {
     core.warning(error);
+    process.exitCode = 1;
     core.setFailed(error.message);
   }
 }
