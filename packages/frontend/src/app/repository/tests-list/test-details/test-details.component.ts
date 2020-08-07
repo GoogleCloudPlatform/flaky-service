@@ -15,7 +15,7 @@
 import {Component, Input} from '@angular/core';
 import {Test} from 'src/app/services/search/interfaces';
 import {COMService} from '../../../services/com/com.service';
-import {environment} from '../../../../../environments/environment';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-test-details',
