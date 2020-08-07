@@ -50,13 +50,13 @@ export const apiLinks: ApiLinks = {
     ) =>
       apiBaseLink +
       'repo/' +
-      orgName +
+      encodeURIComponent(orgName) +
       '/' +
-      repoName +
+      encodeURIComponent(repoName) +
       '/test/' +
-      testName +
+      encodeURIComponent(testName) +
       '?redirect=' +
-      redirect,
+      encodeURIComponent(redirect),
   },
   post: {
     authLink: apiBaseLink + 'auth',
