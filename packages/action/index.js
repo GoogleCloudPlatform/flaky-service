@@ -19,84 +19,78 @@ const core = require('@actions/core');
 /**
  * main
  */
-async function main() {
+async function main () {
   try {
     // `who-to-greet` input defined in action metadata file
-    if(!core.getInput('repo-token') || !core.getInput('os') || !core.getInput('file-path') || !core.getInput('repo-token') ){
-      throw "Github action missing required fields. Refer to documentation at https://github.com/googlecloudplatform/flaky-service";
+    if (!core.getInput('repo-token') || !core.getInput('os') || !core.getInput('file-path') || !core.getInput('repo-token')) {
+      throw 'Github action missing required fields. Refer to documentation at https://github.com/googlecloudplatform/flaky-service';
     }
 
-   
     let buildmessageStr = process.env.GITHUB_WORKFLOW + ' ' + process.env.GITHUB_RUN_NUMBER;
-    if(core.getInput('tag') && core.getInput('tag') !== "None"){
+    if (core.getInput('tag') && core.getInput('tag') !== 'None') {
       buildmessageStr += ' (' + core.getInput('tag') + ')';
     }
 
-
     const metaData = {
-      repoId: encodeURIComponent(process.env.GITHUB_REPOSITORY), //resanitized server side
-      organization: process.env.GITHUB_REPOSITORY.substr(0,process.env.GITHUB_REPOSITORY.indexOf("/")),
+      repoId: encodeURIComponent(process.env.GITHUB_REPOSITORY), // resanitized server side
+      organization: process.env.GITHUB_REPOSITORY.substr(0, process.env.GITHUB_REPOSITORY.indexOf('/')),
       timestamp: new Date(),
       url: process.env.GITHUB_SERVER_URL + '/' + process.env.GITHUB_REPOSITORY,
-      environment:{
+      environment: {
         os: core.getInput('os'),
         tag: core.getInput('tag'),
-        matrix :JSON.parse(core.getInput('matrix')),
+        matrix: JSON.parse(core.getInput('matrix')),
         ref: process.env.GITHUB_REF
       },
       buildId: process.env.GITHUB_RUN_ID,
       sha: process.env.GITHUB_SHA,
-      name: process.env.GITHUB_REPOSITORY.substr(1+process.env.GITHUB_REPOSITORY.indexOf("/")),
+      name: process.env.GITHUB_REPOSITORY.substr(1 + process.env.GITHUB_REPOSITORY.indexOf('/')),
       description: core.getInput('repo-description'),
       buildmessage: buildmessageStr,
       token: core.getInput('repo-token')
     };
 
-    metaData.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); //consistancy 
-    
+    metaData.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); // consistancy
+
     metaData.environment.ref = metaData.environment.ref.replace('refs/', '');
     metaData.environment.ref = metaData.environment.ref.replace('heads/', '');
 
     const fileType = core.getInput('log-type');
-    
-    if (!fs.existsSync(core.getInput('file-path'))){
-      core.warning("Could not find a test log file located at " + core.getInput('file-path'));
-      core.warning("Make you are saving a test log before running this action, and that it is saved to the file-path arguement");
-      throw "Could not find File";
+
+    if (!fs.existsSync(core.getInput('file-path'))) {
+      core.warning('Could not find a test log file located at ' + core.getInput('file-path'));
+      core.warning('Make you are saving a test log before running this action, and that it is saved to the file-path arguement');
+      throw 'Could not find File';
     }
     const data = fs.readFileSync(
-        core.getInput('file-path'), 'utf8');
-    const sendMe = {type: fileType, data: data, metadata: metaData};
-    const endpoint = core.getInput('endpoint') + '/api/build/gh/v1'
-    console.log("Beginning Upload of data...")
+      core.getInput('file-path'), 'utf8');
+    const sendMe = { type: fileType, data: data, metadata: metaData };
+    const endpoint = core.getInput('endpoint') + '/api/build/gh/v1';
+    console.log('Beginning Upload of data...');
     const outcome = await fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify(sendMe),
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' }
     });
     const outcomeText = await outcome.text();
     const outcomeAsJSON = JSON.parse(outcomeText);
-    if(outcomeAsJSON.error){
-      core.warning("Upload Failed - Status " + outcome.status);
+    if (outcomeAsJSON.error) {
+      core.warning('Upload Failed - Status ' + outcome.status);
       core.warning(outcomeAsJSON.error);
-      core.warning("See documentation on how to use this action at https://github.com/googlecloudplatform/flaky-service");
-      throw "Upload Failed";
+      core.warning('See documentation on how to use this action at https://github.com/googlecloudplatform/flaky-service');
+      throw 'Upload Failed';
+    } else if (outcomeAsJSON.message) {
+      console.log('Build Uploaded Successfully!');
+      console.log('Visit ' + core.getInput('endpoint') + '/org/' + process.env.GITHUB_REPOSITORY + ' to see uploaded data');
+    } else {
+      core.warning('Encountered unknown error, possibly involving server issues');
+      throw 'Unkown Error';
     }
-    else if (outcomeAsJSON.message){
-      console.log("Build Uploaded Successfully!");
-      console.log("Visit " + core.getInput('endpoint') + "/org/" + process.env.GITHUB_REPOSITORY + " to see uploaded data")
-    }else{
-      core.warning("Encountered unknown error, possibly involving server issues");
-      throw "Unkown Error";
-    }
-    
-
   } catch (error) {
     core.warning(error);
     process.exitCode = 1;
     core.setFailed(error.message);
   }
 }
-
 
 main();
