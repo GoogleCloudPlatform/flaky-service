@@ -191,7 +191,7 @@ async function main() {
     // `who-to-greet` input defined in action metadata file
    
     let buildmessageStr = process.env.GITHUB_WORKFLOW + ' ' + process.env.GITHUB_RUN_NUMBER;
-    if(core.getInput('tag') || !core.getInput('tag') !== "None"){
+    if(core.getInput('tag') || core.getInput('tag') !== "None"){
       buildmessageStr += ' (' + core.getInput('tag') + ')';
     }
 
