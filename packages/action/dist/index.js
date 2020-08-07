@@ -224,8 +224,6 @@ async function main() {
     metaData.environment.ref = metaData.environment.ref.replace('refs/', '');
     metaData.environment.ref = metaData.environment.ref.replace('heads/', '');
 
-    console.log(metaData);
-
     const fileType = core.getInput('log-type');
     
     if (!fs.existsSync(core.getInput('file-path'))){
