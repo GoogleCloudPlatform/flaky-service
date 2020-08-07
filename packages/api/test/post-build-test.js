@@ -212,9 +212,9 @@ describe('Posting Builds', () => {
     var parsedPayloadRaw = JSON.parse(EXAMPLE_PAYLOAD_RAW);
     var repoIds = [parsedPayloadRaw.metadata.github.repository, parsedPayload.metadata.github.repository, 'other/repo'];
 
-    await deleteRepo(client, repoIds[0]);
-    await deleteRepo(client, repoIds[1]);
-    await deleteRepo(client, repoIds[2]);
+    await deleteRepo(repoIds[0], client);
+    await deleteRepo(repoIds[1], client);
+    await deleteRepo(repoIds[2], client);
 
     nock.restore();
     nock.cleanAll();

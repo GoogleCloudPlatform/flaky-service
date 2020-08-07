@@ -480,7 +480,7 @@ describe('Add-Build', () => {
     });
 
     it('Can delete an entire repository', async () => {
-      await deleteRepo(client, decodeURIComponent(buildInfo[0].repoId));
+      await deleteRepo(decodeURIComponent(buildInfo[0].repoId), client);
 
       // make sure the repo doc is still there
       const repoDoc = await client.collection(global.headCollection).doc(buildInfo[0].repoId).get();

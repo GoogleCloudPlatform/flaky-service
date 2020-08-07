@@ -163,7 +163,7 @@ describe('Repository', () => {
     });
 
     it('does not delete repo if not permitted', async () => {
-      await repo.performTicketIfAllowed({ action: 'delete-test', fullName: 'org/repo', }, 'notPermitted');
+      await repo.performTicketIfAllowed({ action: 'delete-test', fullName: 'org/repo' }, 'notPermitted');
 
       // stubbedTestDeletion is called once by other test, but should never be called more than once.
       assert(stubbedRepoDeletion.callCount === 0);

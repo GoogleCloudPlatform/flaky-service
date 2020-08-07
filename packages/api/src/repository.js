@@ -74,7 +74,7 @@ class Repository {
       if (ticket.action === 'delete-test') {
         deleter.deleteTest(ticket.fullName, ticket.testName, client);
       } else if (ticket.action === 'delete-repo') {
-        deleter.deleteRepo(client, ticket.fullName);
+        deleter.deleteRepo(ticket.fullName, client);
       } else {
         throw Error('invalid action');
       }
