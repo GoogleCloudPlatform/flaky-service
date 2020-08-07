@@ -221,19 +221,18 @@ async function main() {
     metaData.environment.ref = metaData.environment.ref.replace('heads/', '');
 
     console.log(metaData);
-    core.warning("WARN TEST");
 
     const fileType = core.getInput('logtype');
     
     if (!fs.existsSync(core.getInput('filepath'))){
-      console.log("Could not find a test log file located at " + core.getInput('filepath'));
-      console.log("Make you are saving a test log before running this action, and that it is saved to the filepath arguement");
+      core.warning("Could not find a test log file located at " + core.getInput('filepath'));
+      core.warning("Make you are saving a test log before running this action, and that it is saved to the filepath arguement");
       return;
     }
     const data = fs.readFileSync(
         core.getInput('filepath'), 'utf8');
     const sendMe = {type: fileType, data: data, metadata: metaData};
-    const endpoint = core.getInput('endpoint') + '/api/build'
+    const endpoint = core.getInput('endpoint') + '/api/build/gh/v1'
     console.log("Beginning Upload of data...")
     const outcome = await fetch(endpoint, {
       method: 'POST',
@@ -243,20 +242,20 @@ async function main() {
     const outcomeText = await outcome.text();
     const outcomeAsJSON = JSON.parse(outcomeText);
     if(outcomeAsJSON.error){
-      console.log("Upload Failed - Status " + outcome.status);
-      console.log(outcomeAsJSON.error);
-      console.log("See documentation on how to use this action at https://github.com/googlecloudplatform/flaky-service");
+      core.warning("Upload Failed - Status " + outcome.status);
+      core.warning(outcomeAsJSON.error);
+      core.warning("See documentation on how to use this action at https://github.com/googlecloudplatform/flaky-service");
     }
     else if (outcomeAsJSON.message){
       console.log("Build Uploaded Successfully!");
       console.log("Visit " + core.getInput('endpoint') + "/org/" + metaData.github.repository + " to see uploaded data")
     }else{
-      console.log("Encountered unknown error, possibly involving server issues");
+      core.warning("Encountered unknown error, possibly involving server issues");
     }
     
 
   } catch (error) {
-    console.log(error);
+    core.warning(error);
     core.setFailed(error.message);
   }
 }
