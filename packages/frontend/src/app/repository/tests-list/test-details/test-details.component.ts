@@ -35,13 +35,15 @@ export class TestDetailsComponent {
   }
 
   startDeleteTest() {
-    this.comService.fetchDeleteTestUrl(
-      this.orgName,
-      this.repoName,
-      this.test.name,
-      environment.baseUrl
-    ).subscribe(res => {
-      this.windowProvider.open(res, '_self');
-    });
+    this.comService
+      .fetchDeleteTestUrl(
+        this.orgName,
+        this.repoName,
+        this.test.name,
+        environment.baseUrl
+      )
+      .subscribe(res => {
+        this.windowProvider.open(res, '_self');
+      });
   }
 }

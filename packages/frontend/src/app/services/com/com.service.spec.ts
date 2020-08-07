@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {TestBed} from '@angular/core/testing';
+import {TestBed, tick} from '@angular/core/testing';
 import {COMService} from './com.service';
 import {HttpClientModule, HttpErrorResponse} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
@@ -245,9 +245,12 @@ describe('COMService', () => {
       const err = {} as HttpErrorResponse;
       httpClientSpy.get.and.returnValue(throwError(err));
 
-      service.fetchDeleteTestUrl(repoName, orgName, testName, redirect).subscribe(result => {
-        expect(errorHandler).toHaveBeenCalledWith(err);
-      });
+      service
+        .fetchDeleteTestUrl(repoName, orgName, testName, redirect)
+        .subscribe();
+
+      tick();
+      expect(errorHandler).toHaveBeenCalledWith(err);
     });
   });
 
