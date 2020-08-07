@@ -191,6 +191,7 @@ async function main() {
     // `who-to-greet` input defined in action metadata file
     if(!core.getInput('repo-token') || !core.getInput('os') || !core.getInput('file-path:') || !core.getInput('repo-token') ){
       core.setFailed("Github action missing required fields. Refer to documentation at https://github.com/googlecloudplatform/flaky-service");
+      return;
     }
 
    
