@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {TestBed, tick} from '@angular/core/testing';
+import {TestBed, tick, fakeAsync} from '@angular/core/testing';
 import {COMService} from './com.service';
 import {HttpClientModule, HttpErrorResponse} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
@@ -238,7 +238,7 @@ describe('COMService', () => {
       );
     });
 
-    it('should call the error handler if an error occurs', () => {
+    it('should call the error handler if an error occurs', fakeAsync (() => {
       const errorHandler = spyOn(service, 'handleError').and.returnValue(
         empty()
       );
@@ -251,7 +251,7 @@ describe('COMService', () => {
 
       tick();
       expect(errorHandler).toHaveBeenCalledWith(err);
-    });
+    }));
   });
 
   describe('handleError', () => {
