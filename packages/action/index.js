@@ -58,8 +58,8 @@ async function main() {
     const fileType = core.getInput('log-type');
     
     if (!fs.existsSync(core.getInput('file-path'))){
-      core.warning("Could not find a test log file located at " + core.getInput('filepath'));
-      core.warning("Make you are saving a test log before running this action, and that it is saved to the filepath arguement");
+      core.warning("Could not find a test log file located at " + core.getInput('file-path'));
+      core.warning("Make you are saving a test log before running this action, and that it is saved to the file-path arguement");
       return;
     }
     const data = fs.readFileSync(
