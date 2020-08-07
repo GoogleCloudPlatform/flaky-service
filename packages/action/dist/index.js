@@ -189,7 +189,7 @@ const core = __webpack_require__(931);
 async function main() {
   try {
     // `who-to-greet` input defined in action metadata file
-    if(!core.getInput('repo-token') || !core.getInput('os') || !core.getInput('file-path:') || !core.getInput('repo-token') ){
+    if(!core.getInput('repo-token') || !core.getInput('os') || !core.getInput('file-path') || !core.getInput('repo-token') ){
       throw "Github action missing required fields. Refer to documentation at https://github.com/googlecloudplatform/flaky-service";
     }
 
