@@ -245,7 +245,7 @@ describe('COMService', () => {
       const err = {} as HttpErrorResponse;
       httpClientSpy.get.and.returnValue(throwError(err));
 
-      service.fetchDeleteTestUrl('repo', 'org', []).subscribe();
+      service.fetchDeleteTestUrl(repoName, orgName, testName, redirect);
       expect(errorHandler).toHaveBeenCalledWith(err);
     });
   });
