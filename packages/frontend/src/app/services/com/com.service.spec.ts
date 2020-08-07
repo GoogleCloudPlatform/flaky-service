@@ -238,7 +238,7 @@ describe('COMService', () => {
       );
     });
 
-    it('should call the error handler if an error occurs', fakeAsync (() => {
+    it('should call the error handler if an error occurs', fakeAsync(() => {
       const errorHandler = spyOn(service, 'handleError').and.returnValue(
         empty()
       );
