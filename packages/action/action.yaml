@@ -15,7 +15,7 @@ inputs:
     description: 'Type of Log.. e.g. (TAP, XML, ... TODO)'
     required: false
     default: 'TAP'
-  filepath:
+  file-path:
     description: 'location of the testing file'
     required: true
   repo-description:
