@@ -80,7 +80,7 @@ describe('TestDetailsComponent', () => {
     spyOn(component.windowProvider, 'open');
     //click the test deletion button
     const deleteButton = fixture.debugElement.nativeElement.querySelector(
-      '#delete-test-button'
+      '.delete-test-button'
     );
     deleteButton.click();
     tick();
