@@ -156,13 +156,13 @@ describe('Repository', () => {
       assert(stubbedTestDeletion.callCount === 0);
     });
 
-    it('deletes test if permitted', async () => {
+    it('deletes repo if permitted', async () => {
       await repo.performTicketIfAllowed({ action: 'delete-repo', fullName: 'org/repo' }, 'permitted');
 
       assert(stubbedRepoDeletion.calledWith('org/repo'));
     });
 
-    it('does not delete test if not permitted', async () => {
+    it('does not delete repo if not permitted', async () => {
       await repo.performTicketIfAllowed({ action: 'delete-test', fullName: 'org/repo', }, 'notPermitted');
 
       // stubbedTestDeletion is called once by other test, but should never be called more than once.
