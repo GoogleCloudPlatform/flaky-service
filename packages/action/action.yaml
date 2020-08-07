@@ -1,6 +1,9 @@
 name: 'Flaky.dev'
 description: 'Post Testing Logs to Flaky Server'
 inputs:
+  repo-token:
+    description: "Github action's token to authenticate post"
+    required: true
   matrix:
     description: 'Matrix information on run in jSON format'
     required: false
@@ -8,14 +11,14 @@ inputs:
   os:
     description: 'Operating System it is being run on'
     required: true
-  logtype:
+  log-type:
     description: 'Type of Log.. e.g. (TAP, XML, ... TODO)'
     required: false
     default: 'TAP'
   filepath:
     description: 'location of the testing file'
     required: true
-  repodescription:
+  repo-description:
     description: 'Description of the repository'
     required: false
     default: 'None'
@@ -27,9 +30,6 @@ inputs:
     description: 'Tag post. Useful for two posts from same action'
     required: false
     default: 'None'
-  private:
-    description: 'Flaky.dev only supports repositories which are not private. If private, results will be discarded'
-    required: true
 
 runs:
   using: 'node12'

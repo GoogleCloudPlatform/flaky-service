@@ -210,10 +210,9 @@ async function main() {
       buildId: process.env.GITHUB_RUN_ID,
       sha: process.env.GITHUB_SHA,
       name: process.env.GITHUB_REPOSITORY.substr(1+process.env.GITHUB_REPOSITORY.indexOf("/")),
-      description: core.getInput('repodescription'),
-      private: core.getInput("private"),
+      description: core.getInput('repo-description'),
       buildmessage: buildmessageStr,
-      token: process.env.GITHUB_TOKEN
+      token: core.getInput('repo-token')
     };
 
     metaData.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); //consistancy 
@@ -223,7 +222,7 @@ async function main() {
 
     console.log(metaData);
 
-    const fileType = core.getInput('logtype');
+    const fileType = core.getInput('log-type');
     
     if (!fs.existsSync(core.getInput('filepath'))){
       core.warning("Could not find a test log file located at " + core.getInput('filepath'));
