@@ -81,7 +81,7 @@ async function main() {
     }
     else if (outcomeAsJSON.message){
       console.log("Build Uploaded Successfully!");
-      console.log("Visit " + core.getInput('endpoint') + "/org/" + metaData.github.repository + " to see uploaded data")
+      console.log("Visit " + core.getInput('endpoint') + "/org/" + process.env.GITHUB_REPOSITOR + " to see uploaded data")
     }else{
       core.warning("Encountered unknown error, possibly involving server issues");
     }
