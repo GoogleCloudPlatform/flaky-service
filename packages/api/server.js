@@ -81,14 +81,7 @@ app.get('/api/callback', async (req, res) => {
 
   const performed = await repo.performTicketIfAllowed(ticket, userPermission);
 
-  // todo send a message to the frontend to put a banner on the page indicating whether the action has been performed
-  if (performed) {
-    console.log('Successfully performed the action');
-    res.status(200).redirect(redirect);
-  } else {
-    console.log('Not permitted to perform the action');
-    res.status(404).redirect(redirect);
-  }
+  res.redirect(redirect + ';done=' + performed);
 });
 
 const postBuildHandler = new PostBuildHandler(app, client);
