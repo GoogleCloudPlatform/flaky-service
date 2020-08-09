@@ -28,7 +28,7 @@ const { v4 } = require('uuid');
 
 const cors = require('cors');
 
-global.headCollection = process.env.HEAD_COLLECTION || 'production/main/repos';
+global.headCollection = 'production/main/repos';
 
 app.use(cors());
 app.use(bodyParser.json());
