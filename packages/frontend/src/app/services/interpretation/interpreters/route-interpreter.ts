@@ -68,7 +68,7 @@ export const expectedParams: Map<string, ExpectedParams> = new Map([
   ],
   [
     RouteProvider.routes.repo.name,
-    {queries: ['org', 'repo'], filters: ['tag', 'matrix', 'ref', 'os']},
+    {queries: ['org', 'repo', 'done'], filters: ['tag', 'matrix', 'ref', 'os']},
   ],
   ['build', {queries: ['org', 'repo', 'build'], filters: ['order by']}],
 ]);
