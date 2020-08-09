@@ -81,7 +81,13 @@ app.get('/api/callback', async (req, res) => {
 
   const performed = await repo.performTicketIfAllowed(ticket, userPermission);
 
-  res.redirect(redirect + ';done=' + performed);
+  if (performed) {
+    console.log('Successfully performed the action');
+    res.status(200).redirect(redirect + ';done=' + performed);
+  } else {
+    console.log('Not permitted to perform the action');
+    res.status(404).redirect(redirect + ';done=' + performed);
+  }
 });
 
 const postBuildHandler = new PostBuildHandler(app, client);
