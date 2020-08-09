@@ -88,7 +88,7 @@ describe('flaky express server', () => {
       const resp = await fetch('http://0.0.0.0:3000/api/callback?state=' + fakeState + '&code=ANYTHING', {
         headers: { redirect: 'manual' }
       });
-      assert.strictEqual(resp.url, process.env.FRONTEND_URL);
+      assert.strictEqual(resp.url, process.env.FRONTEND_URL + ';done=true');
       assert.strictEqual(resp.status, 200);
     });
 
