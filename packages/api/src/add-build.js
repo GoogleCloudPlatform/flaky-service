@@ -67,11 +67,9 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
       return false;
     }
   });
-  console.log(dbRepo);
 
   const testsToProcess = testCases.map((testCase) => {
     return () => {
-      //return Promise.all([addTestRun(testCase, buildInfo, dbRepo), updateQueue(isFirstBuild, testCase, buildInfo, dbRepo)]);
       return Promise.resolve(updateQueue(isFirstBuild, testCase, buildInfo, dbRepo));
     };
   });
@@ -88,6 +86,7 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
   });
 
   //metrics.percentpassing = (metrics.total === 0) ? 0 : metrics.passcount / metrics.total;
+  console.log(metrics);
   return metrics;
 }
 
@@ -113,6 +112,7 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
   const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo);
 
   if(isFirstBuild) {
+    await addTestRun(testCase, buildInfo, dbRepo);
     return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
   }
 
@@ -121,18 +121,26 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
     //the current run fails
     //whether this run's test is in the queue or not, call updateTest
     //to add the test to the queue, or update it appropriately
+    await addTestRun(testCase, buildInfo, dbRepo);
     return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
   }
   else{
     //the current run is successful
     if(calculateFlaky(prevTest, testCase)) {
       //the current run is flaky so it must be updated
+      await addTestRun(testCase, buildInfo, dbRepo);
       return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
     }
     else if(prevTest.exists) {
-      //the current run is successful and not flaky so it can be removed from the queue
-      console.log(testCase.encodedName);
-      await dbRepo.collection('queued').doc(testCase.encodedName).delete();
+      if(prevTest.data().passed) {
+        //remove the test from the queue, it was previously passing and is currently passing
+        await dbRepo.collection('queued').doc(testCase.encodedName).delete();
+      }
+      else {
+        //the current run is successful and not flaky but previously failed, update the test to be passing
+        await addTestRun(testCase, buildInfo, dbRepo);
+        return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+      }
     }
     //if the test does not previously exist in the queue, do nothing
   }
@@ -146,8 +154,9 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
 async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo) {
   const updateObj = {
     //percentpassing: testCaseAnalytics.computePassingPercent(),
+    hasfailed: ((prevTest.exists && prevTest.data().hasfailed) || !testCase.successful),
+    shouldtrack: calculateTrack(prevTest, testCase),
     flaky: calculateFlaky(prevTest, testCase),
-    hasfailed: (prevTest.exists && !isFirstBuild),
     passed: testCase.successful,
     failuremessageiffailing: testCaseAnalytics.mostRecentStatus(prevTest.exists ? prevTest.data().failuremessageiffailing : 'None'),
     searchindex: testCaseAnalytics.isCurrentlyPassing() ? (testCaseAnalytics.computeIsFlaky() ? 1 : 0) : 2,
@@ -187,12 +196,49 @@ async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, 
   };
 }
 
+//function to see if we should start tracking subsequentpasses
+function calculateTrack (prevTest, testCase) {
+  if(!prevTest.exists) {
+    return false;
+  }
+
+  if(prevTest.data().shouldtrack){
+    if(testCase.successful){
+      //check how many subsequent passes there have been
+      if(prevTest.data().subsequentpasses < 15) {
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+    else{
+      //the test was previously being tracked and failed, so continue tracking
+      return true;
+    }
+  }
+  else {
+    if(testCase.successful) {
+      //the test is successful and previously untracked, so no need to track
+      return false;
+    }
+    else if(prevTest.data().hasfailed && prevTest.data().passed) {
+      //the test is currently failing and has failed in a prior run, so track it
+      return true;
+    }
+    else{
+      //this is the first time that the test is failing, so no need to track yet
+      return false;
+    }
+  }
+}
+
 function calculateFlaky (prevTest, testCase) {
-  if(prevTest.exists && prevTest.hasfailed){
-    //test is in the queue
+  if(prevTest.exists && prevTest.data().hasfailed){
+    //test is in the queue and has failed previously
     if(testCase.successful){
       //currently passing
-      if(prevTest.data().subsequentpasses >= 15) {
+      if((prevTest.data().subsequentpasses >= 15)||(!prevTest.data().shouldtrack)){
         //NOT FLAKY
         return false;
       }
@@ -224,7 +270,7 @@ function calculateFlaky (prevTest, testCase) {
 function calculateSubsequentPasses (prevTest, testCase) {
   if(testCase.successful) {
     //currently passing
-    if(prevTest.exists) {
+    if(prevTest.exists && prevTest.data().shouldtrack) {
       //test was previously in the queue
       return (prevTest.data().subsequentpasses+1);
     }
