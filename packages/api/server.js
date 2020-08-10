@@ -35,7 +35,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-app.get('/api/repo/deleteurl/:orgname/:reponame/test/', async (req, res) => {
+app.get('/api/repo/deleteurl/:orgname/:reponame/test', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
   if (!req.query.testname) {
