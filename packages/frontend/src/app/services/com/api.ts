@@ -53,9 +53,9 @@ export const apiLinks: ApiLinks = {
       encodeURIComponent(orgName) +
       '/' +
       encodeURIComponent(repoName) +
-      '/test/' +
+      '?testname=' +
       encodeURIComponent(testName) +
-      '?redirect=' +
+      '&redirect=' +
       encodeURIComponent(redirect),
   },
   post: {

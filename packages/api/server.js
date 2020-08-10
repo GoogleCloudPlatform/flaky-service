@@ -23,6 +23,7 @@ const GetTestHandler = require('./src/get-test.js');
 const GetExportHandler = require('./src/get-export.js');
 const client = require('./src/firestore.js');
 const auth = require('./src/auth.js');
+const firebaseEncode = require('./lib/firebase-encode');
 
 const { v4 } = require('uuid');
 
@@ -34,11 +35,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-app.get('/api/repo/deleteurl/:orgname/:reponame/test/:testid', async (req, res) => {
+app.get('/api/repo/deleteurl/:orgname/:reponame/test/', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
-  const testName = req.params.testid;
-  const redirect = req.query.redirect || process.env.FRONTEND_URL;
+  if (!req.query.testname) {
+          throw new InvalidParameterError('Route requires query parameter of name');
+        }
+  const testName = firebaseEncode(req.query.testname);
+  const redirect = firebaseEncode(req.query.redirect) || process.env.FRONTEND_URL;
   const state = v4();
 
   await repo.storeTicket({
