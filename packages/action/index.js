@@ -67,6 +67,8 @@ async function main () {
     const sendMe = { type: fileType, data: data, metadata: metaData };
     const endpoint = core.getInput('endpoint') + '/api/build/gh/v1';
     console.log('Beginning Upload of data...');
+    console.log(JSON.stringify(sendMe));
+    console.log(endpoint);
     const outcome = await fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify(sendMe),
