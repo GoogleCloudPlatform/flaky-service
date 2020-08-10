@@ -1,26 +1,35 @@
 name: 'Flaky.dev'
 description: 'Post Testing Logs to Flaky Server'
 inputs:
-  github:
-    description: 'The Github Context JSON object'
+  repo-token:
+    description: "Github action's token to authenticate post"
     required: true
-    default: 'None'
   matrix:
-    description: 'Matrix information on run'
+    description: 'Matrix information on run in jSON format'
     required: false
-    default: 'None'
+    default: '{None: 0}'
   os:
     description: 'Operating System it is being run on'
     required: true
-  logtype:
+  log-type:
     description: 'Type of Log.. e.g. (TAP, XML, ... TODO)'
-    required: true
-  filepath:
+    required: false
+    default: 'TAP'
+  file-path:
     description: 'location of the testing file'
     required: true
-  endpoint:
-    description: 'post url'
+  repo-description:
+    description: 'Description of the repository'
     required: false
+    default: 'None'
+  endpoint:
+    description: 'Base URL to post data to'
+    required: false
+    default: 'https://flaky-dev-staging.web.app'
+  tag:
+    description: 'Tag post. Useful for two posts from same action'
+    required: false
+    default: 'None'
 
 runs:
   using: 'node12'

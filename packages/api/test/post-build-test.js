@@ -207,14 +207,68 @@ describe('Posting Builds', () => {
     }
   });
 
+  it('it should be able to post data already formatted to /build/gh/v1', async () => {
+    const payloadJSON = JSON.parse(EXAMPLE_PAYLOAD_RAW);
+
+    payloadJSON.metadata = {
+      repoId: 'nodejs/node', // This value needs to be encoded
+      organization: 'nodejs',
+      name: 'node',
+      buildId: '11111',
+      sha: '123',
+      url: 'https://github.com/nodejs/WRONG', // URL starts off wrong
+      environment: {
+        os: 'linux-apple',
+        matrix: { 'node-version': '12.0' },
+        ref: 'master',
+        tag: 'abc'
+      },
+      timestamp: 'foobar', // invalid date that will be replaced
+      description: 'nodejs repository',
+      buildmessage: 'Workflow - 1',
+      token: 'CORRECTTOKEN',
+      private: false
+    };
+
+    nock('https://api.github.com', {
+      reqheaders: {
+        Authorization: 'token CORRECTTOKEN'
+      }
+    }).persist()
+      .get('/installation/repositories')
+      .reply(200, validNockResponse);
+
+    const resp = await fetch('http://127.0.0.1:3000/api/build/gh/v1', {
+      method: 'post',
+      body: JSON.stringify(payloadJSON),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const respJSON = await resp.json();
+    assert.strictEqual(respJSON.message, 'successfully added build');
+
+    var repoId = firebaseEncode(payloadJSON.metadata.repoId);
+    var buildId = payloadJSON.metadata.buildId;
+
+    var repositoryInfo = await client.collection(global.headCollection).doc(repoId).get();
+    assert.strictEqual(repositoryInfo.data().organization, payloadJSON.metadata.organization);
+    assert.strictEqual(repositoryInfo.data().url, payloadJSON.metadata.url);
+
+    var buildInfo = await client.collection(global.headCollection).doc(repoId).collection('builds').where('buildId', '==', buildId).get();
+    let result;
+    buildInfo.forEach(r => { result = r; });
+    assert.strictEqual(result.data().tests.length, 2);
+    assert.strictEqual(result.data().percentpassing, 1);
+    assert.strictEqual(result.data().environment.ref, 'master');
+  });
+
   after(async () => {
     var parsedPayload = JSON.parse(EXAMPLE_PAYLOAD);
     var parsedPayloadRaw = JSON.parse(EXAMPLE_PAYLOAD_RAW);
-    var repoIds = [parsedPayloadRaw.metadata.github.repository, parsedPayload.metadata.github.repository, 'other/repo'];
+    var repoIds = [parsedPayloadRaw.metadata.github.repository, parsedPayload.metadata.github.repository, 'other/repo', 'nodejs/node'];
 
-    await deleteRepo(client, repoIds[0]);
-    await deleteRepo(client, repoIds[1]);
-    await deleteRepo(client, repoIds[2]);
+    for (let i = 0; i < repoIds.length; i++) {
+      await deleteRepo(client, repoIds[i]);
+    }
 
     nock.restore();
     nock.cleanAll();
