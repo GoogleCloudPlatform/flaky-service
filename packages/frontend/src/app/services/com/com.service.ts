@@ -85,8 +85,8 @@ export class COMService {
   }
 
   public fetchDeleteTestUrl(
-    repoName: string,
     orgName: string,
+    repoName: string,
     testName: string,
     redirect: string
   ): Observable<string> {

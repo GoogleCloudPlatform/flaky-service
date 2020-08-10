@@ -227,7 +227,7 @@ describe('COMService', () => {
       httpClientSpy.get.and.returnValue(of(serverUrl));
 
       service
-        .fetchDeleteTestUrl(repoName, orgName, testName, redirect)
+        .fetchDeleteTestUrl(orgName, repoName, testName, redirect)
         .subscribe(result => {
           expect(result).toBe(serverUrl);
         });
