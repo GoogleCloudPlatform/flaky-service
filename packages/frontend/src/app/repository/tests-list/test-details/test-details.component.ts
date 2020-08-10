@@ -28,6 +28,7 @@ export class TestDetailsComponent {
   @Input() test: Test;
   @Input() repoName: string;
   @Input() orgName: string;
+  @Input() removalButtonState;
   windowProvider = window;
 
   // Converts tests' passing percentage from decimal to percentage
@@ -36,6 +37,7 @@ export class TestDetailsComponent {
   }
 
   startDeleteTest() {
+    this.removalButtonState.disabled = true;
     this.comService
       .fetchDeleteTestUrl(
         this.orgName,

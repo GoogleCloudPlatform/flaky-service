@@ -52,7 +52,7 @@ limitations under the License.
     <span *ngIf="!test.flaky">NOT FLAKY</span>
     <span>.&nbsp;</span>
 
-    <button mat-raised-button (click)="startDeleteTest()" class="delete-test-button">Delete</button>
+    <button mat-raised-button [disabled]="removalButtonState?.disabled" (click)="startDeleteTest()" class="delete-test-button">Delete</button>
 </div>
 
 
