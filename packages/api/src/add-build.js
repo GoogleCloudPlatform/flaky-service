@@ -134,6 +134,7 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
     else if(prevTest.exists) {
       if(prevTest.data().passed) {
         //remove the test from the queue, it was previously passing and is currently passing
+        await deleteRunCollection(testCase, dbRepo);
         await dbRepo.collection('queued').doc(testCase.encodedName).delete();
       }
       else {
@@ -194,6 +195,29 @@ async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, 
     flaky: calculateFlaky(prevTest, testCase),
     passed: testCase.successful
   };
+}
+
+//this function deletes any run documents in a test's runs collection
+async function deleteRunCollection(testCase, dbRepo) {
+  const snapshot = await dbRepo.collection('queued').doc(testCase.encodedName).collection('runs').get();
+  const batchSize = snapshot.size;
+  if (batchSize === 0) {
+    // When there are no documents left, we are done
+    return;
+  }
+  
+
+  // Delete documents in a batch
+  snapshot.docs.forEach(async(doc) => {
+    //console.log(doc._fieldsProto.buildIdInternal.stringValue);
+    await dbRepo.collection('queued').doc(testCase.encodedName).collection('runs').doc(doc._fieldsProto.buildIdInternal.stringValue).delete();
+  });
+
+  // Recurse on the next process tick, to avoid
+  // exploding the stack.
+  process.nextTick(() => {
+    deleteRunCollection(testCase, dbRepo);
+  });
 }
 
 //function to see if we should start tracking subsequentpasses
