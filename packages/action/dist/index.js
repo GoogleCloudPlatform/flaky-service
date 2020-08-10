@@ -232,7 +232,7 @@ async function main () {
     const data = fs.readFileSync(
       core.getInput('file-path'), 'utf8');
     const sendMe = { type: fileType, data: data, metadata: metaData };
-    const endpoint = core.getInput('endpoint') + '/api/build/gh/v1RANDOM';
+    const endpoint = core.getInput('endpoint') + '/api/build/gh/v1';
     console.log('Beginning Upload of data...');
     console.log(JSON.stringify(sendMe));
     console.log(endpoint);
