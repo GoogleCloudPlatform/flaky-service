@@ -77,6 +77,8 @@ async function main () {
     const outcomeText = await outcome.text();
     const outcomeAsJSON = JSON.parse(outcomeText);
     if (outcomeAsJSON.error) {
+      core.warning(outcome)
+      console.error(outcome)
       core.warning('Upload Failed - Status ' + outcome.status);
       core.warning(outcomeAsJSON.error);
       core.warning('See documentation on how to use this action at https://github.com/googlecloudplatform/flaky-service');
