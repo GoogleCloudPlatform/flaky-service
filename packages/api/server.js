@@ -23,6 +23,7 @@ const GetTestHandler = require('./src/get-test.js');
 const GetExportHandler = require('./src/get-export.js');
 const client = require('./src/firestore.js');
 const auth = require('./src/auth.js');
+const { InvalidParameterError } = require('./lib/errors');
 
 const { v4 } = require('uuid');
 
@@ -38,8 +39,8 @@ app.get('/api/repo/deleteurl/:orgname/:reponame/test/', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
   if (!req.query.testname) {
-          throw new InvalidParameterError('Route requires query parameter of name');
-        }
+    throw new InvalidParameterError('Route requires query parameter of name');
+  }
   const testName = req.query.testname;
   const redirect = req.query.redirect || process.env.FRONTEND_URL;
   const state = v4();
