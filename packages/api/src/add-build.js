@@ -53,21 +53,33 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
     flaky: 0,
     failcount: 0,
     passcount: 0,
-    percentpassing: 0,
+    //percentpassing: 0,
     buildflaky: 0,
     total: 0
   };
 
+  //see if this is the first build for the repository
+  const isFirstBuild = await dbRepo.collection('builds').get().then(collectionSnapshot => {
+    if(collectionSnapshot.size == 0){
+      return true;
+    }
+    else{
+      return false;
+    }
+  });
+  console.log(dbRepo);
+
   const testsToProcess = testCases.map((testCase) => {
     return () => {
-      return Promise.all([addTestRun(testCase, buildInfo, dbRepo), updateQueue(testCase, buildInfo, dbRepo)]);
+      //return Promise.all([addTestRun(testCase, buildInfo, dbRepo), updateQueue(isFirstBuild, testCase, buildInfo, dbRepo)]);
+      return Promise.resolve(updateQueue(isFirstBuild, testCase, buildInfo, dbRepo));
     };
   });
 
   const allTestMetrics = await awaitInBatches(testsToProcess, 50);
 
   allTestMetrics.forEach(testStatus => {
-    const { passed, flaky } = testStatus[1];
+    const { passed, flaky } = testStatus;
     if (flaky) { metrics.flaky += 1; }
     if (passed) { metrics.passcount += 1; }
     if (!passed) { metrics.failcount += 1; }
@@ -75,12 +87,12 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
     metrics.total += 1;
   });
 
-  metrics.percentpassing = (metrics.total === 0) ? 0 : metrics.passcount / metrics.total;
+  //metrics.percentpassing = (metrics.total === 0) ? 0 : metrics.passcount / metrics.total;
   return metrics;
 }
 
 async function addTestRun (testCase, buildInfo, dbRepo) {
-  return dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').doc(buildInfo.buildId).set(
+  return dbRepo.collection('queued').doc(testCase.encodedName).collection('runs').doc(buildInfo.buildId).set(
     {
       environment: buildInfo.environment,
       status: testCase.successful ? 'OK' : testCase.failureMessage,
@@ -92,58 +104,56 @@ async function addTestRun (testCase, buildInfo, dbRepo) {
   );
 }
 
-async function updateQueue (testCase, buildInfo, dbRepo) {
+async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
   //see if the test exists in the queue
   const prevTest = await dbRepo.collection('queued').doc(testCase.encodedName).get();
-  const cachedSuccess = (prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
-  const cachedFails = (prevTest.data() && prevTest.data().cachedFails) ? prevTest.data().cachedFails : [];
-
-  const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo);
-  //check the status of the current test run
-  if(testCase.successful) {
-    if(prevTest.exists()) {
-      //the current run is successful and this run's test previously existed in the queue
-      //see if the test is considered flaky
-      if(testCaseAnalytics.computeIsFlaky()){
-        return Promise(updateTest(prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
-      }
-      //remove the test from queued collection because it is successful and not flaky
-      await dbRepo.collection('queued').doc(testCase.encodedName).delete();
-    }
-    //the current run is successful and the test did not exist in the queue
-    //so no need to update anything in the queue
-  }
-  else{
-    //the current run fails
-    //whether this run's test is in the queue or not, call updateTest
-    //to add the test to the queue, or update it appropriately
-    return Promise(updateTest(prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
-  }
-  //return empty metrics
-  return {
-    flaky: testCaseAnalytics.computeIsFlaky(),
-    passed: testCase.successful
-  };
-}
-
-async function updateTest (prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo) {
-  // first read the test
-  /*
-  const prevTest = await dbRepo.collection('tests').doc(testCase.encodedName).get();
   const cachedSuccess = (prevTest.exists && prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
   const cachedFails = (prevTest.exists && prevTest.data() && prevTest.data().cachedFails) ? prevTest.data().cachedFails : [];
 
   const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo);
-  */
 
+  if(isFirstBuild) {
+    return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+  }
+
+  //check the status of the current test run
+  if(!testCase.successful) {
+    //the current run fails
+    //whether this run's test is in the queue or not, call updateTest
+    //to add the test to the queue, or update it appropriately
+    return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+  }
+  else{
+    //the current run is successful
+    if(calculateFlaky(prevTest, testCase)) {
+      //the current run is flaky so it must be updated
+      return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+    }
+    else if(prevTest.exists) {
+      //the current run is successful and not flaky so it can be removed from the queue
+      console.log(testCase.encodedName);
+      await dbRepo.collection('queued').doc(testCase.encodedName).delete();
+    }
+    //if the test does not previously exist in the queue, do nothing
+  }
+  //return metrics
+  return {
+    flaky: calculateFlaky(prevTest, testCase),
+    passed: testCase.successful
+  };
+}
+
+async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo) {
   const updateObj = {
-    percentpassing: testCaseAnalytics.computePassingPercent(),
-    flaky: testCaseAnalytics.computeIsFlaky(),
-    passed: testCaseAnalytics.isCurrentlyPassing(),
+    //percentpassing: testCaseAnalytics.computePassingPercent(),
+    flaky: calculateFlaky(prevTest, testCase),
+    hasfailed: (prevTest.exists && !isFirstBuild),
+    passed: testCase.successful,
     failuremessageiffailing: testCaseAnalytics.mostRecentStatus(prevTest.exists ? prevTest.data().failuremessageiffailing : 'None'),
     searchindex: testCaseAnalytics.isCurrentlyPassing() ? (testCaseAnalytics.computeIsFlaky() ? 1 : 0) : 2,
     lastupdate: testCaseAnalytics.getLastUpdate(),
     name: testCase.name,
+    subsequentpasses: calculateSubsequentPasses(prevTest, testCase),
     lifetimepasscount: (testCase.successful) ? Firestore.FieldValue.increment(1) : Firestore.FieldValue.increment(0),
     lifetimefailcount: (testCase.successful) ? Firestore.FieldValue.increment(0) : Firestore.FieldValue.increment(1)
   };
@@ -172,10 +182,58 @@ async function updateTest (prevTest, testCaseAnalytics, testCase, buildInfo, dbR
   }
 
   return {
-    flaky: testCaseAnalytics.computeIsFlaky(),
+    flaky: calculateFlaky(prevTest, testCase),
     passed: testCase.successful
   };
 }
+
+function calculateFlaky (prevTest, testCase) {
+  if(prevTest.exists && prevTest.hasfailed){
+    //test is in the queue
+    if(testCase.successful){
+      //currently passing
+      if(prevTest.data().subsequentpasses >= 15) {
+        //NOT FLAKY
+        return false;
+      }
+      else{
+        //FLAKY
+        return true;
+      }
+    }
+    else{
+      //currently failing
+      if(prevTest.data().subsequentpasses == 0) {
+        //NOT FLAKY, just failing
+        return false;
+      }
+      else{
+        //FLAKY
+        return true;
+      }
+    }
+
+  }
+  else{
+    //test is not in the queue so NOT FLAKY
+    return false;
+  }
+}
+
+
+function calculateSubsequentPasses (prevTest, testCase) {
+  if(testCase.successful) {
+    //currently passing
+    if(prevTest.exists) {
+      //test was previously in the queue
+      return (prevTest.data().subsequentpasses+1);
+    }
+  }
+
+  //otherwise, set the subsequent passes to zero
+  return 0;
+}
+
 
 async function isMostRecentBuild (buildInfo, dbRepo) {
   const curRepo = await dbRepo.get();
@@ -190,7 +248,7 @@ async function addBuildDoc (testCases, buildInfo, computedData, dbRepo) {
   const alltests = testCases.map(x => x.encodedName); // not currently used in MVP but would be useful for finding all tests in a build
 
   await dbRepo.collection('builds').doc(buildInfo.buildId).set({
-    percentpassing: computedData.percentpassing,
+    //percentpassing: computedData.percentpassing,
     passcount: computedData.passcount,
     failcount: computedData.failcount,
     environment: buildInfo.environment,
