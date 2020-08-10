@@ -49,6 +49,7 @@ describe('TestDetailsComponent', () => {
     component = fixture.componentInstance;
     component.test = mockTests.tests[0];
     fixture.detectChanges();
+    component.removalButtonState = {disabled: false};
   });
 
   it('should create', () => {
@@ -88,5 +89,23 @@ describe('TestDetailsComponent', () => {
       'https://flaky-dashboard.web.app/',
       '_self'
     );
+  }));
+
+  it("should disable the removal button when it's clicked", fakeAsync(() => {
+    component.orgName = 'testOrg';
+    component.repoName = 'testRepo';
+    component.windowProvider = (mockWindowProvider as unknown) as typeof window;
+
+    component.comService.fetchDeleteTestUrl = comMock;
+    fixture.detectChanges();
+
+    //click the test deletion button
+    const deleteButton = fixture.debugElement.nativeElement.querySelector(
+      '.delete-test-button'
+    );
+    deleteButton.click();
+    tick();
+
+    expect(component.removalButtonState.disabled).toBeTrue();
   }));
 });
