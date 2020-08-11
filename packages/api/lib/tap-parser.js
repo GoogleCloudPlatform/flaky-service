@@ -14,6 +14,9 @@
 
 /*
 File with utilities for parsing Tap files and outputting them as Csv or more readable format
+
+Only used by scripts/populate.js
+
 */
 
 var fs = require('fs');

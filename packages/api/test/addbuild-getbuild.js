@@ -136,7 +136,6 @@ describe('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
-      console.log('BUIDLS>DATA: ' + builds.data().percentpassing);
       assert.strictEqual(builds.data().percentpassing, 1.0);
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 0);

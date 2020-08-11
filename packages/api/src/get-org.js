@@ -41,48 +41,7 @@ class GetOrgHandler {
 
   // TODO order by flakyness
   listen () {
-    // return the different environments for a build - all parameters and possible values for next query
-    this.app.get('/api/repo', async (req, res, next) => {
-      try {
-        if (req.query.limit && isNaN(req.query.limit)) {
-          throw new InvalidParameterError('limit parameter must be int');
-        }
-        if (!req.query.org) {
-          throw new InvalidParameterError('Must include org query parameter');
-        }
 
-        const limit = parseInt(req.query.limit || 10);
-        if (!req.query.startswith) { // case with no query
-          let defaultQuery = this.client.collection(global.headCollection).limit(limit).orderBy('lower.name');
-
-          defaultQuery = defaultQuery.where('lower.organization', '==', req.query.org.toLowerCase());
-
-          defaultQuery = this.paginateQuery(defaultQuery, req.query.startaftername, req.query.endbeforename);
-          const snapshot = await defaultQuery.get();
-          res.send(snapshot.docs.map(doc => doc.data()));
-        } else {
-          // get 10 results starting with name or org/name
-          const results = [];
-          const startsWith = req.query.startswith.toLowerCase();
-
-          let nameQuery = this.client.collection(global.headCollection)
-            .where('lower.name', '>=', startsWith)
-            .where('lower.name', '<', this.alphabeticallyIncrement(startsWith));
-          nameQuery = nameQuery.where('lower.organization', '==', req.query.org.toLowerCase());
-
-          nameQuery = nameQuery.orderBy('lower.name').limit(limit);
-          nameQuery = this.paginateQuery(nameQuery, req.query.startaftername, req.query.endbeforename);
-          const snapshotName = await nameQuery.get();
-          snapshotName.docs.forEach(doc => {
-            results.push(doc.data());
-          });
-
-          res.send(results);
-        }
-      } catch (err) {
-        handleError(res, err);
-      }
-    });
 
     // returns all repositories for a particular org
     this.app.get('/api/org/:orgname', async (req, res, next) => {
