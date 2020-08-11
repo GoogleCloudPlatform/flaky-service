@@ -107,7 +107,7 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
   const cachedSuccess = (prevTest.exists && prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
   const cachedFails = (prevTest.exists && prevTest.data() && prevTest.data().cachedFails) ? prevTest.data().cachedFails : [];
 
-  const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo);
+  const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
 
   if (isFirstBuild) {
     await addTestRun(testCase, buildInfo, dbRepo);
@@ -125,7 +125,7 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
     return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
   } else {
     // the current run is successful
-    if (calculateFlaky(prevTest, testCase)) {
+    if (testCaseAnalytics.calculateFlaky()) {
       // the current run is flaky so it must be updated
       await addTestRun(testCase, buildInfo, dbRepo);
       return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
@@ -144,7 +144,7 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
   }
   // return metrics
   return {
-    flaky: calculateFlaky(prevTest, testCase),
+    flaky: testCaseAnalytics.calculateFlaky(),
     passed: testCase.successful
   };
 }
@@ -153,14 +153,14 @@ async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, 
   const updateObj = {
     // percentpassing: testCaseAnalytics.computePassingPercent(),
     hasfailed: ((prevTest.exists && prevTest.data().hasfailed) || !testCase.successful),
-    shouldtrack: calculateTrack(prevTest, testCase),
-    flaky: calculateFlaky(prevTest, testCase),
+    shouldtrack: testCaseAnalytics.calculateTrack(),
+    flaky: testCaseAnalytics.calculateFlaky(),
     passed: testCase.successful,
     failuremessageiffailing: (!testCase.successful) ? testCase.failureMessage : 'None',
-    searchindex: testCaseAnalytics.isCurrentlyPassing() ? (calculateFlaky(prevTest, testCase) ? 1 : 0) : 2,
+    searchindex: testCaseAnalytics.isCurrentlyPassing() ? (testCaseAnalytics.calculateFlaky(prevTest, testCase) ? 1 : 0) : 2,
     lastupdate: testCaseAnalytics.getLastUpdate(),
     name: testCase.name,
-    subsequentpasses: calculateSubsequentPasses(prevTest, testCase),
+    subsequentpasses: testCaseAnalytics.calculateSubsequentPasses(prevTest, testCase),
     lifetimepasscount: (testCase.successful) ? Firestore.FieldValue.increment(1) : Firestore.FieldValue.increment(0),
     lifetimefailcount: (testCase.successful) ? Firestore.FieldValue.increment(0) : Firestore.FieldValue.increment(1)
   };
@@ -189,7 +189,7 @@ async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, 
   }
 
   return {
-    flaky: calculateFlaky(prevTest, testCase),
+    flaky: testCaseAnalytics.calculateFlaky(),
     passed: testCase.successful
   };
 }
@@ -213,79 +213,6 @@ async function deleteRunCollection (testCase, dbRepo) {
   process.nextTick(() => {
     deleteRunCollection(testCase, dbRepo);
   });
-}
-
-// function to see if we should start tracking subsequentpasses
-function calculateTrack (prevTest, testCase) {
-  if (!prevTest.exists) {
-    return false;
-  }
-
-  if (prevTest.data().shouldtrack) {
-    if (testCase.successful) {
-      // check how many subsequent passes there have been
-      if (prevTest.data().subsequentpasses < 15) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      // the test was previously being tracked and failed, so continue tracking
-      return true;
-    }
-  } else {
-    if (testCase.successful) {
-      // the test is successful and previously untracked, so no need to track
-      return false;
-    } else if (prevTest.data().hasfailed && prevTest.data().passed) {
-      // the test is currently failing and has failed in a prior run, so track it
-      return true;
-    } else {
-      // this is the first time that the test is failing, so no need to track yet
-      return false;
-    }
-  }
-}
-
-function calculateFlaky (prevTest, testCase) {
-  if (prevTest.exists && prevTest.data().hasfailed) {
-    // test is in the queue and has failed previously
-    if (testCase.successful) {
-      // currently passing
-      if ((prevTest.data().subsequentpasses >= 15) || (!prevTest.data().shouldtrack)) {
-        // NOT FLAKY
-        return 0;
-      } else {
-        // FLAKY
-        return 1;
-      }
-    } else {
-      // currently failing
-      if (prevTest.data().subsequentpasses === 0) {
-        // NOT FLAKY, just failing
-        return 0;
-      } else {
-        // FLAKY
-        return 1;
-      }
-    }
-  } else {
-    // test is not in the queue so NOT FLAKY
-    return 0;
-  }
-}
-
-function calculateSubsequentPasses (prevTest, testCase) {
-  if (testCase.successful) {
-    // currently passing
-    if (prevTest.exists && prevTest.data().shouldtrack) {
-      // test was previously in the queue
-      return (prevTest.data().subsequentpasses + 1);
-    }
-  }
-
-  // otherwise, set the subsequent passes to zero
-  return 0;
 }
 
 async function isMostRecentBuild (buildInfo, dbRepo) {

@@ -221,7 +221,6 @@ describe.only('Add-Build', () => {
 
         const test = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('queued').doc(encodeURIComponent(testExpectation.name)).get();
         // assert.strictEqual(test.data().percentpassing, testExpecation.percentpassing);
-        assert.strictEqual(test.data().flaky, testExpectation.flaky);
         assert.deepStrictEqual(test.data().environments, testExpectation.environments);
 
         // make sure all builds exist
