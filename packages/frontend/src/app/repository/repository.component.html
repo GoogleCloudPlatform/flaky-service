@@ -17,7 +17,7 @@ limitations under the License.
 <!-- REPOSITORY METADATA -->
 <div id="filters-container" fxLayoutAlign="center" [class.hidden]="!heatMapLoaded">
     <div id="filters-subcontainer" fxLayout="row" fxLayoutAlign="end">
-        <app-filters (filtersChanged)="onFiltersChanged($event)"></app-filters>
+        <app-filters [showDefaultOption]="true" (filtersChanged)="onFiltersChanged($event)"></app-filters>
     </div>
 </div>
 

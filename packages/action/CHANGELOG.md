@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.1](https://www.github.com/GoogleCloudPlatform/flaky-service/compare/v1.0.0...v1.0.1) (2020-08-07)
+
+
+### Bug Fixes
+
+* action Improvements - overflow error, messages, + ([#226](https://www.github.com/GoogleCloudPlatform/flaky-service/issues/226)) ([5eb3935](https://www.github.com/GoogleCloudPlatform/flaky-service/commit/5eb393552f3bf4f67682da0de8cf69040517ead8))
+
 ## 1.0.0 (2020-07-28)
 
 

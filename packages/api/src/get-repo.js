@@ -33,8 +33,12 @@ class GetRepoHandler {
 
         const metadata = await this.client.collection(global.headCollection).doc(repoid).get();
 
-        if (metadata.data()) {
-          res.send(metadata.data());
+        const metadataObject = metadata.data();
+        if (metadataObject) {
+          if (metadataObject.description === 'None') {
+            metadataObject.description = '';
+          }
+          res.send(metadataObject);
         } else {
           res.status(404).send({ error: 'Did not find repo' });
         }
