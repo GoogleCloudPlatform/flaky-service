@@ -69,33 +69,7 @@ class TestCaseAnalytics {
     return (this.mergedList.length === 0) ? 0 : numSuc / this.mergedList.length;
   }
 
-  // returns true if both...
-  // condition 1: there has been a failure within the last 5 runs
-  // condition 2: there have been any two failures separated by between 1 and 10 successes
-  /*
-  computeIsFlaky () {
-    const failureIndices = [];
-    for (let k = 0; k < this.mergedList.length; k++) {
-      if (!this.mergedList[k].passed) {
-        failureIndices.push(k);
-      }
-    }
-    if (failureIndices.length < 2) {
-      return false;
-    }
-
-    const condition1 = failureIndices[0] < 5;
-    let condition2 = false;
-    for (let j = 1; j < failureIndices.length; j++) {
-      const dif = failureIndices[j] - failureIndices[j - 1];
-      if (dif > 1 && dif <= 10) {
-        condition2 = true;
-      }
-    }
-
-    return condition1 && condition2;
-  }
-  */
+  // returns true if there have been any two failures separated by between 1 and 14 successes
   calculateFlaky () {
     if (this.prevTest.exists && this.prevTest.data().hasfailed) {
       // test is in the queue and has failed previously
@@ -110,8 +84,8 @@ class TestCaseAnalytics {
         }
       } else {
         // currently failing
-        if (this.prevTest.data().subsequentpasses === 0) {
-          // NOT FLAKY, just failing
+        if (!this.prevTest.data().passed) {
+          // not flaky, just failing multiple times in a row
           return false;
         } else {
           // FLAKY
@@ -164,7 +138,6 @@ class TestCaseAnalytics {
         return (this.prevTest.data().subsequentpasses + 1);
       }
     }
-  
     // otherwise, set the subsequent passes to zero
     return 0;
   }

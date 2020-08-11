@@ -45,7 +45,7 @@ const buildInfo = [
       ref: 'master',
       tag: 'abc'
     },
-    timestamp: new Date('01/01/2001'),
+    timestamp: new Date('01/01/2000'),
     testCases: [
       new TestCaseRun('ok', 1, 'a/1'),
       new TestCaseRun('not ok', 2, 'a/2'),
@@ -68,7 +68,7 @@ const buildInfo = [
       ref: 'master',
       tag: 'xyz'
     },
-    timestamp: new Date('01/01/2000'),
+    timestamp: new Date('01/01/2001'),
     testCases: [
       new TestCaseRun('ok', 1, 'a/1'),
       new TestCaseRun('ok', 2, 'a/2') // this test is now passing
@@ -102,14 +102,13 @@ const buildInfo = [
 buildInfo[2].testCases[0].failureMessage = 'Error message';
 buildInfo[2].testCases[1].failureMessage = 'Error message';
 
-describe.only('Add-Build', () => {
+describe('Add-Build', () => {
   before(async () => {
     global.headCollection = 'testing1/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
   });
 
   describe('add-build', async () => {
     it('Can add a build and repository to a blank collection', async () => {
-      console.log(global.headCollection);
       await addBuild(buildInfo[0].testCases, buildInfo[0], client, global.headCollection);
 
       // ensure repository was initialized
@@ -259,7 +258,7 @@ describe.only('Add-Build', () => {
       // assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
-      const solMeta = { name: 'node', repoId: 'nodejs/node', description: '', organization: 'nodejs', searchindex: 2 * 10000, numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
+      const solMeta = { name: 'node', repoId: 'nodejs/node', description: '', organization: 'nodejs', searchindex: 2 * 10000 + 1, numfails: 2, flaky: 1, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
       const solActual = JSON.parse(respTextMeta);
       delete solActual.lastupdate;
       assert.deepStrictEqual(solActual, solMeta);

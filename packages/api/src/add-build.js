@@ -39,7 +39,7 @@ async function addBuild (testCases, buildInfo, client, collectionName) {
   buildInfo.buildIdReadable = buildInfo.buildId;
   buildInfo.buildId = uuidv4(); // buildId will always be UUID
 
-  const phaseOne = await Promise.all([updateAllTests(testCases, buildInfo, dbRepo), isMostRecentBuild(buildInfo, dbRepo)]);
+  const phaseOne = await Promise.all([updateAllTests(client, testCases, buildInfo, dbRepo), isMostRecentBuild(buildInfo, dbRepo)]);
   // unpack results
   const computedData = phaseOne[0];
   const mostRecent = phaseOne[1];
@@ -47,7 +47,7 @@ async function addBuild (testCases, buildInfo, client, collectionName) {
   await Promise.all([addBuildDoc(testCases, buildInfo, computedData, dbRepo), updateRepoDoc(buildInfo, computedData, mostRecent, dbRepo)]);
 }
 
-async function updateAllTests (testCases, buildInfo, dbRepo) {
+async function updateAllTests (client, testCases, buildInfo, dbRepo) {
   // For the test cases
   const metrics = {
     flaky: 0,
@@ -69,7 +69,7 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
 
   const testsToProcess = testCases.map((testCase) => {
     return () => {
-      return Promise.resolve(updateQueue(isFirstBuild, testCase, buildInfo, dbRepo));
+      return Promise.resolve(updateQueue(client, isFirstBuild, testCase, buildInfo, dbRepo));
     };
   });
 
@@ -101,7 +101,7 @@ async function addTestRun (testCase, buildInfo, dbRepo) {
   );
 }
 
-async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
+async function updateQueue (client, isFirstBuild, testCase, buildInfo, dbRepo) {
   // see if the test exists in the queue
   const prevTest = await dbRepo.collection('queued').doc(testCase.encodedName).get();
   const cachedSuccess = (prevTest.exists && prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
@@ -204,7 +204,7 @@ async function deleteRunCollection (testCase, dbRepo) {
   }
 
   // Delete documents in a batch
-  snapshot.docs.forEach(async(doc) => {
+  snapshot.docs.forEach(async (doc) => {
     await dbRepo.collection('queued').doc(testCase.encodedName).collection('runs').doc(doc._fieldsProto.buildIdInternal.stringValue).delete();
   });
 
