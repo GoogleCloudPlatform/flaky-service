@@ -104,7 +104,7 @@ async function updateTest (testCase, buildInfo, dbRepo) {
     percentpassing: testCaseAnalytics.computePassingPercent(),
     flaky: testCaseAnalytics.computeIsFlaky(),
     passed: testCaseAnalytics.isCurrentlyPassing(),
-    failuremessageiffailing: testCaseAnalytics.mostRecentStatus(prevTest.exists ? prevTest.data().failuremessageiffailing : 'None'),
+    failuremessageiffailing: testCaseAnalytics.mostRecentStatus((prevTest.exists && prevTest.data().failuremessageiffailing) ? prevTest.data().failuremessageiffailing : 'None'),
     searchindex: testCaseAnalytics.isCurrentlyPassing() ? (testCaseAnalytics.computeIsFlaky() ? 1 : 0) : 2,
     lastupdate: testCaseAnalytics.getLastUpdate(),
     name: testCase.name,

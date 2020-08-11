@@ -103,7 +103,7 @@ class TestCaseAnalytics {
   }
 
   mostRecentStatus (existingStatus) {
-    if ((this.mergedList.length <= 1 || this.buildInfo.timestamp > this.mergedList[1].date) && !this.testCase.successful) {
+    if ((this.mergedList.length <= 1 || this.buildInfo.timestamp > this.mergedList[1].date) && !this.testCase.successful && this.testCase.failureMessage) {
       return this.testCase.failureMessage;
     } else {
       return existingStatus;
