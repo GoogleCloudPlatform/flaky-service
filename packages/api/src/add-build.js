@@ -86,7 +86,6 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
   });
 
   //metrics.percentpassing = (metrics.total === 0) ? 0 : metrics.passcount / metrics.total;
-  console.log(metrics);
   return metrics;
 }
 
@@ -159,8 +158,8 @@ async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, 
     shouldtrack: calculateTrack(prevTest, testCase),
     flaky: calculateFlaky(prevTest, testCase),
     passed: testCase.successful,
-    failuremessageiffailing: testCaseAnalytics.mostRecentStatus(prevTest.exists ? prevTest.data().failuremessageiffailing : 'None'),
-    searchindex: testCaseAnalytics.isCurrentlyPassing() ? (testCaseAnalytics.computeIsFlaky() ? 1 : 0) : 2,
+    failuremessageiffailing: (!testCase.successful) ? testCase.failureMessage : 'None',
+    searchindex: testCaseAnalytics.isCurrentlyPassing() ? (calculateFlaky(prevTest, testCase) ? 1 : 0) : 2,
     lastupdate: testCaseAnalytics.getLastUpdate(),
     name: testCase.name,
     subsequentpasses: calculateSubsequentPasses(prevTest, testCase),
@@ -209,7 +208,6 @@ async function deleteRunCollection(testCase, dbRepo) {
 
   // Delete documents in a batch
   snapshot.docs.forEach(async(doc) => {
-    //console.log(doc._fieldsProto.buildIdInternal.stringValue);
     await dbRepo.collection('queued').doc(testCase.encodedName).collection('runs').doc(doc._fieldsProto.buildIdInternal.stringValue).delete();
   });
 
@@ -282,7 +280,6 @@ function calculateFlaky (prevTest, testCase) {
         return true;
       }
     }
-
   }
   else{
     //test is not in the queue so NOT FLAKY
