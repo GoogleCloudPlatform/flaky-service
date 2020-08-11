@@ -67,7 +67,7 @@ class GetTestHandler {
         const resp = [];
         snapshot.forEach(doc => resp.push(doc.data()));
 
-        var metadataResp = await this.client.collection(global.headCollection).doc(repoid).collection('tests').doc(name).get();
+        var metadataResp = await this.client.collection(global.headCollection).doc(repoid).collection('queued').doc(name).get();
 
         if (metadataResp.data()) {
           res.send({ metadata: metadataResp.data(), builds: resp });

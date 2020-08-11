@@ -92,7 +92,7 @@ const buildInfo = [
     timestamp: new Date('01/01/2002'),
     testCases: [
       new TestCaseRun('not ok', 1, 'a/5'),
-      new TestCaseRun('not ok', 2, 'a/2') // this test is now passing
+      new TestCaseRun('not ok', 2, 'a/2') // this test is now failing
     ],
     description: 'None',
     buildmessage: 'Workflow - 1'
@@ -109,6 +109,7 @@ describe.only('Add-Build', () => {
 
   describe('add-build', async () => {
     it('Can add a build and repository to a blank collection', async () => {
+      console.log(global.headCollection);
       await addBuild(buildInfo[0].testCases, buildInfo[0], client, global.headCollection);
 
       // ensure repository was initialized
@@ -119,7 +120,7 @@ describe.only('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('builds').doc(buildInfo[0].buildId).get();
-      //assert.strictEqual(builds.data().percentpassing, 0.5);
+      // assert.strictEqual(builds.data().percentpassing, 0.5);
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 2);
       assert.deepStrictEqual(builds.data().environment, buildInfo[0].environment);
@@ -136,7 +137,7 @@ describe.only('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
-      //assert.strictEqual(builds.data().percentpassing, 1.0);
+      // assert.strictEqual(builds.data().percentpassing, 1.0);
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 0);
       assert.deepStrictEqual(builds.data().environment, buildInfo[1].environment);
@@ -148,7 +149,7 @@ describe.only('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
-      //assert.strictEqual(builds.data().percentpassing, 1.0);
+      // assert.strictEqual(builds.data().percentpassing, 1.0);
       assert.deepStrictEqual(builds.data().environment, buildInfo[1].environment);
 
       // ensure tests were uploaded correctly
@@ -161,7 +162,7 @@ describe.only('Add-Build', () => {
             ref: ['master'],
             tag: ['abc', 'xyz']
           },
-          //percentpassing: 1.0,
+          // percentpassing: 1.0,
           builds: [buildInfo[0].buildId, buildInfo[1].buildId],
           flaky: 0
         },
@@ -173,7 +174,7 @@ describe.only('Add-Build', () => {
             ref: ['master'],
             tag: ['abc', 'xyz']
           },
-          //percentpassing: 1.0 / 3.0,
+          // percentpassing: 1.0 / 3.0,
           builds: [buildInfo[0].buildId, buildInfo[1].buildId, buildInfo[2].buildId],
           flaky: 0
         },
@@ -185,7 +186,7 @@ describe.only('Add-Build', () => {
             ref: ['master'],
             tag: ['abc']
           },
-          //percentpassing: 1,
+          // percentpassing: 1,
           builds: [buildInfo[0].buildId],
           flaky: 0
         },
@@ -197,7 +198,7 @@ describe.only('Add-Build', () => {
             ref: ['master'],
             tag: ['abc']
           },
-          //percentpassing: 0,
+          // percentpassing: 0,
           builds: [buildInfo[0].buildId],
           flaky: 0
         },
@@ -209,17 +210,17 @@ describe.only('Add-Build', () => {
             ref: ['master'],
             tag: ['xyz']
           },
-          //percentpassing: 0,
+          // percentpassing: 0,
           builds: [buildInfo[2].buildId],
           flaky: 0
         }
       ];
 
-      for (var k = 0; k < testExpectations.length; k++) {
+      for (var k = 1; k < testExpectations.length; k++) {
         var testExpectation = testExpectations[k];
 
         const test = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('queued').doc(encodeURIComponent(testExpectation.name)).get();
-        //assert.strictEqual(test.data().percentpassing, testExpecation.percentpassing);
+        // assert.strictEqual(test.data().percentpassing, testExpecation.percentpassing);
         assert.strictEqual(test.data().flaky, testExpectation.flaky);
         assert.deepStrictEqual(test.data().environments, testExpectation.environments);
 
@@ -256,7 +257,7 @@ describe.only('Add-Build', () => {
 
       assert.strictEqual(ansObj.length, 1);
       assert.strictEqual(ansObj[0].buildId, '33333');
-      //assert.strictEqual(ansObj[0].percentpassing, 0);
+      // assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
       const solMeta = { name: 'node', repoId: 'nodejs/node', description: '', organization: 'nodejs', searchindex: 2 * 10000, numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
@@ -280,26 +281,37 @@ describe.only('Add-Build', () => {
 
       assert.strictEqual(ansObj.length, 2);
       assert.strictEqual(ansObj[0].buildId, '33333');
-      //assert.strictEqual(ansObj[0].percentpassing, 0);
+      // assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
       assert.strictEqual(ansObj[1].buildId, '22222');
-      //assert.strictEqual(ansObj[1].percentpassing, 1);
+      // assert.strictEqual(ansObj[1].percentpassing, 1);
       assert.strictEqual(ansObj[1].tests.length, 2);
     });
   });
 
   describe('GetTestHandler', async () => {
-    it('Can get limit and sort by date', async () => {
-      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=a%2F1&limit=1');
+    it('Removes tests that are consistently passing', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/tests');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
 
+      assert(ansObj.tests.length === 4); // there should only be 4 tests
+
+      for (var k = 0; k < ansObj.length; k++) {
+        assert(ansObj[k].name !== 'a/1'); // test a/1 should not be in the queue
+      }
+    });
+
+    it('Can get limit and sort by date', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=a%2F3&limit=1');
       const respText = await resp.text();
       const ansObj = JSON.parse(respText);
 
       assert.strictEqual(ansObj.builds.length, 1);
       assert.strictEqual(ansObj.builds[0].buildId, '11111');
 
-      assert.deepStrictEqual(ansObj.metadata.environments.os, ['linux-apple', 'linux-banana']);
+      assert.deepStrictEqual(ansObj.metadata.environments.os, ['linux-apple']);
     });
 
     it('Can use random combinations of queries', async () => {
@@ -341,8 +353,7 @@ describe.only('Add-Build', () => {
 
       assert(ansObj[2].name === 'a/4'); // failed on build before the last build
 
-      assert(ansObj[3].name === 'a/3' || ansObj[3].name === 'a/1'); // both failed on most recent build
-      assert(ansObj[4].name === 'a/3' || ansObj[4].name === 'a/1'); // both failed on most recent build
+      assert(ansObj[3].name === 'a/3'); // passed on build before the last build
 
       // make sure their are the newly added fields
       assert.strictEqual(ansObj[2].lifetimepasscount, 0);
@@ -356,7 +367,7 @@ describe.only('Add-Build', () => {
       const ansObj = JSON.parse(respText);
       assert.strictEqual(ansObj.tests.length, 1);
       assert.strictEqual(ansObj.hasprev, true);
-      assert.strictEqual(ansObj.hasnext, true);
+      assert.strictEqual(ansObj.hasnext, false);
     });
   });
 
@@ -394,7 +405,6 @@ describe.only('Add-Build', () => {
   describe('GetExportHandler', async () => {
     it('Can get a csv export', async () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/csv');
-
       const respText = await resp.text();
 
       const linesReal = respText.split(/\n/);
