@@ -190,7 +190,7 @@ describe('Posting Builds', () => {
     assert.strictEqual(result.data().percentpassing, 2.0 / 3.0);
     assert.strictEqual(result.data().environment.ref, 'master');
 
-    const testNames = ['Testing%20Box%20should%20assert%20obj%20is%20instance%20of%20Box', 'Testing%20Box%20should%20assert%20volume%20of%20the%20box%20to%20be%206000', 'Testing%20Box%20should%20throw%20an%20error'];
+    const testNames = ['Testing%20Box%20should%20assert%20obj%20is%20instance%20of%20Box', 'Testing%20Box%20should%20assert%20volume%20of%20the%20box%20to%20be', 'Testing%20Box%20should%20throw%20an%20error'];
     for (var i = 0; i < 3; i++) {
       var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(testNames[i]).get();
       const testInfoJson = testInfo.data();
