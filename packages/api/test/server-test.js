@@ -42,7 +42,6 @@ describe('flaky express server', () => {
   describe('get /repo to delete a test', async () => {
     it('generates a GitHub redirect', async () => {
       stubs.push(sinon.stub(repo, 'storeTicket').returns(true));
-      const resp = await fetch('http://0.0.0.0:3000/api/repo/deleteurl/my-org/my-repo/test/my-test?redirect=' + process.env.FRONTEND_URL, {
       const resp = await fetch('http://0.0.0.0:3000/api/repo/deleteurl/my-org/my-repo/test?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
         method: 'GET'
       });
