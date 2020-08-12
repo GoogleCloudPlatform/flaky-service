@@ -208,7 +208,7 @@ describe('Posting Builds', () => {
     var repoIds = [EXAMPLE_PAYLOAD.metadata.repoId, 'nodejs/node'];
 
     for (let i = 0; i < repoIds.length; i++) {
-      // await deleteRepo(client, repoIds[i]);
+      await deleteRepo(client, repoIds[i]);
     }
 
     nock.restore();
