@@ -104,7 +104,7 @@ buildInfo[2].testCases[1].failureMessage = 'Error message';
 
 describe('Add-Build', () => {
   before(async () => {
-    global.headCollection = 'testing1/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
+    global.headCollection = 'testing/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
   });
 
   describe('add-build', async () => {
