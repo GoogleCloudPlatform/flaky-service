@@ -59,7 +59,6 @@ describe('Getting Repos and Orgs', () => {
     }
   });
 
-
   it('find all repos for one org', async () => {
     const resp = await fetch('http://localhost:3000/api/org/bigorg');
     const respText = await resp.text();
@@ -120,7 +119,6 @@ describe('Getting Repos and Orgs', () => {
     assert.strictEqual(parsedResp.repos.length, 1);
     assert.strictEqual(parsedResp.hasnext, true);
   });
-
 
   after(async () => {
     for (let k = 0; k < data.length; k++) {

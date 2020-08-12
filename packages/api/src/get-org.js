@@ -41,8 +41,6 @@ class GetOrgHandler {
 
   // TODO order by flakyness
   listen () {
-
-
     // returns all repositories for a particular org
     this.app.get('/api/org/:orgname', async (req, res, next) => {
       try {
