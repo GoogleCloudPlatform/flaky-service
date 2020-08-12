@@ -55,7 +55,7 @@ class Repository {
     return data.ticket;
   }
 
-  async allowedToPerformTicket (action, permission) {
+  allowedToPerformTicket (action, permission) {
     if (action === 'delete-repo') {
       return permission === 'admin';
     }

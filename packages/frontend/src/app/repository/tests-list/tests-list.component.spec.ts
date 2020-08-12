@@ -36,6 +36,9 @@ import {Test} from 'src/app/services/search/interfaces';
 })
 class TestDetailsComponent {
   @Input() test: Test;
+  @Input() repoName: string;
+  @Input() orgName: string;
+  @Input() removalButtonState;
 }
 
 const COMServiceMock = {

@@ -49,6 +49,7 @@ class PostBuildHandler {
     return envData;
   }
 
+  // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
   static parseBuildInfo (metadata) {
     // buildInfo must have attributes of organization, timestamp, url, environment, buildId
     const timestamp = metadata.github.event.head_commit ? new Date(metadata.github.event.head_commit.timestamp) : new Date();
@@ -167,6 +168,51 @@ class PostBuildHandler {
     return result;
   }
 
+  // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
+  static cleanBuildInfo (metadata) {
+    const timestampNumb = Date.parse(metadata.timestamp);
+    const timestamp = isNaN(timestampNumb) ? new Date() : new Date(timestampNumb);
+
+    const returnVal = {
+      repoId: firebaseEncode(decodeURIComponent(metadata.repoId)),
+      organization: metadata.organization,
+      timestamp,
+      url: metadata.url,
+      environment: PostBuildHandler.cleanEnvironment(metadata),
+      buildId: firebaseEncode(decodeURIComponent(metadata.buildId)),
+      sha: metadata.sha,
+      name: metadata.name,
+      description: metadata.description,
+      buildmessage: metadata.buildmessage
+    };
+
+    // validate data
+    for (const prop in returnVal) {
+      if (!returnVal[prop]) {
+        throw new InvalidParameterError('Missing All Build Meta Data Info - ' + prop);
+      }
+    }
+
+    return returnVal;
+  }
+
+  static cleanEnvironment (metadata) {
+    var envData = {
+      os: metadata.environment.os,
+      ref: metadata.environment.ref,
+      matrix: metadata.environment.matrix,
+      tag: metadata.environment.tag
+    };
+
+    // validate data
+    for (const prop in envData) {
+      if (!envData[prop]) {
+        throw new InvalidParameterError('Missing All Build Meta Data Info - ' + prop);
+      }
+    }
+    return envData;
+  }
+
   listen () {
     // route for parsing test input server side
     this.app.post('/api/build', async (req, res, next) => {
@@ -184,6 +230,32 @@ class PostBuildHandler {
 
         if (req.body.metadata.github.event.repository.private) {
           throw new UnauthorizedError('Flaky does not store tests for private repos');
+        }
+
+        await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
+        res.send({ message: 'successfully added build' });
+      } catch (err) {
+        handleError(res, err);
+      }
+    });
+
+    // endpoint expects the the required buildinfo to be in req.body.metadata to already exist and be properly formatted.
+    // required keys in the req.body.metadata are the inputs for addBuild in src/add-build.js
+    this.app.post('/api/build/gh/v1', async (req, res, next) => {
+      try {
+        if (req.body.metadata.private) {
+          throw new UnauthorizedError('Flaky does not store tests for private repos');
+        }
+
+        const buildInfo = PostBuildHandler.cleanBuildInfo(req.body.metadata); // Different line. The metadata object is the same as addbuild, already validated
+
+        req.body.data = await PostBuildHandler.flattenTap(req.body.data);
+        const parsedRaw = await PostBuildHandler.parseRawOutput(req.body.data, req.body.type);
+        const testCases = PostBuildHandler.parseTestCases(parsedRaw, req.body.data);
+
+        const isValid = await validateGithub(req.body.metadata.token, decodeURIComponent(req.body.metadata.repoId));
+        if (!isValid) {
+          throw new UnauthorizedError('Must have valid Github Token to post build');
         }
 
         await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);

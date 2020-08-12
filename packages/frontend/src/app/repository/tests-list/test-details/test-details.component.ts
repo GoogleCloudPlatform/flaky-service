@@ -15,7 +15,8 @@
 import {Component, Input} from '@angular/core';
 import {Test} from 'src/app/services/search/interfaces';
 import {COMService} from '../../../services/com/com.service';
-import {Observable} from 'rxjs';
+import {environment} from '../../../../environments/environment';
+import {RouteProvider} from 'src/app/routing/route-provider/RouteProvider';
 
 @Component({
   selector: 'app-test-details',
@@ -27,24 +28,27 @@ export class TestDetailsComponent {
   @Input() test: Test;
   @Input() repoName: string;
   @Input() orgName: string;
+  @Input() removalButtonState;
   windowProvider = window;
-  public deleteUrl$: Observable<string>;
 
-  //Converts tests' passing percentage from decimal to percentage
+  // Converts tests' passing percentage from decimal to percentage
   toPercentage(percentpassing: number): string {
     return (percentpassing * 100).toFixed(2);
   }
 
   startDeleteTest() {
-    this.deleteUrl$ = this.comService.fetchDeleteTestUrl(
-      this.orgName,
-      this.repoName,
-      this.test.name,
-      'https://flaky-dashboard.web.app/'
-    );
-    this.deleteUrl$.subscribe(res => {
-      console.info(res);
-      this.windowProvider.open(res, '_self');
-    });
+    this.removalButtonState.disabled = true;
+    this.comService
+      .fetchDeleteTestUrl(
+        this.orgName,
+        this.repoName,
+        this.test.name,
+        environment.baseUrl +
+          '/' +
+          RouteProvider.routes.repo.link(this.orgName, this.repoName)
+      )
+      .subscribe(res => {
+        this.windowProvider.open(res, '_self');
+      });
   }
 }

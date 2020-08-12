@@ -31,7 +31,7 @@ import {SnackBarService} from '../snackbar/snack-bar.service';
   providedIn: 'root',
 })
 export class COMService {
-  constructor(private http: HttpClient, private snackBar: SnackBarService) {}
+  constructor(private http: HttpClient, public snackBar: SnackBarService) {}
 
   public fetchRepositories(
     repoName: string,
@@ -85,8 +85,8 @@ export class COMService {
   }
 
   public fetchDeleteTestUrl(
-    repoName: string,
     orgName: string,
+    repoName: string,
     testName: string,
     redirect: string
   ): Observable<string> {

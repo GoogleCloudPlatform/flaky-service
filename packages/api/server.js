@@ -23,21 +23,25 @@ const GetTestHandler = require('./src/get-test.js');
 const GetExportHandler = require('./src/get-export.js');
 const client = require('./src/firestore.js');
 const auth = require('./src/auth.js');
+const { InvalidParameterError } = require('./lib/errors');
 
 const { v4 } = require('uuid');
 
 const cors = require('cors');
 
-global.headCollection = process.env.HEAD_COLLECTION || 'production/main/repos';
+global.headCollection = process.env.HEAD_COLLECTION || 'testing/main/repos';
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-app.get('/api/repo/deleteurl/:orgname/:reponame/test/:testid', async (req, res) => {
+app.get('/api/repo/deleteurl/:orgname/:reponame/test', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
-  const testName = req.params.testid;
+  if (!req.query.testname) {
+    throw new InvalidParameterError('Route requires query parameter of name');
+  }
+  const testName = req.query.testname;
   const redirect = req.query.redirect || process.env.FRONTEND_URL;
   const state = v4();
 
@@ -52,7 +56,7 @@ app.get('/api/repo/deleteurl/:orgname/:reponame/test/:testid', async (req, res) 
   });
 
   const url = `http://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&state=${state}&allow_signup=false&scope=repo`;
-  res.status(200).send(url).end();
+  res.status(200).send(url);
 });
 
 app.get('/api/repo/deleteurl/:orgname/:reponame', async (req, res) => {
@@ -96,16 +100,15 @@ app.get('/api/callback', async (req, res) => {
     return res.status(404).redirect(redirect);
   }
   const userPermission = await auth.retrieveUserPermission(queryObject.access_token, ticket.fullName);
-  console.log('PERMISSION: ' + userPermission);
 
   const performed = await repo.performTicketIfAllowed(ticket, userPermission);
 
   if (performed) {
     console.log('Successfully performed the action');
-    res.status(200).redirect(redirect);
+    res.status(200).redirect(redirect + ';done=' + performed);
   } else {
     console.log('Not permitted to perform the action');
-    res.status(404).redirect(redirect);
+    res.status(404).redirect(redirect + ';done=' + performed);
   }
 });
 
