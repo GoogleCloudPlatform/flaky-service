@@ -119,7 +119,7 @@ describe('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('builds').doc(buildInfo[0].buildId).get();
-      // assert.strictEqual(builds.data().percentpassing, 0.5);
+      assert.strictEqual(builds.data().percentpassing, 0.5);
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 2);
       assert.deepStrictEqual(builds.data().environment, buildInfo[0].environment);
@@ -136,7 +136,7 @@ describe('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
-      // assert.strictEqual(builds.data().percentpassing, 1.0);
+      assert.strictEqual(builds.data().percentpassing, 1.0);
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 0);
       assert.deepStrictEqual(builds.data().environment, buildInfo[1].environment);
@@ -148,7 +148,7 @@ describe('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
-      // assert.strictEqual(builds.data().percentpassing, 1.0);
+      assert.strictEqual(builds.data().percentpassing, 1.0);
       assert.deepStrictEqual(builds.data().environment, buildInfo[1].environment);
 
       // ensure tests were uploaded correctly
@@ -255,7 +255,7 @@ describe('Add-Build', () => {
 
       assert.strictEqual(ansObj.length, 1);
       assert.strictEqual(ansObj[0].buildId, '33333');
-      // assert.strictEqual(ansObj[0].percentpassing, 0);
+      assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
       const solMeta = { name: 'node', repoId: 'nodejs/node', description: '', organization: 'nodejs', searchindex: 2 * 10000 + 1, numfails: 2, flaky: 1, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
@@ -279,11 +279,11 @@ describe('Add-Build', () => {
 
       assert.strictEqual(ansObj.length, 2);
       assert.strictEqual(ansObj[0].buildId, '33333');
-      // assert.strictEqual(ansObj[0].percentpassing, 0);
+      assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
       assert.strictEqual(ansObj[1].buildId, '22222');
-      // assert.strictEqual(ansObj[1].percentpassing, 1);
+      assert.strictEqual(ansObj[1].percentpassing, 1);
       assert.strictEqual(ansObj[1].tests.length, 2);
     });
   });

@@ -64,7 +64,7 @@ const buildInfoTemplate = {
   buildmessage: 'dfdfdf'
 };
 
-const NUM_DOCUMENTS = 5;
+const NUM_DOCUMENTS = 1;
 async function main () {
   fs.readdir(directory, async function (err, files) {
     if (err) {
@@ -108,7 +108,9 @@ async function main () {
           buildInfo.repoURL = 'http://github.com/' + buildInfo.organization + '/' + buildInfo.name;
         }
         buildInfo.description = 'Description for the repository of ' + decodeURIComponent(buildInfo.repoId);
-
+        console.log(repositoryCollection);
+        console.log(buildInfo.organization);
+        console.log(buildInfo.name);
         addBuild(testCasesUse, buildInfo, client, repositoryCollection);
       }
     }

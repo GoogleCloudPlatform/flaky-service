@@ -53,7 +53,7 @@ async function updateAllTests (client, testCases, buildInfo, dbRepo) {
     flaky: 0,
     failcount: 0,
     passcount: 0,
-    // percentpassing: 0,
+    percentpassing: 0,
     buildflaky: 0,
     total: 0
   };
@@ -84,7 +84,7 @@ async function updateAllTests (client, testCases, buildInfo, dbRepo) {
     metrics.total += 1;
   });
 
-  // metrics.percentpassing = (metrics.total === 0) ? 0 : metrics.passcount / metrics.total;
+  metrics.percentpassing = (metrics.total === 0) ? 0 : metrics.passcount / metrics.total;
   return metrics;
 }
 
@@ -228,7 +228,7 @@ async function addBuildDoc (testCases, buildInfo, computedData, dbRepo) {
   const alltests = testCases.map(x => x.encodedName); // not currently used in MVP but would be useful for finding all tests in a build
 
   await dbRepo.collection('builds').doc(buildInfo.buildId).set({
-    // percentpassing: computedData.percentpassing,
+    percentpassing: computedData.percentpassing,
     passcount: computedData.passcount,
     failcount: computedData.failcount,
     environment: buildInfo.environment,
