@@ -102,7 +102,7 @@ const buildInfo = [
 buildInfo[2].testCases[0].failureMessage = 'Error message';
 buildInfo[2].testCases[1].failureMessage = 'Error message';
 
-describe('Add-Build', () => {
+describe.only('Add-Build', () => {
   before(async () => {
     global.headCollection = 'testing/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
   });
@@ -161,7 +161,7 @@ describe('Add-Build', () => {
             ref: ['master'],
             tag: ['abc', 'xyz']
           },
-          // percentpassing: 1.0,
+          percentpassing: 1.0,
           builds: [buildInfo[0].buildId, buildInfo[1].buildId],
           flaky: 0
         },
@@ -173,7 +173,7 @@ describe('Add-Build', () => {
             ref: ['master'],
             tag: ['abc', 'xyz']
           },
-          // percentpassing: 1.0 / 3.0,
+          percentpassing: 1.0 / 3.0,
           builds: [buildInfo[0].buildId, buildInfo[1].buildId, buildInfo[2].buildId],
           flaky: 0
         },
@@ -185,7 +185,7 @@ describe('Add-Build', () => {
             ref: ['master'],
             tag: ['abc']
           },
-          // percentpassing: 1,
+          percentpassing: 1,
           builds: [buildInfo[0].buildId],
           flaky: 0
         },
@@ -197,7 +197,7 @@ describe('Add-Build', () => {
             ref: ['master'],
             tag: ['abc']
           },
-          // percentpassing: 0,
+          percentpassing: 0,
           builds: [buildInfo[0].buildId],
           flaky: 0
         },
@@ -209,7 +209,7 @@ describe('Add-Build', () => {
             ref: ['master'],
             tag: ['xyz']
           },
-          // percentpassing: 0,
+          percentpassing: 0,
           builds: [buildInfo[2].buildId],
           flaky: 0
         }
@@ -219,7 +219,7 @@ describe('Add-Build', () => {
         var testExpectation = testExpectations[k];
 
         const test = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('queued').doc(encodeURIComponent(testExpectation.name)).get();
-        // assert.strictEqual(test.data().percentpassing, testExpecation.percentpassing);
+        assert.strictEqual(test.data().percentpassing, testExpectation.percentpassing);
         assert.deepStrictEqual(test.data().environments, testExpectation.environments);
 
         // make sure all builds exist

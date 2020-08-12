@@ -151,7 +151,8 @@ async function updateQueue (client, isFirstBuild, testCase, buildInfo, dbRepo) {
 
 async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo) {
   const updateObj = {
-    // percentpassing: testCaseAnalytics.computePassingPercent(),
+    percentpassing: testCaseAnalytics.computePassingPercent(),
+    historicaltests: testCaseAnalytics.numberOfHistoricalTests(),
     hasfailed: ((prevTest.exists && prevTest.data().hasfailed) || !testCase.successful),
     shouldtrack: testCaseAnalytics.calculateTrack(),
     flaky: testCaseAnalytics.calculateFlaky(),

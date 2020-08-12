@@ -69,6 +69,10 @@ class TestCaseAnalytics {
     return (this.mergedList.length === 0) ? 0 : numSuc / this.mergedList.length;
   }
 
+  numberOfHistoricalTests () {
+    return (this.mergedList.length);
+  }
+
   // returns true if there have been any two failures separated by between 1 and 14 successes
   calculateFlaky () {
     if (this.prevTest.exists && this.prevTest.data().hasfailed) {
