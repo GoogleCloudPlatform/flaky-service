@@ -195,7 +195,7 @@ describe('Posting Builds', () => {
       var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(testNames[i]).get();
       const testInfoJson = testInfo.data();
       console.log(testInfoJson);
-      assert.strictEqual(testInfoJson.percentpassing, (i < 2) ? 1 : 0);
+      assert.strictEqual(testInfoJson['percentpassing, (i < 2) ? 1 : 0);
 
       var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(testNames[i]).collection('runs').where('buildId', '==', buildId).get();
       let resultRun;
