@@ -35,7 +35,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-app.get('/api/repo/deleteurl/:orgname/:reponame/test', async (req, res) => {
+app.get('/api/repo/:orgname/:reponame/test/deleteurl', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
   if (!req.query.testname) {
@@ -59,7 +59,7 @@ app.get('/api/repo/deleteurl/:orgname/:reponame/test', async (req, res) => {
   res.status(200).send(url);
 });
 
-app.get('/api/repo/deleteurl/:orgname/:reponame', async (req, res) => {
+app.get('/api/repo/:orgname/:reponame/deleteurl', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
   const redirect = req.query.redirect || process.env.FRONTEND_URL;
