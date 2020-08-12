@@ -108,9 +108,6 @@ async function main () {
           buildInfo.repoURL = 'http://github.com/' + buildInfo.organization + '/' + buildInfo.name;
         }
         buildInfo.description = 'Description for the repository of ' + decodeURIComponent(buildInfo.repoId);
-        console.log(repositoryCollection);
-        console.log(buildInfo.organization);
-        console.log(buildInfo.name);
         addBuild(testCasesUse, buildInfo, client, repositoryCollection);
       }
     }
