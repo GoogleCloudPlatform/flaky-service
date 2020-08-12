@@ -193,7 +193,8 @@ describe('Posting Builds', () => {
     const testNames = ['Testing%20Box%20should%20assert%20obj%20is%20instance%20of%20Box', 'Testing%20Box%20should%20assert%20volume%20of%20the%20box%20to%20be%206000', 'Testing%20Box%20should%20throw%20an%20error'];
     for (var i = 0; i < 3; i++) {
       var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(testNames[i]).get();
-      const testInfoJson = JSON.parse(JSON.stringify(testInfo.data()));
+      const testInfoJson = testInfo.data();
+      console.log(testI)
       assert.strictEqual(testInfoJson.percentpassing, (i < 2) ? 1 : 0);
 
       var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(testNames[i]).collection('runs').where('buildId', '==', buildId).get();
