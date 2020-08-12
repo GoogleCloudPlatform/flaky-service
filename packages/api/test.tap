@@ -1,0 +1,109 @@
+1..76
+Example app listening at http://localhost:3000
+ok 1 Add-Build add-build Can add a build and repository to a blank collection
+ok 2 Add-Build add-build Can add a different build with overlapping test cases and update repo info
+ok 3 Add-Build add-build Can add a third build with some new test cases, add same thing multiple times
+ok 4 Add-Build GetRepoHandler Can get limit and sort by date
+ok 5 Add-Build GetRepoHandler Can use offset when getting builds
+ok 6 Add-Build GetRepoHandler Can use random combinations of queries
+ok 7 Add-Build GetTestHandler Removes tests that are consistently passing
+ok 8 Add-Build GetTestHandler Can get limit and sort by date
+ok 9 Add-Build GetTestHandler Can use random combinations of queries
+ok 10 Add-Build GetTestHandler Can Handle Malformed requests
+ok 11 Add-Build GetTestHandler Can Handle length 0 request
+ok 12 Add-Build GetTestHandler Can return all tests in the right order
+ok 13 Add-Build GetTestHandler Can use offset and limit parameter for tests
+ok 14 Add-Build GetBuildHandler Can get a particular build
+ok 15 Add-Build GetBuildHandler Can get a nonexistant build
+ok 16 Add-Build GetBuildHandler Can get a nonexistant repo
+ok 17 Add-Build GetExportHandler Can get a csv export
+ok 18 Add-Build GetExportHandler Can handle exports with tricky matrix parameter
+ok 19 Add-Build Duplicate Addbuild Can add two builds with the same id and treat them differently
+ok 20 Add-Build deleter Can delete a particular test
+ok 21 Add-Build deleter Can delete an entire repository
+ok 22 Flaky-Analytics Getting Flaky vals Should track stats for a repository
+ok 23 Flaky-Analytics Getting Flaky vals Should track stats for builds
+ok 24 Flaky-Analytics Getting Flaky vals Should track stats for tests
+ok 25 Auth retrieveAccessToken sends the correct data to Github
+ok 26 Auth retrieveUserLogin retrieves the user login using the correct auth token
+ok 27 Auth retrieveUserPermission retrieves the user permission using the correct auth token
+ok 28 Getting Repos and Orgs should respond with an empty list with random queries
+ok 29 Getting Repos and Orgs should return all results no matter the next characters
+ok 30 Getting Repos and Orgs should not work with a name too long
+ok 31 Getting Repos and Orgs find all repos for one org
+ok 32 Getting Repos and Orgs can sort within org based on date
+ok 33 Getting Repos and Orgs can sort within org based on priority
+ok 34 Getting Repos and Orgs can sort within org by name
+ok 35 Getting Repos and Orgs still orders by name if startswith parameter
+ok 36 Getting Repos and Orgs can use offset parameters on org sesarch
+ok 37 Getting Repos and Orgs can correctly use hasnext when there is more
+ok 38 Getting Repos and Orgs limit search (only on repos)
+ok 39 Getting Repos and Orgs should return all with no startswith
+ok 40 Getting Repos and Orgs should work with case insensitive
+ok 41 Library Functions FirebaseEncode works
+ok 42 Getting Repos and Orgs paginate forward and backwards with a search string
+ok 43 Getting Repos and Orgs paginate forward and backwards without a search string
+ok 44 Getting Repos and Orgs handle a single result
+ok 45 Getting Repos and Orgs returns empty list if out of bounds
+ok 46 Getting Repos and Orgs errors if incorrect request
+ok 47 Posting Builds should be able to parse a TAP file with errors and extract error messages
+ok 48 Posting Builds should parse a mangled TAP file without breaking 
+ok 49 Posting Builds should handle a test with a not flat structure and repeated tests
+ok 50 Posting Builds should handle a test with other stuff at the top
+ok 51 Posting Builds should send back an error code when being sent invalid metadata
+ok 52 Posting Builds should send back an error code if token is incorrect
+ok 53 Posting Builds it can post without a description
+ok 54 Posting Builds should not post data for private repos
+ok 55 Posting Builds it responds to a valid POST on the /build path with valid token
+ok 56 Posting Builds it should be able to post data already formatted to /build/gh/v1
+ok 57 Repository createDoc creates a new document
+ok 58 Repository getDoc gets a document that exists
+ok 59 Repository getDoc returns null when a document does not exist
+ok 60 Repository getCollection retrieves the contents of a collection
+ok 61 Repository getCollection returns empty array if the collection does not exist
+ok 62 Repository ticket handlers storeTicket stores a ticket which has a state
+ok 63 Repository ticket handlers getTicket retrieves a ticket by its state
+ok 64 Repository allowedToPerformTicket returns true when user has write permission to repo and attempts to delete a test
+ok 65 Repository allowedToPerformTicket returns true when user has admin permission to repo and attempts to delete a test
+ok 66 Repository allowedToPerformTicket returns false when user has write permission to repo and attempts to delete a repo
+ok 67 Repository allowedToPerformTicket returns true when user has admin permission to repo and attempts to delete a repo
+ok 68 Repository performTicketIfAllowed deletes test if permitted
+ok 69 Repository performTicketIfAllowed does not delete test if not permitted
+ok 70 flaky express server should have the mocked environment variables
+ok 71 flaky express server it returns a single repository, when you call GET on /repository/:id # SKIP -
+ok 72 flaky express server it creates a repository, when you call POST on /repository # SKIP -
+ok 73 flaky express server delete /repo generates a GitHub redirect
+ok 74 flaky express server delete /repo stores correct information in the ticket
+PERMISSION: write
+Successfully performed the action
+ok 75 flaky express server /callback completes the authentication dance
+ok 76 flaky express server /callback redirects to the flaky-dev home page when the state is wrong
+# tests 74
+# pass 74
+# fail 0
+---------------------|---------|----------|---------|---------|-------------------------------------
+File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                   
+---------------------|---------|----------|---------|---------|-------------------------------------
+All files            |   92.75 |    84.31 |   92.54 |   92.75 |                                     
+ api                 |   92.66 |    57.14 |     100 |   92.66 |                                     
+  server.js          |   92.66 |    57.14 |     100 |   92.66 | 70-72,77-78,89-91                   
+ api/lib             |   91.73 |       90 |   80.95 |   91.73 |                                     
+  analytics.js       |   90.24 |    95.12 |      80 |   90.24 | 35-36,65-70,113-114,154-159         
+  deleter.js         |   95.83 |      100 |     100 |   95.83 | 28,42                               
+  errors.js          |   85.96 |       75 |      75 |   85.96 | 25-28,43,47-49                      
+  firebase-encode.js |     100 |      100 |     100 |     100 |                                     
+  promise-util.js    |     100 |      100 |     100 |     100 |                                     
+  testrun.js         |   93.55 |      100 |      50 |   93.55 | 27-28                               
+  validate-github.js |    90.2 |       70 |     100 |    90.2 | 37-38,42-43,48                      
+ api/src             |   93.12 |    84.45 |   97.78 |   93.12 |                                     
+  add-build.js       |   96.39 |    98.46 |     100 |   96.39 | 180-189                             
+  auth.js            |   84.21 |    57.14 |      75 |   84.21 | 34-36,46-48,64-66,70-72             
+  firestore.js       |     100 |      100 |     100 |     100 |                                     
+  get-export.js      |   92.81 |       88 |     100 |   92.81 | 85-86,107-112,133-134               
+  get-org.js         |   95.86 |    91.18 |     100 |   95.86 | 91-92,128-129,139-140               
+  get-repo.js        |   85.45 |    65.22 |     100 |   85.45 | ...,65-66,70-71,75-76,88-89,104-105 
+  post-build.js      |   93.33 |    73.44 |     100 |   93.33 | ...,210-211,247-248,258-259,264-265 
+  repository.js      |   93.55 |    89.47 |     100 |   93.55 | 66-67,77-80                         
+ api/util            |   92.59 |    66.67 |     100 |   92.59 |                                     
+  validation.js      |   92.59 |    66.67 |     100 |   92.59 | 20-21                               
+---------------------|---------|----------|---------|---------|-------------------------------------
