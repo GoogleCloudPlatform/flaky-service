@@ -1,6 +1,6 @@
 {
    "type":"TAP",
-   "data":"1..3\nok 1 Testing Box should assert obj is instance of Box\nok 2 Testing Box should assert volume of the box to be 6000\nnot ok 3 Testing Box should throw an error\n  AssertionError: expected 1 to equal 2\n      at Context.<anonymous> (test/Box.test.js:20:12)\n      at processImmediate (internal/timers.js:456:21)\n# tests 3\n# pass 2\n# fail 1\n",
+   "data":"1..3\nok 1 Testing Box should assert obj is instance of Box\nok 2 Testing Box should assert volume of the box to be\nnot ok 3 Testing Box should throw an error\n  AssertionError: expected 1 to equal 2\n      at Context.<anonymous> (test/Box.test.js:20:12)\n      at processImmediate (internal/timers.js:456:21)\n# tests 3\n# pass 2\n# fail 1\n",
    "metadata":{
       "repoId":"StuartRucker%2Fmocha-chai-project",
       "organization":"StuartRucker",

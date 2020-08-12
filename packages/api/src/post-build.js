@@ -83,7 +83,6 @@ class PostBuildHandler {
         await new Promise(resolve => {
           p.on('complete', response => resolve(response));
         });
-        console.log(data)
         return data;
       }
       default: {
@@ -98,7 +97,6 @@ class PostBuildHandler {
         if (error || stderr) {
           // not necessarily an error, could just mean tap was not properly formatted but still somewhat parsable
         }
-        console.log(stdout);
         resolve(stdout);
       });
 
