@@ -43,4 +43,32 @@ describe('SnackBarService', () => {
       );
     });
   });
+
+  describe('showSuccessfulTestRemoval', () => {
+    it('should show the snack bar with the error message', () => {
+      const snackOpener = spyOn(service._snackBar, 'open');
+
+      service.showSuccessfulTestRemoval();
+
+      expect(snackOpener).toHaveBeenCalledWith(
+        'Test successfully removed !',
+        undefined,
+        jasmine.objectContaining({duration: 3000})
+      );
+    });
+  });
+
+  describe('showNotAllowed', () => {
+    it('should show the snack bar with the error message', () => {
+      const snackOpener = spyOn(service._snackBar, 'open');
+
+      service.showNotAllowed();
+
+      expect(snackOpener).toHaveBeenCalledWith(
+        'You do not have the permission to perform this action.',
+        undefined,
+        jasmine.objectContaining({duration: 3000})
+      );
+    });
+  });
 });

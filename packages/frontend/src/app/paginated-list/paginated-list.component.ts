@@ -48,6 +48,7 @@ export abstract class PaginatedListComponent<Elements> {
   repoName = '';
   orgName = '';
   filters: Filter[] = [];
+  removalButtonsState = {disabled: false};
 
   @ViewChild(MatPaginator) paginator;
 

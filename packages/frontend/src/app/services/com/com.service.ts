@@ -31,7 +31,7 @@ import {SnackBarService} from '../snackbar/snack-bar.service';
   providedIn: 'root',
 })
 export class COMService {
-  constructor(private http: HttpClient, private snackBar: SnackBarService) {}
+  constructor(private http: HttpClient, public snackBar: SnackBarService) {}
 
   public fetchRepositories(
     repoName: string,
@@ -80,6 +80,19 @@ export class COMService {
     return this.http
       .get<Repository>(apiLinks.get.repository(repoName, orgName), {
         params: this.getParams(filters),
+      })
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  public fetchDeleteTestUrl(
+    orgName: string,
+    repoName: string,
+    testName: string,
+    redirect: string
+  ): Observable<string> {
+    return this.http
+      .get(apiLinks.get.deleteTest(orgName, repoName, testName, redirect), {
+        responseType: 'text',
       })
       .pipe(catchError(err => this.handleError(err)));
   }
