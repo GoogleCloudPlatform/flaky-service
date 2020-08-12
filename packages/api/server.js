@@ -29,7 +29,7 @@ const { v4 } = require('uuid');
 
 const cors = require('cors');
 
-global.headCollection = 'production/main/repos';
+global.headCollection = process.env.HEAD_COLLECTION || 'testing/main/repos';
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -81,7 +81,6 @@ app.get('/api/callback', async (req, res) => {
     return res.status(404).redirect(redirect);
   }
   const userPermission = await auth.retrieveUserPermission(queryObject.access_token, ticket.fullName);
-  console.log('PERMISSION: ' + userPermission);
 
   const performed = await repo.performTicketIfAllowed(ticket, userPermission);
 
