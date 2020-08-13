@@ -267,7 +267,7 @@ describe('Posting Builds', () => {
     var repoIds = [parsedPayloadRaw.metadata.github.repository, parsedPayload.metadata.github.repository, 'other/repo', 'nodejs/node'];
 
     for (let i = 0; i < repoIds.length; i++) {
-      await deleteRepo(client, repoIds[i]);
+      await deleteRepo(repoIds[i], client);
     }
 
     nock.restore();
