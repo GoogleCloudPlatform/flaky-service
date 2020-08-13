@@ -44,56 +44,28 @@ describe('SnackBarService', () => {
     });
   });
 
-  describe('showSuccessfulTestRemoval', () => {
+  describe('showSuccessfulRemoval', () => {
     it('should show the snack bar with the error message', () => {
       const snackOpener = spyOn(service._snackBar, 'open');
 
-      service.showSuccessfulTestRemoval();
+      service.showSuccessfulRemoval();
 
       expect(snackOpener).toHaveBeenCalledWith(
-        'Test successfully removed !',
+        'Deletion successfully performed!',
         undefined,
         jasmine.objectContaining({duration: 3000})
       );
     });
   });
 
-  describe('showTestRemovalNotAllowed', () => {
+  describe('showRemovalNotAllowed', () => {
     it('should show the snack bar with the error message', () => {
       const snackOpener = spyOn(service._snackBar, 'open');
 
-      service.showTestRemovalNotAllowed();
+      service.showRemovalNotAllowed();
 
       expect(snackOpener).toHaveBeenCalledWith(
-        'You do not have the permission to delete this test.',
-        undefined,
-        jasmine.objectContaining({duration: 3000})
-      );
-    });
-  });
-
-    describe('showSuccessfulRepoRemoval', () => {
-    it('should show the snack bar with the error message', () => {
-      const snackOpener = spyOn(service._snackBar, 'open');
-
-      service.showSuccessfulRepoRemoval();
-
-      expect(snackOpener).toHaveBeenCalledWith(
-        'Repository successfully removed !',
-        undefined,
-        jasmine.objectContaining({duration: 3000})
-      );
-    });
-  });
-
-  describe('showRepoRemovalNotAllowed', () => {
-    it('should show the snack bar with the error message', () => {
-      const snackOpener = spyOn(service._snackBar, 'open');
-
-      service.showRepoRemovalNotAllowed();
-
-      expect(snackOpener).toHaveBeenCalledWith(
-        'You do not have the permission to delete this repository.',
+        'You do not have permission to perform this deletion.',
         undefined,
         jasmine.objectContaining({duration: 3000})
       );

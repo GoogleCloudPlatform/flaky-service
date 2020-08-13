@@ -26,7 +26,7 @@ import {RouteProvider} from 'src/app/routing/route-provider/RouteProvider';
 export class ConfigComponent {
   @Input() repoName: string;
   @Input() orgName: string;
-  @Input() removalButtonState;
+  @Input() repoRemovalButtonState;
   windowProvider = window;
 
   constructor(public userService: UserService, public comService: COMService) {}
@@ -43,7 +43,7 @@ export class ConfigComponent {
   }
 
   startDeleteRepo() {
-    //this.removalButtonState.disabled = true;
+    this.repoRemovalButtonState.disabled = true;
     console.info('startDeleteRepo');
     this.comService
       .fetchDeleteRepoUrl(

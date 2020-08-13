@@ -28,20 +28,12 @@ export class SnackBarService {
       message: "The server can't be reached. Please try again.",
       snackConfig: {duration: 5000},
     },
-    successfulTestRemoval: {
-      message: 'Test successfully removed !',
+    successfulRemoval: {
+      message: 'Deletion successfully performed!',
       snackConfig: {duration: 3000},
     },
-    testRemovalNotAllowed: {
-      message: 'You do not have the permission to delete this test.',
-      snackConfig: {duration: 3000},
-    },
-    successfulRepoRemoval: {
-      message: 'Repository successfully removed !',
-      snackConfig: {duration: 3000},
-    },
-    repoRemovalNotAllowed: {
-      message: 'You do not have the permission to delete this repo.',
+    removalNotAllowed: {
+      message: 'You do not have permission to perform this deletion.',
       snackConfig: {duration: 3000},
     },
   };
@@ -56,35 +48,19 @@ export class SnackBarService {
     );
   }
 
-  showSuccessfulTestRemoval() {
+  showSuccessfulRemoval() {
     this._snackBar.open(
-      this.scenarios.successfulTestRemoval.message,
+      this.scenarios.successfulRemoval.message,
       undefined,
-      this.scenarios.successfulTestRemoval.snackConfig
+      this.scenarios.successfulRemoval.snackConfig
     );
   }
 
-  showTestRemovalNotAllowed() {
+  showRemovalNotAllowed() {
     this._snackBar.open(
-      this.scenarios.testRemovalNotAllowed.message,
+      this.scenarios.removalNotAllowed.message,
       undefined,
-      this.scenarios.testRemovalNotAllowed.snackConfig
-    );
-  }
-
-  showSuccessfulRepoRemoval() {
-    this._snackBar.open(
-      this.scenarios.successfulRepoRemoval.message,
-      undefined,
-      this.scenarios.successfulRepoRemoval.snackConfig
-    );
-  }
-
-  showRepoRemovalNotAllowed() {
-    this._snackBar.open(
-      this.scenarios.repoRemovalNotAllowed.message,
-      undefined,
-      this.scenarios.repoRemovalNotAllowed.snackConfig
+      this.scenarios.removalNotAllowed.snackConfig
     );
   }
 }
@@ -95,8 +71,6 @@ interface Scenario {
 }
 interface AllScenarios {
   connectionError: Scenario;
-  successfulTestRemoval: Scenario;
-  testRemovalNotAllowed: Scenario;
-  successfulRepoRemoval: Scenario;
-  repoRemovalNotAllowed: Scenario;
+  successfulRemoval: Scenario;
+  removalNotAllowed: Scenario;
 }

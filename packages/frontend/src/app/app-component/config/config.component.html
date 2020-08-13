@@ -19,6 +19,6 @@ limitations under the License.
      <!--DOWNLOAD BUTTON-->
      <div id="download">
         <a mat-raised-button id="download-button" (click)="onDownloadClick()" target="_blank">Export CSV</a>
-        <button mat-raised-button [disabled]="removalButtonState?.disabled" (click)="startDeleteRepo()" class="delete-repo-button">Delete Repo</button>
+        <button mat-raised-button [disabled]="repoRemovalButtonState?.disabled" (click)="startDeleteRepo()" class="delete-repo-button">Delete Repo</button>
     </div>
 </div>

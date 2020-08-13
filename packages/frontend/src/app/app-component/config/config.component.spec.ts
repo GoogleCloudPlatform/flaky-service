@@ -47,7 +47,7 @@ describe('ConfigComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ConfigComponent);
     component = fixture.componentInstance;
-    component.removalButtonState = {disabled: false};
+    component.repoRemovalButtonState = {disabled: false};
   });
 
   it('should create', () => {
@@ -107,6 +107,6 @@ describe('ConfigComponent', () => {
     deleteButton.click();
     tick();
 
-    expect(component.removalButtonState.disabled).toBeTrue();
+    expect(component.repoRemovalButtonState.disabled).toBeTrue();
   }));
 });
