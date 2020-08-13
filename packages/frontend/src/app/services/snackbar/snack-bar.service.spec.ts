@@ -58,14 +58,42 @@ describe('SnackBarService', () => {
     });
   });
 
-  describe('showNotAllowed', () => {
+  describe('showTestRemovalNotAllowed', () => {
     it('should show the snack bar with the error message', () => {
       const snackOpener = spyOn(service._snackBar, 'open');
 
-      service.showNotAllowed();
+      service.showTestRemovalNotAllowed();
 
       expect(snackOpener).toHaveBeenCalledWith(
-        'You do not have the permission to perform this action.',
+        'You do not have the permission to delete this test.',
+        undefined,
+        jasmine.objectContaining({duration: 3000})
+      );
+    });
+  });
+
+    describe('showSuccessfulRepoRemoval', () => {
+    it('should show the snack bar with the error message', () => {
+      const snackOpener = spyOn(service._snackBar, 'open');
+
+      service.showSuccessfulRepoRemoval();
+
+      expect(snackOpener).toHaveBeenCalledWith(
+        'Repository successfully removed !',
+        undefined,
+        jasmine.objectContaining({duration: 3000})
+      );
+    });
+  });
+
+  describe('showRepoRemovalNotAllowed', () => {
+    it('should show the snack bar with the error message', () => {
+      const snackOpener = spyOn(service._snackBar, 'open');
+
+      service.showRepoRemovalNotAllowed();
+
+      expect(snackOpener).toHaveBeenCalledWith(
+        'You do not have the permission to delete this repository.',
         undefined,
         jasmine.objectContaining({duration: 3000})
       );

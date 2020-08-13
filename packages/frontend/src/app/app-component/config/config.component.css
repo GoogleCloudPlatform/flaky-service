@@ -39,3 +39,6 @@ limitations under the License.
     text-decoration: none;
     box-shadow: 2px 2px lightgray;
 }
+.delete-repo-button {
+    margin-left:3%;
+}

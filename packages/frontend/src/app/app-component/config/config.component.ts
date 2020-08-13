@@ -15,6 +15,8 @@
 import {Component, Input} from '@angular/core';
 import {UserService} from 'src/app/services/user/user.service';
 import {environment} from 'src/environments/environment';
+import {COMService} from 'src/app/services/com/com.service';
+import {RouteProvider} from 'src/app/routing/route-provider/RouteProvider';
 
 @Component({
   selector: 'app-config',
@@ -24,10 +26,10 @@ import {environment} from 'src/environments/environment';
 export class ConfigComponent {
   @Input() repoName: string;
   @Input() orgName: string;
-
+  @Input() removalButtonState;
   windowProvider = window;
 
-  constructor(public userService: UserService) {}
+  constructor(public userService: UserService, public comService: COMService) {}
 
   onDownloadClick() {
     const exportUrl =
@@ -38,5 +40,22 @@ export class ConfigComponent {
       this.repoName +
       '/csv';
     this.windowProvider.open(exportUrl);
+  }
+
+  startDeleteRepo() {
+    //this.removalButtonState.disabled = true;
+    console.info('startDeleteRepo');
+    this.comService
+      .fetchDeleteRepoUrl(
+        this.orgName,
+        this.repoName,
+        environment.baseUrl +
+          '/' +
+          RouteProvider.routes.repo.link(this.orgName, this.repoName)
+      )
+      .subscribe(res => {
+        console.info(res);
+        this.windowProvider.open(environment.baseUrl, '_self');
+      });
   }
 }

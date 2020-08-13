@@ -68,6 +68,7 @@ export class RepositoryComponent implements AfterViewInit {
       this.repoName = foundParams.queries.get('repo');
       this.orgName = foundParams.queries.get('org');
       this.showTestRemovalResult(foundParams.queries.get('done'));
+      this.showRepoRemovalResult(foundParams.queries.get('done'));
       this.globals.update(
         RouteProvider.routes.repo.name,
         this.orgName,
@@ -116,6 +117,11 @@ export class RepositoryComponent implements AfterViewInit {
 
   showTestRemovalResult(done: string | undefined) {
     if (done === 'true') this.com.snackBar.showSuccessfulTestRemoval();
-    else if (done === 'false') this.com.snackBar.showNotAllowed();
+    else if (done === 'false') this.com.snackBar.showTestRemovalNotAllowed();
+  }
+
+  showRepoRemovalResult(done: string | undefined) {
+    if (done === 'true') this.com.snackBar.showSuccessfulRepoRemoval();
+    else if (done === 'false') this.com.snackBar.showRepoRemovalNotAllowed();
   }
 }

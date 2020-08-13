@@ -32,8 +32,16 @@ export class SnackBarService {
       message: 'Test successfully removed !',
       snackConfig: {duration: 3000},
     },
-    notAllowed: {
-      message: 'You do not have the permission to perform this action.',
+    testRemovalNotAllowed: {
+      message: 'You do not have the permission to delete this test.',
+      snackConfig: {duration: 3000},
+    },
+    successfulRepoRemoval: {
+      message: 'Repository successfully removed !',
+      snackConfig: {duration: 3000},
+    },
+    repoRemovalNotAllowed: {
+      message: 'You do not have the permission to delete this repo.',
       snackConfig: {duration: 3000},
     },
   };
@@ -56,11 +64,27 @@ export class SnackBarService {
     );
   }
 
-  showNotAllowed() {
+  showTestRemovalNotAllowed() {
     this._snackBar.open(
-      this.scenarios.notAllowed.message,
+      this.scenarios.testRemovalNotAllowed.message,
       undefined,
-      this.scenarios.notAllowed.snackConfig
+      this.scenarios.testRemovalNotAllowed.snackConfig
+    );
+  }
+
+  showSuccessfulRepoRemoval() {
+    this._snackBar.open(
+      this.scenarios.successfulRepoRemoval.message,
+      undefined,
+      this.scenarios.successfulRepoRemoval.snackConfig
+    );
+  }
+
+  showRepoRemovalNotAllowed() {
+    this._snackBar.open(
+      this.scenarios.repoRemovalNotAllowed.message,
+      undefined,
+      this.scenarios.repoRemovalNotAllowed.snackConfig
     );
   }
 }
@@ -72,5 +96,7 @@ interface Scenario {
 interface AllScenarios {
   connectionError: Scenario;
   successfulTestRemoval: Scenario;
-  notAllowed: Scenario;
+  testRemovalNotAllowed: Scenario;
+  successfulRepoRemoval: Scenario;
+  repoRemovalNotAllowed: Scenario;
 }

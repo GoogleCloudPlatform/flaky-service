@@ -97,6 +97,19 @@ export class COMService {
       .pipe(catchError(err => this.handleError(err)));
   }
 
+  public fetchDeleteRepoUrl(
+    orgName: string,
+    repoName: string,
+    redirect: string
+  ): Observable<string> {
+    console.info('fetchDeleteRepoUrl. Org: ' + orgName + ', Repo: ' + repoName + ', redirect: ' + redirect);
+    return this.http
+      .get(apiLinks.get.deleteRepo(orgName, repoName, redirect), {
+        responseType: 'text',
+      })
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
   private getParams(filters: Filter[]) {
     let params: HttpParams = new HttpParams();
     filters.forEach(filter => (params = params.set(filter.name, filter.value)));
