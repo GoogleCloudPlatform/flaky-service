@@ -22,7 +22,7 @@ import {
 import {ConfigComponent} from './config.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
-import {of} from 'yxjs';
+import {of} from 'rxjs';
 import {COMService} from 'src/app/services/com/com.service';
 
 describe('ConfigComponent', () => {
