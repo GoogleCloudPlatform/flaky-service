@@ -54,7 +54,7 @@ export class ConfigComponent {
           RouteProvider.routes.repo.link(this.orgName, this.repoName)
       )
       .subscribe(res => {
-        this.windowProvider.open(environment.baseUrl, '_self');
+        this.windowProvider.open(res, '_self');
       });
   }
 }
