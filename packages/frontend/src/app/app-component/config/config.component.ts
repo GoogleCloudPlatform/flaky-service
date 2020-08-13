@@ -43,8 +43,9 @@ export class ConfigComponent {
   }
 
   startDeleteRepo() {
-    this.repoRemovalButtonState.disabled = true;
-    this.comService
+    if(this.windowProvider.confirm('Are you sure you want to delete this repository? This action cannot be undone.')) {
+      this.repoRemovalButtonState.disabled = true;
+      this.comService
       .fetchDeleteRepoUrl(
         this.orgName,
         this.repoName,
@@ -55,5 +56,6 @@ export class ConfigComponent {
       .subscribe(res => {
         this.windowProvider.open(res, '_self');
       });
+    }
   }
 }
