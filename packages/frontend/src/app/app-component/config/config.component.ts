@@ -44,7 +44,6 @@ export class ConfigComponent {
 
   startDeleteRepo() {
     this.repoRemovalButtonState.disabled = true;
-    console.info('startDeleteRepo');
     this.comService
       .fetchDeleteRepoUrl(
         this.orgName,
