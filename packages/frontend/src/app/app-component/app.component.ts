@@ -28,6 +28,7 @@ export class AppComponent implements OnInit {
   showConfigWheel = false;
   repository = '';
   organization = '';
+  removalButtonsState = {disabled: false};
 
   constructor(public dialog: MatDialog, private globals: GlobalsService) {}
 
