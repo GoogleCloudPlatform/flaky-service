@@ -102,7 +102,14 @@ export class COMService {
     repoName: string,
     redirect: string
   ): Observable<string> {
-    console.info('fetchDeleteRepoUrl. Org: ' + orgName + ', Repo: ' + repoName + ', redirect: ' + redirect);
+    console.info(
+      'fetchDeleteRepoUrl. Org: ' +
+        orgName +
+        ', Repo: ' +
+        repoName +
+        ', redirect: ' +
+        redirect
+    );
     return this.http
       .get(apiLinks.get.deleteRepo(orgName, repoName, redirect), {
         responseType: 'text',

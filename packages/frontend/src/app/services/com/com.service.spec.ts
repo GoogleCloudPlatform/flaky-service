@@ -282,9 +282,7 @@ describe('COMService', () => {
       const err = {} as HttpErrorResponse;
       httpClientSpy.get.and.returnValue(throwError(err));
 
-      service
-        .fetchDeleteRepoUrl(repoName, orgName, redirect)
-        .subscribe();
+      service.fetchDeleteRepoUrl(repoName, orgName, redirect).subscribe();
 
       tick();
       expect(errorHandler).toHaveBeenCalledWith(err);

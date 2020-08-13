@@ -40,7 +40,10 @@ describe('ConfigComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ConfigComponent],
       imports: [MatDividerModule, MatIconModule],
-      providers: [{provide: Window, useValue: mockWindowProvider}, {provide: COMService, useValue: comMock}],
+      providers: [
+        {provide: Window, useValue: mockWindowProvider},
+        {provide: COMService, useValue: comMock},
+      ],
     }).compileComponents();
   }));
 
