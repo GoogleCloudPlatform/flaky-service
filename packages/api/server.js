@@ -21,8 +21,10 @@ const GetRepoHandler = require('./src/get-repo.js');
 const GetOrgHandler = require('./src/get-org.js');
 const GetTestHandler = require('./src/get-test.js');
 const GetExportHandler = require('./src/get-export.js');
+const GetBatchesHandler = require('./src/get-batches.js');
 const client = require('./src/firestore.js');
 const auth = require('./src/auth.js');
+const { InvalidParameterError } = require('./lib/errors');
 
 const { v4 } = require('uuid');
 
@@ -34,10 +36,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-app.delete('/api/repo/:orgname/:reponame/test/:testid', async (req, res) => {
+app.get('/api/repo/deleteurl/:orgname/:reponame/test', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
-  const testName = req.params.testid;
+  if (!req.query.testname) {
+    throw new InvalidParameterError('Route requires query parameter of name');
+  }
+  const testName = req.query.testname;
   const redirect = req.query.redirect || process.env.FRONTEND_URL;
   const state = v4();
 
@@ -52,7 +57,7 @@ app.delete('/api/repo/:orgname/:reponame/test/:testid', async (req, res) => {
   });
 
   const url = `http://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&state=${state}&allow_signup=false&scope=repo`;
-  res.status(302).redirect(url);
+  res.status(200).send(url);
 });
 
 app.get('/api/callback', async (req, res) => {
@@ -77,17 +82,15 @@ app.get('/api/callback', async (req, res) => {
     return res.status(404).redirect(redirect);
   }
   const userPermission = await auth.retrieveUserPermission(queryObject.access_token, ticket.fullName);
-  console.log('PERMISSION: ' + userPermission);
 
   const performed = await repo.performTicketIfAllowed(ticket, userPermission);
 
-  // todo send a message to the frontend to put a banner on the page indicating whether the action has been performed
   if (performed) {
     console.log('Successfully performed the action');
-    res.status(200).redirect(redirect);
+    res.status(200).redirect(redirect + ';done=' + performed);
   } else {
     console.log('Not permitted to perform the action');
-    res.status(404).redirect(redirect);
+    res.status(404).redirect(redirect + ';done=' + performed);
   }
 });
 
@@ -101,6 +104,8 @@ const getTestHandler = new GetTestHandler(app, client);
 getTestHandler.listen();
 const getExportHandler = new GetExportHandler(app, client);
 getExportHandler.listen();
+const getBatchesHandler = new GetBatchesHandler(app, client);
+getBatchesHandler.listen();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';

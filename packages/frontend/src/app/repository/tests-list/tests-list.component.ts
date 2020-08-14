@@ -28,8 +28,6 @@ import {map} from 'rxjs/operators';
   styleUrls: ['./tests-list.component.css'],
 })
 export class TestsListComponent extends PaginatedListComponent<Test> {
-  /* fetches and returns tests using com service for http
-  request to be displayed in the list*/
   fetchPageData(filters: Filter[] = []): Observable<PageData> {
     return this.comService
       .fetchTests(this.repoName, this.orgName, filters)

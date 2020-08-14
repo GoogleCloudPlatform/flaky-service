@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {TestBed} from '@angular/core/testing';
+import {TestBed, tick, fakeAsync} from '@angular/core/testing';
 import {COMService} from './com.service';
 import {HttpClientModule, HttpErrorResponse} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
@@ -214,6 +214,44 @@ describe('COMService', () => {
       service.fetchTests('repo', 'org', []).subscribe();
       expect(errorHandler).toHaveBeenCalledWith(err);
     });
+  });
+
+  describe('fetchDeleteTestUrl', () => {
+    const repoName = 'repoName';
+    const orgName = 'orgName';
+    const testName = 'testName';
+    const redirect = 'redirect';
+
+    it('should get a link from the server', () => {
+      const serverUrl = 'url-from-server';
+      httpClientSpy.get.and.returnValue(of(serverUrl));
+
+      service
+        .fetchDeleteTestUrl(orgName, repoName, testName, redirect)
+        .subscribe(result => {
+          expect(result).toBe(serverUrl);
+        });
+
+      //called the right link
+      expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
+        apiLinks.get.deleteTest(orgName, repoName, testName, redirect)
+      );
+    });
+
+    it('should call the error handler if an error occurs', fakeAsync(() => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service
+        .fetchDeleteTestUrl(repoName, orgName, testName, redirect)
+        .subscribe();
+
+      tick();
+      expect(errorHandler).toHaveBeenCalledWith(err);
+    }));
   });
 
   describe('handleError', () => {

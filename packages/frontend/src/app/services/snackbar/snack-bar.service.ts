@@ -28,6 +28,14 @@ export class SnackBarService {
       message: "The server can't be reached. Please try again.",
       snackConfig: {duration: 5000},
     },
+    successfulTestRemoval: {
+      message: 'Test successfully removed !',
+      snackConfig: {duration: 3000},
+    },
+    notAllowed: {
+      message: 'You do not have the permission to perform this action.',
+      snackConfig: {duration: 3000},
+    },
   };
 
   constructor(public _snackBar: MatSnackBar) {}
@@ -39,6 +47,22 @@ export class SnackBarService {
       this.scenarios.connectionError.snackConfig
     );
   }
+
+  showSuccessfulTestRemoval() {
+    this._snackBar.open(
+      this.scenarios.successfulTestRemoval.message,
+      undefined,
+      this.scenarios.successfulTestRemoval.snackConfig
+    );
+  }
+
+  showNotAllowed() {
+    this._snackBar.open(
+      this.scenarios.notAllowed.message,
+      undefined,
+      this.scenarios.notAllowed.snackConfig
+    );
+  }
 }
 
 interface Scenario {
@@ -47,4 +71,6 @@ interface Scenario {
 }
 interface AllScenarios {
   connectionError: Scenario;
+  successfulTestRemoval: Scenario;
+  notAllowed: Scenario;
 }

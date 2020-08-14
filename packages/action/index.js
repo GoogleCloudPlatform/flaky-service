@@ -50,7 +50,7 @@ async function main () {
       token: core.getInput('repo-token')
     };
 
-    metaData.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); // consistancy
+    metaData.environment.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); // consistancy
 
     metaData.environment.ref = metaData.environment.ref.replace('refs/', '');
     metaData.environment.ref = metaData.environment.ref.replace('heads/', '');
