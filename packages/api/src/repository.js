@@ -56,7 +56,7 @@ class Repository {
   }
 
   async deleteTicket(ticket) {
-    return this.deleteDoc(`tickets/${state}`);
+    return this.deleteDoc(`tickets/${ticket.state}`);
   }
 
   allowedToPerformTicket (action, permission) {
