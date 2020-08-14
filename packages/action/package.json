@@ -13,8 +13,7 @@
     "@actions/core": "^1.2.4",
     "@actions/github": "^3.0.0",
     "node-fetch": "^2.6.0",
-    "tap-parser": "^10.0.1",
-    "url": "^0.11.0"
+    "tap-parser": "^10.0.1"
   },
   "devDependencies": {
     "eslint": "^7.2.0",
