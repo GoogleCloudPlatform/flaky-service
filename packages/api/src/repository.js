@@ -55,7 +55,7 @@ class Repository {
     return data.ticket;
   }
 
-  async deleteTicket(ticket) {
+  async deleteTicket (ticket) {
     return this.deleteDoc(`tickets/${ticket.state}`);
   }
 
