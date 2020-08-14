@@ -15,7 +15,7 @@
 
 const firebaseEncode = require('../lib/firebase-encode');
 
-async function deleteRepo (client, repoId) {
+async function deleteRepo (repoId, client) {
   const deleteOperations = [];
 
   const allBuilds = await client.collection(global.headCollection).doc(firebaseEncode(repoId)).collection('builds').get();

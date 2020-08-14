@@ -124,6 +124,7 @@ describe('Repository', () => {
   describe('performTicketIfAllowed', async () => {
     let stubbedPermissions;
     let stubbedTestDeletion;
+    let stubbedRepoDeletion;
 
     beforeEach(() => {
       stubbedPermissions = sinon.stub(repo, 'allowedToPerformTicket').callsFake((action, permission) => {
@@ -131,12 +132,15 @@ describe('Repository', () => {
         if (permission === 'permitted') return true;
         return false;
       });
+
       stubbedTestDeletion = sinon.stub(deleter, 'deleteTest');
+      stubbedRepoDeletion = sinon.stub(deleter, 'deleteRepo');
     });
 
     afterEach(() => {
       stubbedPermissions.restore();
       stubbedTestDeletion.restore();
+      stubbedRepoDeletion.restore();
     });
 
     it('deletes test if permitted', async () => {
@@ -150,6 +154,19 @@ describe('Repository', () => {
 
       // stubbedTestDeletion is called once by other test, but should never be called more than once.
       assert(stubbedTestDeletion.callCount === 0);
+    });
+
+    it('deletes repo if permitted', async () => {
+      await repo.performTicketIfAllowed({ action: 'delete-repo', fullName: 'org/repo' }, 'permitted');
+
+      assert(stubbedRepoDeletion.calledWith('org/repo'));
+    });
+
+    it('does not delete repo if not permitted', async () => {
+      await repo.performTicketIfAllowed({ action: 'delete-test', fullName: 'org/repo' }, 'notPermitted');
+
+      // stubbedTestDeletion is called once by other test, but should never be called more than once.
+      assert(stubbedRepoDeletion.callCount === 0);
     });
   });
 });
