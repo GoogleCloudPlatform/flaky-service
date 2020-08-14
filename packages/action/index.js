@@ -15,7 +15,7 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
 const core = require('@actions/core');
-
+const {resolve} = require('url');
 /**
  * main
  */
@@ -65,7 +65,7 @@ async function main () {
     const data = fs.readFileSync(
       core.getInput('file-path'), 'utf8');
     const sendMe = { type: fileType, data: data, metadata: metaData };
-    const endpoint = core.getInput('endpoint') + '/api/build/gh/v1';
+    const endpoint = resolve(core.getInput('endpoint'), '/api/build/gh/v1');
     console.log('Beginning Upload of data...');
     const outcome = await fetch(endpoint, {
       method: 'POST',
