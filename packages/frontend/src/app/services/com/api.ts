@@ -26,6 +26,7 @@ interface ApiLinks {
       testName: string,
       redirect: string
     ) => string;
+    deleteRepo: (orgName: string, repoName: string, redirect: string) => string;
   };
   post: {
     authLink: string;
@@ -49,13 +50,21 @@ export const apiLinks: ApiLinks = {
       redirect: string
     ) =>
       apiBaseLink +
-      'repo/deleteurl/' +
+      'repo/' +
       encodeURIComponent(orgName) +
       '/' +
       encodeURIComponent(repoName) +
-      '/test?testname=' +
+      '/test/deleteurl?testname=' +
       encodeURIComponent(testName) +
       '&redirect=' +
+      encodeURIComponent(redirect),
+    deleteRepo: (orgName: string, repoName: string, redirect: string) =>
+      apiBaseLink +
+      'repo/' +
+      encodeURIComponent(orgName) +
+      '/' +
+      encodeURIComponent(repoName) +
+      '/deleteurl?redirect=' +
       encodeURIComponent(redirect),
   },
   post: {
