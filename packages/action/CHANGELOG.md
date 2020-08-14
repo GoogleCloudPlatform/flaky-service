@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.2](https://www.github.com/GoogleCloudPlatform/flaky-service/compare/v1.0.1...v1.0.2) (2020-08-14)
+
+
+### Bug Fixes
+
+* default endpoint for action is production ([#234](https://www.github.com/GoogleCloudPlatform/flaky-service/issues/234)) ([043c602](https://www.github.com/GoogleCloudPlatform/flaky-service/commit/043c60247fe53c995dcbbc7bddbd746d089d8b0f))
+
 ### [1.0.1](https://www.github.com/GoogleCloudPlatform/flaky-service/compare/v1.0.0...v1.0.1) (2020-08-07)
 
 
