@@ -17,6 +17,9 @@ import {UserService} from 'src/app/services/user/user.service';
 import {environment} from 'src/environments/environment';
 import {COMService} from 'src/app/services/com/com.service';
 import {RouteProvider} from 'src/app/routing/route-provider/RouteProvider';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {RepositoryRemovalDialogComponent} from './repository-removal-dialog/repository-removal-dialog.component';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-config',
@@ -26,10 +29,14 @@ import {RouteProvider} from 'src/app/routing/route-provider/RouteProvider';
 export class ConfigComponent {
   @Input() repoName: string;
   @Input() orgName: string;
-  @Input() repoRemovalButtonState;
+  @Input() repoRemovalButtonDisbaled = false;
   windowProvider = window;
 
-  constructor(public userService: UserService, public comService: COMService) {}
+  constructor(
+    public userService: UserService,
+    public comService: COMService,
+    public dialog: MatDialog
+  ) {}
 
   onDownloadClick() {
     const exportUrl =
@@ -42,21 +49,32 @@ export class ConfigComponent {
     this.windowProvider.open(exportUrl);
   }
 
+  onRepoDeleteClick() {
+    this.dialog
+      .open(RepositoryRemovalDialogComponent, new MatDialogConfig())
+      .afterClosed()
+      .subscribe((deleteRepo: boolean) => {
+        if (deleteRepo) this.startDeleteRepo();
+      });
+  }
+
   startDeleteRepo() {
-    console.log("start delete repo");
-    if(this.windowProvider.confirm("Are you sure you want to delete this repository? This action cannot be undone!")) {
-      this.repoRemovalButtonState.disabled = true;
-      this.comService
+    this.repoRemovalButtonDisbaled = true;
+    this.comService
       .fetchDeleteRepoUrl(
         this.orgName,
         this.repoName,
         environment.baseUrl +
-         '/' +
+          '/' +
           RouteProvider.routes.repo.link(this.orgName, this.repoName)
+      )
+      .pipe(
+        finalize(() => {
+          this.repoRemovalButtonDisbaled = false;
+        })
       )
       .subscribe(res => {
         this.windowProvider.open(res, '_self');
       });
-    }
   }
 }

@@ -17,6 +17,6 @@ import {Component} from '@angular/core';
 @Component({
   selector: 'app-repository-removal-dialog',
   templateUrl: './repository-removal-dialog.component.html',
-  styleUrls: ['./repository-removal-dialog.component.css']
+  styleUrls: ['./repository-removal-dialog.component.css'],
 })
 export class RepositoryRemovalDialogComponent {}
