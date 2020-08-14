@@ -85,7 +85,7 @@ describe('ConfigComponent', () => {
     spyOn(component.windowProvider, 'open');
     //click the repo deletion button
     const deleteButton = fixture.debugElement.nativeElement.querySelector(
-      '.delete-repo-button'
+      '#delete-repo-button'
     );
     deleteButton.click();
     tick();
@@ -105,7 +105,7 @@ describe('ConfigComponent', () => {
 
     //click the repo deletion button
     const deleteButton = fixture.debugElement.nativeElement.querySelector(
-      '.delete-repo-button'
+      '#delete-repo-button'
     );
     deleteButton.click();
     tick();
