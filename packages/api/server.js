@@ -104,6 +104,8 @@ app.get('/api/callback', async (req, res) => {
 
   const performed = await repo.performTicketIfAllowed(ticket, userPermission);
 
+  await repo.deleteTicket(ticket);
+
   if (performed) {
     console.log('Successfully performed the action');
     res.status(200).redirect(redirect + ';done=' + performed);

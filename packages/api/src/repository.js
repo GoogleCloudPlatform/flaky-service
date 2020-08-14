@@ -55,6 +55,10 @@ class Repository {
     return data.ticket;
   }
 
+  async deleteTicket(ticket) {
+    return this.deleteDoc(`tickets/${state}`);
+  }
+
   allowedToPerformTicket (action, permission) {
     if (action === 'delete-repo') {
       return permission === 'admin';
