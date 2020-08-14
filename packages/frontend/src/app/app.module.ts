@@ -57,6 +57,7 @@ import {NotFoundComponent} from './not-found/not-found.component';
 import {HeatMapComponent} from './heat-map/heat-map.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {RepositoryRemovalDialogComponent} from './app-component/config/repository-removal-dialog/repository-removal-dialog.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     BreadcrumbsComponent,
     NotFoundComponent,
     HeatMapComponent,
+    RepositoryRemovalDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -105,7 +107,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     ScrollingModule,
     FlexLayoutModule,
   ],
-  entryComponents: [LicenseComponent],
+  entryComponents: [LicenseComponent, RepositoryRemovalDialogComponent],
   providers: [],
   bootstrap: [AppComponent],
 })
