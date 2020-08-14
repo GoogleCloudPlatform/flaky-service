@@ -43,14 +43,15 @@ export class ConfigComponent {
   }
 
   startDeleteRepo() {
-    if(this.windowProvider.confirm('Are you sure you want to delete this repository? This action cannot be undone.')) {
+    console.log("start delete repo");
+    if(this.windowProvider.confirm("Are you sure you want to delete this repository? This action cannot be undone!")) {
       this.repoRemovalButtonState.disabled = true;
       this.comService
       .fetchDeleteRepoUrl(
         this.orgName,
         this.repoName,
         environment.baseUrl +
-          '/' +
+         '/' +
           RouteProvider.routes.repo.link(this.orgName, this.repoName)
       )
       .subscribe(res => {

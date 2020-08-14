@@ -89,6 +89,7 @@ describe('ConfigComponent', () => {
     );
     deleteButton.click();
     tick();
+    tick();
     expect(component.windowProvider.open).toHaveBeenCalledWith(
       'https://flaky-dashboard.web.app/',
       '_self'
