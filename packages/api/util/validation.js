@@ -22,6 +22,11 @@ function isJson (str) {
   return true;
 }
 
+function isAPositiveNumber (val) {
+  return !isNaN(val) && val >= 0;
+}
+
 module.exports = {
-  isJson
+  isJson,
+  isAPositiveNumber
 };

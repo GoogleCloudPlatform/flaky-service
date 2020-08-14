@@ -21,6 +21,7 @@ const GetRepoHandler = require('./src/get-repo.js');
 const GetOrgHandler = require('./src/get-org.js');
 const GetTestHandler = require('./src/get-test.js');
 const GetExportHandler = require('./src/get-export.js');
+const GetBatchesHandler = require('./src/get-batches.js');
 const client = require('./src/firestore.js');
 const auth = require('./src/auth.js');
 const { InvalidParameterError } = require('./lib/errors');
@@ -103,6 +104,8 @@ const getTestHandler = new GetTestHandler(app, client);
 getTestHandler.listen();
 const getExportHandler = new GetExportHandler(app, client);
 getExportHandler.listen();
+const getBatchesHandler = new GetBatchesHandler(app, client);
+getBatchesHandler.listen();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const host = '0.0.0.0';
