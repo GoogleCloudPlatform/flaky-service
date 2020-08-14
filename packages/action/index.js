@@ -81,7 +81,7 @@ async function main () {
       throw 'Upload Failed';
     } else if (outcomeAsJSON.message) {
       console.log('Build Uploaded Successfully!');
-      console.log('Visit ' + resolve(core.getInput('endpoint'), '/org/', process.env.GITHUB_REPOSITORY) + ' to see uploaded data');
+      console.log('Visit ' + resolve(resolve(core.getInput('endpoint'),'/org/'), process.env.GITHUB_REPOSITORY) + ' to see uploaded data');
     } else {
       core.warning('Encountered unknown error, possibly involving server issues');
       throw 'Unkown Error';
