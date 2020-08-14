@@ -362,6 +362,6 @@ describe('GetBatchesHandler', () => {
   });
 
   after(async () => {
-    await deleteRepo(client, repos.repoId);
+    await deleteRepo(repos.repoId, client);
   });
 });

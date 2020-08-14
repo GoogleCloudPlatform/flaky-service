@@ -36,7 +36,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-app.get('/api/repo/deleteurl/:orgname/:reponame/test', async (req, res) => {
+app.get('/api/repo/:orgname/:reponame/test/deleteurl', async (req, res) => {
   const orgName = req.params.orgname;
   const repoId = req.params.reponame;
   if (!req.query.testname) {
@@ -58,6 +58,25 @@ app.get('/api/repo/deleteurl/:orgname/:reponame/test', async (req, res) => {
 
   const url = `http://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&state=${state}&allow_signup=false&scope=repo`;
   res.status(200).send(url);
+});
+
+app.get('/api/repo/:orgname/:reponame/deleteurl', async (req, res) => {
+  const orgName = req.params.orgname;
+  const repoId = req.params.reponame;
+  const redirect = req.query.redirect || process.env.FRONTEND_URL;
+  const state = v4();
+
+  await repo.storeTicket({
+    action: 'delete-repo',
+    orgName: orgName,
+    repoId: repoId,
+    fullName: orgName + '/' + repoId,
+    state: state,
+    redirect: redirect
+  });
+
+  const url = `http://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&state=${state}&allow_signup=false&scope=repo`;
+  res.status(200).send(url).end();
 });
 
 app.get('/api/callback', async (req, res) => {

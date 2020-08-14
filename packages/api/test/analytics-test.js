@@ -135,6 +135,6 @@ describe('Flaky-Analytics', () => {
   });
 
   after(async () => {
-    await deleteRepo(client, decodeURIComponent(buildInfo.repoId));
+    await deleteRepo(decodeURIComponent(buildInfo.repoId), client);
   });
 });

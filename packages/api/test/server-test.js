@@ -39,10 +39,10 @@ describe('flaky express server', () => {
     assert.strictEqual(process.env.FRONTEND_URL, frontendUrl);
   });
 
-  describe('delete /repo', async () => {
+  describe('get /repo to delete a test', async () => {
     it('generates a GitHub redirect', async () => {
       stubs.push(sinon.stub(repo, 'storeTicket').returns(true));
-      const resp = await fetch('http://0.0.0.0:3000/api/repo/deleteurl/my-org/my-repo/test?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
+      const resp = await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/deleteurl?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
         method: 'GET'
       });
       const respJSON = await resp.text();
@@ -53,7 +53,7 @@ describe('flaky express server', () => {
       const stubbed = sinon.stub(repo, 'storeTicket');
       stubs.push(stubbed);
 
-      await fetch('http://0.0.0.0:3000/api/repo/deleteurl/my-org/my-repo/test?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
+      await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/deleteurl?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
         method: 'GET'
       });
 
@@ -62,6 +62,33 @@ describe('flaky express server', () => {
         orgName: 'my-org',
         repoId: 'my-repo',
         testName: 'my-test',
+        redirect: process.env.FRONTEND_URL
+      }));
+    });
+  });
+
+  describe('get /repo to delete a repository', async () => {
+    it('generates a GitHub redirect', async () => {
+      stubs.push(sinon.stub(repo, 'storeTicket').returns(true));
+      const resp = await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/deleteurl?redirect=' + process.env.FRONTEND_URL, {
+        method: 'GET'
+      });
+      const respJSON = await resp.text();
+      assert(respJSON.includes('github.com/login/oauth'));
+    });
+
+    it('stores correct information in the ticket', async () => {
+      const stubbed = sinon.stub(repo, 'storeTicket');
+      stubs.push(stubbed);
+
+      await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/deleteurl?redirect=' + process.env.FRONTEND_URL, {
+        method: 'GET'
+      });
+
+      assert(stubbed.calledWithMatch({
+        action: 'delete-repo',
+        orgName: 'my-org',
+        repoId: 'my-repo',
         redirect: process.env.FRONTEND_URL
       }));
     });
