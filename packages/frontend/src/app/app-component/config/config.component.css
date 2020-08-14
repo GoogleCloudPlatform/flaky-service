@@ -39,3 +39,16 @@ limitations under the License.
     text-decoration: none;
     box-shadow: 2px 2px lightgray;
 }
+#delete-repo-button {
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    color: white;
+    background-color: #0075FF;
+    font-size: medium;
+    text-decoration: none;
+    box-shadow: 2px 2px lightgray;
+    margin-top: 30px;
+}
