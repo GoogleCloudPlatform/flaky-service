@@ -37,11 +37,11 @@ async function deleteRepo (repoId, client) {
 // in the test collection to verify that the test does indeed exist
 async function deleteTest (repoId, testname, client) {
   const deleteOperations = [];
-  const allRuns = await client.collection(global.headCollection).doc(firebaseEncode(repoId)).collection('tests').doc(firebaseEncode(testname)).collection('runs').get();
+  const allRuns = await client.collection(global.headCollection).doc(firebaseEncode(repoId)).collection('queued').doc(firebaseEncode(testname)).collection('runs').get();
   allRuns.forEach(run => {
     deleteOperations.push(run.ref.delete());
   });
-  deleteOperations.push(client.collection(global.headCollection).doc(firebaseEncode(repoId)).collection('tests').doc(firebaseEncode(testname)).delete());
+  deleteOperations.push(client.collection(global.headCollection).doc(firebaseEncode(repoId)).collection('queued').doc(firebaseEncode(testname)).delete());
   await Promise.all(deleteOperations);
 }
 

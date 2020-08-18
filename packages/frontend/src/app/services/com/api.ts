@@ -17,7 +17,8 @@ import {environment} from '../../../environments/environment';
 interface ApiLinks {
   get: {
     repositories: (orgName: string) => string;
-    builds: (repoName: string, orgName: string) => string;
+    batches: (repoName: string, orgName: string) => string;
+    batch: (repoName: string, orgName: string, timestamp: number) => string;
     tests: (repoName: string, orgName: string) => string;
     repository: (repoName: string, orgName: string) => string;
     deleteTest: (
@@ -37,8 +38,10 @@ export const apiBaseLink = environment.baseUrl + '/api/';
 export const apiLinks: ApiLinks = {
   get: {
     repositories: (orgName: string) => apiBaseLink + 'org/' + orgName,
-    builds: (repoName: string, orgName: string) =>
-      apiBaseLink + 'repo/' + orgName + '/' + repoName + '/builds',
+    batches: (repoName: string, orgName: string) =>
+      apiBaseLink + 'repo/' + orgName + '/' + repoName + '/batches',
+    batch: (repoName: string, orgName: string, timestamp: number) =>
+      apiBaseLink + 'repo/' + orgName + '/' + repoName + '/batch/' + timestamp,
     tests: (repoName: string, orgName: string) =>
       apiBaseLink + 'repo/' + orgName + '/' + repoName + '/tests',
     repository: (repoName: string, orgName: string) =>

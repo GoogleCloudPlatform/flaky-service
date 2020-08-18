@@ -62,7 +62,7 @@ class GetExportHandler {
   async getTest (client, repoid, testname) {
     const getOperations = [];
 
-    const allRuns = await client.collection(global.headCollection).doc(repoid).collection('tests').doc(testname).collection('runs').get();
+    const allRuns = await client.collection(global.headCollection).doc(repoid).collection('queued').doc(testname).collection('runs').get();
     allRuns.forEach(run => {
       getOperations.push(run.ref.get());
     });
@@ -80,7 +80,7 @@ class GetExportHandler {
         const testNamesInOrder = [];
         let testCount = 0;
 
-        const allTests = await this.client.collection(global.headCollection).doc(repoid).collection('tests').get();
+        const allTests = await this.client.collection(global.headCollection).doc(repoid).collection('queued').get();
         if (!(allTests.size > 0)) {
           throw new ResourceNotFoundError('Could not find this resource');
         }
