@@ -12,14 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const { describe, it, afterEach } = require('mocha');
+const { describe, it } = require('mocha');
 const assert = require('assert');
 const parser = require('../lib/xunit-parser');
 const { readFileSync } = require('fs');
 
-describe.only('xunit-parser-test', () => {
-  it('parses xunit into Javascript object', () => {
+describe('xunit-parser-test', () => {
+  it('stores the correct number of tests', () => {
     const tests = parser(readFileSync(require.resolve('./fixtures/one_failed.xml'), 'utf8'));
     assert.strictEqual(tests.length, 4);
+  });
+
+  it('stores a passing test with the correct values', () => {
+    const tests = parser(readFileSync(require.resolve('./fixtures/one_failed.xml'), 'utf8'));
+    const test = tests[0];
+    // <testcase classname="golang-samples" name="TestBadFiles" time="0.030"/>
+    assert(test.successful === true);
+    assert(test.number === 1);
+    assert(test.name === 'TestBadFiles');
+    assert(test.failureMessage === 'Successful');
   });
 });

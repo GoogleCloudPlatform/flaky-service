@@ -13,7 +13,6 @@
 // limitations under the License.
 
 const xmljs = require('xml-js');
-const { readFileSync } = require('fs');
 const TestCaseRun = require('../lib/testrun');
 
 const parse = (xmlString) => {
@@ -45,13 +44,13 @@ const parse = (xmlString) => {
       testcases = [testcases];
     }
     for (const testcase of testcases) {
-      let pkg = testsuiteName;
+      // let pkg = testsuiteName;
       if (
         !testsuiteName ||
         testsuiteName === 'pytest' ||
         testsuiteName === 'Mocha Tests'
       ) {
-        pkg = testcase._attributes.classname;
+        // pkg = testcase._attributes.classname;
       }
       // Ignore skipped tests. They didn't pass and they didn't fail.
       if (testcase.skipped !== undefined) {
@@ -65,14 +64,13 @@ const parse = (xmlString) => {
       count++;
 
       if (failure !== undefined || error !== undefined) {
-	      // Here we must have a failure or an error.
-	      let log = (failure === undefined) ? error._text : failure._text;
-	      // Java puts its test logs in a CDATA element.
-	      if (log === undefined) {
-	        log = failure._cdata;
-	      }
-
-	      testCaseRun.failureMessage = log;
+      // Here we must have a failure or an error.
+        let log = (failure === undefined) ? error._text : failure._text;
+        // Java puts its test logs in a CDATA element.
+        if (log === undefined) {
+          log = failure._cdata;
+        }
+        testCaseRun.failureMessage = log;
       }
 
       tests.push(testCaseRun);
