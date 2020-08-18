@@ -58,16 +58,25 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
     total: 0
   };
 
+  // see if this is the first build for the repository
+  const isFirstBuild = await dbRepo.collection('builds').get().then(collectionSnapshot => {
+    if (collectionSnapshot.size === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
   const testsToProcess = testCases.map((testCase) => {
     return () => {
-      return Promise.all([addTestRun(testCase, buildInfo, dbRepo), updateTest(testCase, buildInfo, dbRepo)]);
+      return Promise.resolve(updateQueue(isFirstBuild, testCase, buildInfo, dbRepo));
     };
   });
 
   const allTestMetrics = await awaitInBatches(testsToProcess, 50);
 
   allTestMetrics.forEach(testStatus => {
-    const { passed, flaky } = testStatus[1];
+    const { passed, flaky } = testStatus;
     if (flaky) { metrics.flaky += 1; }
     if (passed) { metrics.passcount += 1; }
     if (!passed) { metrics.failcount += 1; }
@@ -80,7 +89,7 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
 }
 
 async function addTestRun (testCase, buildInfo, dbRepo) {
-  return dbRepo.collection('tests').doc(testCase.encodedName).collection('runs').doc(buildInfo.buildId).set(
+  return dbRepo.collection('queued').doc(testCase.encodedName).collection('runs').doc(buildInfo.buildId).set(
     {
       environment: buildInfo.environment,
       status: testCase.successful ? 'OK' : testCase.failureMessage,
@@ -92,22 +101,91 @@ async function addTestRun (testCase, buildInfo, dbRepo) {
   );
 }
 
-async function updateTest (testCase, buildInfo, dbRepo) {
-  // first read the test
-  const prevTest = await dbRepo.collection('tests').doc(testCase.encodedName).get();
+async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
+  // see if the test exists in the queue
+  const prevTest = await dbRepo.collection('queued').doc(testCase.encodedName).get();
   const cachedSuccess = (prevTest.exists && prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
   const cachedFails = (prevTest.exists && prevTest.data() && prevTest.data().cachedFails) ? prevTest.data().cachedFails : [];
 
-  const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo);
+  if (isFirstBuild) {
+    const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
+    await addTestRun(testCase, buildInfo, dbRepo);
+    return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+  }
 
+  // check the status of the current test run
+  if (!testCase.successful) {
+    /*
+    the current run fails
+    whether this run's test is in the queue or not, call updateTest
+    to add the test to the queue, or update it appropriately
+    */
+    const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
+    await addTestRun(testCase, buildInfo, dbRepo);
+    return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+  } else {
+    // the current run is successful
+    if (calculateFlaky(prevTest, testCase)) {
+      // the current run is flaky so it must be updated
+      const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
+      await addTestRun(testCase, buildInfo, dbRepo);
+      return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+    } else if (prevTest.exists && !prevTest.data().passed) {
+      // the current run is successful and not flaky but previously failed, update the test to be passing
+      const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
+      await addTestRun(testCase, buildInfo, dbRepo);
+      return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
+    }
+    // do not update the test
+  }
+  // return metrics
+  return {
+    flaky: calculateFlaky(prevTest, testCase),
+    passed: testCase.successful
+  };
+}
+
+function calculateFlaky (prevTest, testCase) {
+  if (prevTest.exists && prevTest.data().hasfailed) {
+    // test is in the queue and has failed previously
+    if (testCase.successful) {
+      // currently passing
+      if ((prevTest.data().subsequentpasses >= 15) || (!prevTest.data().shouldtrack)) {
+        // NOT FLAKY
+        return false;
+      } else {
+        // FLAKY
+        return true;
+      }
+    } else {
+      // currently failing
+      if (!prevTest.data().passed) {
+        // not flaky, just failing multiple times in a row
+        return false;
+      } else {
+        // FLAKY
+        return true;
+      }
+    }
+  } else {
+    // test is not in the queue so NOT FLAKY
+    return false;
+  }
+}
+
+async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo) {
   const updateObj = {
     percentpassing: testCaseAnalytics.computePassingPercent(),
-    flaky: testCaseAnalytics.computeIsFlaky(),
-    passed: testCaseAnalytics.isCurrentlyPassing(),
-    failuremessageiffailing: testCaseAnalytics.mostRecentStatus((prevTest.exists && prevTest.data().failuremessageiffailing) ? prevTest.data().failuremessageiffailing : 'None'),
-    searchindex: testCaseAnalytics.isCurrentlyPassing() ? (testCaseAnalytics.computeIsFlaky() ? 1 : 0) : 2,
-    lastupdate: testCaseAnalytics.getLastUpdate(),
+    historicaltests: testCaseAnalytics.numberOfHistoricalTests(),
+    hasfailed: ((prevTest.exists && prevTest.data().hasfailed) || !testCase.successful),
+    shouldtrack: testCaseAnalytics.calculateTrack(),
+    flaky: calculateFlaky(prevTest, testCase),
+    passed: testCase.successful,
+    failuremessageiffailing: (!testCase.successful) ? testCase.failureMessage : 'None',
+    searchindex: testCaseAnalytics.successful ? (calculateFlaky(prevTest, testCase) ? 1 : 0) : 2,
+    lastupdate: buildInfo.timestamp,
     name: testCase.name,
+    subsequentpasses: testCaseAnalytics.calculateSubsequentPasses(prevTest, testCase),
     lifetimepasscount: (testCase.successful) ? Firestore.FieldValue.increment(1) : Firestore.FieldValue.increment(0),
     lifetimefailcount: (testCase.successful) ? Firestore.FieldValue.increment(0) : Firestore.FieldValue.increment(1)
   };
@@ -121,7 +199,7 @@ async function updateTest (testCase, buildInfo, dbRepo) {
   } else {
     updateObj.cachedFails = Firestore.FieldValue.arrayUnion(firestoreTimestamp);
   }
-  await dbRepo.collection('tests').doc(testCase.encodedName).update(updateObj, { merge: true });
+  await dbRepo.collection('queued').doc(testCase.encodedName).update(updateObj, { merge: true });
 
   while (testCaseAnalytics.deleteQueue.length > 0) {
     const deleteMe = testCaseAnalytics.deleteQueue.pop();
@@ -132,11 +210,11 @@ async function updateTest (testCase, buildInfo, dbRepo) {
     } else {
       deleteObj.cachedFails = Firestore.FieldValue.arrayRemove(deleteDate);
     }
-    await dbRepo.collection('tests').doc(testCase.encodedName).update(deleteObj, { merge: true });
+    await dbRepo.collection('queued').doc(testCase.encodedName).update(deleteObj, { merge: true });
   }
 
   return {
-    flaky: testCaseAnalytics.computeIsFlaky(),
+    flaky: calculateFlaky(prevTest, testCase),
     passed: testCase.successful
   };
 }
