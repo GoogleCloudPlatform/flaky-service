@@ -38,7 +38,11 @@ const parse = (xmlString) => {
     // Get rid of github.com/orgName/repoName/
     testsuiteName = testsuiteName.substring(testsuiteName.indexOf('/') + 1);
     testsuiteName = testsuiteName.substring(testsuiteName.indexOf('/') + 1);
-    testsuiteName = testsuiteName.substring(testsuiteName.indexOf('/') + 1);
+    const index = testsuiteName.indexOf('/');
+    if (index !== -1) { testsuiteName = testsuiteName.substring(index + 1); } else {
+    // There is nothing past the repo url
+      testsuiteName = '';
+    }
 
     let testcases = suite.testcase;
     // If there were no tests in the package, continue.
@@ -59,7 +63,7 @@ const parse = (xmlString) => {
       const failure = testcase.failure;
       const error = testcase.error;
 
-      const testCaseRun = new TestCaseRun((failure === undefined && error === undefined) ? 'ok' : 'not ok', count, testsuiteName + '/' + testcase._attributes.name);
+      const testCaseRun = new TestCaseRun((failure === undefined && error === undefined) ? 'ok' : 'not ok', count, (testsuiteName !== '') ? testsuiteName + '/' + testcase._attributes.name : testcase._attributes.name);
       count++;
 
       if (!testCaseRun.successful) {
@@ -74,7 +78,6 @@ const parse = (xmlString) => {
       }
 
       tests.push(testCaseRun);
-      // console.log(testCaseRun.display());
     }
   }
   return tests;
