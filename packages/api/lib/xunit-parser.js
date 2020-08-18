@@ -33,7 +33,13 @@ const parse = (xmlString) => {
   }
   for (const suite of testsuites) {
     // Ruby doesn't always have _attributes.
-    const testsuiteName = suite._attributes ? suite._attributes.name : undefined;
+    let testsuiteName = suite._attributes ? suite._attributes.name : undefined;
+
+    // Get rid of github.com/orgName/repoName/
+    testsuiteName = testsuiteName.substring(testsuiteName.indexOf('/') + 1);
+    testsuiteName = testsuiteName.substring(testsuiteName.indexOf('/') + 1);
+    testsuiteName = testsuiteName.substring(testsuiteName.indexOf('/') + 1);
+
     let testcases = suite.testcase;
     // If there were no tests in the package, continue.
     if (testcases === undefined) {
@@ -43,15 +49,8 @@ const parse = (xmlString) => {
     if (!Array.isArray(testcases)) {
       testcases = [testcases];
     }
+
     for (const testcase of testcases) {
-      // let pkg = testsuiteName;
-      if (
-        !testsuiteName ||
-        testsuiteName === 'pytest' ||
-        testsuiteName === 'Mocha Tests'
-      ) {
-        // pkg = testcase._attributes.classname;
-      }
       // Ignore skipped tests. They didn't pass and they didn't fail.
       if (testcase.skipped !== undefined) {
         continue;
@@ -60,21 +59,22 @@ const parse = (xmlString) => {
       const failure = testcase.failure;
       const error = testcase.error;
 
-      const testCaseRun = new TestCaseRun((failure === undefined && error === undefined) ? 'ok' : 'not ok', count, testcase._attributes.name);
+      const testCaseRun = new TestCaseRun((failure === undefined && error === undefined) ? 'ok' : 'not ok', count, testsuiteName + '/' + testcase._attributes.name);
       count++;
 
-      if (failure !== undefined || error !== undefined) {
+      if (!testCaseRun.successful) {
       // Here we must have a failure or an error.
         let log = (failure === undefined) ? error._text : failure._text;
         // Java puts its test logs in a CDATA element.
         if (log === undefined) {
           log = failure._cdata;
         }
+
         testCaseRun.failureMessage = log;
       }
 
       tests.push(testCaseRun);
-      console.log(testCaseRun.display());
+      // console.log(testCaseRun.display());
     }
   }
   return tests;

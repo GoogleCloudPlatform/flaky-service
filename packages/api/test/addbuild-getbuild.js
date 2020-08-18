@@ -102,7 +102,7 @@ const buildInfo = [
 buildInfo[2].testCases[0].failureMessage = 'Error message';
 buildInfo[2].testCases[1].failureMessage = 'Error message';
 
-describe.only('Add-Build', () => {
+describe('Add-Build', () => {
   before(async () => {
     global.headCollection = 'testing/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
   });
