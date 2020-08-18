@@ -18,7 +18,8 @@
 
 const addBuild = require('../src/add-build');
 const TestCaseRun = require('../lib/testrun');
-var Parser = require('tap-parser');
+var tapParser = require('tap-parser');
+const xunitParser = require('../lib/xunit-parser');
 const Readable = require('stream').Readable;
 const firebaseEncode = require('../lib/firebase-encode');
 const { InvalidParameterError, UnauthorizedError, handleError } = require('../lib/errors');
@@ -121,7 +122,7 @@ class PostBuildHandler {
     switch (fileType) {
       case 'TAP': {
         var data = [];
-        var p = new Parser();
+        var p = new tapParser();
 
         p.on('result', function (assert) {
           data.push(assert);
@@ -274,15 +275,15 @@ class PostBuildHandler {
         //   throw new UnauthorizedError('Flaky does not store tests for private repos');
         // }
 
+        //TODO: Metadata stuff
         // const buildInfo = PostBuildHandler.cleanBuildInfo(req.body.metadata); // Different line. The metadata object is the same as addbuild, already validated
+        const testCases = xunitParser(req.body.data);
 
-        // req.body.data = await PostBuildHandler.flattenTap(req.body.data);
-        const testCases = PostBuildHandler.parseTestCases(parsedRaw, req.body.data);
-
-        const isValid = await validateGithub(req.body.metadata.token, decodeURIComponent(req.body.metadata.repoId));
-        if (!isValid) {
-          throw new UnauthorizedError('Must have valid Github Token to post build');
-        }
+        //TODO: Data validation
+        // const isValid = await validateGithub(req.body.metadata.token, decodeURIComponent(req.body.metadata.repoId));
+        // if (!isValid) {
+        //   throw new UnauthorizedError('Must have valid Github Token to post build');
+        // }
 
         await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
