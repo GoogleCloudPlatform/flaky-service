@@ -18,15 +18,14 @@ const {readFileSync} = require('fs');
 
 const parse = (xmlString) => {
 	const obj = xmljs.xml2js(xmlString, {compact: true});
-  const failures = [];
-  const passes = [];
+  const tests = [];
   // Python doesn't always have a top-level testsuites element.
   let testsuites = obj['testsuite'];
   if (testsuites === undefined) {
     testsuites = obj['testsuites']['testsuite'];
   }
   if (testsuites === undefined) {
-    return {passes: [], failures: []};
+    return tests;
   }
   // If there is only one test suite, put it into an array to make it iterable.
   if (!Array.isArray(testsuites)) {
@@ -45,7 +44,6 @@ const parse = (xmlString) => {
       testcases = [testcases];
     }
     for (const testcase of testcases) {
-    	console.log("test case!");
       let pkg = testsuiteName;
       if (
         !testsuiteName ||
@@ -61,7 +59,7 @@ const parse = (xmlString) => {
       const failure = testcase['failure'];
       const error = testcase['error'];
       if (failure === undefined && error === undefined) {
-        passes.push({
+        tests.push({
           package: pkg,
           testCase: testcase['_attributes'].name,
           passed: true,
@@ -74,7 +72,7 @@ const parse = (xmlString) => {
       if (log === undefined) {
         log = failure['_cdata'];
       }
-      failures.push({
+      tests.push({
         package: pkg,
         testCase: testcase['_attributes'].name,
         passed: false,
@@ -82,10 +80,7 @@ const parse = (xmlString) => {
       });
     }
   }
-  return {
-    passes: passes,
-    failures: failures,
-  };
+  return tests;
 }
 
 console.log(parse(readFileSync(require.resolve('../test/fixtures/one_failed.xml'), 'utf8')));
