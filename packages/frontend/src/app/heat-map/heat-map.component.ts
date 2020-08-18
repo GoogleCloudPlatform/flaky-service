@@ -17,13 +17,13 @@ import {
   Congifuration,
   HeatMapService,
 } from './services/heat-map/heat-map.service';
-import {BatchService} from './services/batch/batch.service';
 import {BuildBatch, Build} from './services/interfaces';
 import {MatSidenav} from '@angular/material/sidenav';
 import {UtilsService} from '../services/utils.service';
 import {COMService} from '../services/com/com.service';
 import {EventEmitter} from '@angular/core';
 import {Filter} from '../services/search/interfaces';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-heat-map',
@@ -46,12 +46,12 @@ export class HeatMapComponent {
 
   orgName = '';
   repoName = '';
+  filters = [];
   @Output() loadingComplete: EventEmitter<void> = new EventEmitter();
   @ViewChild(MatSidenav) sidenave: MatSidenav;
 
   constructor(
     private heatMapService: HeatMapService,
-    private batchService: BatchService,
     public utils: UtilsService,
     private com: COMService
   ) {}
@@ -59,30 +59,44 @@ export class HeatMapComponent {
   init(repoName: string, orgName: string, filters: Filter[] = []): void {
     this.repoName = repoName;
     this.orgName = orgName;
+    this.filters = filters;
     this.com
-      .fetchBuilds(this.repoName, this.orgName, filters)
-      .subscribe(result => {
-        this.drawMap(result.builds.reverse()).subscribe(batch => {
+      .fetchBatches(this.repoName, this.orgName, filters)
+      .pipe(finalize(() => this.loadingComplete.emit()))
+      .subscribe(batches => {
+        this.drawMap(batches).subscribe(batch => {
           this.onBatchClick(batch);
         });
-        this.loadingComplete.emit();
       });
   }
 
-  private drawMap(builds: Build[]): EventEmitter<BuildBatch> {
+  private drawMap(batches: BuildBatch[]): EventEmitter<BuildBatch> {
     return this.heatMapService.draw(
       this.config,
-      this.batchService.buildBatches(builds),
+      batches,
       this.dataHolderSelector
     );
   }
 
   private onBatchClick(batch: BuildBatch) {
-    if (batch.builds.length) {
-      this.selectedBuilds = batch.builds;
-      this.selectedBatchDate = batch.moment.format('MMM D, YYYY');
-      this.sidenave.open();
+    if (batch.isDefault) return;
+
+    // Fetch the builds only once per batch
+    if (batch.builds) this.showBuilds(batch);
+    else {
+      this.com
+        .fetchBatch(this.repoName, this.orgName, batch.timestamp, this.filters)
+        .subscribe(builds => {
+          batch.builds = builds;
+          this.showBuilds(batch);
+        });
     }
+  }
+
+  private showBuilds(batch: BuildBatch) {
+    this.selectedBuilds = batch.builds;
+    this.selectedBatchDate = batch.moment.format('MMM D, YYYY');
+    this.sidenave.open();
   }
 
   getBuildLink(buildId): string {
@@ -104,12 +118,6 @@ export class HeatMapComponent {
   }
 
   getBuildRunText(build: Build): string {
-    const digitsOnly = /\D/g;
-    return (
-      '#' +
-      (build.buildmessage
-        ? build.buildmessage.replace(digitsOnly, '')
-        : build.buildId)
-    );
+    return build.buildmessage ? build.buildmessage : build.buildId;
   }
 }

@@ -86,11 +86,6 @@ export interface Build {
   buildmessage?: string;
 }
 
-export interface ApiRepository {
-  metadata: Repository;
-  builds: Build[];
-}
-
 export interface SessionStatus {
   permitted: boolean;
   expiration?: Date;

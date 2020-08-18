@@ -12,18 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {BuildHealthColors} from './services/heat-map/providers/colors';
 import * as moment from 'moment';
-
-//helper
-const hex2rgb = hex =>
-  'rgb(' +
-  parseInt('' + hex[1] + hex[2], 16) +
-  ', ' +
-  parseInt('' + hex[3] + hex[4], 16) +
-  ', ' +
-  parseInt('' + hex[5] + hex[6], 16) +
-  ')';
 
 export const mockBuilds = {
   none: [],
@@ -38,8 +27,7 @@ export const mockBuilds = {
         _seconds: moment().subtract(1, 'week').day('Sunday').unix(),
       },
       row: 6,
-      expectedColor: hex2rgb(BuildHealthColors.passing),
-      buildmessage: '1',
+      buildmessage: 'ci - 1',
     },
     {
       buildId: '1.1',
@@ -50,8 +38,7 @@ export const mockBuilds = {
         _seconds: moment().subtract(1, 'week').day('Sunday').unix(),
       },
       row: 6,
-      expectedColor: hex2rgb(BuildHealthColors.passing),
-      buildmessage: '2',
+      buildmessage: 'ci - 2',
     },
 
     // Monday builds
@@ -64,8 +51,7 @@ export const mockBuilds = {
         _seconds: moment().subtract(1, 'week').day('Monday').unix(),
       },
       row: 5,
-      expectedColor: hex2rgb(BuildHealthColors.failing),
-      buildmessage: '3',
+      buildmessage: 'ci - 3',
     },
 
     // Saturday builds
@@ -78,8 +64,7 @@ export const mockBuilds = {
         _seconds: moment().subtract(1, 'week').day('Saturday').unix(),
       },
       row: 0,
-      expectedColor: hex2rgb(BuildHealthColors.flaky),
-      buildmessage: '4',
+      buildmessage: 'ci - 4',
     },
   ],
 };
