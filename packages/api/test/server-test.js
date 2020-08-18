@@ -13,6 +13,7 @@
 // limitations under the License.
 
 process.env.FRONTEND_URL = 'https://flaky-dashboard.web.app/home';
+process.env.CLIENT_ID = 'client-id-for-testing';
 const { describe, it, afterEach } = require('mocha');
 
 const assert = require('assert');
@@ -38,32 +39,58 @@ describe('flaky express server', () => {
     assert.strictEqual(process.env.FRONTEND_URL, frontendUrl);
   });
 
-  describe('delete /repo', async () => {
+  describe('get /repo to delete a test', async () => {
     it('generates a GitHub redirect', async () => {
       stubs.push(sinon.stub(repo, 'storeTicket').returns(true));
-      const resp = await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/my-test?redirect=' + process.env.FRONTEND_URL, {
-        redirect: 'manual',
-        method: 'DELETE'
+      const resp = await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/deleteurl?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
+        method: 'GET'
       });
-      assert(resp.headers.get('location').includes('github.com/login/oauth'));
+      const respJSON = await resp.text();
+      assert(respJSON.includes('github.com/login/oauth'));
     });
 
     it('stores correct information in the ticket', async () => {
-      let ticket;
-      stubs.push(sinon.stub(repo, 'storeTicket').callsFake((ticketToPerform) => {
-        ticket = ticketToPerform;
-      }));
+      const stubbed = sinon.stub(repo, 'storeTicket');
+      stubs.push(stubbed);
 
-      await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/my-test?redirect=' + process.env.FRONTEND_URL, {
-        redirect: 'manual',
-        method: 'DELETE'
+      await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/deleteurl?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
+        method: 'GET'
       });
 
-      assert.strictEqual(ticket.action, 'delete-test');
-      assert.strictEqual(ticket.orgName, 'my-org');
-      assert.strictEqual(ticket.repoId, 'my-repo');
-      assert.strictEqual(ticket.testName, 'my-test');
-      assert.strictEqual(ticket.redirect, process.env.FRONTEND_URL);
+      assert(stubbed.calledWithMatch({
+        action: 'delete-test',
+        orgName: 'my-org',
+        repoId: 'my-repo',
+        testName: 'my-test',
+        redirect: process.env.FRONTEND_URL
+      }));
+    });
+  });
+
+  describe('get /repo to delete a repository', async () => {
+    it('generates a GitHub redirect', async () => {
+      stubs.push(sinon.stub(repo, 'storeTicket').returns(true));
+      const resp = await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/deleteurl?redirect=' + process.env.FRONTEND_URL, {
+        method: 'GET'
+      });
+      const respJSON = await resp.text();
+      assert(respJSON.includes('github.com/login/oauth'));
+    });
+
+    it('stores correct information in the ticket', async () => {
+      const stubbed = sinon.stub(repo, 'storeTicket');
+      stubs.push(stubbed);
+
+      await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/deleteurl?redirect=' + process.env.FRONTEND_URL, {
+        method: 'GET'
+      });
+
+      assert(stubbed.calledWithMatch({
+        action: 'delete-repo',
+        orgName: 'my-org',
+        repoId: 'my-repo',
+        redirect: process.env.FRONTEND_URL
+      }));
     });
   });
 
@@ -88,7 +115,7 @@ describe('flaky express server', () => {
       const resp = await fetch('http://0.0.0.0:3000/api/callback?state=' + fakeState + '&code=ANYTHING', {
         headers: { redirect: 'manual' }
       });
-      assert.strictEqual(resp.url, process.env.FRONTEND_URL);
+      assert.strictEqual(resp.url, process.env.FRONTEND_URL + ';done=true');
       assert.strictEqual(resp.status, 200);
     });
 

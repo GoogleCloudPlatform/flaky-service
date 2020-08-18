@@ -28,6 +28,14 @@ export class SnackBarService {
       message: "The server can't be reached. Please try again.",
       snackConfig: {duration: 5000},
     },
+    successfulRemoval: {
+      message: 'Deletion successfully performed!',
+      snackConfig: {duration: 3000},
+    },
+    removalNotAllowed: {
+      message: 'You do not have permission to perform this deletion.',
+      snackConfig: {duration: 3000},
+    },
   };
 
   constructor(public _snackBar: MatSnackBar) {}
@@ -39,6 +47,22 @@ export class SnackBarService {
       this.scenarios.connectionError.snackConfig
     );
   }
+
+  showSuccessfulRemoval() {
+    this._snackBar.open(
+      this.scenarios.successfulRemoval.message,
+      undefined,
+      this.scenarios.successfulRemoval.snackConfig
+    );
+  }
+
+  showRemovalNotAllowed() {
+    this._snackBar.open(
+      this.scenarios.removalNotAllowed.message,
+      undefined,
+      this.scenarios.removalNotAllowed.snackConfig
+    );
+  }
 }
 
 interface Scenario {
@@ -47,4 +71,6 @@ interface Scenario {
 }
 interface AllScenarios {
   connectionError: Scenario;
+  successfulRemoval: Scenario;
+  removalNotAllowed: Scenario;
 }

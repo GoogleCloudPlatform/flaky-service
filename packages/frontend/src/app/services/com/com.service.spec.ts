@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {TestBed} from '@angular/core/testing';
+import {TestBed, tick, fakeAsync} from '@angular/core/testing';
 import {COMService} from './com.service';
 import {HttpClientModule, HttpErrorResponse} from '@angular/common/http';
 import {HttpClient, HttpParams} from '@angular/common/http';
@@ -119,7 +119,7 @@ describe('COMService', () => {
     });
   });
 
-  describe('fetchBuilds', () => {
+  describe('fetchBatches', () => {
     it('should send a GET request with the provided filters', () => {
       const searchData = getSearchData();
       const repoName = 'repoName';
@@ -127,12 +127,12 @@ describe('COMService', () => {
       httpClientSpy.get.and.returnValue(of(searchData.expectedServerResponse));
 
       service
-        .fetchBuilds(repoName, orgName, searchData.search.filters)
+        .fetchBatches(repoName, orgName, searchData.search.filters)
         .subscribe();
 
       // called the right link
       expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
-        apiLinks.get.builds(repoName, orgName)
+        apiLinks.get.batches(repoName, orgName)
       );
     });
 
@@ -143,7 +143,37 @@ describe('COMService', () => {
       const err = {} as HttpErrorResponse;
       httpClientSpy.get.and.returnValue(throwError(err));
 
-      service.fetchBuilds('repo', 'org', []).subscribe();
+      service.fetchBatches('repo', 'org', []).subscribe();
+      expect(errorHandler).toHaveBeenCalledWith(err);
+    });
+  });
+
+  describe('fetchBatch', () => {
+    const timestamp = 1;
+    it('should send a GET request with the provided filters', () => {
+      const searchData = getSearchData();
+      const repoName = 'repoName';
+      const orgName = 'orgName';
+      httpClientSpy.get.and.returnValue(of(searchData.expectedServerResponse));
+
+      service
+        .fetchBatch(repoName, orgName, timestamp, searchData.search.filters)
+        .subscribe();
+
+      // called the right link
+      expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
+        apiLinks.get.batch(repoName, orgName, timestamp)
+      );
+    });
+
+    it('should call the error handler if an error occurs', () => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service.fetchBatch('repo', 'org', timestamp, []).subscribe();
       expect(errorHandler).toHaveBeenCalledWith(err);
     });
   });
@@ -214,6 +244,79 @@ describe('COMService', () => {
       service.fetchTests('repo', 'org', []).subscribe();
       expect(errorHandler).toHaveBeenCalledWith(err);
     });
+  });
+
+  describe('fetchDeleteTestUrl', () => {
+    const repoName = 'repoName';
+    const orgName = 'orgName';
+    const testName = 'testName';
+    const redirect = 'redirect';
+
+    it('should get a link from the server', () => {
+      const serverUrl = 'url-from-server';
+      httpClientSpy.get.and.returnValue(of(serverUrl));
+
+      service
+        .fetchDeleteTestUrl(orgName, repoName, testName, redirect)
+        .subscribe(result => {
+          expect(result).toBe(serverUrl);
+        });
+
+      //called the right link
+      expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
+        apiLinks.get.deleteTest(orgName, repoName, testName, redirect)
+      );
+    });
+
+    it('should call the error handler if an error occurs', fakeAsync(() => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service
+        .fetchDeleteTestUrl(repoName, orgName, testName, redirect)
+        .subscribe();
+
+      tick();
+      expect(errorHandler).toHaveBeenCalledWith(err);
+    }));
+  });
+
+  describe('fetchDeleteRepoUrl', () => {
+    const repoName = 'repoName';
+    const orgName = 'orgName';
+    const redirect = 'redirect';
+
+    it('should get a link from the server', () => {
+      const serverUrl = 'url-from-server';
+      httpClientSpy.get.and.returnValue(of(serverUrl));
+
+      service
+        .fetchDeleteRepoUrl(orgName, repoName, redirect)
+        .subscribe(result => {
+          expect(result).toBe(serverUrl);
+        });
+
+      //called the right link
+      expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
+        apiLinks.get.deleteRepo(orgName, repoName, redirect)
+      );
+    });
+
+    it('should call the error handler if an error occurs', fakeAsync(() => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service.fetchDeleteRepoUrl(repoName, orgName, redirect).subscribe();
+
+      tick();
+      expect(errorHandler).toHaveBeenCalledWith(err);
+    }));
   });
 
   describe('handleError', () => {

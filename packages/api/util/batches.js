@@ -12,26 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Injectable} from '@angular/core';
-import {Build, BuildBatch, moment} from '../interfaces';
+const moment = require('moment');
 
-@Injectable({
-  providedIn: 'root',
-})
-export class BatchService {
-  public buildBatches(builds: Build[]): BuildBatch[] {
-    builds = this.sortByTimeStamp(builds);
+class BatchService {
+  constructor () { this.utcOffset = 0; }
 
-    const batches: BuildBatch[] = [];
-    let newBatch: BuildBatch;
+  buildBatches (builds, utcOffset) {
+    this.utcOffset = isNaN(utcOffset) ? 0 : utcOffset;
+
+    const batches = [];
+    let newBatch;
 
     builds.forEach((build, index) => {
-      if (newBatch && this.buildBelongsToBatch(newBatch, build)) {
-        newBatch.builds.push(build);
-        this.updateBatchStats(newBatch, build);
+      if (newBatch && this._buildBelongsToBatch(newBatch, build)) {
+        this._updateBatchStats(newBatch, build);
       } else {
-        if (newBatch) batches.push(newBatch);
-        newBatch = this.getNewBatch(build);
+        if (newBatch) {
+          delete newBatch.moment;
+          batches.push(newBatch);
+        }
+        newBatch = this._getNewBatch(build);
       }
       const isLastBuild = index === builds.length - 1;
       if (isLastBuild) batches.push(newBatch);
@@ -40,33 +40,29 @@ export class BatchService {
     return batches;
   }
 
-  private sortByTimeStamp(builds: Build[]): Build[] {
-    return builds.sort(
-      (buildA, buildB) => buildA.timestamp._seconds - buildB.timestamp._seconds
-    );
-  }
-
-  private buildBelongsToBatch(batch: BuildBatch, build: Build): boolean {
+  _buildBelongsToBatch (batch, build) {
     const batchMoment = batch.moment;
-    const buildMoment = moment.unix(build.timestamp._seconds).utc();
+    const buildMoment = moment.unix(build.timestamp._seconds).utc().utcOffset(this.utcOffset);
     return batchMoment.isSame(buildMoment, 'day');
   }
 
-  private updateBatchStats(batch: BuildBatch, build: Build) {
+  _updateBatchStats (batch, build) {
     batch.failingBuilds += +(build.failcount !== 0);
     batch.passedBuilds += +(build.passcount !== 0 && build.failcount === 0);
     batch.flakyBuilds += +(build.flaky !== 0);
   }
 
-  private getNewBatch(build: Build): BuildBatch {
+  _getNewBatch (build) {
     const newBatch = {
-      builds: [build],
+      timestamp: build.timestamp._seconds,
       passedBuilds: 0,
       flakyBuilds: 0,
       failingBuilds: 0,
-      moment: moment.unix(build.timestamp._seconds).utc(),
+      moment: moment.unix(build.timestamp._seconds).utc().utcOffset(this.utcOffset)
     };
-    this.updateBatchStats(newBatch, build);
+    this._updateBatchStats(newBatch, build);
     return newBatch;
   }
 }
+
+module.exports = BatchService;

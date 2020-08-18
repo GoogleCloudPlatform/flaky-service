@@ -12,59 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as moment from 'moment';
+const moment = require('moment');
 
-export const mockBuilds = {
+const mockBuilds = {
   none: [],
   _3PreviousDays: [
-    // Sunday builds
+    // Sunday build @ 11:59 pm
     {
       buildId: '1',
       flaky: 0,
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().subtract(1, 'week').day('Sunday').unix(),
+        _seconds: moment.utc('2000-01-01').day('Sunday').hour(23).minute(59).unix()
       },
       row: 6,
-      buildmessage: 'ci - 1',
+      buildmessage: '1'
     },
+
+    // Sunday build @ 00:00
     {
       buildId: '1.1',
       flaky: 0,
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().subtract(1, 'week').day('Sunday').unix(),
+        _seconds: moment.utc('2000-01-01').day('Sunday').unix()
       },
       row: 6,
-      buildmessage: 'ci - 2',
+      buildmessage: '2'
     },
 
-    // Monday builds
+    // Monday build
     {
       buildId: '2',
       flaky: 0,
       failcount: 1,
       passcount: 1,
       timestamp: {
-        _seconds: moment().subtract(1, 'week').day('Monday').unix(),
+        _seconds: moment.utc('2000-01-01').day('Monday').unix()
       },
       row: 5,
-      buildmessage: 'ci - 3',
+      buildmessage: '3'
     },
 
-    // Saturday builds
+    // Saturday build
     {
       buildId: '3',
       flaky: 1,
       failcount: 0,
       passcount: 1,
       timestamp: {
-        _seconds: moment().subtract(1, 'week').day('Saturday').unix(),
+        _seconds: moment.utc('2000-01-01').day('Saturday').unix()
       },
       row: 0,
-      buildmessage: 'ci - 4',
-    },
-  ],
+      buildmessage: '4'
+    }
+  ]
 };
+
+module.exports = mockBuilds;

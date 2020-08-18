@@ -45,7 +45,7 @@ const buildInfo = [
       ref: 'master',
       tag: 'abc'
     },
-    timestamp: new Date('01/01/2001'),
+    timestamp: new Date('01/01/2000'),
     testCases: [
       new TestCaseRun('ok', 1, 'a/1'),
       new TestCaseRun('not ok', 2, 'a/2'),
@@ -68,7 +68,7 @@ const buildInfo = [
       ref: 'master',
       tag: 'xyz'
     },
-    timestamp: new Date('01/01/2000'),
+    timestamp: new Date('01/01/2001'),
     testCases: [
       new TestCaseRun('ok', 1, 'a/1'),
       new TestCaseRun('ok', 2, 'a/2') // this test is now passing
@@ -92,7 +92,7 @@ const buildInfo = [
     timestamp: new Date('01/01/2002'),
     testCases: [
       new TestCaseRun('not ok', 1, 'a/5'),
-      new TestCaseRun('not ok', 2, 'a/2') // this test is now passing
+      new TestCaseRun('not ok', 2, 'a/2') // this test is now failing
     ],
     description: 'None',
     buildmessage: 'Workflow - 1'
@@ -102,7 +102,7 @@ const buildInfo = [
 buildInfo[2].testCases[0].failureMessage = 'Error message';
 buildInfo[2].testCases[1].failureMessage = 'Error message';
 
-describe('Add-Build', () => {
+describe.only('Add-Build', () => {
   before(async () => {
     global.headCollection = 'testing/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
   });
@@ -215,20 +215,20 @@ describe('Add-Build', () => {
         }
       ];
 
-      for (var k = 0; k < testExpectations.length; k++) {
-        var testExpecation = testExpectations[k];
+      for (var k = 1; k < testExpectations.length; k++) {
+        var testExpectation = testExpectations[k];
 
-        const test = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('tests').doc(encodeURIComponent(testExpecation.name)).get();
-        assert.strictEqual(test.data().percentpassing, testExpecation.percentpassing);
-        assert.deepStrictEqual(test.data().environments, testExpecation.environments);
+        const test = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('queued').doc(encodeURIComponent(testExpectation.name)).get();
+        assert.strictEqual(test.data().percentpassing, testExpectation.percentpassing);
+        assert.deepStrictEqual(test.data().environments, testExpectation.environments);
 
         // make sure all builds exist
-        const testruns = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('tests').doc(encodeURIComponent(testExpecation.name)).collection('runs').get();
+        const testruns = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('queued').doc(encodeURIComponent(testExpectation.name)).collection('runs').get();
         var testBuilds = [];
         testruns.forEach((doc) => {
           testBuilds.push(doc.id);
         });
-        assert.deepStrictEqual(new Set(testBuilds), new Set(testExpecation.builds));
+        assert.deepStrictEqual(new Set(testBuilds), new Set(testExpectation.builds));
       }
 
       // lastly make sure the repository has correctly stored the build fields
@@ -258,7 +258,7 @@ describe('Add-Build', () => {
       assert.strictEqual(ansObj[0].percentpassing, 0);
       assert.strictEqual(ansObj[0].tests.length, 2);
 
-      const solMeta = { name: 'node', repoId: 'nodejs/node', description: '', organization: 'nodejs', searchindex: 2 * 10000, numfails: 2, flaky: 0, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
+      const solMeta = { name: 'node', repoId: 'nodejs/node', description: '', organization: 'nodejs', searchindex: 2 * 10000 + 1, numfails: 2, flaky: 1, numtestcases: 2, lower: { name: 'node', repoId: 'nodejs/node', organization: 'nodejs' }, environments: { matrix: [{ 'node-version': '12.0' }], os: ['linux-apple', 'linux-banana'], tag: ['abc', 'xyz'], ref: ['master'] }, url: 'https://github.com/nodejs/node' };
       const solActual = JSON.parse(respTextMeta);
       delete solActual.lastupdate;
       assert.deepStrictEqual(solActual, solMeta);
@@ -289,16 +289,24 @@ describe('Add-Build', () => {
   });
 
   describe('GetTestHandler', async () => {
-    it('Can get limit and sort by date', async () => {
-      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=a%2F1&limit=1');
+    it('Does not update tests that are consistently passing', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/tests');
+      const respText = await resp.text();
+      const ansObj = JSON.parse(respText);
 
+      assert(ansObj.tests[4].name === 'a/1'); // test a/1 should be in the queue at the end
+      // since it was only updated once on the first build
+    });
+
+    it('Can get limit and sort by date', async () => {
+      const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=a%2F3&limit=1');
       const respText = await resp.text();
       const ansObj = JSON.parse(respText);
 
       assert.strictEqual(ansObj.builds.length, 1);
       assert.strictEqual(ansObj.builds[0].buildId, '11111');
 
-      assert.deepStrictEqual(ansObj.metadata.environments.os, ['linux-apple', 'linux-banana']);
+      assert.deepStrictEqual(ansObj.metadata.environments.os, ['linux-apple']);
     });
 
     it('Can use random combinations of queries', async () => {
@@ -340,8 +348,8 @@ describe('Add-Build', () => {
 
       assert(ansObj[2].name === 'a/4'); // failed on build before the last build
 
-      assert(ansObj[3].name === 'a/3' || ansObj[3].name === 'a/1'); // both failed on most recent build
-      assert(ansObj[4].name === 'a/3' || ansObj[4].name === 'a/1'); // both failed on most recent build
+      assert(ansObj[3].name === 'a/3'); // passed on build before the last build
+      assert(ansObj[4].name === 'a/1'); // has not been recently updated because considered healthy
 
       // make sure their are the newly added fields
       assert.strictEqual(ansObj[2].lifetimepasscount, 0);
@@ -393,7 +401,6 @@ describe('Add-Build', () => {
   describe('GetExportHandler', async () => {
     it('Can get a csv export', async () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/csv');
-
       const respText = await resp.text();
 
       const linesReal = respText.split(/\n/);
@@ -469,7 +476,7 @@ describe('Add-Build', () => {
       await deleteTest(decodeURIComponent(buildInfo[0].repoId), 'a/1', client);
 
       // make sure that test is no longer there
-      const testDoc = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('tests').doc(firebaseEncode('a/1')).get();
+      const testDoc = await client.collection(global.headCollection).doc(buildInfo[0].repoId).collection('queued').doc(firebaseEncode('a/1')).get();
 
       assert(!testDoc.exists);
 
@@ -479,7 +486,7 @@ describe('Add-Build', () => {
     });
 
     it('Can delete an entire repository', async () => {
-      await deleteRepo(client, decodeURIComponent(buildInfo[0].repoId));
+      await deleteRepo(decodeURIComponent(buildInfo[0].repoId), client);
 
       // make sure the repo doc is still there
       const repoDoc = await client.collection(global.headCollection).doc(buildInfo[0].repoId).get();

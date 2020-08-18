@@ -182,7 +182,7 @@ module.exports = require("https");
 const fetch = __webpack_require__(492);
 const fs = __webpack_require__(747);
 const core = __webpack_require__(931);
-
+const {resolve} = __webpack_require__(835);
 /**
  * main
  */
@@ -217,7 +217,7 @@ async function main () {
       token: core.getInput('repo-token')
     };
 
-    metaData.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); // consistancy
+    metaData.environment.matrix = JSON.stringify(metaData.environment.matrix, Object.keys(metaData.environment.matrix).sort()); // consistancy
 
     metaData.environment.ref = metaData.environment.ref.replace('refs/', '');
     metaData.environment.ref = metaData.environment.ref.replace('heads/', '');
@@ -232,7 +232,7 @@ async function main () {
     const data = fs.readFileSync(
       core.getInput('file-path'), 'utf8');
     const sendMe = { type: fileType, data: data, metadata: metaData };
-    const endpoint = core.getInput('endpoint') + '/api/build/gh/v1';
+    const endpoint = resolve(core.getInput('endpoint'), '/api/build/gh/v1');
     console.log('Beginning Upload of data...');
     const outcome = await fetch(endpoint, {
       method: 'POST',
@@ -248,7 +248,7 @@ async function main () {
       throw 'Upload Failed';
     } else if (outcomeAsJSON.message) {
       console.log('Build Uploaded Successfully!');
-      console.log('Visit ' + core.getInput('endpoint') + '/org/' + process.env.GITHUB_REPOSITORY + ' to see uploaded data');
+      console.log('Visit ' + resolve(resolve(core.getInput('endpoint'),'/org/'), process.env.GITHUB_REPOSITORY) + ' to see uploaded data');
     } else {
       core.warning('Encountered unknown error, possibly involving server issues');
       throw 'Unkown Error';

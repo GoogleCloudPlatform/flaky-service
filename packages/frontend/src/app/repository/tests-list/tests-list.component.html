@@ -44,9 +44,11 @@ limitations under the License.
                                 <p  class="percent-passing-indicator"
                                     [class.show-green]="test.percentpassing >= 0.9 && test.passed && !test.flaky"
                                     [class.show-red]="test.percentpassing < 0.9 && test.passed && !test.flaky">
-                                    <span>passes&nbsp;</span>
+                                    <span>passed&nbsp;</span>
                                     <span [innerHTML]="toPercentage(test.percentpassing)"></span>
-                                    <span>% of the time</span>
+                                    <span>% of the time over the past </span>
+                                    <span>{{test.historicaltests}}</span>
+                                    <span> runs</span>
                                 </p>
                             </div>
                         </div>
@@ -56,7 +58,7 @@ limitations under the License.
             <!--TEST DETAILS-->
             <ng-template matExpansionPanelContent>
                 <div class="test-details">
-                    <app-test-details [test]="test"></app-test-details>
+                    <app-test-details [test]="test" [repoName]="repoName" [orgName]="orgName" [removalButtonState]="removalButtonsState"></app-test-details>
                 </div>
             </ng-template>
 

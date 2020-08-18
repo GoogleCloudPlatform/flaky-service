@@ -42,3 +42,6 @@ limitations under the License.
 .show-red {
     color: red;
 }
+.delete-test-button {
+    margin-left:3%;
+}

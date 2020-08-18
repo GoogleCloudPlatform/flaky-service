@@ -29,13 +29,14 @@ jobs:
         working-directory: ./packages/api
       - name: track flaky tests
         if: ${{ always() }}
-        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
+        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.3
         with:
-          github: ${{toJson(github)}}
+          file-path: ${{github.workspace}}/packages/api/test.tap
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           matrix: ${{toJson(matrix)}}
-          os: ${{toJson(runner)}}
-          logtype: TAP
-          filepath: ${{github.workspace}}/packages/api/test.tap
+          os: ${{runner.os}}
+          repo-description: ${{github.event.repository.description}}
+          tag: 'api'
   frontend-test-linux:
     runs-on: ubuntu-latest
     strategy:
@@ -63,13 +64,14 @@ jobs:
       - name: track flaky tests
         continue-on-error: true
         if: ${{ always() }}
-        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
+        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.3
         with:
-          github: ${{toJson(github)}}
+          file-path: ${{github.workspace}}/packages/frontend/test.tap
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           matrix: ${{toJson(matrix)}}
-          os: ${{toJson(runner)}}
-          logtype: TAP
-          filepath: ${{github.workspace}}/packages/frontend/test.tap
+          os: ${{runner.os}}
+          repo-description: ${{github.event.repository.description}}
+          tag: 'frontend-linux'
   frontend-test-windows:
     runs-on: windows-latest
     strategy:
@@ -95,10 +97,11 @@ jobs:
       - name: track flaky tests
         continue-on-error: true
         if: ${{ always() }}
-        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.0
+        uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.2
         with:
-          github: ${{toJson(github)}}
+          file-path: ${{github.workspace}}/packages/frontend/test.tap
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           matrix: ${{toJson(matrix)}}
-          os: ${{toJson(runner)}}
-          logtype: TAP
-          filepath: ${{github.workspace}}/packages/frontend/test.tap
+          os: ${{runner.os}}
+          repo-description: ${{github.event.repository.description}}
+          tag: 'frontend-windows'

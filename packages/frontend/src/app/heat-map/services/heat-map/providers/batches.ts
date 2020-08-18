@@ -21,10 +21,15 @@ export class BatchesProvider {
     daysToDisplay: number
   ): BuildBatch[] {
     const newBatches = [];
-    let batchIndex = 0;
 
     const batchMoment = moment().subtract(weeksToDisplay - 1, 'weeks');
     batchMoment.day(0);
+
+    // Ignore all batches previous to the oldest heat map day
+    let batchIndex = batches.findIndex(batch => {
+      return moment.unix(batch.timestamp).isSameOrAfter(batchMoment, 'day');
+    });
+    batchIndex = batchIndex < 0 ? 0 : batchIndex;
 
     for (let xDomainIndex = 0; xDomainIndex < weeksToDisplay; xDomainIndex++) {
       for (let yDomainIndex = 0; yDomainIndex < daysToDisplay; yDomainIndex++) {
@@ -34,8 +39,9 @@ export class BatchesProvider {
           newBatches.push(this.defaultBatch(xDomainIndex, batchMoment));
         else {
           const batch = batches[batchIndex];
+          batch['moment'] = moment.unix(batch.timestamp);
 
-          if (batch.moment.local().isSame(batchMoment, 'day')) {
+          if (batch.moment.isSame(batchMoment, 'day')) {
             batch['x'] = xDomainIndex;
             batch['y'] = batch.moment.day().toString();
             batch['health'] = this.getBatchHealth(batch);
@@ -54,7 +60,6 @@ export class BatchesProvider {
 
   private defaultBatch(xDomainIndex: number, batchMoment: moment.Moment) {
     return {
-      builds: [],
       failingBuilds: 0,
       flakyBuilds: 0,
       passedBuilds: 0,
@@ -62,6 +67,7 @@ export class BatchesProvider {
       y: batchMoment.day().toString(),
       moment: batchMoment.clone(),
       health: BuildHealth.none,
+      isDefault: true,
     };
   }
 

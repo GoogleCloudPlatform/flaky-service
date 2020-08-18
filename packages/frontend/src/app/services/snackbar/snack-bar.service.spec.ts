@@ -43,4 +43,32 @@ describe('SnackBarService', () => {
       );
     });
   });
+
+  describe('showSuccessfulRemoval', () => {
+    it('should show the snack bar with the error message', () => {
+      const snackOpener = spyOn(service._snackBar, 'open');
+
+      service.showSuccessfulRemoval();
+
+      expect(snackOpener).toHaveBeenCalledWith(
+        'Deletion successfully performed!',
+        undefined,
+        jasmine.objectContaining({duration: 3000})
+      );
+    });
+  });
+
+  describe('showRemovalNotAllowed', () => {
+    it('should show the snack bar with the error message', () => {
+      const snackOpener = spyOn(service._snackBar, 'open');
+
+      service.showRemovalNotAllowed();
+
+      expect(snackOpener).toHaveBeenCalledWith(
+        'You do not have permission to perform this deletion.',
+        undefined,
+        jasmine.objectContaining({duration: 3000})
+      );
+    });
+  });
 });
