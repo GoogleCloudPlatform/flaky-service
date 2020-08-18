@@ -43,6 +43,8 @@ export interface BuildBatch {
   failingBuilds?: number;
   flakyBuilds?: number;
   passedBuilds?: number;
+  timestamp?: number;
+  isDefault?: boolean;
 }
 
 const d3Select = d3.select('div');

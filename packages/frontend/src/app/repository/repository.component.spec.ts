@@ -187,18 +187,8 @@ describe('RepositoryComponent', () => {
     expect(location.path()).toEqual(RouteProvider.routes._404.link());
   }));
 
-  it('should hide the spinner when tests list is ready', fakeAsync(() => {
+  it('should hide the spinner when the tests list and the heat map are ready', fakeAsync(() => {
     component.onTestsLoaded();
-
-    component.ngAfterViewInit();
-    fixture.detectChanges();
-    tick();
-
-    const spinner = fixture.debugElement.query(By.css('#spinner'));
-    expect(spinner).toBeNull();
-  }));
-
-  it('should hide the spinner when the heat map is ready', fakeAsync(() => {
     component.onHeatMapLoaded();
 
     component.ngAfterViewInit();
@@ -209,8 +199,31 @@ describe('RepositoryComponent', () => {
     expect(spinner).toBeNull();
   }));
 
+  it('should show the spinner when the tests list is not ready', fakeAsync(() => {
+    component.onHeatMapLoaded();
+
+    component.ngAfterViewInit();
+    fixture.detectChanges();
+    tick();
+
+    const spinner = fixture.debugElement.query(By.css('#spinner'));
+    expect(spinner).not.toBeNull();
+  }));
+
+  it('should show the spinner when the heat map is not ready', fakeAsync(() => {
+    component.onTestsLoaded();
+
+    component.ngAfterViewInit();
+    fixture.detectChanges();
+    tick();
+
+    const spinner = fixture.debugElement.query(By.css('#spinner'));
+    expect(spinner).not.toBeNull();
+  }));
+
   it('should show the no-test text when no tests were found', fakeAsync(() => {
     testsListViewConfig.elements = [];
+    component.onHeatMapLoaded();
     component.onTestsLoaded();
 
     fixture.detectChanges();
@@ -222,6 +235,7 @@ describe('RepositoryComponent', () => {
 
   it('should hide the no-test text when tests were found', fakeAsync(() => {
     testsListViewConfig.elements = [{}];
+    component.onHeatMapLoaded();
     component.onTestsLoaded();
 
     fixture.detectChanges();
@@ -231,27 +245,37 @@ describe('RepositoryComponent', () => {
     expect(noRepoText).toBeNull();
   }));
 
-  it('should hide the filters while the heat map is not ready', fakeAsync(() => {
-    component.heatMapLoaded = false;
+  it('should hide the heat map and the tests list when the heat map is not ready', fakeAsync(() => {
+    component.onTestsLoaded();
 
     fixture.detectChanges();
     tick();
 
-    const filterClasses = fixture.debugElement.query(
-      By.css('#filters-container')
-    ).attributes['class'];
-    expect(filterClasses).toContain('hidden');
+    const allComponents = fixture.debugElement.query(By.css('#all-components'))
+      .attributes['class'];
+    expect(allComponents).toContain('hidden');
   }));
 
-  it('should show the filters when the heat map is ready', fakeAsync(() => {
-    component.heatMapLoaded = true;
+  it('should hide the heat map and the tests list when the tests list is not ready', fakeAsync(() => {
+    component.onHeatMapLoaded();
 
     fixture.detectChanges();
     tick();
 
-    const filterClasses = fixture.debugElement.query(
-      By.css('#filters-container')
-    ).attributes['class'];
-    expect(filterClasses).not.toContain('hidden');
+    const allComponents = fixture.debugElement.query(By.css('#all-components'))
+      .attributes['class'];
+    expect(allComponents).toContain('hidden');
+  }));
+
+  it('should show the heat map and the tests list when they are both ready', fakeAsync(() => {
+    component.onHeatMapLoaded();
+    component.onTestsLoaded();
+
+    fixture.detectChanges();
+    tick();
+
+    const allComponents = fixture.debugElement.query(By.css('#all-components'))
+      .attributes['class'];
+    expect(allComponents).not.toContain('hidden');
   }));
 });
