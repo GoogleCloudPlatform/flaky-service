@@ -15,11 +15,11 @@
 const { describe, it, afterEach } = require('mocha');
 const assert = require('assert');
 const parser = require('../lib/xunit-parser');
-const {readFileSync} = require('fs');
+const { readFileSync } = require('fs');
 
-describe('xunit-parser-test', () => {
-	it('parses xunit into Javascript object', () => {
-		const tests = parser(readFileSync(require.resolve('./fixtures/one_failed.xml'), 'utf8'));
-		assert.strictEqual(tests.length, 4);
-	});
+describe.only('xunit-parser-test', () => {
+  it('parses xunit into Javascript object', () => {
+    const tests = parser(readFileSync(require.resolve('./fixtures/one_failed.xml'), 'utf8'));
+    assert.strictEqual(tests.length, 4);
+  });
 });

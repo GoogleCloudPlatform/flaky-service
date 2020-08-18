@@ -264,6 +264,32 @@ class PostBuildHandler {
         handleError(res, err);
       }
     });
+
+    // endpoint expects the the required buildinfo to be in req.body.metadata to already exist and be properly formatted.
+    // required keys in the req.body.metadata are the inputs for addBuild in src/add-build.js
+    this.app.post('/api/build/xml', async (req, res, next) => {
+      try {
+        // TODO: Check for private repo, reject if it is one.
+        // if (req.body.metadata.private) {
+        //   throw new UnauthorizedError('Flaky does not store tests for private repos');
+        // }
+
+        // const buildInfo = PostBuildHandler.cleanBuildInfo(req.body.metadata); // Different line. The metadata object is the same as addbuild, already validated
+
+        // req.body.data = await PostBuildHandler.flattenTap(req.body.data);
+        const testCases = PostBuildHandler.parseTestCases(parsedRaw, req.body.data);
+
+        const isValid = await validateGithub(req.body.metadata.token, decodeURIComponent(req.body.metadata.repoId));
+        if (!isValid) {
+          throw new UnauthorizedError('Must have valid Github Token to post build');
+        }
+
+        await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
+        res.send({ message: 'successfully added build' });
+      } catch (err) {
+        handleError(res, err);
+      }
+    });
   }
 }
 
