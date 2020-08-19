@@ -18,7 +18,7 @@
 
 const addBuild = require('../src/add-build');
 const TestCaseRun = require('../lib/testrun');
-var TapParser = require('tap-parser');
+const TapParser = require('tap-parser');
 const xunitParser = require('../lib/xunit-parser');
 const Readable = require('stream').Readable;
 const firebaseEncode = require('../lib/firebase-encode');
