@@ -97,7 +97,7 @@ class PostBuildHandler {
       if (typeof x.ok !== 'boolean' || !x.id || !x.name) {
         throw new InvalidParameterError('Missing All Test Case Info');
       }
-      const testcase = new TestCaseRun(x.ok ? 'ok' : 'not ok', x.id, x.name);
+      const testcase = new TestCaseRun(x.ok ? 'ok' : 'not ok', x.name);
 
       // wrap failure message generation in try so still works if ids arent sequential
       try {

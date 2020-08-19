@@ -16,7 +16,6 @@ const xmljs = require('xml-js');
 const TestCaseRun = require('../lib/testrun');
 
 const parse = (xmlString) => {
-  let count = 1;
   const obj = xmljs.xml2js(xmlString, { compact: true });
   const tests = [];
   // Python doesn't always have a top-level testsuites element.
@@ -63,8 +62,7 @@ const parse = (xmlString) => {
       const failure = testcase.failure;
       const error = testcase.error;
 
-      const testCaseRun = new TestCaseRun((failure === undefined && error === undefined) ? 'ok' : 'not ok', count, (testsuiteName !== '') ? testsuiteName + '/' + testcase._attributes.name : testcase._attributes.name);
-      count++;
+      const testCaseRun = new TestCaseRun((failure === undefined && error === undefined) ? 'ok' : 'not ok', (testsuiteName !== '') ? testsuiteName + '/' + testcase._attributes.name : testcase._attributes.name);
 
       if (!testCaseRun.successful) {
       // Here we must have a failure or an error.

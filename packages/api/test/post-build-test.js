@@ -73,12 +73,10 @@ describe('Posting Builds', () => {
 
     // two failed
     assert(!testcases[2].successful);
-    assert.strictEqual(testcases[2].number, 3);
     assert(testcases[2].failureMessage.includes('AssertionError'));
 
     // five failed
     assert(!testcases[5].successful);
-    assert.strictEqual(testcases[5].number, 6);
     assert(testcases[5].failureMessage.includes('AssertionError'));
   });
 
