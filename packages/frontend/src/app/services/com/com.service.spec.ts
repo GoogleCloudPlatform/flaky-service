@@ -119,7 +119,7 @@ describe('COMService', () => {
     });
   });
 
-  describe('fetchBuilds', () => {
+  describe('fetchBatches', () => {
     it('should send a GET request with the provided filters', () => {
       const searchData = getSearchData();
       const repoName = 'repoName';
@@ -127,12 +127,12 @@ describe('COMService', () => {
       httpClientSpy.get.and.returnValue(of(searchData.expectedServerResponse));
 
       service
-        .fetchBuilds(repoName, orgName, searchData.search.filters)
+        .fetchBatches(repoName, orgName, searchData.search.filters)
         .subscribe();
 
       // called the right link
       expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
-        apiLinks.get.builds(repoName, orgName)
+        apiLinks.get.batches(repoName, orgName)
       );
     });
 
@@ -143,7 +143,37 @@ describe('COMService', () => {
       const err = {} as HttpErrorResponse;
       httpClientSpy.get.and.returnValue(throwError(err));
 
-      service.fetchBuilds('repo', 'org', []).subscribe();
+      service.fetchBatches('repo', 'org', []).subscribe();
+      expect(errorHandler).toHaveBeenCalledWith(err);
+    });
+  });
+
+  describe('fetchBatch', () => {
+    const timestamp = 1;
+    it('should send a GET request with the provided filters', () => {
+      const searchData = getSearchData();
+      const repoName = 'repoName';
+      const orgName = 'orgName';
+      httpClientSpy.get.and.returnValue(of(searchData.expectedServerResponse));
+
+      service
+        .fetchBatch(repoName, orgName, timestamp, searchData.search.filters)
+        .subscribe();
+
+      // called the right link
+      expect(httpClientSpy.get.calls.mostRecent().args[0]).toEqual(
+        apiLinks.get.batch(repoName, orgName, timestamp)
+      );
+    });
+
+    it('should call the error handler if an error occurs', () => {
+      const errorHandler = spyOn(service, 'handleError').and.returnValue(
+        empty()
+      );
+      const err = {} as HttpErrorResponse;
+      httpClientSpy.get.and.returnValue(throwError(err));
+
+      service.fetchBatch('repo', 'org', timestamp, []).subscribe();
       expect(errorHandler).toHaveBeenCalledWith(err);
     });
   });

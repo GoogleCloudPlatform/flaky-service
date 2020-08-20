@@ -16,16 +16,12 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams, HttpErrorResponse} from '@angular/common/http';
 import {apiLinks} from './api';
 import {Observable, empty, throwError} from 'rxjs';
-import {
-  Repository,
-  ApiRepository,
-  Filter,
-  Tests,
-  ApiRepositories,
-} from '../search/interfaces';
+import {Repository, Filter, Tests, ApiRepositories} from '../search/interfaces';
 import {catchError} from 'rxjs/operators';
 import {NotFoundError} from './Errors/NotFoundError';
 import {SnackBarService} from '../snackbar/snack-bar.service';
+import * as moment from 'moment';
+import {BuildBatch, Build} from 'src/app/heat-map/services/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -47,14 +43,28 @@ export class COMService {
       .pipe(catchError(err => this.handleError(err)));
   }
 
-  public fetchBuilds(
+  public fetchBatches(
     repoName: string,
     orgName: string,
     filters: Filter[]
-  ): Observable<ApiRepository> {
-    filters.push({name: 'limit', value: '999999'});
+  ): Observable<BuildBatch[]> {
+    filters.push({name: 'utcOffset', value: moment().utcOffset().toString()});
     return this.http
-      .get<ApiRepository>(apiLinks.get.builds(repoName, orgName), {
+      .get<BuildBatch[]>(apiLinks.get.batches(repoName, orgName), {
+        params: this.getParams(filters),
+      })
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  public fetchBatch(
+    repoName: string,
+    orgName: string,
+    timestamp: number,
+    filters: Filter[]
+  ): Observable<Build[]> {
+    filters.push({name: 'utcOffset', value: moment().utcOffset().toString()});
+    return this.http
+      .get<Build[]>(apiLinks.get.batch(repoName, orgName, timestamp), {
         params: this.getParams(filters),
       })
       .pipe(catchError(err => this.handleError(err)));

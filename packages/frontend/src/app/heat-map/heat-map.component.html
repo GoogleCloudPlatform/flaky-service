@@ -20,7 +20,7 @@ limitations under the License.
 
     <mat-sidenav #snav mode="over" position="end">
       <mat-nav-list>
-      <cdk-virtual-scroll-viewport itemSize="4" id="builds-viewport">
+      <cdk-virtual-scroll-viewport itemSize="5" id="builds-viewport" minBufferPx="200">
           <p id="build-view-date">Runs on {{selectedBatchDate}}</p>
           <mat-divider></mat-divider>
           <div

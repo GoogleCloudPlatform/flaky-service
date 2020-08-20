@@ -197,10 +197,10 @@ describe('Posting Builds', () => {
     assert.strictEqual(result.data().environment.ref, 'master');
 
     for (var i = 0; i < 2; i++) {
-      var testInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).get();
-      assert.strictEqual(testInfo.data().percentpassing, 1);
+      var testInfo = await client.collection(global.headCollection).doc(repoId).collection('queued').doc(firebaseEncode(parsedPayload.data[0].name)).get();
+      assert.strictEqual(testInfo.data().passed, true);
 
-      var runInfo = await client.collection(global.headCollection).doc(repoId).collection('tests').doc(firebaseEncode(parsedPayload.data[0].name)).collection('runs').where('buildId', '==', buildId).get();
+      var runInfo = await client.collection(global.headCollection).doc(repoId).collection('queued').doc(firebaseEncode(parsedPayload.data[0].name)).collection('runs').where('buildId', '==', buildId).get();
       let resultRun;
       runInfo.forEach(r => { resultRun = r; });
       assert.strictEqual(resultRun.data().timestamp.toDate().getTime(), new Date(parsedPayloadRaw.metadata.github.event.head_commit.timestamp).getTime());

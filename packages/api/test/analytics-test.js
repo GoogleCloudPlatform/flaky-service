@@ -94,43 +94,9 @@ describe('Flaky-Analytics', () => {
     it('Should track stats for tests', async () => {
       const testFlakyExpecations = [false, true, true, false];
       for (let i = 0; i < testFlakyExpecations.length; i++) {
-        const testData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('tests').doc(i.toString()).get();
+        const testData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('queued').doc(i.toString()).get();
         assert.strictEqual(testData.data().flaky, testFlakyExpecations[i]);
       }
-    });
-
-    // cannot readd builds
-
-    it('Can add builds non chronologically', async () => {
-      const updateObj = JSON.parse(JSON.stringify(buildInfo));
-      updateObj.timestamp = new Date('06/01/2021');
-      updateObj.buildId = '1.5';
-      const testCaseObjs = [];
-      const nonChronTestCases = [true, false, false, true];
-      for (let k = 0; k < nonChronTestCases.length; k++) {
-        testCaseObjs.push(new TestCaseRun(nonChronTestCases[k] ? 'ok' : 'not ok', k, k.toString()));
-      }
-
-      await addBuild(testCaseObjs, updateObj, client, global.headCollection);
-
-      // check builddata
-      const buildData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('builds').where('buildId', '==', '1.5').get();
-      let result;
-      buildData.forEach(r => { result = r; });
-      assert.strictEqual(result.data().flaky, 2); // only 1 is flaky looking backwards, however two fit the criteria of currently being flaky and failing on that build.
-
-      // ensure test cases flakyness is updated
-      const testFlakyExpecations = [false, true, true, true]; // note test case 4 has now become flaky
-      for (let i = 0; i < testFlakyExpecations.length; i++) {
-        const testData = await client.collection(global.headCollection).doc(buildInfo.repoId).collection('tests').doc(i.toString()).get();
-        assert.strictEqual(testData.data().flaky, testFlakyExpecations[i]);
-      }
-
-      // repo info changes flaky count, does not change num test cases/ numfails count
-      const repoData = await client.collection(global.headCollection).doc(buildInfo.repoId).get();
-      assert.strictEqual(repoData.data().numfails, 3); // number of tests/failing testss has not changed, since this is not up to date
-      assert.strictEqual(repoData.data().numtestcases, 4);
-      assert.strictEqual(repoData.data().flaky, 3); // # flaky tests has Changed
     });
   });
 
