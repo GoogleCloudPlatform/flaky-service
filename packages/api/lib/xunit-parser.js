@@ -88,6 +88,5 @@ class Parser {
   }
 }
 
-// console.log(parse(readFileSync(require.resolve('../test/fixtures/one_failed.xml'), 'utf8')));
 const parserHandler = new Parser();
 module.exports = parserHandler;
