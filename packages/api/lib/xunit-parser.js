@@ -32,17 +32,11 @@ class Parser {
       testsuites = [testsuites];
     }
     for (const suite of testsuites) {
-    // Ruby doesn't always have _attributes.
+      // Ruby doesn't always have _attributes.
       let testsuiteName = suite._attributes ? suite._attributes.name : undefined;
 
       // Get rid of github.com/orgName/repoName/
-      testsuiteName = testsuiteName.substring(testsuiteName.indexOf('/') + 1);
-      testsuiteName = testsuiteName.substring(testsuiteName.indexOf('/') + 1);
-      const index = testsuiteName.indexOf('/');
-      if (index !== -1) { testsuiteName = testsuiteName.substring(index + 1); } else {
-        // There is nothing past the repo url
-        testsuiteName = '';
-      }
+      testsuiteName = this.trim(testsuiteName);
 
       let testcases = suite.testcase;
       // If there were no tests in the package, continue.
@@ -80,6 +74,12 @@ class Parser {
       }
     }
     return tests;
+  }
+
+  trim (url) {
+    const updated = url.replace(/(.)*github.com\/[a-zA-Z-]*\/[a-zA-Z-]*/g, '');
+    if (updated.length > 1) return updated.substring(1); // Get rid of starting `/`
+    return updated;
   }
 
   // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
