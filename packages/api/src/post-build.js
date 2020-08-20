@@ -170,7 +170,7 @@ class PostBuildHandler {
   }
 
   // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
-  static cleanBuildInfo (metadata) {
+  static cleanTapBuildInfo (metadata) {
     const timestampNumb = Date.parse(metadata.timestamp);
     const timestamp = isNaN(timestampNumb) ? new Date() : new Date(timestampNumb);
 
@@ -248,7 +248,7 @@ class PostBuildHandler {
           throw new UnauthorizedError('Flaky does not store tests for private repos');
         }
 
-        const buildInfo = PostBuildHandler.cleanBuildInfo(req.body.metadata); // Different line. The metadata object is the same as addbuild, already validated
+        const buildInfo = PostBuildHandler.cleanTapBuildInfo(req.body.metadata); // Different line. The metadata object is the same as addbuild, already validated
 
         req.body.data = await PostBuildHandler.flattenTap(req.body.data);
         const parsedRaw = await PostBuildHandler.parseRawOutput(req.body.data, req.body.type);
@@ -270,22 +270,12 @@ class PostBuildHandler {
     // required keys in the req.body.metadata are the inputs for addBuild in src/add-build.js
     this.app.post('/api/build/xml', async (req, res, next) => {
       try {
-        // TODO: Check for private repo, reject if it is one.
-        // if (req.body.metadata.private) {
-        //   throw new UnauthorizedError('Flaky does not store tests for private repos');
-        // }
+        if (req.body.metadata.token !== process.env.buildCopSecret) {
+          throw new UnauthorizedError('Invalid Secret. Only Google Employees may use this endpoint.');
+        }
 
-        // TODO: Metadata stuff
-        // const buildInfo = PostBuildHandler.cleanBuildInfo(req.body.metadata); // Different line. The metadata object is the same as addbuild, already validated
-        const testCases = xunitParser(req.body.data);
-
-        const buildInfo = [];
-
-        // TODO: Data validation
-        // const isValid = await validateGithub(req.body.metadata.token, decodeURIComponent(req.body.metadata.repoId));
-        // if (!isValid) {
-        //   throw new UnauthorizedError('Must have valid Github Token to post build');
-        // }
+        const testCases = xunitParser.parse(req.body.data);
+        const buildInfo = xunitParser.cleanXunitBuildInfo(req.body.metadata);
 
         await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
