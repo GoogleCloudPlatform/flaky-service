@@ -85,41 +85,6 @@ class Parser {
   // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
   cleanXunitBuildInfo (metadata) {
     return {};
-    //    const timestampNumb = Date.parse(metadata.timestamp);
-    //    const timestamp = isNaN(timestampNumb) ? new Date() : new Date(timestampNumb);
-
-    //    const returnVal = {
-    //      repoId: firebaseEncode(decodeURIComponent(metadata.repoId)),
-    //    organization: metadata.organization,
-    //      timestamp,
-    //      url: metadata.url,
-    //      environment: PostBuildHandler.cleanEnvironment(metadata),
-    //      buildId: firebaseEncode(decodeURIComponent(metadata.buildId)),
-    //      sha: metadata.sha,
-    //      name: metadata.name,
-    //      description: metadata.description,
-    //      buildmessage: metadata.buildmessage
-    //    };
-
-    //    // validate data
-    //    for (const prop in returnVal) {
-    //      if (!returnVal[prop]) {
-    //        throw new InvalidParameterError('Missing All Build Meta Data Info - ' + prop);
-    //      }
-    //    }
-
-    // /**
-    // environment:
-    //   matrix
-    //   os
-    //   ref (linking to build)
-    //   tag
-
-    // sha: should make correct, should be in Buildcop
-
-    // */
-
-  //    return returnVal;
   }
 }
 
