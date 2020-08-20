@@ -32,6 +32,10 @@ class PostBuildHandler {
     this.client = client;
   }
 
+  static async addBuild (testCases, buildInfo, client, collectionName) {
+    await addBuild(testCases, buildInfo, client, collectionName);
+  }
+
   static parseEnvironment (metadata) {
     var envData = {
       os: metadata.os.os || 'Not specified',
@@ -233,7 +237,7 @@ class PostBuildHandler {
           throw new UnauthorizedError('Flaky does not store tests for private repos');
         }
 
-        await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
+        await PostBuildHandler.addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
         handleError(res, err);
@@ -259,7 +263,7 @@ class PostBuildHandler {
           throw new UnauthorizedError('Must have valid Github Token to post build');
         }
 
-        await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
+        await PostBuildHandler.addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
         handleError(res, err);
@@ -270,14 +274,14 @@ class PostBuildHandler {
     // required keys in the req.body.metadata are the inputs for addBuild in src/add-build.js
     this.app.post('/api/build/xml', async (req, res, next) => {
       try {
-        if (req.body.metadata.token !== process.env.buildCopSecret) {
+        if (req.headers.authorization !== process.env.PRIVATE_POSTING_TOKEN) {
           throw new UnauthorizedError('Invalid Secret. Only Google Employees may use this endpoint.');
         }
 
         const testCases = xunitParser.parse(req.body.data);
         const buildInfo = xunitParser.cleanXunitBuildInfo(req.body.metadata);
 
-        await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
+        await PostBuildHandler.addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
         handleError(res, err);
