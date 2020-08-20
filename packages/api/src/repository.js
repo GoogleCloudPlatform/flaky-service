@@ -59,6 +59,39 @@ class Repository {
     return this.deleteDoc(`tickets/${ticket.state}`);
   }
 
+  async deleteAllTickets () {
+    const collectionRef = client.collection('tickets');
+    const query = collectionRef.orderBy('__name__').limit(50);
+
+    return new Promise((resolve, reject) => {
+      this.deleteQueryBatch(query, resolve).catch(reject);
+    });
+  }
+
+  async deleteQueryBatch (query, resolve) {
+    const snapshot = await query.get();
+
+    const batchSize = snapshot.size;
+    if (batchSize === 0) {
+    // When there are no documents left, we are done
+      resolve();
+      return;
+    }
+
+    // Delete documents in a batch
+    const batch = client.batch();
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+
+    // Recurse on the next process tick, to avoid
+    // exploding the stack.
+    process.nextTick(() => {
+      this.deleteQueryBatch(query, resolve);
+    });
+  }
+
   allowedToPerformTicket (action, permission) {
     if (action === 'delete-repo') {
       return permission === 'admin';
