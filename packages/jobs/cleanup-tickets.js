@@ -19,8 +19,7 @@ const repo = require('../api/src/repository');
  * Run once a day at midnight, to cleanup the tickets
  * Manually run the task here https://console.cloud.google.com/cloudscheduler
  */
-// exports.ticketCleanup = functions.pubsub.schedule('every day 00:00').onRun(async context => {
-exports.ticketCleanup = functions.pubsub.schedule('every 20 seconds').onRun(async context => {
+exports.ticketCleanup = functions.pubsub.schedule('every day 00:00').onRun(async context => {
 	repo.deleteAllTickets();
 	console.log('Ticket cleanup finished');
 });
