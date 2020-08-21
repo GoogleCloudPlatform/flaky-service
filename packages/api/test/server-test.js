@@ -24,15 +24,11 @@ const auth = require('../src/auth.js');
 const repo = require('../src/repository.js');
 
 describe('flaky express server', () => {
-  let stubs = [];
+  const sandbox = sinon.createSandbox();
   const frontendUrl = 'https://flaky-dashboard.web.app/home';
 
   afterEach(() => {
-    /** Cleanup **/
-    stubs.forEach(stubbed => {
-      stubbed.restore();
-    });
-    stubs = [];
+    sandbox.restore();
   });
 
   it('should have the mocked environment variables', () => {
@@ -41,7 +37,7 @@ describe('flaky express server', () => {
 
   describe('get /repo to delete a test', async () => {
     it('generates a GitHub redirect', async () => {
-      stubs.push(sinon.stub(repo, 'storeTicket').returns(true));
+      sandbox.stub(repo, 'storeTicket').returns(true);
       const resp = await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/deleteurl?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
         method: 'GET'
       });
@@ -51,7 +47,6 @@ describe('flaky express server', () => {
 
     it('stores correct information in the ticket', async () => {
       const stubbed = sinon.stub(repo, 'storeTicket');
-      stubs.push(stubbed);
 
       await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/test/deleteurl?testname=my-test&redirect=' + process.env.FRONTEND_URL, {
         method: 'GET'
@@ -64,12 +59,14 @@ describe('flaky express server', () => {
         testName: 'my-test',
         redirect: process.env.FRONTEND_URL
       }));
+
+      stubbed.restore();
     });
   });
 
   describe('get /repo to delete a repository', async () => {
     it('generates a GitHub redirect', async () => {
-      stubs.push(sinon.stub(repo, 'storeTicket').returns(true));
+      sandbox.stub(repo, 'storeTicket').returns(true);
       const resp = await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/deleteurl?redirect=' + process.env.FRONTEND_URL, {
         method: 'GET'
       });
@@ -79,7 +76,6 @@ describe('flaky express server', () => {
 
     it('stores correct information in the ticket', async () => {
       const stubbed = sinon.stub(repo, 'storeTicket');
-      stubs.push(stubbed);
 
       await fetch('http://0.0.0.0:3000/api/repo/my-org/my-repo/deleteurl?redirect=' + process.env.FRONTEND_URL, {
         method: 'GET'
@@ -91,6 +87,8 @@ describe('flaky express server', () => {
         repoId: 'my-repo',
         redirect: process.env.FRONTEND_URL
       }));
+
+      stubbed.restore();
     });
   });
 
@@ -99,17 +97,17 @@ describe('flaky express server', () => {
       /** Stubbing **/
       const queryObject = querystring.stringify({ access_token: 'fake-access-token' });
 
-      stubs.push(sinon.stub(auth, 'retrieveAccessToken').returns(queryObject));
+      sandbox.stub(auth, 'retrieveAccessToken').returns(queryObjectstu);
 
-      stubs.push(sinon.stub(auth, 'retrieveUserPermission').returns('write'));
+      sandbox.stub(auth, 'retrieveUserPermission').returns('write');
 
-      stubs.push(sinon.stub(repo, 'performTicketIfAllowed').returns(true));
+      sandbox.stub(repo, 'performTicketIfAllowed').returns(true);
 
       const fakeState = 'testing-state';
-      stubs.push(sinon.stub(repo, 'getTicket').returns({
+      sandbox.stub(repo, 'getTicket').returns({
         state: fakeState,
         redirect: process.env.FRONTEND_URL
-      }));
+      });
 
       /** Testing **/
       const resp = await fetch('http://0.0.0.0:3000/api/callback?state=' + fakeState + '&code=ANYTHING', {

@@ -263,18 +263,14 @@ describe('Posting Builds', () => {
   });
 
   describe('xunit endpoint', async () => {
-    let stubs = [];
+    const sandbox = sinon.createSandbox();
 
     afterEach(() => {
-      /** Cleanup **/
-      stubs.forEach(stubbed => {
-        stubbed.restore();
-      });
-      stubs = [];
+      sandbox.restore();
     });
 
     it('does not allow a post if no password is included', async () => {
-      stubs.push(sinon.stub(PostBuildHandler, 'addBuild'));
+      sandbox.stub(PostBuildHandler, 'addBuild');
 
       const bodyData = fs.readFileSync(require.resolve('./fixtures/passed.xml'), 'utf8');
       process.env.PRIVATE_POSTING_TOKEN = 'hello';
@@ -293,9 +289,9 @@ describe('Posting Builds', () => {
     });
 
     it('calls addBuild with appropriate data when authentication token is included', async () => {
-      stubs.push(sinon.stub(PostBuildHandler, 'addBuild'));
-      stubs.push(sinon.stub(xunitParser, 'parse').returns([]));
-      stubs.push(sinon.stub(xunitParser, 'cleanXunitBuildInfo').returns({}));
+      const addBuildStub = sinon.stub(PostBuildHandler, 'addBuild');
+      sandbox.stub(xunitParser, 'parse').returns([]);
+      sandbox.stub(xunitParser, 'cleanXunitBuildInfo').returns({});
 
       const bodyData = fs.readFileSync(require.resolve('./fixtures/passed.xml'), 'utf8');
       process.env.PRIVATE_POSTING_TOKEN = 'hello';
@@ -310,7 +306,9 @@ describe('Posting Builds', () => {
       });
 
       assert.strictEqual(resp.status, 200);
-      assert(stubs[0].calledWith([], {}));
+      assert(addBuildStub.calledWith([], {}));
+
+      addBuildStub.restore();
     });
   });
 

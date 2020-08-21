@@ -17,7 +17,7 @@ const TestCaseRun = require('../lib/testrun');
 
 class Parser {
   /**
-  Parse the xunit test results, converting them to an array of testrun objects. 
+  Parse the xunit test results, converting them to an array of testrun objects.
   Each of these testrun objects contains whether the test passed, its name, and
   its failure message (if failed).
   @param xmlString - The complete xunit string of test results sent to the endpoint
