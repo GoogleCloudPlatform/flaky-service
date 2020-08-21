@@ -19,7 +19,7 @@ const client = require('../src/firestore.js');
 const firebaseEncode = require('../lib/firebase-encode');
 
 const TestCaseRun = require('../lib/testrun');
-const addBuild = require('../src/add-build');
+const { addBuild } = require('../src/add-build');
 const { deleteTest, deleteRepo } = require('../lib/deleter');
 
 const fetch = require('node-fetch');

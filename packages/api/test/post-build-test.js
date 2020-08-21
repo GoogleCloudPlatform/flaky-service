@@ -33,6 +33,7 @@ const validNockResponse = require('./res/sample-validate-resp.json');
 const { deleteRepo } = require('../lib/deleter');
 
 const PostBuildHandler = require('../src/post-build.js');
+const AddBuildHandler = require('../src/add-build');
 const client = require('../src/firestore.js');
 
 const assert = require('assert');
@@ -270,7 +271,7 @@ describe('Posting Builds', () => {
     });
 
     it('does not allow a post if no password is included', async () => {
-      sandbox.stub(PostBuildHandler, 'addBuild');
+      sandbox.stub(AddBuildHandler, 'addBuild');
 
       const bodyData = fs.readFileSync(require.resolve('./fixtures/passed.xml'), 'utf8');
       process.env.PRIVATE_POSTING_TOKEN = 'hello';
@@ -289,7 +290,7 @@ describe('Posting Builds', () => {
     });
 
     it('calls addBuild with appropriate data when authentication token is included', async () => {
-      const addBuildStub = sinon.stub(PostBuildHandler, 'addBuild');
+      const addBuildStub = sinon.stub(AddBuildHandler, 'addBuild');
       sandbox.stub(xunitParser, 'parse').returns([]);
       sandbox.stub(xunitParser, 'cleanXunitBuildInfo').returns({});
 

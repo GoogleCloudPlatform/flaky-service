@@ -97,7 +97,7 @@ describe('flaky express server', () => {
       /** Stubbing **/
       const queryObject = querystring.stringify({ access_token: 'fake-access-token' });
 
-      sandbox.stub(auth, 'retrieveAccessToken').returns(queryObjectstu);
+      sandbox.stub(auth, 'retrieveAccessToken').returns(queryObject);
 
       sandbox.stub(auth, 'retrieveUserPermission').returns('write');
 
