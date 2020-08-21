@@ -23,19 +23,23 @@ const EXAMPLE_TAP_MANGLED = fs.readFileSync(path.join(__dirname, 'res/mangledtap
 const EXAMPLE_TAP_NESTED = fs.readFileSync(path.join(__dirname, 'res/nestedtap.tap'), 'utf8');
 const EXAMPLE_STUFF_ON_TOP = fs.readFileSync(path.join(__dirname, 'res/stuffontoptap.tap'), 'utf8');
 
-const { describe, before, after, it } = require('mocha');
+const { describe, before, after, it, afterEach } = require('mocha');
 const { v4: uuidv4 } = require('uuid');
 const firebaseEncode = require('../lib/firebase-encode');
 
 const nock = require('nock');
+const sinon = require('sinon');
 const validNockResponse = require('./res/sample-validate-resp.json');
 const { deleteRepo } = require('../lib/deleter');
 
 const PostBuildHandler = require('../src/post-build.js');
+const AddBuildHandler = require('../src/add-build');
 const client = require('../src/firestore.js');
 
 const assert = require('assert');
 const fetch = require('node-fetch');
+
+const xunitParser = require('../lib/xunit-parser');
 
 nock.disableNetConnect();
 nock.enableNetConnect(/^(?!.*github\.com).*$/); // only disable requests on github.com
@@ -73,12 +77,10 @@ describe('Posting Builds', () => {
 
     // two failed
     assert(!testcases[2].successful);
-    assert.strictEqual(testcases[2].number, 3);
     assert(testcases[2].failureMessage.includes('AssertionError'));
 
     // five failed
     assert(!testcases[5].successful);
-    assert.strictEqual(testcases[5].number, 6);
     assert(testcases[5].failureMessage.includes('AssertionError'));
   });
 
@@ -259,6 +261,56 @@ describe('Posting Builds', () => {
     assert.strictEqual(result.data().tests.length, 2);
     assert.strictEqual(result.data().percentpassing, 1);
     assert.strictEqual(result.data().environment.ref, 'master');
+  });
+
+  describe('xunit endpoint', async () => {
+    const sandbox = sinon.createSandbox();
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+
+    it('does not allow a post if no password is included', async () => {
+      sandbox.stub(AddBuildHandler, 'addBuild');
+
+      const bodyData = fs.readFileSync(require.resolve('./fixtures/passed.xml'), 'utf8');
+      process.env.PRIVATE_POSTING_TOKEN = 'hello';
+
+      const resp = await fetch('http://127.0.0.1:3000/api/build/xml', {
+        method: 'post',
+        body: JSON.stringify({
+          data: bodyData,
+          metadata: {}
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      assert.strictEqual(resp.status, 401);
+      assert.strictEqual(resp.statusText, 'Unauthorized');
+    });
+
+    it('calls addBuild with appropriate data when authentication token is included', async () => {
+      const addBuildStub = sinon.stub(AddBuildHandler, 'addBuild');
+      sandbox.stub(xunitParser, 'parse').returns([]);
+      sandbox.stub(xunitParser, 'cleanXunitBuildInfo').returns({});
+
+      const bodyData = fs.readFileSync(require.resolve('./fixtures/passed.xml'), 'utf8');
+      process.env.PRIVATE_POSTING_TOKEN = 'hello';
+
+      const resp = await fetch('http://127.0.0.1:3000/api/build/xml', {
+        method: 'post',
+        body: JSON.stringify({
+          data: bodyData,
+          metadata: {}
+        }),
+        headers: { 'content-type': 'application/json', Authorization: process.env.PRIVATE_POSTING_TOKEN }
+      });
+
+      assert.strictEqual(resp.status, 200);
+      assert(addBuildStub.calledWith([], {}));
+
+      addBuildStub.restore();
+    });
   });
 
   after(async () => {

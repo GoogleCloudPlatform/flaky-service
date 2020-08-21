@@ -18,7 +18,7 @@ const { v4: uuidv4 } = require('uuid');
 const client = require('../src/firestore.js');
 
 const TestCaseRun = require('../lib/testrun');
-const addBuild = require('../src/add-build');
+const { addBuild } = require('../src/add-build');
 const { deleteRepo } = require('../lib/deleter');
 
 const buildInfo = {

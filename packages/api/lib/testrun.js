@@ -15,16 +15,15 @@
 const firebaseEncode = require('./firebase-encode');
 
 class TestCaseRun {
-  constructor (okMessage, number, name) {
+  constructor (okMessage, name) {
     this.successful = (okMessage === 'ok');
-    this.number = number;
     this.name = name;
     this.encodedName = firebaseEncode(this.name);
     this.failureMessage = 'Successful';
   }
 
   display () {
-    return this.number + ', ' + this.name + ', ' + this.time + ', ' + (this.successful ? '1' : '0') + ', ' + this.failureMessage;
+    return this.name + ', ' + this.time + ', ' + (this.successful ? '1' : '0') + ', ' + this.failureMessage;
   }
 }
 
