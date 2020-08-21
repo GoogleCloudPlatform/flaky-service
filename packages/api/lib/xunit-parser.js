@@ -16,6 +16,12 @@ const xmljs = require('xml-js');
 const TestCaseRun = require('../lib/testrun');
 
 class Parser {
+  /**
+  Parse the xunit test results, converting them to an array of testrun objects. 
+  Each of these testrun objects contains whether the test passed, its name, and
+  its failure message (if failed).
+  @param xmlString - The complete xunit string of test results sent to the endpoint
+  */
   parse (xmlString) {
     const obj = xmljs.xml2js(xmlString, { compact: true });
     const tests = [];
@@ -83,6 +89,11 @@ class Parser {
     return tests;
   }
 
+  /**
+  The url contains 'github.com/:org/:repo', optionally followed by a path.
+  This method trims the url down to only the string following `repo`, which may be empty.
+  @param url - the Github url of where a test came from
+  */
   trim (url) {
     const updated = url.replace(/(.)*github.com\/[a-zA-Z-]*\/[a-zA-Z-]*/g, '');
     if (updated.length > 1) return updated.substring(1); // Get rid of starting `/`
@@ -90,6 +101,10 @@ class Parser {
   }
 
   // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
+  /**
+  Parse the build data and convert it into a JSON format that can easily be read and stored.
+  @param metadata - contains all data sent to the endpoint besides the actual test results.
+  */
   cleanXunitBuildInfo (metadata) {
     return {};
   }
