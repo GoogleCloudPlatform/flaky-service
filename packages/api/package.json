@@ -33,7 +33,8 @@
     "express-session": "^1.17.1",
     "moment": "^2.27.0",
     "tap-parser": "^10.0.1",
-    "uuid": "^8.2.0"
+    "uuid": "^8.2.0",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "c8": "^7.1.2",

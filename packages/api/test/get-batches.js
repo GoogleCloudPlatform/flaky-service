@@ -20,7 +20,7 @@ const sinon = require('sinon');
 const assert = require('assert');
 const fetch = require('node-fetch');
 const firebaseEncode = require('../lib/firebase-encode');
-const addBuild = require('../src/add-build');
+const { addBuild } = require('../src/add-build');
 const { deleteRepo } = require('../lib/deleter');
 const client = require('../src/firestore');
 
