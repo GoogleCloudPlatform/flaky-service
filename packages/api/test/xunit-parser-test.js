@@ -17,7 +17,7 @@ const assert = require('assert');
 const parser = require('../lib/xunit-parser');
 const { readFileSync } = require('fs');
 
-describe.only('xunit-parser-test', () => {
+describe('xunit-parser-test', () => {
   it('stores the correct number of tests', () => {
     const tests = parser.parse(readFileSync(require.resolve('./fixtures/one_failed.xml'), 'utf8'));
     assert.strictEqual(tests.length, 4);

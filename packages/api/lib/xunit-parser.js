@@ -57,7 +57,14 @@ class Parser {
         const failure = testcase.failure;
         const error = testcase.error;
 
-        const testCaseRun = new TestCaseRun((failure === undefined && error === undefined) ? 'ok' : 'not ok', (testsuiteName !== '') ? testsuiteName + '/' + testcase._attributes.name : testcase._attributes.name);
+        const okayMessage = (failure === undefined && error === undefined) ? 'ok' : 'not ok';
+        let name = testcase._attributes.name;
+
+        if (testsuiteName.length > 0) {
+          name = testsuiteName + '/' + name;
+        }
+
+        const testCaseRun = new TestCaseRun(okayMessage, name);
 
         if (!testCaseRun.successful) {
           // Here we must have a failure or an error.
