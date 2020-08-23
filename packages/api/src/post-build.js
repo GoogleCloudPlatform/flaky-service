@@ -16,9 +16,10 @@
 
 // NOTE: relies on global.headCollection to be the high level repository
 
-const addBuild = require('../src/add-build');
+const AddBuildHandler = require('../src/add-build');
 const TestCaseRun = require('../lib/testrun');
-var Parser = require('tap-parser');
+const TapParser = require('tap-parser');
+const xunitParser = require('../lib/xunit-parser');
 const Readable = require('stream').Readable;
 const firebaseEncode = require('../lib/firebase-encode');
 const { InvalidParameterError, UnauthorizedError, handleError } = require('../lib/errors');
@@ -48,7 +49,7 @@ class PostBuildHandler {
       if (typeof x.ok !== 'boolean' || !x.id || !x.name) {
         throw new InvalidParameterError('Missing All Test Case Info');
       }
-      const testcase = new TestCaseRun(x.ok ? 'ok' : 'not ok', x.id, x.name);
+      const testcase = new TestCaseRun(x.ok ? 'ok' : 'not ok', x.name);
 
       // wrap failure message generation in try so still works if ids arent sequential
       try {
@@ -73,7 +74,7 @@ class PostBuildHandler {
     switch (fileType) {
       case 'TAP': {
         var data = [];
-        var p = new Parser();
+        var p = new TapParser();
 
         p.on('result', function (assert) {
           data.push(assert);
@@ -120,7 +121,7 @@ class PostBuildHandler {
   }
 
   // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
-  static cleanBuildInfo (metadata) {
+  static cleanTapBuildInfo (metadata) {
     const timestampNumb = Date.parse(metadata.timestamp);
     const timestamp = isNaN(timestampNumb) ? new Date() : new Date(timestampNumb);
 
@@ -169,11 +170,16 @@ class PostBuildHandler {
   }
 
   listen () {
+
     // endpoint expects the the required buildinfo to be in req.body.metadata to already exist and be properly formatted.
     // required keys in the req.body.metadata are the inputs for addBuild in src/add-build.js
     this.app.post('/api/build/gh/v1', async (req, res, next) => {
       try {
-        const buildInfo = PostBuildHandler.cleanBuildInfo(req.body.metadata); // Different line. The metadata object is the same as addbuild, already validated
+        if (req.body.metadata.private) {
+          throw new UnauthorizedError('Flaky does not store tests for private repos');
+        }
+
+        const buildInfo = PostBuildHandler.cleanTapBuildInfo(req.body.metadata); // Different line. The metadata object is the same as addbuild, already validated
 
         req.body.data = await PostBuildHandler.flattenTap(req.body.data);
         const parsedRaw = await PostBuildHandler.parseRawOutput(req.body.data, req.body.type);
@@ -184,7 +190,25 @@ class PostBuildHandler {
           throw new UnauthorizedError('Must have valid Github Token to post build');
         }
 
-        await addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
+        await AddBuildHandler.addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
+        res.send({ message: 'successfully added build' });
+      } catch (err) {
+        handleError(res, err);
+      }
+    });
+
+    // endpoint expects the the required buildinfo to be in req.body.metadata to already exist and be properly formatted.
+    // required keys in the req.body.metadata are the inputs for addBuild in src/add-build.js
+    this.app.post('/api/build/xml', async (req, res, next) => {
+      try {
+        if (req.headers.authorization !== process.env.PRIVATE_POSTING_TOKEN) {
+          throw new UnauthorizedError('Invalid Secret. Only Google Employees may use this endpoint.');
+        }
+
+        const testCases = xunitParser.parse(req.body.data);
+        const buildInfo = xunitParser.cleanXunitBuildInfo(req.body.metadata);
+
+        await AddBuildHandler.addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
         handleError(res, err);

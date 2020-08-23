@@ -278,4 +278,4 @@ async function updateRepoDoc (buildInfo, computedData, mostRecent, dbRepo) {
   // db read operation to fix this. This would only be visible when ordering by priority on org page.
 }
 
-module.exports = addBuild;
+module.exports = { addBuild };
