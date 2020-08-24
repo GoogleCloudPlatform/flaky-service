@@ -14,7 +14,6 @@
 
 const xmljs = require('xml-js');
 const TestCaseRun = require('../lib/testrun');
-const firebaseEncode = require('./firebase-encode');
 
 class Parser {
   /**
@@ -41,10 +40,7 @@ class Parser {
     }
     for (const suite of testsuites) {
       // Ruby doesn't always have _attributes.
-      let testsuiteName = suite._attributes ? suite._attributes.name : undefined;
-
-      // Get rid of github.com/orgName/repoName/
-      testsuiteName = this.trim(testsuiteName);
+      const testsuiteName = suite._attributes ? this.trim(suite._attributes.name) : undefined;
 
       let testcases = suite.testcase;
       // If there were no tests in the package, continue.
@@ -93,21 +89,7 @@ class Parser {
   * @returns {string} the string following `:repo`, which may be empty
   */
   trim (url) {
-    const updated = url.replace(/(.)*github.com\/[a-zA-Z-]*\/[a-zA-Z-]*/g, '');
-    if (updated.length > 1) return updated.substring(1); // Get rid of starting `/`
-    return updated;
-  }
-
-  // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
-  /**
-  * Parse the build data and convert it into a JSON format that can easily be read and stored.
-  * @param metadata Contains all data sent to the endpoint besides the actual test results.
-  * @returns {JSON} The metadata for the build
-  */
-  cleanXunitBuildInfo (metadata) {
-    metadata.repoId = firebaseEncode(metadata.repoId);
-    metadata.buildId = firebaseEncode(metadata.buildId);
-    return metadata;
+    return url.replace(/^github.com\/[^/]+\/[^/]+\/?/, '');
   }
 }
 

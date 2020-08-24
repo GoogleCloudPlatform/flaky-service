@@ -100,13 +100,17 @@ export class HeatMapComponent {
   }
 
   getBuildLink(buildId): string {
-    return 'https://github.com/'.concat(
-      this.orgName,
-      '/',
-      this.repoName,
-      '/actions/runs/',
-      buildId
-    );
+    if (buildId.match(/^https?/)) {
+      return buildId;
+    } else {
+      return 'https://github.com/'.concat(
+        this.orgName,
+        '/',
+        this.repoName,
+        '/actions/runs/',
+        buildId
+      );
+    }
   }
 
   buildIsFlaky(build: Build) {
