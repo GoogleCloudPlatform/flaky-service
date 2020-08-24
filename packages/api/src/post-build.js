@@ -17,14 +17,16 @@
 // NOTE: relies on global.headCollection to be the high level repository
 
 const AddBuildHandler = require('../src/add-build');
-const TestCaseRun = require('../lib/testrun');
-const TapParser = require('tap-parser');
-const xunitParser = require('../lib/xunit-parser');
-const Readable = require('stream').Readable;
+const authMiddleware = require('../lib/auth-middleware');
+const cp = require('child_process');
 const firebaseEncode = require('../lib/firebase-encode');
 const { InvalidParameterError, UnauthorizedError, handleError } = require('../lib/errors');
+const parsePubSubPayload = require('../lib/parse-pubsub-payload');
+const Readable = require('stream').Readable;
+const TestCaseRun = require('../lib/testrun');
+const TapParser = require('tap-parser');
 const { validateGithub } = require('../lib/validate-github');
-const cp = require('child_process');
+const xunitParser = require('../lib/xunit-parser');
 
 class PostBuildHandler {
   constructor (app, client) {
@@ -268,15 +270,10 @@ class PostBuildHandler {
 
     // endpoint expects the the required buildinfo to be in req.body.metadata to already exist and be properly formatted.
     // required keys in the req.body.metadata are the inputs for addBuild in src/add-build.js
-    this.app.post('/api/build/xml', async (req, res, next) => {
+    this.app.post('/api/build/pubsub/v1', authMiddleware, async (req, res, next) => {
       try {
-        if (req.headers.authorization !== process.env.PRIVATE_POSTING_TOKEN) {
-          throw new UnauthorizedError('Invalid Secret. Only Google Employees may use this endpoint.');
-        }
-
-        const testCases = xunitParser.parse(req.body.data);
-        const buildInfo = xunitParser.cleanXunitBuildInfo(req.body.metadata);
-
+        const { xml, buildInfo } = parsePubSubPayload(req.body);
+        const testCases = xunitParser.parse(xml);
         await AddBuildHandler.addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {

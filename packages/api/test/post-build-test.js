@@ -263,7 +263,7 @@ describe('Posting Builds', () => {
     assert.strictEqual(result.data().environment.ref, 'master');
   });
 
-  describe('xunit endpoint', async () => {
+  describe('pubsub xunit endpoint', async () => {
     const sandbox = sinon.createSandbox();
 
     afterEach(() => {
@@ -276,7 +276,7 @@ describe('Posting Builds', () => {
       const bodyData = fs.readFileSync(require.resolve('./fixtures/passed.xml'), 'utf8');
       process.env.PRIVATE_POSTING_TOKEN = 'hello';
 
-      const resp = await fetch('http://127.0.0.1:3000/api/build/xml', {
+      const resp = await fetch('http://127.0.0.1:3000/api/build/pubsub/v1', {
         method: 'post',
         body: JSON.stringify({
           data: bodyData,
@@ -292,22 +292,17 @@ describe('Posting Builds', () => {
     it('calls addBuild with appropriate data when authentication token is included', async () => {
       const addBuildStub = sinon.stub(AddBuildHandler, 'addBuild');
       sandbox.stub(xunitParser, 'parse').returns([]);
-      sandbox.stub(xunitParser, 'cleanXunitBuildInfo').returns({});
 
-      const bodyData = fs.readFileSync(require.resolve('./fixtures/passed.xml'), 'utf8');
       process.env.PRIVATE_POSTING_TOKEN = 'hello';
 
-      const resp = await fetch('http://127.0.0.1:3000/api/build/xml', {
+      const resp = await fetch('http://127.0.0.1:3000/api/build/pubsub/v1', {
         method: 'post',
-        body: JSON.stringify({
-          data: bodyData,
-          metadata: {}
-        }),
+        body: JSON.stringify(require('./fixtures/pubsub-payload.json')),
         headers: { 'content-type': 'application/json', Authorization: process.env.PRIVATE_POSTING_TOKEN }
       });
 
       assert.strictEqual(resp.status, 200);
-      assert(addBuildStub.calledWith([], {}));
+      sinon.assert.calledOnce(addBuildStub);
 
       addBuildStub.restore();
     });
