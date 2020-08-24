@@ -24,5 +24,6 @@ describe('parse-pubsub-payload', () => {
     assert.strictEqual(buildInfo.sha, '5b586d52b1798b6edf2bec7e59402e4d4115c8ee');
     assert.strictEqual(buildInfo.repoId, 'gaxios');
     assert.strictEqual(buildInfo.organization, 'googleapis');
+    assert.strictEqual(buildInfo.buildId, 'http://sponge2/38318e6f-4a1f-4650-b9ae-26d89b643c2c');
   });
 });

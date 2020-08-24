@@ -16,6 +16,7 @@ const firebaseEncode = require('./firebase-encode');
 
 function buildInfo (metadata) {
   const [org, repo] = metadata.repo.split('/');
+  const match = metadata.buildURL.match(/\[Sponge\]\((?<url>.*)\)/);
   return {
     repoId: firebaseEncode(decodeURIComponent(repo)),
     organization: org,
@@ -26,6 +27,7 @@ function buildInfo (metadata) {
       ref: metadata.commit,
       tag: 'None'
     },
+    buildId: match ? match.groups.url : metadata.commit,
     sha: metadata.commit,
     name: metadata.repo,
     description: '',
