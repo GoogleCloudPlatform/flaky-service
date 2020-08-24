@@ -217,6 +217,10 @@ describe('HeatMapComponent', () => {
   }));
 
   it('should show the tooltip when the mouse hovers a cell', fakeAsync(() => {
+    mockCOMService.fetchBatches = () => of(mockBatches.none);
+    component.init('', '');
+    tick();
+
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
     );
@@ -231,6 +235,10 @@ describe('HeatMapComponent', () => {
   }));
 
   it('should hide the tooltip when the mouse leaves a cell', fakeAsync(() => {
+    mockCOMService.fetchBatches = () => of(mockBatches.none);
+    component.init('', '');
+    tick();
+
     const dataHolder = fixture.debugElement.query(
       By.css(component.dataHolderSelector)
     );

@@ -37,7 +37,7 @@ const data = [
 
 describe('Getting Repos and Orgs', () => {
   before(async () => {
-    global.headCollection = 'testing/' + 'testing-repos-' + uuidv4() + '/repos';
+    global.headCollection = 'testing/' + Date.now() + '-testing-repos-' + uuidv4() + '/repos';
 
     for (let k = 0; k < data.length; k++) {
       const repo = data[k];

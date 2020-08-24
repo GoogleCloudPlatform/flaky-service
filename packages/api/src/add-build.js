@@ -22,6 +22,10 @@ const { Firestore } = require('@google-cloud/firestore');
 const { TestCaseAnalytics } = require('../lib/analytics.js');
 const { v4: uuidv4 } = require('uuid');
 const awaitInBatches = require('../lib/promise-util.js');
+
+const RESET_SUCCESS_COUNT = 15;
+const api = { addTestRun, addBuild, updateQueue, updateTest };
+
 // Main Functionalitkk
 /*
 * Adds a list of TestCaseRun objects to the database, described by the meta information in buildInfo
@@ -69,7 +73,7 @@ async function updateAllTests (testCases, buildInfo, dbRepo) {
 
   const testsToProcess = testCases.map((testCase) => {
     return () => {
-      return Promise.resolve(updateQueue(isFirstBuild, testCase, buildInfo, dbRepo));
+      return updateQueue(isFirstBuild, testCase, buildInfo, dbRepo);
     };
   });
 
@@ -107,36 +111,14 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
   const cachedSuccess = (prevTest.exists && prevTest.data().cachedSuccess) ? prevTest.data().cachedSuccess : [];
   const cachedFails = (prevTest.exists && prevTest.data() && prevTest.data().cachedFails) ? prevTest.data().cachedFails : [];
 
-  if (isFirstBuild) {
+  // We should update the queue of tests:
+  // 1. if this is the very first build.
+  // 2. if there have been less than a threshold of successes in a row.
+  // 3. if the testCase is itself a failure.
+  if (!testCase.successful || shouldContinueUpdating(prevTest) || isFirstBuild) {
     const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
-    await addTestRun(testCase, buildInfo, dbRepo);
-    return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
-  }
-
-  // check the status of the current test run
-  if (!testCase.successful) {
-    /*
-    the current run fails
-    whether this run's test is in the queue or not, call updateTest
-    to add the test to the queue, or update it appropriately
-    */
-    const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
-    await addTestRun(testCase, buildInfo, dbRepo);
-    return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
-  } else {
-    // the current run is successful
-    if (calculateFlaky(prevTest, testCase)) {
-      // the current run is flaky so it must be updated
-      const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
-      await addTestRun(testCase, buildInfo, dbRepo);
-      return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
-    } else if (prevTest.exists && !prevTest.data().passed) {
-      // the current run is successful and not flaky but previously failed, update the test to be passing
-      const testCaseAnalytics = new TestCaseAnalytics(testCase, cachedSuccess, cachedFails, buildInfo, prevTest);
-      await addTestRun(testCase, buildInfo, dbRepo);
-      return Promise.resolve(updateTest(isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo));
-    }
-    // do not update the test
+    await api.addTestRun(testCase, buildInfo, dbRepo);
+    return api.updateTest(prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo);
   }
   // return metrics
   return {
@@ -145,12 +127,18 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
   };
 }
 
+function shouldContinueUpdating (prevTest) {
+  if (!prevTest.exists) return false;
+  const test = prevTest.data();
+  return test.subsequentpasses < RESET_SUCCESS_COUNT && test.hasfailed;
+}
+
 function calculateFlaky (prevTest, testCase) {
   if (prevTest.exists && prevTest.data().hasfailed) {
     // test is in the queue and has failed previously
     if (testCase.successful) {
       // currently passing
-      if ((prevTest.data().subsequentpasses >= 15) || (!prevTest.data().shouldtrack)) {
+      if ((prevTest.data().subsequentpasses >= RESET_SUCCESS_COUNT) || (!prevTest.data().shouldtrack)) {
         // NOT FLAKY
         return false;
       } else {
@@ -173,19 +161,20 @@ function calculateFlaky (prevTest, testCase) {
   }
 }
 
-async function updateTest (isFirstBuild, prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo) {
+async function updateTest (prevTest, testCaseAnalytics, testCase, buildInfo, dbRepo) {
+  const failing = !testCase.successful;
   const updateObj = {
     percentpassing: testCaseAnalytics.computePassingPercent(),
     historicaltests: testCaseAnalytics.numberOfHistoricalTests(),
-    hasfailed: ((prevTest.exists && prevTest.data().hasfailed) || !testCase.successful),
-    shouldtrack: testCaseAnalytics.calculateTrack(),
+    hasfailed: ((prevTest.exists && prevTest.data().hasfailed) || failing),
+    shouldtrack: failing || testCaseAnalytics.calculateTrack(),
     flaky: calculateFlaky(prevTest, testCase),
     passed: testCase.successful,
     failuremessageiffailing: (!testCase.successful) ? testCase.failureMessage : 'None',
-    searchindex: testCaseAnalytics.successful ? (calculateFlaky(prevTest, testCase) ? 1 : 0) : 2,
+    searchindex: failing ? 2 : (calculateFlaky(prevTest, testCase) ? 1 : 0),
     lastupdate: buildInfo.timestamp,
     name: testCase.name,
-    subsequentpasses: testCaseAnalytics.calculateSubsequentPasses(prevTest, testCase),
+    subsequentpasses: testCaseAnalytics.incrementSubsequentPasses(prevTest, testCase) === 0 ? 0 : Firestore.FieldValue.increment(1),
     lifetimepasscount: (testCase.successful) ? Firestore.FieldValue.increment(1) : Firestore.FieldValue.increment(0),
     lifetimefailcount: (testCase.successful) ? Firestore.FieldValue.increment(0) : Firestore.FieldValue.increment(1)
   };
@@ -278,4 +267,4 @@ async function updateRepoDoc (buildInfo, computedData, mostRecent, dbRepo) {
   // db read operation to fix this. This would only be visible when ordering by priority on org page.
 }
 
-module.exports = { addBuild };
+module.exports = api;

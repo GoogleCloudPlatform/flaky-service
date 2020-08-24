@@ -30,27 +30,18 @@ class Repository {
     return document.data();
   }
 
-  async getCollection (identifier) {
-    const result = [];
-    const snapshot = await client.collection(`${identifier}`).get();
-    if (snapshot.empty) {
-      return result;
-    }
-    snapshot.forEach(doc => {
-      const entry = doc.data();
-      result.push(entry);
-    });
-    return result;
+  ticketCollection () {
+    return global.ticketCollection || 'tickets';
   }
 
   async storeTicket (ticketToPerform) {
-    return this.createDoc(`tickets/${ticketToPerform.state}`, {
+    return this.createDoc(`${this.ticketCollection()}/${ticketToPerform.state}`, {
       ticket: ticketToPerform
     });
   }
 
   async getTicket (state) {
-    const data = await this.getDoc(`tickets/${state}`);
+    const data = await this.getDoc(`${this.ticketCollection()}/${state}`);
     if (data === null) return null;
     return data.ticket;
   }
