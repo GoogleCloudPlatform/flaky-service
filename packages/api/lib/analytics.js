@@ -105,13 +105,9 @@ class TestCaseAnalytics {
     }
   }
 
-  calculateSubsequentPasses () {
-    if (this.testCase.successful) {
-      // currently passing
-      if (this.prevTest.exists && this.prevTest.data().shouldtrack) {
-        // test was previously in the queue
-        return (this.prevTest.data().subsequentpasses + 1);
-      }
+  incrementSubsequentPasses () {
+    if (this.testCase.successful && this.prevTest.exists && this.prevTest.data().shouldtrack) {
+      return 1;
     }
     // otherwise, set the subsequent passes to zero
     return 0;

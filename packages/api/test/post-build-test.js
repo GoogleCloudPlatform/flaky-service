@@ -46,7 +46,7 @@ nock.enableNetConnect(/^(?!.*github\.com).*$/); // only disable requests on gith
 
 describe('Posting Builds', () => {
   before(async () => {
-    global.headCollection = 'testing/' + 'postingbuild-test-' + uuidv4() + '/repos';
+    global.headCollection = 'testing/' + Date.now() + '-postingbuild-test-' + uuidv4() + '/repos';
 
     nock('https://api.github.com', {
       reqheaders: {

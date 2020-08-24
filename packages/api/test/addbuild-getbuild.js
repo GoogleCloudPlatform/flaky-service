@@ -104,7 +104,7 @@ buildInfo[2].testCases[1].failureMessage = 'Error message';
 
 describe('Add-Build', () => {
   before(async () => {
-    global.headCollection = 'testing/' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
+    global.headCollection = 'testing/' + Date.now() + '-' + TESTING_COLLECTION_BASE + uuidv4() + '/repos'; // random collection name for concurrent testing
   });
 
   describe('add-build', async () => {
@@ -136,6 +136,7 @@ describe('Add-Build', () => {
 
       // ensure builds were uploaded correctly
       const builds = await client.collection(global.headCollection).doc(buildInfo[1].repoId).collection('builds').doc(buildInfo[1].buildId).get();
+
       assert.strictEqual(builds.data().percentpassing, 1.0);
       assert.strictEqual(builds.data().passcount, 2);
       assert.strictEqual(builds.data().failcount, 0);
@@ -329,6 +330,7 @@ describe('Add-Build', () => {
       assert('error' in ansObj);
       assert.strictEqual(resp.status, 400);
     });
+
     it('Can Handle length 0 request', async () => {
       const resp = await fetch('http://localhost:3000/api/repo/nodejs/node/test?name=DOESNOTEXIST');
       const respText = await resp.text();

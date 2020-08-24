@@ -102,7 +102,7 @@ describe('GetBatchesHandler', () => {
   let clock;
 
   before(async () => {
-    global.headCollection = 'testing/' + 'testing-repos-' + uuidv4() + '/repos';
+    global.headCollection = 'testing/' + Date.now() + '-testing-repos-' + uuidv4() + '/repos';
 
     await client.collection(global.headCollection).doc(firebaseEncode(repos.repoId)).set(repos);
 

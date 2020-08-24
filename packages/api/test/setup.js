@@ -13,12 +13,43 @@
 // limitations under the License.
 
 const { before, after } = require('mocha');
+const client = require('../src/firestore.js');
+const firebaseTools = require('firebase-tools');
 
 let server;
 before(() => {
   server = require('../server');
 });
 
-after(() => {
+after(async () => {
+  await cleanupStaleTestData();
   server.close();
 });
+
+// After 2 minutes, delete any collections in the testing/ collection:
+const CLEANUP_AFTER = 120000; // Cleanup stale data after N ms.
+const TEST_DB = 'testing';
+async function cleanupStaleTestData () {
+  const now = Date.now();
+  try {
+    const testDocs = await client
+      .collection(TEST_DB)
+      .listDocuments();
+    for (const testDoc of testDocs) {
+      const test = await testDoc.get();
+      console.info(`collection ${test.ref.path}`);
+      const msStr = test.ref.path.split('-')[0].replace(`${TEST_DB}/`, '');
+      if ((now - Number(msStr)) > CLEANUP_AFTER) {
+        console.info(`deleting ${test.ref.path}`);
+        await firebaseTools.firestore
+          .delete(test.ref.path, {
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            yes: true
+          });
+      }
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+}

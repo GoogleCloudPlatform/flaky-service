@@ -87,8 +87,14 @@ class GetTestHandler {
         const limit = parseInt(req.query.limit || 30);
         const offset = parseInt(req.query.offset || 0);
 
-        const snapshot = await this.client.collection(global.headCollection).doc(repoid).collection('queued')
-          .orderBy('searchindex', 'desc').orderBy('lastupdate', 'desc').offset(offset).limit(limit + 1).get();
+        const snapshot = await this.client.collection(global.headCollection)
+          .doc(repoid)
+          .collection('queued')
+          .orderBy('searchindex', 'desc')
+          .orderBy('lastupdate', 'desc')
+          .offset(offset)
+          .limit(limit + 1)
+          .get();
 
         const responseJSON = {
           hasnext: false,

@@ -27,6 +27,8 @@ jobs:
         working-directory: ./packages/api
       - run: npm test
         working-directory: ./packages/api
+        env:
+          GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
       - name: track flaky tests
         if: ${{ always() }}
         uses: GoogleCloudPlatform/flaky-service/packages/action@v1.0.3
