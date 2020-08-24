@@ -21,7 +21,7 @@ function buildInfo (metadata) {
     repoId: firebaseEncode(decodeURIComponent(repo)),
     organization: org,
     timestamp: new Date(),
-    url: match ? match.groups.url : `https://github.com/${metadata.repo}/commit/${metadata.commit}`,
+    url: match ? match.groups.url : `https://github.com/${metadata.repo}`,
     environment: {
       matrix: '{"kokoro":""}',
       os: 'Linux',
@@ -30,7 +30,7 @@ function buildInfo (metadata) {
     },
     buildId: match ? match.groups.url : metadata.commit,
     sha: metadata.commit,
-    name: metadata.repo,
+    name: repo,
     description: '',
     buildmessage: ''
   };

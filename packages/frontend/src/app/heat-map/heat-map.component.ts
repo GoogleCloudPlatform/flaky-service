@@ -101,7 +101,7 @@ export class HeatMapComponent {
 
   getBuildLink(buildId): string {
     if (buildId.match(/^https?/)) {
-      return buildId
+      return buildId;
     } else {
       return 'https://github.com/'.concat(
         this.orgName,
