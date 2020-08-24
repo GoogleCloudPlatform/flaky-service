@@ -18,7 +18,7 @@ function buildInfo (metadata) {
   const [org, repo] = metadata.repo.split('/');
   const match = metadata.buildURL.match(/\[Sponge\]\((?<url>.*)\)/);
   return {
-    repoId: firebaseEncode(decodeURIComponent(repo)),
+    repoId: firebaseEncode(decodeURIComponent(metadata.repo)),
     organization: org,
     timestamp: new Date(),
     url: match ? match.groups.url : `https://github.com/${metadata.repo}`,
