@@ -21,6 +21,7 @@ function buildInfo (metadata) {
     repoId: firebaseEncode(decodeURIComponent(repo)),
     organization: org,
     timestamp: new Date(),
+    url: match ? match.groups.url : `https://github.com/${metadata.repo}/commit/${metadata.commit}`,
     environment: {
       matrix: '{"kokoro":""}',
       os: 'Linux',
