@@ -15,8 +15,8 @@
 const firebaseEncode = require('./firebase-encode');
 
 class TestCaseRun {
-  constructor (okMessage, name) {
-    this.successful = (okMessage === 'ok');
+  constructor (okMessageBoolean, name) {
+    this.successful = okMessageBoolean;
     this.name = name;
     this.encodedName = firebaseEncode(this.name);
     this.failureMessage = 'Successful';

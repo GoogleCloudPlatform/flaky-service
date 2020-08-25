@@ -61,7 +61,7 @@ class Parser {
         const failure = testcase.failure;
         const error = testcase.error;
 
-        const okayMessage = (failure === undefined && error === undefined) ? 'ok' : 'not ok';
+        const okayMessage = (failure === undefined && error === undefined);
         let name = testcase._attributes.name;
 
         if (testsuiteName.length > 0) {

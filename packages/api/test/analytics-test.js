@@ -64,7 +64,7 @@ describe('Flaky-Analytics', () => {
     for (let i = 0; i < testCases.length; i++) {
       const testCaseObjs = [];
       for (let k = 0; k < testCases[i].length; k++) {
-        testCaseObjs.push(new TestCaseRun(testCases[i][k] ? 'ok' : 'not ok', k.toString()));
+        testCaseObjs.push(new TestCaseRun(testCases[i][k], k.toString()));
       }
       const updateObj = JSON.parse(JSON.stringify(buildInfo));
       updateObj.timestamp = new Date('01/01/202' + i.toString());

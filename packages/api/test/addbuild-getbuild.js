@@ -47,10 +47,10 @@ const buildInfo = [
     },
     timestamp: new Date('01/01/2000'),
     testCases: [
-      new TestCaseRun('ok', 'a/1'),
-      new TestCaseRun('not ok', 'a/2'),
-      new TestCaseRun('ok', 'a/3'),
-      new TestCaseRun('not ok', 'a/4')
+      new TestCaseRun(true, 'a/1'),
+      new TestCaseRun(false, 'a/2'),
+      new TestCaseRun(true, 'a/3'),
+      new TestCaseRun(false, 'a/4')
     ],
     description: 'nodejs repository',
     buildmessage: 'Workflow - 1'
@@ -70,8 +70,8 @@ const buildInfo = [
     },
     timestamp: new Date('01/01/2001'),
     testCases: [
-      new TestCaseRun('ok', 'a/1'),
-      new TestCaseRun('ok', 'a/2') // this test is now passing
+      new TestCaseRun(true, 'a/1'),
+      new TestCaseRun(true, 'a/2') // this test is now passing
     ],
     description: 'nodejs repository',
     buildmessage: 'Workflow - 2'
@@ -91,8 +91,8 @@ const buildInfo = [
     },
     timestamp: new Date('01/01/2002'),
     testCases: [
-      new TestCaseRun('not ok', 'a/5'),
-      new TestCaseRun('not ok', 'a/2') // this test is now failing
+      new TestCaseRun(false, 'a/5'),
+      new TestCaseRun(false, 'a/2') // this test is now failing
     ],
     description: 'None',
     buildmessage: 'Workflow - 1'
@@ -436,8 +436,8 @@ describe('Add-Build', () => {
         },
         timestamp: new Date('01/01/2004'),
         testCases: [
-          new TestCaseRun('not ok', 'a/5'),
-          new TestCaseRun('not ok', 'a/2') // this test is now passing
+          new TestCaseRun(false, 'a/5'),
+          new TestCaseRun(false, 'a/2') // this test is now passing
         ],
         description: 'nodejs repository',
         buildmessage: 'Workflow - 42'

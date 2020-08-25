@@ -39,7 +39,7 @@ function getTestCases (inputFilePath, fileName) {
     var dateMatch = outcome[i].match(dateRegex);
 
     if (tryMatch !== null) {
-      testCases.push(new TestCaseRun(tryMatch.groups.status, tryMatch.groups.message));
+      testCases.push(new TestCaseRun(tryMatch.groups.status === 'ok', tryMatch.groups.message));
     }
 
     if (dateMatch !== null && determinedDate == null) {
