@@ -33,8 +33,8 @@ const cors = require('cors');
 global.headCollection = process.env.HEAD_COLLECTION || 'testing/main/repos';
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(bodyParser.json({ limit: '64mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '64mb', extended: true })); // support encoded bodies
 
 app.get('/api/repo/:orgname/:reponame/test/deleteurl', async (req, res) => {
   const orgName = req.params.orgname;
