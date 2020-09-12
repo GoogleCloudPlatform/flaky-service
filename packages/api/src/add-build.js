@@ -23,6 +23,7 @@ const { TestCaseAnalytics } = require('../lib/analytics.js');
 const { v4: uuidv4 } = require('uuid');
 const awaitInBatches = require('../lib/promise-util.js');
 
+const AGGREGATE_SIZE = 25;
 const RESET_SUCCESS_COUNT = 15;
 const api = { addTestRun, addBuild, updateQueue, updateTest };
 
@@ -48,7 +49,7 @@ async function addBuild (testCases, buildInfo, client, collectionName) {
   const computedData = phaseOne[0];
   const mostRecent = phaseOne[1];
 
-  await Promise.all([addBuildDoc(testCases, buildInfo, computedData, dbRepo), updateRepoDoc(buildInfo, computedData, mostRecent, dbRepo)]);
+  await Promise.all([addBuildDoc(testCases, buildInfo, computedData, dbRepo), updateRepoDoc(buildInfo, mostRecent, dbRepo)]);
 }
 
 async function updateAllTests (testCases, buildInfo, dbRepo) {
@@ -235,36 +236,53 @@ async function addBuildDoc (testCases, buildInfo, computedData, dbRepo) {
   });
 }
 
-async function updateRepoDoc (buildInfo, computedData, mostRecent, dbRepo) {
+async function updateRepoDoc (buildInfo, mostRecent, dbRepo) {
+  const repoId = decodeURIComponent(buildInfo.repoId);
   const repoUpdate = {
     organization: buildInfo.organization,
     url: buildInfo.url,
-    repoId: decodeURIComponent(buildInfo.repoId),
+    repoId: repoId,
     name: buildInfo.name,
     description: buildInfo.description,
     lower: {
       repoId: decodeURIComponent(buildInfo.repoId).toLowerCase(),
       name: buildInfo.name.toLowerCase(),
       organization: buildInfo.organization.toLowerCase()
-    },
-    flaky: computedData.flaky
+    }
   };
   for (const prop in buildInfo.environment) {
     repoUpdate['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
   }
 
+  // The top level repository object tracks aggregate test runs from the last
+  // AGGREGATE_SIZE test runs:
+  // TODO: we should consider moving to calculating this daily.
+  const queuedTestLookup = await dbRepo
+    .collection('queued')
+    .orderBy('searchindex', 'desc')
+    .orderBy('lastupdate', 'desc')
+    .offset(0)
+    .limit(AGGREGATE_SIZE)
+    .get();
+  const queuedTests = queuedTestLookup.docs.map(doc => doc.data());
+  const results = queuedTests.reduce((a, test) => {
+    if (!test.passed) {
+      a.failing++;
+    }
+    if (test.flaky) {
+      a.flaky++;
+    }
+    return a;
+  }, { flaky: 0, failing: 0 });
+
   if (mostRecent) {
-    repoUpdate.numfails = computedData.failcount;
-    repoUpdate.searchindex = computedData.failcount * 10000 + computedData.flaky;
-    repoUpdate.numtestcases = computedData.total;
+    repoUpdate.flaky = results.flaky;
+    repoUpdate.numfails = results.failing;
+    repoUpdate.searchindex = results.failing * 10000 + results.flaky;
+    repoUpdate.numtestcases = queuedTestLookup.size;
     repoUpdate.lastupdate = buildInfo.timestamp;
   }
-
   await dbRepo.update(repoUpdate, { merge: true });
-  // note: in extremely rare circumstances this results in incorrect ordering -
-  // when a build is added non chronologically that makes multiple tests flaky, and two repos have the same number of
-  // failing test cases in most recent build, then their secondary ordering based on flakiness would be wrong, but it is not worth the extra
-  // db read operation to fix this. This would only be visible when ordering by priority on org page.
 }
 
 module.exports = api;
