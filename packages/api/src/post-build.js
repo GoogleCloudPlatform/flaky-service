@@ -34,54 +34,6 @@ class PostBuildHandler {
     this.client = client;
   }
 
-  static parseEnvironment (metadata) {
-    var envData = {
-      os: metadata.os.os || 'Not specified',
-      ref: metadata.github.ref || 'Not specified',
-      matrix: (metadata.matrix) ? JSON.stringify(metadata.matrix, Object.keys(metadata.matrix).sort()) : 'None',
-      tag: 'None'
-    };
-    envData.ref = envData.ref.replace('refs/', '');
-    envData.ref = envData.ref.replace('heads/', '');
-    // validate data
-    for (const prop in envData) {
-      if (!envData[prop]) {
-        throw new InvalidParameterError('Missing All Build Meta Data Info - ' + prop);
-      }
-    }
-    return envData;
-  }
-
-  // IMPORTANT: All values that will be used as keys in Firestore must be escaped with the firestoreEncode function
-  static parseBuildInfo (metadata) {
-    // buildInfo must have attributes of organization, timestamp, url, environment, buildId
-    const timestamp = metadata.github.event.head_commit ? new Date(metadata.github.event.head_commit.timestamp) : new Date();
-    const returnVal = {
-      repoId: firebaseEncode(metadata.github.repository),
-      organization: metadata.github.repository_owner,
-      timestamp,
-      url: metadata.github.repositoryUrl,
-      environment: PostBuildHandler.parseEnvironment(metadata),
-      buildId: firebaseEncode(metadata.github.run_id),
-      sha: metadata.github.sha,
-      name: metadata.github.event.repository.name,
-      description: metadata.github.event.repository.description || 'None',
-      buildmessage: (metadata.github.workflow ? metadata.github.workflow : 'Workflow') + (metadata.github.run_number ? ' - ' + metadata.github.run_number : '')
-    };
-
-    // validate data
-    for (const prop in returnVal) {
-      if (!returnVal[prop]) {
-        throw new InvalidParameterError('Missing All Build Meta Data Info - ' + prop);
-      }
-    }
-    if (metadata.github.run_id !== firebaseEncode(metadata.github.run_id)) {
-      throw new InvalidParameterError('github.run_id must be alphanumeric');
-    }
-
-    return returnVal;
-  }
-
   static parseTestCases (data, datastring) {
     const tapByLines = datastring.split(/\r?\n/);
     const idToLine = {};// store line number of all insertion indices
@@ -217,31 +169,6 @@ class PostBuildHandler {
   }
 
   listen () {
-    // route for parsing test input server side
-    this.app.post('/api/build', async (req, res, next) => {
-      try {
-        const buildInfo = PostBuildHandler.parseBuildInfo(req.body.metadata);
-
-        req.body.data = await PostBuildHandler.flattenTap(req.body.data);
-        const parsedRaw = await PostBuildHandler.parseRawOutput(req.body.data, req.body.type);
-        const testCases = PostBuildHandler.parseTestCases(parsedRaw, req.body.data);
-
-        const isValid = await validateGithub(req.body.metadata.github.token, req.body.metadata.github.repository);
-        if (!isValid) {
-          throw new UnauthorizedError('Must have valid Github Token to post build');
-        }
-
-        if (req.body.metadata.github.event.repository.private) {
-          throw new UnauthorizedError('Flaky does not store tests for private repos');
-        }
-
-        await AddBuildHandler.addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
-        res.send({ message: 'successfully added build' });
-      } catch (err) {
-        handleError(res, err);
-      }
-    });
-
     // endpoint expects the the required buildinfo to be in req.body.metadata to already exist and be properly formatted.
     // required keys in the req.body.metadata are the inputs for addBuild in src/add-build.js
     this.app.post('/api/build/gh/v1', async (req, res, next) => {
