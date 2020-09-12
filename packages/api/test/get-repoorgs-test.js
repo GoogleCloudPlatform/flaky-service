@@ -59,29 +59,6 @@ describe('Getting Repos and Orgs', () => {
     }
   });
 
-  it('should respond with an empty list with random queries', async () => {
-    const resp = await fetch('http://localhost:3000/api/repo?org=ddd&startswith=randomquery');
-    const respText = await resp.text();
-    assert.strictEqual(JSON.parse(respText).length, 0);
-
-    const respOrg = await fetch('http://localhost:3000/api/org/randomquery');
-    const respTextOrg = await respOrg.text();
-
-    assert.strictEqual(JSON.parse(respTextOrg).repos.length, 0);
-  });
-
-  it('should return all results no matter the next characters', async () => {
-    const resp = await fetch('http://localhost:3000/api/repo?org=bigorg&startswith=z');
-    const respText = await resp.text();
-    assert.strictEqual(JSON.parse(respText).length, 4);
-  });
-
-  it('should not work with a name too long', async () => {
-    const resp = await fetch('http://localhost:3000/api/repo?org=aaa&startswith=aaanamelengthen');
-    const respText = await resp.text();
-    assert.strictEqual(JSON.parse(respText).length, 0);
-  });
-
   it('find all repos for one org', async () => {
     const resp = await fetch('http://localhost:3000/api/org/bigorg');
     const respText = await resp.text();
@@ -141,29 +118,6 @@ describe('Getting Repos and Orgs', () => {
     const parsedResp = JSON.parse(respText);
     assert.strictEqual(parsedResp.repos.length, 1);
     assert.strictEqual(parsedResp.hasnext, true);
-  });
-
-  it('limit search (only on repos)', async () => {
-    const resp = await fetch('http://localhost:3000/api/repo?org=bigorg&startswith=z&limit=3');
-    const respText = await resp.text();
-    assert.strictEqual(JSON.parse(respText).length, 3);
-  });
-
-  it('should return all with no startswith', async () => {
-    const resp = await fetch('http://localhost:3000/api/repo?org=bigorg');
-    const respText = await resp.text();
-    assert.strictEqual(JSON.parse(respText).length, 4);
-  });
-
-  it('should work with case insensitive', async () => {
-    const resp = await fetch('http://localhost:3000/api/repo?org=upper&startswith=upper');
-    const respText = await resp.text();
-    assert.strictEqual(JSON.parse(respText).length, 1);
-
-    const resp2 = await fetch('http://localhost:3000/api/repo?org=LOWER&startswith=LOWER');
-    const respText2 = await resp2.text();
-
-    assert.strictEqual(JSON.parse(respText2).length, 1);
   });
 
   after(async () => {
