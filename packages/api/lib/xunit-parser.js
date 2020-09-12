@@ -40,7 +40,7 @@ class Parser {
     }
     for (const suite of testsuites) {
       // Ruby doesn't always have _attributes.
-      const testsuiteName = suite._attributes ? this.trim(suite._attributes.name) : undefined;
+      const testsuiteName = suite._attributes ? this.trim(suite._attributes.name) : '';
 
       let testcases = suite.testcase;
       // If there were no tests in the package, continue.
@@ -53,28 +53,27 @@ class Parser {
       }
 
       for (const testcase of testcases) {
-      // Ignore skipped tests. They didn't pass and they didn't fail.
+        // Ignore skipped tests. They didn't pass and they didn't fail.
         if (testcase.skipped !== undefined) {
           continue;
         }
 
-        const failure = testcase.failure;
-        const error = testcase.error;
-
-        const okayMessage = (failure === undefined && error === undefined);
+        const passed = (testcase.failure === undefined && testcase.error === undefined);
         let name = testcase._attributes.name;
 
         if (testsuiteName.length > 0) {
           name = testsuiteName + '/' + name;
         }
 
-        const testCaseRun = new TestCaseRun(okayMessage, name);
+        const testCaseRun = new TestCaseRun(passed, name);
 
         if (!testCaseRun.successful) {
+          const error = testcase.error || {};
+          const failure = testcase.failure || {};
+          const errorMessage = error._attributes ? error._attributes.message : undefined;
           // Java puts its test logs in a CDATA element; other languages use _text.
-          const log = failure._text || failure._cdata || '';
-
-          testCaseRun.failureMessage = log;
+          const failureMessage = failure._text || failure._cdata;
+          testCaseRun.failureMessage = failureMessage || errorMessage;
         }
 
         tests.push(testCaseRun);

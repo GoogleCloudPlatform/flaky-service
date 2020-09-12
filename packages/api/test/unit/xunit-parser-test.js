@@ -48,4 +48,14 @@ describe('xunit-parser-test', () => {
     const tests = parser.parse(readFileSync(require.resolve('../fixtures/go_skip.xml'), 'utf8'));
     assert.strictEqual(tests.length, 1);
   });
+
+  it('handles error rather than failure in XML structure', () => {
+    const tests = parser.parse(readFileSync(require.resolve('../fixtures/error.xml'), 'utf8'));
+    assert.strictEqual(tests.length, 1);
+  });
+
+  it('handles test suite with no name', () => {
+    const tests = parser.parse(readFileSync(require.resolve('../fixtures/ruby_one_failed.xml'), 'utf8'));
+    assert.strictEqual(tests.length, 10);
+  });
 });

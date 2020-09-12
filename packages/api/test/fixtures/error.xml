@@ -1,0 +1,3 @@
+<testsuite>
+<testcase classname="Minitest::Result" name="test_0001_lists entries of a log" time="233.43151779999994" assertions="1"><error message="Failure:&#10;Logging Samples::list_log_entries#test_0001_lists entries of a log [/tmpfs/src/github/ruby-docs-samples/logging/acceptance/sample_test.rb:126]:&#10;Expected false to be truthy.&#10;" /></testcase>
+</testsuite>
