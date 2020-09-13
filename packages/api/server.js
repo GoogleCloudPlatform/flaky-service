@@ -29,10 +29,12 @@ const { InvalidParameterError } = require('./lib/errors');
 const { v4 } = require('uuid');
 
 const cors = require('cors');
+const nocache = require('nocache');
 
 global.headCollection = process.env.HEAD_COLLECTION || 'testing/main/repos';
 
 app.use(cors());
+app.use(nocache());
 app.use(bodyParser.json({ limit: '64mb', extended: true }));
 app.use(bodyParser.urlencoded({ limit: '64mb', extended: true })); // support encoded bodies
 
