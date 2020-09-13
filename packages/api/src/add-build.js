@@ -250,9 +250,10 @@ async function updateRepoDoc (buildInfo, dbRepo) {
     repoUpdate['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
   }
 
-  // The top level repository object tracks aggregate test runs from the last
+  // The top level repository object tracks aggregate test stats from the last
   // AGGREGATE_SIZE test runs:
-  // TODO: we should consider moving to calculating this daily.
+  // TODO: we should consider moving towards calculating this daily to save
+  // on read operations.
   const queuedTestLookup = await dbRepo
     .collection('queued')
     .orderBy('searchindex', 'desc')

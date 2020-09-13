@@ -17,14 +17,13 @@ const AGGREGATE_SIZE = 25;
 /*
 * Updates the aggregate statistics for a given repository.
 *
-* @param repoId identifier of repository that requires its aggregate stat supdated.
+* @param repoId identifier of repository that requires its aggregate stats updated.
 */
 async function updateRepoStats (repoId, client) {
   const dbRepo = client.collection(global.headCollection).doc(repoId);
 
-  // The top level repository object tracks aggregate test runs from the last
+  // The top level repository object tracks aggregate test stats from the last
   // AGGREGATE_SIZE test runs:
-  // TODO: we should consider moving to calculating this daily.
   const queuedTestLookup = await dbRepo
     .collection('queued')
     .orderBy('searchindex', 'desc')
