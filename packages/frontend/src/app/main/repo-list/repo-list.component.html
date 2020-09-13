@@ -38,9 +38,8 @@ limitations under the License.
         <div class="indicators">
             <table>
                 <tr>
-                    <td class="indicator passing-tests-indicator">
-                        <span>{{repo.numtestcases - repo.numfails}}</span>
-                        <span>&nbsp; passing</span>
+                    <td class="indicator passing-tests-indicator" *ngIf="!repo.flaky && !repo.numfails">
+                        <span>all passing</span>
                     </td>
 
                     <td class="indicator failing-tests-indicator" *ngIf="repo.numfails">
