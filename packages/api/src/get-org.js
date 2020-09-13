@@ -56,19 +56,24 @@ class GetOrgHandler {
         if (req.query.startswith) {
           const startsWith = req.query.startswith.toLowerCase();
           query = query.where('lower.name', '>=', startsWith)
-            .where('lower.name', '<', this.alphabeticallyIncrement(startsWith));
-        } else {
-          if (req.query.orderby) {
-            if (req.query.orderby === 'priority') {
-              query = query.orderBy('searchindex', 'desc');
-            }
-            if (req.query.orderby === 'activity') {
-              query = query.orderBy('lastupdate', 'desc');
-            }
-            if (req.query.orderby === 'name') {
-              query = query.orderBy('lower.name');
-            }
+            .where('lower.name', '<', this.alphabeticallyIncrement(startsWith))
+            .orderBy('lower.name', 'asc');
+        }
+
+        // We default sorting by the searchindex value, which represents
+        // failing > flaky > success.
+        if (req.query.orderby) {
+          if (req.query.orderby === 'priority') {
+            query = query.orderBy('searchindex', 'desc');
           }
+          if (req.query.orderby === 'activity') {
+            query = query.orderBy('lastupdate', 'desc');
+          }
+          if (req.query.orderby === 'name') {
+            query = query.orderBy('lower.name');
+          }
+        } else {
+          query = query.orderBy('searchindex', 'desc');
         }
 
         query = query.offset(offset).limit(limit + 1);
