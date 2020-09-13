@@ -18,6 +18,7 @@ const AGGREGATE_SIZE = 25;
 * Updates the aggregate statistics for a given repository.
 *
 * @param repoId identifier of repository that requires its aggregate stats updated.
+* @param client a firestore client instance.
 */
 async function updateRepoStats (repoId, client) {
   const dbRepo = client.collection(global.headCollection).doc(repoId);
