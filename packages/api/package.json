@@ -5,7 +5,7 @@
   "description": "the api for the flaky.dev service",
   "main": "server.js",
   "scripts": {
-    "test": "c8 mocha --reporter=tap --timeout=50000 test/*.js test/unit/*.js | tee test.tap | tap-spec",
+    "test": "c8 --reporter=text --reporter=html mocha --reporter=tap --timeout=50000 test/*.js test/unit/*.js | tee test.tap | tap-spec",
     "posttest": "semistandard",
     "fix": "semistandard --fix"
   },

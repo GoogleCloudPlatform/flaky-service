@@ -27,7 +27,6 @@ const AGGREGATE_SIZE = 25;
 const RESET_SUCCESS_COUNT = 15;
 const api = { addTestRun, addBuild, updateQueue, updateTest };
 
-// Main Functionalitkk
 /*
 * Adds a list of TestCaseRun objects to the database, described by the meta information in buildInfo
 *       Does not assume repository has been initializ
@@ -44,12 +43,9 @@ async function addBuild (testCases, buildInfo, client, collectionName) {
   buildInfo.buildIdReadable = buildInfo.buildId;
   buildInfo.buildId = uuidv4(); // buildId will always be UUID
 
-  const phaseOne = await Promise.all([updateAllTests(testCases, buildInfo, dbRepo), isMostRecentBuild(buildInfo, dbRepo)]);
-  // unpack results
-  const computedData = phaseOne[0];
-  const mostRecent = phaseOne[1];
+  const [computedData] = await Promise.all([updateAllTests(testCases, buildInfo, dbRepo), isMostRecentBuild(buildInfo, dbRepo)]);
 
-  await Promise.all([addBuildDoc(testCases, buildInfo, computedData, dbRepo), updateRepoDoc(buildInfo, mostRecent, dbRepo)]);
+  await Promise.all([addBuildDoc(testCases, buildInfo, computedData, dbRepo), updateRepoDoc(buildInfo, dbRepo)]);
 }
 
 async function updateAllTests (testCases, buildInfo, dbRepo) {
@@ -236,7 +232,7 @@ async function addBuildDoc (testCases, buildInfo, computedData, dbRepo) {
   });
 }
 
-async function updateRepoDoc (buildInfo, mostRecent, dbRepo) {
+async function updateRepoDoc (buildInfo, dbRepo) {
   const repoId = decodeURIComponent(buildInfo.repoId);
   const repoUpdate = {
     organization: buildInfo.organization,
@@ -254,9 +250,10 @@ async function updateRepoDoc (buildInfo, mostRecent, dbRepo) {
     repoUpdate['environments.' + prop] = Firestore.FieldValue.arrayUnion(buildInfo.environment[prop]);
   }
 
-  // The top level repository object tracks aggregate test runs from the last
+  // The top level repository object tracks aggregate test stats from the last
   // AGGREGATE_SIZE test runs:
-  // TODO: we should consider moving to calculating this daily.
+  // TODO: we should consider moving towards calculating this daily to save
+  // on read operations.
   const queuedTestLookup = await dbRepo
     .collection('queued')
     .orderBy('searchindex', 'desc')
@@ -275,13 +272,12 @@ async function updateRepoDoc (buildInfo, mostRecent, dbRepo) {
     return a;
   }, { flaky: 0, failing: 0 });
 
-  if (mostRecent) {
-    repoUpdate.flaky = results.flaky;
-    repoUpdate.numfails = results.failing;
-    repoUpdate.searchindex = results.failing * 10000 + results.flaky;
-    repoUpdate.numtestcases = queuedTestLookup.size;
-    repoUpdate.lastupdate = buildInfo.timestamp;
-  }
+  repoUpdate.flaky = results.flaky;
+  repoUpdate.numfails = results.failing;
+  repoUpdate.searchindex = results.failing * 10000 + results.flaky;
+  repoUpdate.numtestcases = queuedTestLookup.size;
+  repoUpdate.lastupdate = buildInfo.timestamp;
+
   await dbRepo.update(repoUpdate, { merge: true });
 }
 
