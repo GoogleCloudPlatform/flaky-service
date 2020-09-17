@@ -24,8 +24,8 @@ const { v4: uuidv4 } = require('uuid');
 const awaitInBatches = require('../lib/promise-util.js');
 
 const AGGREGATE_SIZE = 25;
-const RESET_SUCCESS_COUNT = 15;
-const api = { addTestRun, addBuild, updateQueue, updateTest };
+const RESET_SUCCESS_COUNT = 10;
+const api = { addTestRun, addBuild, calculateFlaky, updateQueue, updateTest, RESET_SUCCESS_COUNT };
 
 /*
 * Adds a list of TestCaseRun objects to the database, described by the meta information in buildInfo
@@ -127,7 +127,8 @@ async function updateQueue (isFirstBuild, testCase, buildInfo, dbRepo) {
 function shouldContinueUpdating (prevTest) {
   if (!prevTest.exists) return false;
   const test = prevTest.data();
-  return test.subsequentpasses < RESET_SUCCESS_COUNT && test.hasfailed;
+  return (test.flaky || !test.passed || test.subsequentpasses < RESET_SUCCESS_COUNT) &&
+    test.hasfailed;
 }
 
 function calculateFlaky (prevTest, testCase) {

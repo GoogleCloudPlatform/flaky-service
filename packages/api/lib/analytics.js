@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const NUM_STORE = 15;
+const { RESET_SUCCESS_COUNT } = require('../src/add-build');
 
 class TestCaseAnalytics {
   // params: encoded name of a test and this.client.collection(global.headCollection).doc(repoid)
@@ -31,7 +31,7 @@ class TestCaseAnalytics {
     this.createMergedList();
 
     this.deleteQueue = [];
-    while (this.mergedList.length > NUM_STORE) {
+    while (this.mergedList.length > RESET_SUCCESS_COUNT) {
       this.deleteQueue.push(this.mergedList.pop());
     }
   }
@@ -82,7 +82,7 @@ class TestCaseAnalytics {
     if (this.prevTest.data().shouldtrack) {
       if (this.testCase.successful) {
         // check how many subsequent passes there have been
-        if (this.prevTest.data().subsequentpasses < 15) {
+        if (this.prevTest.data().subsequentpasses < RESET_SUCCESS_COUNT) {
           return true;
         } else {
           return false;
