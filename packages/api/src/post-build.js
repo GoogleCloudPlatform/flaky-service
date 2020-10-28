@@ -200,7 +200,9 @@ class PostBuildHandler {
     this.app.post('/api/build/pubsub/v1', authMiddleware, async (req, res, next) => {
       try {
         const { xml, buildInfo } = parsePubSubPayload(req.body);
+        console.info(`received payload`, buildInfo);
         const testCases = xunitParser.parse(xml);
+        console.info(`parsed XML payload`);
         await AddBuildHandler.addBuild(PostBuildHandler.removeDuplicateTestCases(testCases), buildInfo, this.client, global.headCollection);
         res.send({ message: 'successfully added build' });
       } catch (err) {
